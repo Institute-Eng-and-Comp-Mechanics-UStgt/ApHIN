@@ -19,6 +19,17 @@ The learned, low-dimensional pH system can describe even nonlinear systems and i
 
 The method is exemplified by a parametric mass-spring-damper and a nonlinear pendulum example as well as the high-dimensional model of a disc brake with linear thermoelastic behavior.
 
+## Features
+This repository implements neural networks that identify linear port-Hamiltonian systems from (potentially high-dimensional) data[1].
+* Autoencoders (AEs) for dimensionality reduction
+* pH layer to identify system matrices that fullfill the definition of a linear pH system
+* pHIN: identify a (parametric) low-dimensional port-Hamiltonian system directly
+* ApHIN: identify a (parametric) low-dimensional latent port-Hamiltonian system based on coordinate representations found using an autoencoder
+* Examples for the identification of linear pH systems from data
+  * One-dimensional mass-spring-damper chain
+  * Pendulum
+  * discbrake model
+  
 ## Installation
 
 You can either clone the repository and install the package locally or install it directly from PyPI.
@@ -53,17 +64,6 @@ systems and applications, 2022.
 [3] Kathleen Champion, Bethany Lusch, J. Nathan Kutz, and Steven L. Brunton. Data-driven
 discovery of coordinates and governing equations. Proceedings of the National Academy of
 Sciences, 116(45):22445–22451, 2019.
-
-## Features
-This repository implements neural networks that identify linear port-Hamiltonian systems from (potentially high-dimensional) data[1].
-* Autoencoders (AEs) for dimensionality reduction
-* pH layer to identify system matrices that fullfill the definition of a linear pH system
-* pHIN: identify a (parametric) low-dimensional port-Hamiltonian system directly
-* ApHIN: identify a (parametric) low-dimensional latent port-Hamiltonian system based on coordinate representations found using an autoencoder
-* Examples for the identification of linear pH systems from data
-  * One-dimensional mass-spring-damper chain
-  * Pendulum
-  * discbrake model
 
 [license-shield]: https://img.shields.io/github/license/Institute-Eng-and-Comp-Mechanics-UStgt/ApHIN.svg
 [license-url]: https://github.com/Institute-Eng-and-Comp-Mechanics-UStgt/ApHIN/blob/main/LICENSE
