@@ -65,8 +65,8 @@ This repository implements neural networks that identify linear port-Hamiltonian
   * Pendulum
   * discbrake model
 
-[license-shield]: https://img.shields.io/github/license/
-[license-url]: https://
+[license-shield]: https://img.shields.io/github/license/Institute-Eng-and-Comp-Mechanics-UStgt/ApHIN.svg
+[license-url]: https://github.com/Institute-Eng-and-Comp-Mechanics-UStgt/ApHIN/blob/main/LICENSE
 [doi-shield]: https://zenodo.org/badge/DOI/
 [doi-url]: https://doi.org/
 [arxiv-shield]: https://img.shields.io/badge/arXiv-
