@@ -7,7 +7,7 @@
 # ApHIN - Autoencoder-based port-Hamiltonian Identification Networks
 A data-driven framework for the identification of latent port-Hamiltonian systems [1].
 
-![ApHIN.pdf](https://github.com/user-attachments/files/16600453/output-figure2.pdf)
+![ApHIN](https://github.com/user-attachments/assets/0764f063-ced4-4b8e-af84-a7772c7d5c30)
 
 ## Abstract
 Conventional physics-based modeling techniques involve high effort, e.g.~time and expert knowledge, while data-driven methods often lack interpretability, structure, and sometimes reliability. To mitigate this, we present a data-driven system identification framework that derives models in the port-Hamiltonian (pH) formulation. 
