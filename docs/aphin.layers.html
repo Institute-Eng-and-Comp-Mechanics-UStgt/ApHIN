@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>aphin.layers package &mdash; ApHIN 0.1.3 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=360bc84d"></script>
+        <script src="_static/doctools.js?v=9a2dae69"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="aphin.operators package" href="aphin.operators.html" />
+    <link rel="prev" title="aphin.identification package" href="aphin.identification.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            ApHIN
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="aphin.html">aphin package</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="aphin.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="aphin.identification.html">aphin.identification package</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">aphin.layers package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-aphin.layers.descriptor_ph_layer">aphin.layers.descriptor_ph_layer module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-aphin.layers.lti_layer">aphin.layers.lti_layer module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-aphin.layers.ph_layer">aphin.layers.ph_layer module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-aphin.layers.phq_layer">aphin.layers.phq_layer module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-aphin.layers.system_layer">aphin.layers.system_layer module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-aphin.layers">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="aphin.operators.html">aphin.operators package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="aphin.systems.html">aphin.systems package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="aphin.utils.html">aphin.utils package</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="aphin.html#module-aphin">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="contact.html">Contact</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">ApHIN</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="aphin.html">aphin package</a></li>
+      <li class="breadcrumb-item active">aphin.layers package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/aphin.layers.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="aphin-layers-package">
+<h1>aphin.layers package<a class="headerlink" href="#aphin-layers-package" title="Link to this heading"></a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
+</section>
+<section id="module-aphin.layers.descriptor_ph_layer">
+<span id="aphin-layers-descriptor-ph-layer-module"></span><h2>aphin.layers.descriptor_ph_layer module<a class="headerlink" href="#module-aphin.layers.descriptor_ph_layer" title="Link to this heading"></a></h2>
+<p>TensorFlow layers for identification of dynamical systems
+e.g. LTI systems (LTILayer), port-Hamiltonian systems (PHLayer), …
+intended for standalone use or the use in the latent space of an autoencoder.
+All layers approximate the right-hand side of the ODE given states z(t), inputs u(t) and parameters mu
+and should be trained using reference values of the states, inputs, parameters and the left-hand side of the ODE
+which is assumed to depend only on the time derivative of the states.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="aphin.layers.descriptor_ph_layer.DescriptorPHLayer">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">aphin.layers.descriptor_ph_layer.</span></span><span class="sig-name descname"><span class="pre">DescriptorPHLayer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/layers/descriptor_ph_layer.html#DescriptorPHLayer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.layers.descriptor_ph_layer.DescriptorPHLayer" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#aphin.layers.ph_layer.PHLayer" title="aphin.layers.ph_layer.PHLayer"><code class="xref py py-class docutils literal notranslate"><span class="pre">PHLayer</span></code></a></p>
+<p>Layer for port-Hamiltonian (pH) approximation with a descriptive matrix of the time derivative of the latent variable
+E * z’(t) = (J - R) * z(t) + B * u(t)
+with J skew-symmetric, R symmetric positive definite, and E symmetric.</p>
+<dl class="py property">
+<dt class="sig sig-object py" id="aphin.layers.descriptor_ph_layer.DescriptorPHLayer.E">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">E</span></span><a class="headerlink" href="#aphin.layers.descriptor_ph_layer.DescriptorPHLayer.E" title="Link to this definition"></a></dt>
+<dd><p>Get the symmetric matrix E.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Symmetric matrix E.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>tf.Tensor</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="aphin.layers.descriptor_ph_layer.DescriptorPHLayer.lhs">
+<span class="sig-name descname"><span class="pre">lhs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dz_dt</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/layers/descriptor_ph_layer.html#DescriptorPHLayer.lhs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.layers.descriptor_ph_layer.DescriptorPHLayer.lhs" title="Link to this definition"></a></dt>
+<dd><p>Evaluate left-hand side of the system ODE given z’(t) as dz_dt.</p>
+<p>For descriptor systems: E * z’(t).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>dz_dt</strong> (<em>array-like</em>) – Time derivative of the system states z’(t).</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Left-hand side of the system ODE.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tf.Tensor</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="aphin.layers.descriptor_ph_layer.DescriptorPHQLayer">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">aphin.layers.descriptor_ph_layer.</span></span><span class="sig-name descname"><span class="pre">DescriptorPHQLayer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/layers/descriptor_ph_layer.html#DescriptorPHQLayer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.layers.descriptor_ph_layer.DescriptorPHQLayer" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#aphin.layers.phq_layer.PHQLayer" title="aphin.layers.phq_layer.PHQLayer"><code class="xref py py-class docutils literal notranslate"><span class="pre">PHQLayer</span></code></a></p>
+<p>Layer for port-Hamiltonian (pH) approximation with a descriptive matrix of the time derivative of the latent variable
+E * z’(t) = (J - R) * Q * z(t) + B * u(t)
+with J skew-symmetric, R symmetric positive definite, Q symmetric positive definite, and E symmetric.
+This is a generalization of DescriptorPHLayer.</p>
+<dl class="py property">
+<dt class="sig sig-object py" id="aphin.layers.descriptor_ph_layer.DescriptorPHQLayer.E">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">E</span></span><a class="headerlink" href="#aphin.layers.descriptor_ph_layer.DescriptorPHQLayer.E" title="Link to this definition"></a></dt>
+<dd><p>Get the symmetric matrix E.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Symmetric matrix E.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>tf.Tensor</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="aphin.layers.descriptor_ph_layer.DescriptorPHQLayer.lhs">
+<span class="sig-name descname"><span class="pre">lhs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dz_dt</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/layers/descriptor_ph_layer.html#DescriptorPHQLayer.lhs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.layers.descriptor_ph_layer.DescriptorPHQLayer.lhs" title="Link to this definition"></a></dt>
+<dd><p>Evaluate left-hand side of the system ODE given z’(t) as dz_dt.</p>
+<p>For descriptor systems: E * z’(t).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>dz_dt</strong> (<em>array-like</em>) – Time derivative of the system states z’(t).</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Left-hand side of the system ODE.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tf.Tensor</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-aphin.layers.lti_layer">
+<span id="aphin-layers-lti-layer-module"></span><h2>aphin.layers.lti_layer module<a class="headerlink" href="#module-aphin.layers.lti_layer" title="Link to this heading"></a></h2>
+<p>TensorFlow layers for identification of dynamical systems
+e.g. LTI systems (LTILayer), port-Hamiltonian systems (PHLayer), …
+intended for standalone use or the use in the latent space of an autoencoder.
+All layers approximate the right-hand side of the ODE given states z(t), inputs u(t) and parameters mu
+and should be trained using reference values of the states, inputs, parameters and the left-hand side of the ODE
+which is assumed to depend only on the time derivative of the states.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="aphin.layers.lti_layer.LTILayer">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">aphin.layers.lti_layer.</span></span><span class="sig-name descname"><span class="pre">LTILayer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/layers/lti_layer.html#LTILayer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.layers.lti_layer.LTILayer" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#aphin.layers.system_layer.SystemLayer" title="aphin.layers.system_layer.SystemLayer"><code class="xref py py-class docutils literal notranslate"><span class="pre">SystemLayer</span></code></a></p>
+<p>Layer for LTI approximation of the time derivative of the latent variable
+z’(t) = A * z(t) + B * u(t)
+with A = J - R, J skew. sym., R sym.
+The system matrix is decomposed into skew-symmetric J and symmetric parts R for conformity with pH layers</p>
+<dl class="py property">
+<dt class="sig sig-object py" id="aphin.layers.lti_layer.LTILayer.B">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">B</span></span><a class="headerlink" href="#aphin.layers.lti_layer.LTILayer.B" title="Link to this definition"></a></dt>
+<dd><p>Get the (full) input matrix B.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Input matrix B.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>tf.Tensor</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="aphin.layers.lti_layer.LTILayer.J">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">J</span></span><a class="headerlink" href="#aphin.layers.lti_layer.LTILayer.J" title="Link to this definition"></a></dt>
+<dd><p>Get the skew-symmetric matrix J.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Skew-symmetric matrix J.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>tf.Tensor</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="aphin.layers.lti_layer.LTILayer.R">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">R</span></span><a class="headerlink" href="#aphin.layers.lti_layer.LTILayer.R" title="Link to this definition"></a></dt>
+<dd><p>Get the symmetric matrix R.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Symmetric matrix R.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>tf.Tensor</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="aphin.layers.lti_layer.LTILayer.call">
+<span class="sig-name descname"><span class="pre">call</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">z</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">u</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mu</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">training</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/layers/lti_layer.html#LTILayer.call"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.layers.lti_layer.LTILayer.call" title="Link to this definition"></a></dt>
+<dd><p>Evaluate right-hand side of the ODE system z’(t) = f(z, u, mu) for inputs (z, u, mu).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>z</strong> (<em>array-like</em>) – System states with shape (n_t * n_s, n).</p></li>
+<li><p><strong>u</strong> (<em>array-like</em><em>, </em><em>optional</em>) – System inputs with shape (n_t * n_s, n_u), by default None.</p></li>
+<li><p><strong>mu</strong> (<em>array-like</em><em>, </em><em>optional</em>) – Parameters, by default None.</p></li>
+<li><p><strong>training</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether the call is in training mode, by default False.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Approximation of z’(t).</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tf.Tensor</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="aphin.layers.lti_layer.LTILayer.dof_split">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">dof_split</span></span><a class="headerlink" href="#aphin.layers.lti_layer.LTILayer.dof_split" title="Link to this definition"></a></dt>
+<dd><p>Split of the internal degrees of freedom into J, R, B.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Tuple containing the split of degrees of freedom.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>tuple</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="aphin.layers.lti_layer.LTILayer.get_parameter_dependent_weights">
+<span class="sig-name descname"><span class="pre">get_parameter_dependent_weights</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mu</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/layers/lti_layer.html#LTILayer.get_parameter_dependent_weights"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.layers.lti_layer.LTILayer.get_parameter_dependent_weights" title="Link to this definition"></a></dt>
+<dd><p>In case of parameter dependent weights, get the weights for the given parameters.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>mu</strong> (<em>array-like</em>) – Parameters.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Tuple containing dof_J, dof_R, dof_B, and dof_Q.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="aphin.layers.lti_layer.LTILayer.get_system_matrices">
+<span class="sig-name descname"><span class="pre">get_system_matrices</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mu</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_t</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/layers/lti_layer.html#LTILayer.get_system_matrices"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.layers.lti_layer.LTILayer.get_system_matrices" title="Link to this definition"></a></dt>
+<dd><p>Return matrices in the format (n_sim, r, r).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>mu</strong> (<em>array-like</em><em>, </em><em>optional</em>) – Parameters, by default None.</p></li>
+<li><p><strong>n_t</strong> (<em>int</em><em>, </em><em>optional</em>) – Number of time steps, required if mu is not None, by default None.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Tuple containing matrices J, R, and B.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="aphin.layers.lti_layer.LTILayer.init_parameter_dependent_weights">
+<span class="sig-name descname"><span class="pre">init_parameter_dependent_weights</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/layers/lti_layer.html#LTILayer.init_parameter_dependent_weights"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.layers.lti_layer.LTILayer.init_parameter_dependent_weights" title="Link to this definition"></a></dt>
+<dd><p>Initialize trainable variables that depend on parameters (mu).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="aphin.layers.lti_layer.LTILayer.init_weights">
+<span class="sig-name descname"><span class="pre">init_weights</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/layers/lti_layer.html#LTILayer.init_weights"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.layers.lti_layer.LTILayer.init_weights" title="Link to this definition"></a></dt>
+<dd><p>Initialize trainable variables</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="aphin.layers.lti_layer.LTILayer.n_matrices_dofs">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">n_matrices_dofs</span></span><a class="headerlink" href="#aphin.layers.lti_layer.LTILayer.n_matrices_dofs" title="Link to this definition"></a></dt>
+<dd><p>Number of trainable variables for the matrices.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Number of trainable variables.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-aphin.layers.ph_layer">
+<span id="aphin-layers-ph-layer-module"></span><h2>aphin.layers.ph_layer module<a class="headerlink" href="#module-aphin.layers.ph_layer" title="Link to this heading"></a></h2>
+<p>TensorFlow layers for identification of dynamical systems
+e.g. LTI systems (LTILayer), port-Hamiltonian systems (PHLayer), …
+intended for standalone use or the use in the latent space of an autoencoder.
+All layers approximate the right-hand side of the ODE given states z(t), inputs u(t) and parameters mu
+and should be trained using reference values of the states, inputs, parameters and the left-hand side of the ODE
+which is assumed to depend only on the time derivative of the states.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="aphin.layers.ph_layer.PHLayer">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">aphin.layers.ph_layer.</span></span><span class="sig-name descname"><span class="pre">PHLayer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/layers/ph_layer.html#PHLayer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.layers.ph_layer.PHLayer" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#aphin.layers.lti_layer.LTILayer" title="aphin.layers.lti_layer.LTILayer"><code class="xref py py-class docutils literal notranslate"><span class="pre">LTILayer</span></code></a></p>
+<p>Layer for port-Hamiltonian (pH) approximation of the time derivative of the latent variable
+z’(t) = (J - R) * z(t) + B * u(t)
+with J skew-symmetric and R symmetric positive definite.</p>
+<dl class="py property">
+<dt class="sig sig-object py" id="aphin.layers.ph_layer.PHLayer.R">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">R</span></span><a class="headerlink" href="#aphin.layers.ph_layer.PHLayer.R" title="Link to this definition"></a></dt>
+<dd><p>Get the symmetric positive definite matrix R.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Symmetric positive definite matrix R.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>tf.Tensor</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-aphin.layers.phq_layer">
+<span id="aphin-layers-phq-layer-module"></span><h2>aphin.layers.phq_layer module<a class="headerlink" href="#module-aphin.layers.phq_layer" title="Link to this heading"></a></h2>
+<p>TensorFlow layers for identification of dynamical systems
+e.g. LTI systems (LTILayer), port-Hamiltonian systems (PHLayer), …
+intended for standalone use or the use in the latent space of an autoencoder.
+All layers approximate the right-hand side of the ODE given states z(t), inputs u(t) and parameters mu
+and should be trained using reference values of the states, inputs, parameters and the left-hand side of the ODE
+which is assumed to depend only on the time derivative of the states.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="aphin.layers.phq_layer.PHQLayer">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">aphin.layers.phq_layer.</span></span><span class="sig-name descname"><span class="pre">PHQLayer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/layers/phq_layer.html#PHQLayer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.layers.phq_layer.PHQLayer" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#aphin.layers.ph_layer.PHLayer" title="aphin.layers.ph_layer.PHLayer"><code class="xref py py-class docutils literal notranslate"><span class="pre">PHLayer</span></code></a></p>
+<p>Layer for port-Hamiltonian (pH) approximation of the time derivative of the latent variable
+z’(t) = (J - R) * Q * z(t) + B * u(t)
+with J skew-symmetric, R symmetric positive definite, and Q symmetric positive definite.
+This is a generalization of PHLayer.</p>
+<dl class="py property">
+<dt class="sig sig-object py" id="aphin.layers.phq_layer.PHQLayer.Q">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Q</span></span><a class="headerlink" href="#aphin.layers.phq_layer.PHQLayer.Q" title="Link to this definition"></a></dt>
+<dd><p>Get the symmetric positive definite matrix Q.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Symmetric positive definite matrix Q.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>tf.Tensor</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="aphin.layers.phq_layer.PHQLayer.call">
+<span class="sig-name descname"><span class="pre">call</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">z</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">u</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mu</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">training</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/layers/phq_layer.html#PHQLayer.call"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.layers.phq_layer.PHQLayer.call" title="Link to this definition"></a></dt>
+<dd><p>Evaluate right-hand side of the ODE system z’(t) = f(z, u, mu) for inputs (z, u, mu).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>z</strong> (<em>array-like</em>) – System states with shape (n_t * n_s, n).</p></li>
+<li><p><strong>u</strong> (<em>array-like</em><em>, </em><em>optional</em>) – System inputs with shape (n_t * n_s, n_u), by default None.</p></li>
+<li><p><strong>mu</strong> (<em>array-like</em><em>, </em><em>optional</em>) – Parameters, by default None.</p></li>
+<li><p><strong>training</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether the call is in training mode, by default False.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Approximation of z’(t).</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tf.Tensor</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="aphin.layers.phq_layer.PHQLayer.dof_split">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">dof_split</span></span><a class="headerlink" href="#aphin.layers.phq_layer.PHQLayer.dof_split" title="Link to this definition"></a></dt>
+<dd><p>Split of the internal degrees of freedom into J, R, B, and Q.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Tuple containing the split of degrees of freedom.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>tuple</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="aphin.layers.phq_layer.PHQLayer.get_system_matrices">
+<span class="sig-name descname"><span class="pre">get_system_matrices</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mu</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_t</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/layers/phq_layer.html#PHQLayer.get_system_matrices"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.layers.phq_layer.PHQLayer.get_system_matrices" title="Link to this definition"></a></dt>
+<dd><p>Return matrices in the format (n_sim, r, r).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>mu</strong> (<em>array-like</em><em>, </em><em>optional</em>) – Parameters, by default None.</p></li>
+<li><p><strong>n_t</strong> (<em>int</em><em>, </em><em>optional</em>) – Number of time steps, required if mu is not None, by default None.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Tuple containing matrices J, R, B, and Q.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="aphin.layers.phq_layer.PHQLayer.init_weights">
+<span class="sig-name descname"><span class="pre">init_weights</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/layers/phq_layer.html#PHQLayer.init_weights"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.layers.phq_layer.PHQLayer.init_weights" title="Link to this definition"></a></dt>
+<dd><p>Initialize trainable variables</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="aphin.layers.phq_layer.PHQLayer.n_matrices_dofs">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">n_matrices_dofs</span></span><a class="headerlink" href="#aphin.layers.phq_layer.PHQLayer.n_matrices_dofs" title="Link to this definition"></a></dt>
+<dd><p>Number of trainable variables for the matrices.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Number of trainable variables.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-aphin.layers.system_layer">
+<span id="aphin-layers-system-layer-module"></span><h2>aphin.layers.system_layer module<a class="headerlink" href="#module-aphin.layers.system_layer" title="Link to this heading"></a></h2>
+<p>TensorFlow layers for identification of dynamical systems
+e.g. LTI systems (LTILayer), port-Hamiltonian systems (PHLayer), …
+intended for standalone use or the use in the latent space of an autoencoder.
+All layers approximate the right-hand side of the ODE given states z(t), inputs u(t) and parameters mu
+and should be trained using reference values of the states, inputs, parameters and the left-hand side of the ODE
+which is assumed to depend only on the time derivative of the states.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="aphin.layers.system_layer.SystemLayer">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">aphin.layers.system_layer.</span></span><span class="sig-name descname"><span class="pre">SystemLayer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/layers/system_layer.html#SystemLayer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.layers.system_layer.SystemLayer" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Layer</span></code></p>
+<p>Layer for identification of an abstract system z’(t) = f(z, u, mu).</p>
+<p>This layer approximates the right-hand side of the ODE given states z(t), inputs u(t), and parameters mu.
+It is intended for standalone use or for use in the latent space of an autoencoder.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="aphin.layers.system_layer.SystemLayer.call">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">call</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">z</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">u</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mu</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">training</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/layers/system_layer.html#SystemLayer.call"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.layers.system_layer.SystemLayer.call" title="Link to this definition"></a></dt>
+<dd><p>Evaluate rhs of the ODE z’(t) = f(z, u, mu) for inputs (z, u, mu).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>z</strong> (<em>array-like</em>) – State variables.</p></li>
+<li><p><strong>u</strong> (<em>array-like</em><em>, </em><em>optional</em>) – Input variables, by default None.</p></li>
+<li><p><strong>mu</strong> (<em>array-like</em><em>, </em><em>optional</em>) – Parameter variables, by default None.</p></li>
+<li><p><strong>training</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether the call is in training mode, by default False.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Approximation of z’(t).</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tf.Tensor</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="aphin.layers.system_layer.SystemLayer.get_config">
+<span class="sig-name descname"><span class="pre">get_config</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/layers/system_layer.html#SystemLayer.get_config"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.layers.system_layer.SystemLayer.get_config" title="Link to this definition"></a></dt>
+<dd><p>Get the configuration of the layer.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Configuration dictionary.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="aphin.layers.system_layer.SystemLayer.lhs">
+<span class="sig-name descname"><span class="pre">lhs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dz_dt</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/layers/system_layer.html#SystemLayer.lhs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.layers.system_layer.SystemLayer.lhs" title="Link to this definition"></a></dt>
+<dd><p>Evaluate left-hand side of the system ODE given z’(t) as dz_dt.</p>
+<p>For descriptor systems: E * z’(t).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>dz_dt</strong> (<em>array-like</em>) – Time derivative of the system states z’(t).</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Left-hand side of the system ODE.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tf.Tensor</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-aphin.layers">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-aphin.layers" title="Link to this heading"></a></h2>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="aphin.identification.html" class="btn btn-neutral float-left" title="aphin.identification package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="aphin.operators.html" class="btn btn-neutral float-right" title="aphin.operators package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Jonas Kneifl, Johannes Rettberg, Julius Herb.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

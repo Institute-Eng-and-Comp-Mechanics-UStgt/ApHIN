@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>aphin.utils.integrators &mdash; ApHIN 0.1.3 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../_static/documentation_options.js?v=360bc84d"></script>
+        <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            ApHIN
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../aphin.html">aphin package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../contact.html">Contact</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">ApHIN</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">aphin.utils.integrators</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for aphin.utils.integrators</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">scipy</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">from</span> <span class="nn">timeit</span> <span class="kn">import</span> <span class="n">default_timer</span> <span class="k">as</span> <span class="n">timer</span>
+
+<span class="n">logging</span><span class="o">.</span><span class="n">basicConfig</span><span class="p">()</span>
+<span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">()</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="implicit_midpoint">
+<a class="viewcode-back" href="../../../aphin.utils.html#aphin.utils.integrators.implicit_midpoint">[docs]</a>
+<span class="k">def</span> <span class="nf">implicit_midpoint</span><span class="p">(</span><span class="n">E</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">z_init</span><span class="p">,</span> <span class="n">B</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">u</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">decomp_option</span><span class="o">=</span><span class="s2">&quot;lu&quot;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calculate time integration of a linear ODE system using the implicit midpoint rule.</span>
+
+<span class="sd">    This function solves the ODE system defined by:</span>
+<span class="sd">        E * dz_dt = A * z + B * u</span>
+
+<span class="sd">    Parameters:</span>
+<span class="sd">    -----------</span>
+<span class="sd">    E : numpy.ndarray</span>
+<span class="sd">        Descriptor matrix of the ODE system.</span>
+<span class="sd">    A : numpy.ndarray</span>
+<span class="sd">        System matrix of the ODE system.</span>
+<span class="sd">    t : numpy.ndarray</span>
+<span class="sd">        Time vector with equidistant time steps.</span>
+<span class="sd">    z_init : numpy.ndarray</span>
+<span class="sd">        Initial state vector.</span>
+<span class="sd">    B : numpy.ndarray, optional</span>
+<span class="sd">        Input matrix. Defaults to None, which sets B to zero.</span>
+<span class="sd">    u : numpy.ndarray, optional</span>
+<span class="sd">        Input function at time midpoints. Defaults to None, which sets u to zero.</span>
+<span class="sd">    decomp_option : str, optional</span>
+<span class="sd">        Option for matrix decomposition or solving. Choices are &#39;lu&#39; for LU decomposition or</span>
+<span class="sd">        &#39;linalg_solve&#39; for solving without decomposition. Defaults to &#39;lu&#39;.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">    --------</span>
+<span class="sd">    z : numpy.ndarray</span>
+<span class="sd">        Array of state vectors at each time step.</span>
+<span class="sd">    t : numpy.ndarray</span>
+<span class="sd">        Array of time points.</span>
+
+<span class="sd">    Theory:</span>
+<span class="sd">    --------</span>
+<span class="sd">    we got a pH-system E*Dx = (J-R)*Q*x + B*u</span>
+<span class="sd">    we define A:=(J-R)*Q and the RHS as f(t,x)</span>
+<span class="sd">    use the differential slope equation at midpoint</span>
+<span class="sd">    (x(t+h)-x(t))/h=Dx(t+h/2)=E^-1 * f(t+h/2,x(t+h/2))</span>
+<span class="sd">    since x(t+h/2) is unknown we use the approximation</span>
+<span class="sd">    x(t+h/2) = 1/2*(x(t)+x(t+h))</span>
+<span class="sd">    insert the linear system into the differential equation leads to</span>
+<span class="sd">    x(t+h) = x(t) + h * E^-1 *(1/2*A*(x(t)+x(t+h))+ B*u(t+h/2))</span>
+<span class="sd">    reformulate the equation to</span>
+<span class="sd">    (E-h/2*A)x(t+h) = (E+h/2*A)*x(t) + h*B*u(t+h/2)</span>
+<span class="sd">    solve the linear equation system, e.g. via LU-decomposition</span>
+
+<span class="sd">    The linear system is solved for x(t + h) using the specified decomposition method.</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">    ---------</span>
+<span class="sd">    &gt;&gt;&gt; E = np.array([[1, 0], [0, 1]])</span>
+<span class="sd">    &gt;&gt;&gt; A = np.array([[0, -1], [1, 0]])</span>
+<span class="sd">    &gt;&gt;&gt; t = np.linspace(0, 10, 100)</span>
+<span class="sd">    &gt;&gt;&gt; z_init = np.array([1, 0])</span>
+<span class="sd">    &gt;&gt;&gt; z, t = implicit_midpoint(E, A, t, z_init)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># number of time samples</span>
+    <span class="n">n_t</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+    <span class="n">step_size</span> <span class="o">=</span> <span class="n">t</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">t</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">tmid</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n_t</span><span class="p">)</span>
+    <span class="c1"># initialize state array</span>
+    <span class="n">n_f</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">z_init</span><span class="p">)</span>
+    <span class="n">z</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">n_t</span><span class="p">,</span> <span class="n">n_f</span><span class="p">))</span>
+    <span class="n">z</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">z_init</span>
+
+    <span class="c1"># default input values</span>
+    <span class="k">if</span> <span class="n">B</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">n_u</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="n">B</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">n_f</span><span class="p">,</span> <span class="n">n_u</span><span class="p">))</span>
+        <span class="n">u</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">n_t</span><span class="p">,</span> <span class="n">n_u</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+            <span class="s2">&quot;Use predefined input function u. Make sure that inputs are given at mid timepoints&quot;</span>
+        <span class="p">)</span>
+
+    <span class="c1"># time different decomposition methods</span>
+    <span class="n">start_time_solver</span> <span class="o">=</span> <span class="n">timer</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">decomp_option</span> <span class="o">==</span> <span class="s2">&quot;lu&quot;</span><span class="p">:</span>
+        <span class="c1"># LU decomposition of lhs</span>
+        <span class="n">lu</span><span class="p">,</span> <span class="n">piv</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">lu_factor</span><span class="p">((</span><span class="n">E</span> <span class="o">-</span> <span class="p">(</span><span class="n">step_size</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">A</span><span class="p">))</span>
+
+    <span class="c1"># loop over time samples</span>
+    <span class="k">for</span> <span class="n">i_t</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_t</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
+        <span class="n">tmid</span><span class="p">[</span><span class="n">i_t</span><span class="p">]</span> <span class="o">=</span> <span class="n">t</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="p">((</span><span class="n">i_t</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">-</span> <span class="mf">0.5</span><span class="p">)</span> <span class="o">*</span> <span class="n">step_size</span>
+        <span class="k">if</span> <span class="n">decomp_option</span> <span class="o">==</span> <span class="s2">&quot;lu&quot;</span><span class="p">:</span>
+            <span class="n">z</span><span class="p">[</span><span class="n">i_t</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">lu_solve</span><span class="p">(</span>
+                <span class="p">(</span><span class="n">lu</span><span class="p">,</span> <span class="n">piv</span><span class="p">),</span>
+                <span class="p">(</span><span class="n">E</span> <span class="o">+</span> <span class="p">(</span><span class="n">step_size</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">A</span><span class="p">)</span> <span class="o">@</span> <span class="n">z</span><span class="p">[</span><span class="n">i_t</span><span class="p">,</span> <span class="p">:]</span> <span class="o">+</span> <span class="n">step_size</span> <span class="o">*</span> <span class="n">B</span> <span class="o">@</span> <span class="n">u</span><span class="p">[</span><span class="n">i_t</span><span class="p">,</span> <span class="p">:],</span>
+            <span class="p">)</span>
+        <span class="k">elif</span> <span class="n">decomp_option</span> <span class="o">==</span> <span class="s2">&quot;linalg_solve&quot;</span><span class="p">:</span>
+            <span class="n">z</span><span class="p">[</span><span class="n">i_t</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span>
+                <span class="p">(</span><span class="n">E</span> <span class="o">-</span> <span class="p">(</span><span class="n">step_size</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">A</span><span class="p">),</span>
+                <span class="p">(</span><span class="n">E</span> <span class="o">+</span> <span class="p">(</span><span class="n">step_size</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">A</span><span class="p">)</span> <span class="o">@</span> <span class="n">z</span><span class="p">[</span><span class="n">i_t</span><span class="p">,</span> <span class="p">:]</span> <span class="o">+</span> <span class="n">step_size</span> <span class="o">*</span> <span class="n">B</span> <span class="o">@</span> <span class="n">u</span><span class="p">[</span><span class="n">i_t</span><span class="p">,</span> <span class="p">:],</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Decomposition option </span><span class="si">{</span><span class="n">decomp_option</span><span class="si">}</span><span class="s2"> is unknown.&quot;</span><span class="p">)</span>
+
+    <span class="n">end_time_solver</span> <span class="o">=</span> <span class="n">timer</span><span class="p">()</span>
+    <span class="n">solver_time</span> <span class="o">=</span> <span class="n">end_time_solver</span> <span class="o">-</span> <span class="n">start_time_solver</span>
+    <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Calculation time of ODE solver has been </span><span class="si">{</span><span class="n">solver_time</span><span class="si">}</span><span class="s2"> s.</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">z</span><span class="p">,</span> <span class="n">t</span><span class="p">[:,</span> <span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">]</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Jonas Kneifl, Johannes Rettberg, Julius Herb.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

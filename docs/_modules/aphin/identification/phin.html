@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>aphin.identification.phin &mdash; ApHIN 0.1.3 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../_static/documentation_options.js?v=360bc84d"></script>
+        <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            ApHIN
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../aphin.html">aphin package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../contact.html">Contact</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">ApHIN</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">aphin.identification.phin</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for aphin.identification.phin</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">ABC</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">tensorflow</span> <span class="k">as</span> <span class="nn">tf</span>
+<span class="kn">from</span> <span class="nn">matplotlib</span> <span class="kn">import</span> <span class="n">pyplot</span> <span class="k">as</span> <span class="n">plt</span>
+
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">PHBasemodel</span>
+<span class="kn">from</span> <span class="nn">aphin.layers</span> <span class="kn">import</span> <span class="n">PHLayer</span>
+
+<span class="n">logging</span><span class="o">.</span><span class="n">basicConfig</span><span class="p">()</span>
+<span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">()</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="PHIN">
+<a class="viewcode-back" href="../../../aphin.identification.html#aphin.identification.phin.PHIN">[docs]</a>
+<span class="k">class</span> <span class="nc">PHIN</span><span class="p">(</span><span class="n">PHBasemodel</span><span class="p">,</span> <span class="n">ABC</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    port-Hamiltonian identification network (phin).</span>
+<span class="sd">    Model to discover the dynamics of a system using a layer for identification of other dynamical systems</span>
+<span class="sd">    (see SystemLayer), e.g., a PHLayer (port-Hamiltonian).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">reduced_order</span><span class="p">,</span>
+        <span class="n">x</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">u</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">mu</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">system_layer</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;float32&quot;</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        initialization of the PHIN model</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        reduced_order : int</span>
+<span class="sd">            Order of the reduced model.</span>
+<span class="sd">        x : array-like, optional</span>
+<span class="sd">            Input data (full states) with shape (n_t * n_s, n) with n states, n_t time steps, n_s simulations.</span>
+<span class="sd">        u : array-like, optional</span>
+<span class="sd">            System inputs with shape (n_t * n_s, n_u) with n_u inputs, n_t time steps, n_s simulations.</span>
+<span class="sd">        mu : array-like, optional</span>
+<span class="sd">            Parameter data of shape (n_t * n_s, n_p) with n_p parameters, n_t time steps, n_s simulations.</span>
+<span class="sd">        system_layer : SystemLayer, optional</span>
+<span class="sd">            SystemLayer (or subclass) instance that learns the reduced system in the latent space.</span>
+<span class="sd">        dtype : str, optional</span>
+<span class="sd">            Data type, by default &quot;float32&quot;.</span>
+<span class="sd">        **kwargs : dict</span>
+<span class="sd">            Additional arguments for the PHBasemodel base class.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dtype_</span> <span class="o">=</span> <span class="n">dtype</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">PHIN</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;config&quot;</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_init_to_config</span><span class="p">(</span><span class="nb">locals</span><span class="p">())</span>
+
+        <span class="c1"># general parameters</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">system_optimizer</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">reduced_order</span> <span class="o">=</span> <span class="n">reduced_order</span>
+        <span class="k">if</span> <span class="n">system_layer</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">system_layer</span> <span class="o">=</span> <span class="n">PHLayer</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reduced_order</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">system_layer</span> <span class="o">=</span> <span class="n">system_layer</span>
+
+        <span class="c1"># create the model</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">cast</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">x_shape</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+        <span class="k">if</span> <span class="n">u</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">u</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">cast</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">u_shape</span> <span class="o">=</span> <span class="n">u</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+        <span class="k">if</span> <span class="n">mu</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">mu</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">cast</span><span class="p">(</span><span class="n">mu</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">build_model</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">u</span><span class="p">,</span> <span class="n">mu</span><span class="p">)</span>
+
+        <span class="c1"># create loss tracker</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">loss_tracker</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">metrics</span><span class="o">.</span><span class="n">Mean</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;loss&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dz_loss_tracker</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">metrics</span><span class="o">.</span><span class="n">Mean</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;dz_loss&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">reg_loss_tracker</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">metrics</span><span class="o">.</span><span class="n">Mean</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;reg_loss&quot;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="PHIN.build_model">
+<a class="viewcode-back" href="../../../aphin.identification.html#aphin.identification.phin.PHIN.build_model">[docs]</a>
+    <span class="k">def</span> <span class="nf">build_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">u</span><span class="p">,</span> <span class="n">mu</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Build the model.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        x : array-like</span>
+<span class="sd">            Full state with shape (n_samples, n_features).</span>
+<span class="sd">        u : array-like, optional</span>
+<span class="sd">            Inputs with shape (n_samples, n_inputs).</span>
+<span class="sd">        mu : array-like, optional</span>
+<span class="sd">            Parameters with shape (n_samples, n_params).</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">x_input</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">Input</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],))</span>
+
+        <span class="c1"># System inputs</span>
+        <span class="k">if</span> <span class="n">u</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">u_input</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">Input</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">u_input</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">Input</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,))</span>
+
+        <span class="c1"># Simulation parameters</span>
+        <span class="k">if</span> <span class="n">mu</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">mu_input</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">Input</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="n">mu</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">mu_input</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">Input</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,))</span>
+
+        <span class="n">dx_dt_system</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">system_layer</span><span class="p">(</span><span class="n">x_input</span><span class="p">,</span> <span class="n">u_input</span><span class="p">,</span> <span class="n">mu_input</span><span class="p">)</span>
+
+        <span class="c1"># network for discovery of dynamic system (e.g. pH system)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">system_network</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">Model</span><span class="p">(</span>
+            <span class="n">inputs</span><span class="o">=</span><span class="p">[</span><span class="n">x_input</span><span class="p">,</span> <span class="n">u_input</span><span class="p">,</span> <span class="n">mu_input</span><span class="p">],</span> <span class="n">outputs</span><span class="o">=</span><span class="n">dx_dt_system</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;system&quot;</span>
+        <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="PHIN.train_step">
+<a class="viewcode-back" href="../../../aphin.identification.html#aphin.identification.phin.PHIN.train_step">[docs]</a>
+    <span class="nd">@tf</span><span class="o">.</span><span class="n">function</span>
+    <span class="k">def</span> <span class="nf">train_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Perform one training step.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        inputs : list of array-like</span>
+<span class="sd">            Input data.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        dict</span>
+<span class="sd">            Dictionary containing the loss, dz_loss, and reg_loss.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># perform forward pass, calculate loss and update weights</span>
+        <span class="n">dz_loss</span><span class="p">,</span> <span class="n">reg_loss</span><span class="p">,</span> <span class="n">loss</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">build_loss</span><span class="p">(</span><span class="n">inputs</span><span class="p">)</span>
+
+        <span class="c1"># update loss tracker</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">loss_tracker</span><span class="o">.</span><span class="n">update_state</span><span class="p">(</span><span class="n">loss</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dz_loss_tracker</span><span class="o">.</span><span class="n">update_state</span><span class="p">(</span><span class="n">dz_loss</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">reg_loss_tracker</span><span class="o">.</span><span class="n">update_state</span><span class="p">(</span><span class="n">reg_loss</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s2">&quot;loss&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">loss_tracker</span><span class="o">.</span><span class="n">result</span><span class="p">(),</span>
+            <span class="s2">&quot;dz_loss&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">dz_loss_tracker</span><span class="o">.</span><span class="n">result</span><span class="p">(),</span>
+            <span class="s2">&quot;reg_loss&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">reg_loss_tracker</span><span class="o">.</span><span class="n">result</span><span class="p">(),</span>
+        <span class="p">}</span></div>
+
+
+<div class="viewcode-block" id="PHIN.test_step">
+<a class="viewcode-back" href="../../../aphin.identification.html#aphin.identification.phin.PHIN.test_step">[docs]</a>
+    <span class="nd">@tf</span><span class="o">.</span><span class="n">function</span>
+    <span class="k">def</span> <span class="nf">test_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Perform one test step.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        inputs : list of array-like</span>
+<span class="sd">            Input data.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        dict</span>
+<span class="sd">            Dictionary containing the loss, dz_loss, and reg_loss.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">dz_loss</span><span class="p">,</span> <span class="n">reg_loss</span><span class="p">,</span> <span class="n">loss</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">build_loss</span><span class="p">(</span><span class="n">inputs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">loss_tracker</span><span class="o">.</span><span class="n">update_state</span><span class="p">(</span><span class="n">loss</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dz_loss_tracker</span><span class="o">.</span><span class="n">update_state</span><span class="p">(</span><span class="n">dz_loss</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">reg_loss_tracker</span><span class="o">.</span><span class="n">update_state</span><span class="p">(</span><span class="n">reg_loss</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s2">&quot;loss&quot;</span><span class="p">:</span> <span class="n">loss</span><span class="p">,</span>
+            <span class="s2">&quot;dz_loss&quot;</span><span class="p">:</span> <span class="n">dz_loss</span><span class="p">,</span>
+            <span class="s2">&quot;reg_loss&quot;</span><span class="p">:</span> <span class="n">reg_loss</span><span class="p">,</span>
+        <span class="p">}</span></div>
+
+
+<div class="viewcode-block" id="PHIN.get_loss">
+<a class="viewcode-back" href="../../../aphin.identification.html#aphin.identification.phin.PHIN.get_loss">[docs]</a>
+    <span class="nd">@tf</span><span class="o">.</span><span class="n">function</span>
+    <span class="k">def</span> <span class="nf">get_loss</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">dx_dt</span><span class="p">,</span> <span class="n">u</span><span class="p">,</span> <span class="n">mu</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calculate loss.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        x : array-like</span>
+<span class="sd">            Full state with shape (n_samples, n_features).</span>
+<span class="sd">        dx_dt : array-like</span>
+<span class="sd">            Time derivative of state with shape (n_samples, n_features).</span>
+<span class="sd">        u : array-like</span>
+<span class="sd">            System input with shape (n_samples, n_inputs).</span>
+<span class="sd">        mu : array-like, optional</span>
+<span class="sd">            System parameters with shape (n_samples, n_parameters), by default None.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        tuple</span>
+<span class="sd">            Tuple containing dz_loss, reg_loss, and total loss.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># calculate left hand side of ODE system (relevant for descriptor systems)</span>
+        <span class="n">dx_dt_lhs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">system_layer</span><span class="o">.</span><span class="n">lhs</span><span class="p">(</span><span class="n">dx_dt</span><span class="p">)</span>
+
+        <span class="c1"># system_network approximation of the time derivative of the latent variable</span>
+        <span class="k">if</span> <span class="n">mu</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">mu</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">zeros</span><span class="p">([</span><span class="n">tf</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">x</span><span class="p">)[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">0</span><span class="p">])</span>
+        <span class="n">dx_dt_system</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">system_network</span><span class="p">([</span><span class="n">x</span><span class="p">,</span> <span class="n">u</span><span class="p">,</span> <span class="n">mu</span><span class="p">])</span>
+
+        <span class="n">dz_loss</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">compiled_loss</span><span class="p">(</span><span class="n">dx_dt_lhs</span><span class="p">,</span> <span class="n">dx_dt_system</span><span class="p">)</span>
+
+        <span class="c1"># add regularization losses</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">system_network</span><span class="o">.</span><span class="n">losses</span><span class="p">:</span>
+            <span class="n">reg_loss</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">math</span><span class="o">.</span><span class="n">add_n</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">system_network</span><span class="o">.</span><span class="n">losses</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">reg_loss</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="n">loss</span> <span class="o">=</span> <span class="n">dz_loss</span> <span class="o">+</span> <span class="n">reg_loss</span>
+        <span class="k">return</span> <span class="n">dz_loss</span><span class="p">,</span> <span class="n">reg_loss</span><span class="p">,</span> <span class="n">loss</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Jonas Kneifl, Johannes Rettberg, Julius Herb.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

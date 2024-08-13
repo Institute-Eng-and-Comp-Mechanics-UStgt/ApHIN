@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>aphin.utils.transformations &mdash; ApHIN 0.1.3 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../_static/documentation_options.js?v=360bc84d"></script>
+        <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            ApHIN
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../aphin.html">aphin package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../contact.html">Contact</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">ApHIN</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">aphin.utils.transformations</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for aphin.utils.transformations</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">from</span> <span class="nn">scipy</span> <span class="kn">import</span> <span class="n">linalg</span>
+
+<span class="kn">from</span> <span class="nn">pymor.models.iosys</span> <span class="kn">import</span> <span class="n">PHLTIModel</span><span class="p">,</span> <span class="n">LTIModel</span>
+
+
+<div class="viewcode-block" id="transform_pH_to_Q_identity">
+<a class="viewcode-back" href="../../../aphin.utils.html#aphin.utils.transformations.transform_pH_to_Q_identity">[docs]</a>
+<span class="k">def</span> <span class="nf">transform_pH_to_Q_identity</span><span class="p">(</span><span class="n">J</span><span class="p">,</span> <span class="n">R</span><span class="p">,</span> <span class="n">Q</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">C</span><span class="p">,</span> <span class="n">solver</span><span class="o">=</span><span class="s2">&quot;Q&quot;</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Transform a port-Hamiltonian (pH) system to one with Q = I (identity matrix).</span>
+
+<span class="sd">    This function transforms a given port-Hamiltonian system to a new representation where the matrix `Q` is replaced</span>
+<span class="sd">    by the identity matrix. The transformation is described in [BeattieMehrmannVanDooren18] and involves solving a</span>
+<span class="sd">    Riccati equation or using `Q` directly as a solution to the KYP (Kalman-Yakubovich-Popov) inequality.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    J : array-like, shape (n, n)</span>
+<span class="sd">        The port-Hamiltonian J matrix, which should be skew-symmetric.</span>
+<span class="sd">    R : array-like, shape (n, n)</span>
+<span class="sd">        The port-Hamiltonian R matrix, which should be symmetric positive semi-definite.</span>
+<span class="sd">    Q : array-like, shape (n, n)</span>
+<span class="sd">        The port-Hamiltonian Q matrix to be transformed to the identity matrix.</span>
+<span class="sd">    B : array-like, shape (n, n_u)</span>
+<span class="sd">        The input matrix of the system.</span>
+<span class="sd">    C : array-like, shape (n_u, n)</span>
+<span class="sd">        The output matrix of the system.</span>
+<span class="sd">    solver : {&#39;scipy&#39;, &#39;pymor&#39;, &#39;Q&#39;}, optional</span>
+<span class="sd">        Method for solving the transformation:</span>
+<span class="sd">        - &#39;scipy&#39; or &#39;pymor&#39;: Use the Riccati equation solver.</span>
+<span class="sd">        - &#39;Q&#39;: Use the provided Q matrix directly.</span>
+<span class="sd">    seed : int, optional</span>
+<span class="sd">        Random seed for generating a dummy input matrix when the Riccati equation is solved.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    J_T : ndarray, shape (n, n)</span>
+<span class="sd">        The transformed J matrix.</span>
+<span class="sd">    R_T : ndarray, shape (n, n)</span>
+<span class="sd">        The transformed R matrix.</span>
+<span class="sd">    B_T_ph : ndarray, shape (n, n_u)</span>
+<span class="sd">        The transformed input matrix.</span>
+<span class="sd">    C_T_ph : ndarray, shape (n_u, n)</span>
+<span class="sd">        The transformed output matrix.</span>
+<span class="sd">    T : ndarray, shape (n, n)</span>
+<span class="sd">        The transformation matrix.</span>
+<span class="sd">    T_inv : ndarray, shape (n, n)</span>
+<span class="sd">        The inverse of the transformation matrix.</span>
+<span class="sd">    input_used : bool</span>
+<span class="sd">        Whether the input matrix was used in the transformation.</span>
+<span class="sd">    Qeye_system_exists : bool</span>
+<span class="sd">        Whether a valid transformation to Q = I was found.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">second_order_size</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">J</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="n">solver_list</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;scipy&quot;</span><span class="p">,</span> <span class="s2">&quot;pymor&quot;</span><span class="p">,</span> <span class="s2">&quot;Q&quot;</span><span class="p">]</span>
+    <span class="k">assert</span> <span class="n">solver</span> <span class="ow">in</span> <span class="n">solver_list</span>
+
+    <span class="c1"># calculate system matrix</span>
+    <span class="n">A_ph</span> <span class="o">=</span> <span class="p">(</span><span class="n">J</span> <span class="o">-</span> <span class="n">R</span><span class="p">)</span> <span class="o">@</span> <span class="n">Q</span>
+    <span class="c1"># no feedthrough</span>
+    <span class="n">D</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">B</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">B</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+
+    <span class="c1"># autonomous system?</span>
+    <span class="k">if</span> <span class="n">B</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">input_used</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">input_used</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="k">if</span> <span class="n">solver</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;scipy&quot;</span><span class="p">,</span> <span class="s2">&quot;pymor&quot;</span><span class="p">]:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">input_used</span><span class="p">):</span>
+            <span class="c1"># no input</span>
+            <span class="c1"># solving the Riccatti equation relies on an input matrix</span>
+            <span class="c1"># if the pH system is autonomous (dissipative Hamiltonian system), we use a dummy input and output to solve the Riccatti equation</span>
+
+            <span class="c1"># dummy B matrix either with one entry as 1 or as random matrix (random seems to work better)</span>
+            <span class="n">B_as_random</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="k">if</span> <span class="n">B_as_random</span><span class="p">:</span>
+                <span class="c1"># B as random entries (only second half of state)</span>
+                <span class="n">rng</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">default_rng</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
+                <span class="n">rand_indices_B</span> <span class="o">=</span> <span class="n">rng</span><span class="o">.</span><span class="n">integers</span><span class="p">(</span>
+                    <span class="n">second_order_size</span><span class="p">,</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">second_order_size</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">second_order_size</span>
+                <span class="p">)</span>
+                <span class="n">B_Ricc</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">second_order_size</span><span class="p">)[:,</span> <span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">]</span>
+                <span class="n">B_Ricc</span><span class="p">[</span><span class="n">rand_indices_B</span><span class="p">]</span> <span class="o">=</span> <span class="n">rng</span><span class="o">.</span><span class="n">random</span><span class="p">(</span><span class="n">second_order_size</span><span class="p">)[:,</span> <span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># B is one entry 1</span>
+                <span class="n">B_Ricc</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">second_order_size</span><span class="p">)[:,</span> <span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">]</span>
+                <span class="n">B_Ricc</span><span class="p">[</span><span class="n">second_order_size</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+
+            <span class="n">C</span> <span class="o">=</span> <span class="n">B_Ricc</span><span class="o">.</span><span class="n">T</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">B_Ricc</span> <span class="o">=</span> <span class="n">B</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+            <span class="n">C</span> <span class="o">=</span> <span class="n">C</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+        <span class="c1"># use small identity for feedthrough</span>
+        <span class="n">epsilon</span> <span class="o">=</span> <span class="mf">1e-12</span>
+        <span class="n">D</span> <span class="o">=</span> <span class="n">epsilon</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="n">B_Ricc</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+        <span class="n">checkPR</span><span class="p">(</span><span class="n">A_ph</span><span class="p">,</span> <span class="n">B_Ricc</span><span class="p">,</span> <span class="n">C</span><span class="p">,</span> <span class="n">D</span><span class="p">)</span>
+
+        <span class="n">X</span><span class="p">,</span> <span class="n">Qeye_system_exists</span> <span class="o">=</span> <span class="n">solve_Riccati</span><span class="p">(</span><span class="n">A_ph</span><span class="p">,</span> <span class="n">B_Ricc</span><span class="p">,</span> <span class="n">C</span><span class="p">,</span> <span class="n">D</span><span class="p">,</span> <span class="n">solver</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">solver</span> <span class="o">==</span> <span class="s2">&quot;Q&quot;</span><span class="p">:</span>
+        <span class="n">Qeye_system_exists</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="c1"># use Q as solution to the KYP inequality</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Using Q for transformation to identity.&quot;</span><span class="p">)</span>
+        <span class="n">X</span> <span class="o">=</span> <span class="n">Q</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Unknown value for solver </span><span class="si">{</span><span class="n">solver</span><span class="si">}</span><span class="s2">. Choose from valid entries: </span><span class="si">{</span><span class="n">solver_list</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+
+    <span class="n">J_T</span><span class="p">,</span> <span class="n">R_T</span><span class="p">,</span> <span class="n">B_T_ph</span><span class="p">,</span> <span class="n">C_T_ph</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">T_inv</span> <span class="o">=</span> <span class="n">Q_to_I_transformation</span><span class="p">(</span>
+        <span class="n">Qeye_system_exists</span><span class="p">,</span> <span class="n">A_ph</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">C</span><span class="p">,</span> <span class="n">D</span><span class="p">,</span> <span class="n">X</span>
+    <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">J_T</span><span class="p">,</span> <span class="n">R_T</span><span class="p">,</span> <span class="n">B_T_ph</span><span class="p">,</span> <span class="n">C_T_ph</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">T_inv</span><span class="p">,</span> <span class="n">input_used</span><span class="p">,</span> <span class="n">Qeye_system_exists</span></div>
+
+
+
+<div class="viewcode-block" id="checkPR">
+<a class="viewcode-back" href="../../../aphin.utils.html#aphin.utils.transformations.checkPR">[docs]</a>
+<span class="k">def</span> <span class="nf">checkPR</span><span class="p">(</span><span class="n">A_ph</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">C</span><span class="p">,</span> <span class="n">D</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Check if a system is positive-real.</span>
+
+<span class="sd">    This function evaluates the positive-realness of a linear system defined by the matrices \(A_{ph}\), \(B\), \(C\), and \(D\).</span>
+<span class="sd">    It checks if the system&#39;s transfer function matrix is positive semidefinite for several frequencies on the imaginary axis.</span>
+
+<span class="sd">    Parameters:</span>
+<span class="sd">    -----------</span>
+<span class="sd">    A_ph : numpy.ndarray</span>
+<span class="sd">        System matrix of the system.</span>
+<span class="sd">    B : numpy.ndarray</span>
+<span class="sd">        Input matrix of the system.</span>
+<span class="sd">    C : numpy.ndarray</span>
+<span class="sd">        Output matrix of the system.</span>
+<span class="sd">    D : numpy.ndarray</span>
+<span class="sd">        Feedthrough matrix of the system.</span>
+
+<span class="sd">    Notes:</span>
+<span class="sd">    ------</span>
+<span class="sd">    - Positive-realness requires that \(\Phi(s) = T(-s)^\dagger + T(s)\) is positive semidefinite for all \(\omega\) in \(\mathbb{R}\).</span>
+<span class="sd">    - The function checks this for 100 points between 0.1 and 1000 rad/s.</span>
+<span class="sd">    - For stability, it is sufficient to check if the (1,1) block of \(W(X)\) is positive semidefinite.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Check for positive-real systems</span>
+    <span class="n">calT</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">s</span><span class="p">:</span> <span class="n">D</span> <span class="o">+</span> <span class="n">C</span> <span class="o">@</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">s</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="n">A_ph</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">-</span> <span class="n">A_ph</span><span class="p">)</span> <span class="o">@</span> <span class="n">B</span>
+    <span class="n">Phi</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">s</span><span class="p">:</span> <span class="p">(</span><span class="n">calT</span><span class="p">(</span><span class="o">-</span><span class="n">s</span><span class="p">))</span><span class="o">.</span><span class="n">conj</span><span class="p">()</span><span class="o">.</span><span class="n">T</span> <span class="o">+</span> <span class="n">calT</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+    <span class="c1"># Phi needs to be positive semidefinite for all omega in i*R (on imaginary axis)</span>
+    <span class="c1"># (checked for 100 points between 0.1 and 1000)</span>
+    <span class="n">omega_vec</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">0.1</span><span class="p">,</span> <span class="mi">1000</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
+    <span class="n">negEigValPhi</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="k">for</span> <span class="n">omega</span> <span class="ow">in</span> <span class="n">omega_vec</span><span class="p">:</span>
+        <span class="n">eig_vals_Phi</span><span class="p">,</span> <span class="n">eig_vectors_Phi</span> <span class="o">=</span> <span class="n">linalg</span><span class="o">.</span><span class="n">eig</span><span class="p">(</span><span class="n">Phi</span><span class="p">(</span><span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="n">omega</span><span class="p">))</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">eig_vals_Phi</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;negative eigenvalues at i</span><span class="si">{</span><span class="n">omega</span><span class="si">}</span><span class="s2"> rad/s </span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">negEigValPhi</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">negEigValPhi</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Phi is positive semidefinite - X that satisfies W(X) should exist&quot;</span><span class="p">)</span></div>
+
+
+    <span class="c1"># X itself needs to pos. def. for the system to be stable (Theorem 1)</span>
+    <span class="c1"># However, it is sufficient for (asymptotic) stability that the (1,1) block of W, i.e. -X@A - A.conj().T@X,</span>
+    <span class="c1"># is (pos. def.) pos. semidef.</span>
+
+
+<div class="viewcode-block" id="solve_Riccati">
+<a class="viewcode-back" href="../../../aphin.utils.html#aphin.utils.transformations.solve_Riccati">[docs]</a>
+<span class="k">def</span> <span class="nf">solve_Riccati</span><span class="p">(</span><span class="n">A_ph</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">C</span><span class="p">,</span> <span class="n">D</span><span class="p">,</span> <span class="n">solver</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Solve the continuous-time algebraic Riccati equation (CARE) for a given system.</span>
+<span class="sd">    The function supports solving using two different solvers:</span>
+<span class="sd">    `scipy` and `pymor`.</span>
+
+<span class="sd">    Parameters:</span>
+<span class="sd">    -----------</span>
+<span class="sd">    A_ph : numpy.ndarray</span>
+<span class="sd">        System matrix of the system.</span>
+<span class="sd">    B : numpy.ndarray</span>
+<span class="sd">        Input matrix of the system.</span>
+<span class="sd">    C : numpy.ndarray</span>
+<span class="sd">        Output matrix of the system.</span>
+<span class="sd">    D : numpy.ndarray</span>
+<span class="sd">        Feedthrough matrix of the system.</span>
+<span class="sd">    solver : str</span>
+<span class="sd">        Solver to use for solving the Riccati equation. Options are:</span>
+<span class="sd">        - &quot;scipy&quot;: Uses `scipy.linalg.solve_continuous_are`.</span>
+<span class="sd">        - &quot;pymor&quot;: Uses `pymor`&#39;s LTIModel for solution.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">    --------</span>
+<span class="sd">    X : numpy.ndarray</span>
+<span class="sd">        Solution to the Riccati equation, if the solver was successful.</span>
+<span class="sd">    Qeye_system_exists : bool</span>
+<span class="sd">        Flag indicating whether the Riccati equation was successfully solved.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">solver</span> <span class="o">==</span> <span class="s2">&quot;scipy&quot;</span><span class="p">:</span>
+        <span class="c1"># Ricc(X) := -X@A - A.conj().T@X - (C.conj().T - X@B)@ inv(S) @ (C - B.conj().T@X) = 0</span>
+        <span class="n">A_Ricc</span> <span class="o">=</span> <span class="o">-</span><span class="n">A_ph</span>
+        <span class="n">B_Ricc</span> <span class="o">=</span> <span class="o">-</span><span class="n">B</span>
+        <span class="n">R_Ricc</span> <span class="o">=</span> <span class="n">D</span> <span class="o">+</span> <span class="n">D</span><span class="o">.</span><span class="n">conj</span><span class="p">()</span><span class="o">.</span><span class="n">T</span>  <span class="c1"># called S in [BeattieMehrmannVanDooren18]</span>
+        <span class="n">S_Ricc</span> <span class="o">=</span> <span class="n">C</span><span class="o">.</span><span class="n">conj</span><span class="p">()</span><span class="o">.</span><span class="n">T</span>  <span class="c1"># called C^H in [BeattieMehrmannVanDooren18]</span>
+        <span class="n">Q_Ricc</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">A_Ricc</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Trying to solve Riccati equation with scipy.&quot;</span><span class="p">)</span>
+            <span class="n">Qeye_system_exists</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="n">X</span> <span class="o">=</span> <span class="n">linalg</span><span class="o">.</span><span class="n">solve_continuous_are</span><span class="p">(</span>
+                <span class="n">A_Ricc</span><span class="p">,</span> <span class="n">B_Ricc</span><span class="p">,</span> <span class="n">Q_Ricc</span><span class="p">,</span> <span class="n">R_Ricc</span><span class="p">,</span> <span class="n">e</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="n">S_Ricc</span><span class="p">,</span> <span class="n">balanced</span><span class="o">=</span><span class="kc">True</span>
+            <span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;The Riccati equation was solved.&quot;</span><span class="p">)</span>
+        <span class="k">except</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">LinAlgError</span> <span class="k">as</span> <span class="n">LinAlgError</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s1">&#39;LinAlgError: &quot;</span><span class="si">{</span><span class="n">LinAlgError</span><span class="si">}</span><span class="s1">&quot; has occured. Riccati equation could not be solved. Q=I system is not calculated.&#39;</span>
+            <span class="p">)</span>
+            <span class="n">Qeye_system_exists</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="k">elif</span> <span class="n">solver</span> <span class="o">==</span> <span class="s2">&quot;pymor&quot;</span><span class="p">:</span>
+        <span class="n">lti_model</span> <span class="o">=</span> <span class="n">LTIModel</span><span class="o">.</span><span class="n">from_matrices</span><span class="p">(</span><span class="n">A_ph</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">C</span><span class="p">,</span> <span class="n">D</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Trying to solve Riccati equation with pymor/slycot.&quot;</span><span class="p">)</span>
+            <span class="n">phlti_model</span><span class="p">,</span> <span class="n">X</span> <span class="o">=</span> <span class="n">PHLTIModel</span><span class="o">.</span><span class="n">from_passive_LTIModel</span><span class="p">(</span><span class="n">lti_model</span><span class="p">)</span>
+            <span class="n">Qeye_system_exists</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error when calculating Q identity transformation&quot;</span><span class="p">)</span>
+            <span class="n">Qeye_system_exists</span> <span class="o">=</span> <span class="kc">False</span>
+
+    <span class="k">return</span> <span class="n">X</span><span class="p">,</span> <span class="n">Qeye_system_exists</span></div>
+
+
+
+<div class="viewcode-block" id="Q_to_I_transformation">
+<a class="viewcode-back" href="../../../aphin.utils.html#aphin.utils.transformations.Q_to_I_transformation">[docs]</a>
+<span class="k">def</span> <span class="nf">Q_to_I_transformation</span><span class="p">(</span><span class="n">Qeye_system_exists</span><span class="p">,</span> <span class="n">A_ph</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">C</span><span class="p">,</span> <span class="n">D</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Perform a transformation of the system matrices based on the solution of the Riccati equation.</span>
+
+<span class="sd">    This function checks the properties of the solution `X` to the Riccati equation, verifies the</span>
+<span class="sd">    Kalman-Yakubovich-Popov (KYP) inequality, and performs a transformation to obtain a pH representation</span>
+<span class="sd">    in transformed coordinates. It returns the transformed system matrices and the transformation matrices.</span>
+
+<span class="sd">    Parameters:</span>
+<span class="sd">    -----------</span>
+<span class="sd">    Qeye_system_exists : bool</span>
+<span class="sd">        Flag indicating whether the Riccati equation was successfully solved.</span>
+<span class="sd">    A_ph : numpy.ndarray</span>
+<span class="sd">        Descriptor matrix of the system.</span>
+<span class="sd">    B : numpy.ndarray</span>
+<span class="sd">        Input matrix of the system.</span>
+<span class="sd">    C : numpy.ndarray</span>
+<span class="sd">        Output matrix of the system.</span>
+<span class="sd">    D : numpy.ndarray</span>
+<span class="sd">        Direct transmission matrix of the system.</span>
+<span class="sd">    X : numpy.ndarray</span>
+<span class="sd">        Solution to the Riccati equation.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">    --------</span>
+<span class="sd">    J_T : numpy.ndarray</span>
+<span class="sd">        Transformed matrix representing the pH system in T-coordinates.</span>
+<span class="sd">    R_T : numpy.ndarray</span>
+<span class="sd">        Transformed matrix representing the pH system in T-coordinates.</span>
+<span class="sd">    B_T_ph : numpy.ndarray</span>
+<span class="sd">        Transformed input matrix in T-coordinates.</span>
+<span class="sd">    C_T_ph : numpy.ndarray</span>
+<span class="sd">        Transformed output matrix in T-coordinates.</span>
+<span class="sd">    T : numpy.ndarray</span>
+<span class="sd">        Transformation matrix used for the coordinate change.</span>
+<span class="sd">    T_inv : numpy.ndarray</span>
+<span class="sd">        Inverse of the transformation matrix.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">Qeye_system_exists</span><span class="p">:</span>
+        <span class="c1"># matrix function W, KYP-LMI holds if W(X)&gt;=0 (W(X) semidefinite)</span>
+        <span class="n">W</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">X</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">block</span><span class="p">(</span>
+            <span class="p">[</span>
+                <span class="p">[</span><span class="o">-</span><span class="n">X</span> <span class="o">@</span> <span class="n">A_ph</span> <span class="o">-</span> <span class="n">A_ph</span><span class="o">.</span><span class="n">conj</span><span class="p">()</span><span class="o">.</span><span class="n">T</span> <span class="o">@</span> <span class="n">X</span><span class="p">,</span> <span class="n">C</span><span class="o">.</span><span class="n">conj</span><span class="p">()</span><span class="o">.</span><span class="n">T</span> <span class="o">-</span> <span class="n">X</span> <span class="o">@</span> <span class="n">B</span><span class="p">],</span>
+                <span class="p">[</span><span class="n">C</span> <span class="o">-</span> <span class="n">B</span><span class="o">.</span><span class="n">conj</span><span class="p">()</span><span class="o">.</span><span class="n">T</span> <span class="o">@</span> <span class="n">X</span><span class="p">,</span> <span class="n">D</span> <span class="o">+</span> <span class="n">D</span><span class="o">.</span><span class="n">conj</span><span class="p">()</span><span class="o">.</span><span class="n">T</span><span class="p">],</span>
+            <span class="p">]</span>
+        <span class="p">)</span>
+        <span class="c1"># check KYP inequality</span>
+        <span class="n">eig_vals_X</span><span class="p">,</span> <span class="n">eig_vectors_X</span> <span class="o">=</span> <span class="n">linalg</span><span class="o">.</span><span class="n">eig</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">eig_vals_X</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;The solution X is NOT pos. def.&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Nice! The solution X is pos. def.&quot;</span><span class="p">)</span>
+        <span class="n">eig_vals_W</span><span class="p">,</span> <span class="n">eig_vectors_W</span> <span class="o">=</span> <span class="n">linalg</span><span class="o">.</span><span class="n">eig</span><span class="p">(</span><span class="n">W</span><span class="p">(</span><span class="n">X</span><span class="p">))</span>
+        <span class="c1"># eps = 1e-10</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">eig_vals_W</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
+            <span class="nb">print</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;WARNING! The KYP inequality is not satisfied. Minimum eigenvalue: </span><span class="si">{</span><span class="n">eig_vals_W</span><span class="o">.</span><span class="n">min</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Nice! The KYP inequality is satisfied.&quot;</span><span class="p">)</span>
+
+        <span class="c1"># if X is a solution to the KYP,</span>
+        <span class="c1"># the symmetric factorization of X, e.g. Hermitian square root or Cholesky factorization</span>
+        <span class="n">use_cholesky</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">if</span> <span class="n">use_cholesky</span><span class="p">:</span>
+            <span class="n">T</span> <span class="o">=</span> <span class="n">linalg</span><span class="o">.</span><span class="n">cholesky</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>  <span class="c1"># Cholesky factorization (X needs to be pos. def.)</span>
+            <span class="c1"># T = T.conj().T  # This is wrong!</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># use Hermitian square root</span>
+            <span class="n">T</span> <span class="o">=</span> <span class="n">linalg</span><span class="o">.</span><span class="n">sqrtm</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+
+        <span class="c1"># leads to a transformed state-space in T-coordinates</span>
+        <span class="n">T_inv</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">T</span><span class="p">)</span>
+        <span class="n">A_T</span> <span class="o">=</span> <span class="n">T</span> <span class="o">@</span> <span class="n">A_ph</span> <span class="o">@</span> <span class="n">T_inv</span>
+        <span class="n">B_T</span> <span class="o">=</span> <span class="n">T</span> <span class="o">@</span> <span class="n">B</span>
+        <span class="n">C_T</span> <span class="o">=</span> <span class="n">C</span> <span class="o">@</span> <span class="n">T_inv</span>
+
+        <span class="c1"># we obtain a pH representation in T-coordinates</span>
+        <span class="n">J_T</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="mi">2</span> <span class="o">*</span> <span class="p">(</span><span class="n">A_T</span> <span class="o">-</span> <span class="n">A_T</span><span class="o">.</span><span class="n">conj</span><span class="p">()</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
+        <span class="n">R_T</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span> <span class="o">/</span> <span class="mi">2</span> <span class="o">*</span> <span class="p">(</span><span class="n">A_T</span> <span class="o">+</span> <span class="n">A_T</span><span class="o">.</span><span class="n">conj</span><span class="p">()</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
+        <span class="n">K_T</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="mi">2</span> <span class="o">*</span> <span class="p">(</span><span class="n">C_T</span><span class="o">.</span><span class="n">conj</span><span class="p">()</span><span class="o">.</span><span class="n">T</span> <span class="o">-</span> <span class="n">B_T</span><span class="p">)</span>
+        <span class="n">G_T</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="mi">2</span> <span class="o">*</span> <span class="p">(</span><span class="n">C_T</span><span class="o">.</span><span class="n">conj</span><span class="p">()</span><span class="o">.</span><span class="n">T</span> <span class="o">+</span> <span class="n">B_T</span><span class="p">)</span>
+
+        <span class="c1"># check pos. semidef. property of R_T</span>
+        <span class="n">eig_vals_R_T</span><span class="p">,</span> <span class="n">eig_vectors_R_T</span> <span class="o">=</span> <span class="n">linalg</span><span class="o">.</span><span class="n">eig</span><span class="p">(</span><span class="n">R_T</span><span class="p">)</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">eig_vals_R_T</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
+            <span class="nb">print</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;WARNING! The matrix R does NOT satisfy the pH pos. semidef. property. Minimal eigenvalue </span><span class="si">{</span><span class="n">eig_vals_R_T</span><span class="o">.</span><span class="n">min</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Nice! The matrix R does satisfy the pH pos. semidef. property&quot;</span><span class="p">)</span>
+
+        <span class="c1"># build ph system matrices</span>
+        <span class="n">A_T_ph</span> <span class="o">=</span> <span class="n">J_T</span> <span class="o">-</span> <span class="n">R_T</span>
+        <span class="n">B_T_ph</span> <span class="o">=</span> <span class="n">G_T</span> <span class="o">-</span> <span class="n">K_T</span>
+        <span class="n">C_T_ph</span> <span class="o">=</span> <span class="p">(</span><span class="n">G_T</span> <span class="o">+</span> <span class="n">K_T</span><span class="p">)</span><span class="o">.</span><span class="n">conj</span><span class="p">()</span><span class="o">.</span><span class="n">T</span>
+
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># return matrices as zeros</span>
+        <span class="n">A_T_ph</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">A_ph</span><span class="p">)</span>
+        <span class="n">B_T_ph</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">B</span><span class="p">)</span>
+        <span class="n">C_T_ph</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">C</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">J_T</span><span class="p">,</span> <span class="n">R_T</span><span class="p">,</span> <span class="n">B_T_ph</span><span class="p">,</span> <span class="n">C_T_ph</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">T_inv</span></div>
+
+
+
+<div class="viewcode-block" id="reshape_states_to_features">
+<a class="viewcode-back" href="../../../aphin.utils.html#aphin.utils.transformations.reshape_states_to_features">[docs]</a>
+<span class="k">def</span> <span class="nf">reshape_states_to_features</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">X_dt</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Transforms the state array &#39;X&#39; into a feature array &#39;x&#39;, which is required for identification.</span>
+
+<span class="sd">    Parameters:</span>
+<span class="sd">    -----------</span>
+<span class="sd">    X : ndarray</span>
+<span class="sd">        State array of size (n_sim, n_t, n_n, n_dn) or (n_sim, n_t, n_f), where:</span>
+<span class="sd">        - n_sim: number of simulations</span>
+<span class="sd">        - n_t: number of time steps</span>
+<span class="sd">        - n_n: number of nodes (only if X has 4 dimensions)</span>
+<span class="sd">        - n_dn: number of degrees of freedom per node (only if X has 4 dimensions)</span>
+<span class="sd">        - n_f: number of features (only if X has 3 dimensions)</span>
+
+<span class="sd">    X_dt : ndarray, optional</span>
+<span class="sd">        Time derivatives of the state array with the same shape as X. Default is None.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">    --------</span>
+<span class="sd">    x : ndarray</span>
+<span class="sd">        Feature array of size (n_s, n_f), where:</span>
+<span class="sd">        - n_s: number of samples (n_sim * n_t)</span>
+<span class="sd">        - n_f: number of features (n_n * n_dn) or n_f</span>
+
+<span class="sd">    dx_dt : ndarray, optional</span>
+<span class="sd">        Feature array of the time derivatives of size (n_s, n_f). Returned only if X_dt is not None.</span>
+
+<span class="sd">    Notes:</span>
+<span class="sd">    ------</span>
+<span class="sd">    - If X has 4 dimensions, it is reshaped from (n_sim, n_t, n_n, n_dn) to (n_s, n_f).</span>
+<span class="sd">    - If X has 3 dimensions, it is assumed to be already in the shape (n_sim, n_t, n_f).</span>
+<span class="sd">    - If X_dt is provided, it is reshaped similarly and returned alongside x.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">X</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">4</span><span class="p">:</span>
+        <span class="c1"># default</span>
+        <span class="n">n_sim</span><span class="p">,</span> <span class="n">n_t</span><span class="p">,</span> <span class="n">n_n</span><span class="p">,</span> <span class="n">n_dn</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">shape</span>
+        <span class="n">n_f</span> <span class="o">=</span> <span class="n">n_n</span> <span class="o">*</span> <span class="n">n_dn</span>
+    <span class="k">elif</span> <span class="n">X</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+        <span class="n">n_sim</span><span class="p">,</span> <span class="n">n_t</span><span class="p">,</span> <span class="n">n_f</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">shape</span>
+
+    <span class="n">n_s</span> <span class="o">=</span> <span class="n">n_sim</span> <span class="o">*</span> <span class="n">n_t</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">n_s</span><span class="p">,</span> <span class="n">n_f</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">X_dt</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">dx_dt</span> <span class="o">=</span> <span class="n">X_dt</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">n_s</span><span class="p">,</span> <span class="n">n_f</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">x</span><span class="p">,</span> <span class="n">dx_dt</span>
+    <span class="k">return</span> <span class="n">x</span></div>
+
+
+
+<div class="viewcode-block" id="reshape_inputs_to_features">
+<a class="viewcode-back" href="../../../aphin.utils.html#aphin.utils.transformations.reshape_inputs_to_features">[docs]</a>
+<span class="k">def</span> <span class="nf">reshape_inputs_to_features</span><span class="p">(</span><span class="n">U</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Transforms the input array &#39;U&#39; into a feature array &#39;u&#39;, which is required for identification.</span>
+<span class="sd">    The function reshapes the input array from (n_sim, n_t, n_u) to (n_s, n_u).</span>
+
+<span class="sd">    Parameters:</span>
+<span class="sd">    -----------</span>
+<span class="sd">    U : ndarray</span>
+<span class="sd">        Input array of size (n_sim, n_t, n_u), where:</span>
+<span class="sd">        - n_sim: number of simulations</span>
+<span class="sd">        - n_t: number of time steps</span>
+<span class="sd">        - n_u: number of input features</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">    --------</span>
+<span class="sd">    u : ndarray</span>
+<span class="sd">        Feature array of size (n_s, n_u), where:</span>
+<span class="sd">        - n_s: number of samples (n_sim * n_t)</span>
+<span class="sd">        - n_u: number of input features</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">assert</span> <span class="n">U</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">3</span>
+    <span class="n">n_sim</span><span class="p">,</span> <span class="n">n_t</span><span class="p">,</span> <span class="n">n_u</span> <span class="o">=</span> <span class="n">U</span><span class="o">.</span><span class="n">shape</span>
+    <span class="n">n_s</span> <span class="o">=</span> <span class="n">n_sim</span> <span class="o">*</span> <span class="n">n_t</span>
+    <span class="n">u</span> <span class="o">=</span> <span class="n">U</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">n_s</span><span class="p">,</span> <span class="n">n_u</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">u</span></div>
+
+
+
+<div class="viewcode-block" id="reshape_features_to_states">
+<a class="viewcode-back" href="../../../aphin.utils.html#aphin.utils.transformations.reshape_features_to_states">[docs]</a>
+<span class="k">def</span> <span class="nf">reshape_features_to_states</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">n_sim</span><span class="p">,</span> <span class="n">n_t</span><span class="p">,</span> <span class="n">x_dt</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">n_n</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">n_dn</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">n_f</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Transforms the feature array &#39;x&#39; back into a state array &#39;X&#39;, either 3-dimensional or 4-dimensional.</span>
+
+<span class="sd">    Parameters:</span>
+<span class="sd">    -----------</span>
+<span class="sd">    x : ndarray</span>
+<span class="sd">        Feature array of size (n_s, n_f), where:</span>
+<span class="sd">        - n_s: number of samples (n_sim * n_t)</span>
+<span class="sd">        - n_f: number of features (n_n * n_dn) if n_n and n_dn are provided, otherwise it is n_f.</span>
+
+<span class="sd">    n_sim : int</span>
+<span class="sd">        Number of simulations.</span>
+<span class="sd">    n_t : int</span>
+<span class="sd">        Number of time steps.</span>
+<span class="sd">    x_dt : ndarray, optional</span>
+<span class="sd">        Feature array of the time derivatives with the same shape as &#39;x&#39;. Default is None.</span>
+<span class="sd">    n_n : int, optional</span>
+<span class="sd">        Number of nodes. Required if n_dn is provided. Default is None.</span>
+<span class="sd">    n_dn : int, optional</span>
+<span class="sd">        Number of degrees of freedom per node. Required if n_n is provided. Default is None.</span>
+<span class="sd">    n_f : int, optional</span>
+<span class="sd">        Number of features. Default is None.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">    --------</span>
+<span class="sd">    X : ndarray</span>
+<span class="sd">        State array of size (n_sim, n_t, n_n, n_dn) if n_n and n_dn are provided, otherwise (n_sim, n_t, n_f).</span>
+<span class="sd">    X_dt : ndarray, optional</span>
+<span class="sd">        State array of the time derivatives with the same shape as &#39;X&#39;. Returned only if x_dt is not None.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">    -------</span>
+<span class="sd">    ValueError</span>
+<span class="sd">        If both (n_n and n_dn) and n_f are provided.</span>
+
+<span class="sd">    Notes:</span>
+<span class="sd">    ------</span>
+<span class="sd">    - Either n_f should be provided or both n_n and n_dn should be provided, but not both.</span>
+<span class="sd">    - If n_n and n_dn are provided, the function reshapes the feature array to (n_sim, n_t, n_n, n_dn).</span>
+<span class="sd">    - If n_f is provided, the function reshapes the feature array to (n_sim, n_t, n_f).</span>
+<span class="sd">    - If x_dt is provided, it is reshaped similarly and returned alongside X.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">n_n</span> <span class="o">!=</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">n_dn</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">and</span> <span class="n">n_f</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Choose either n_n and n_dn or only n_f&quot;</span><span class="p">)</span>
+    <span class="c1"># return ndim=4 states</span>
+    <span class="k">if</span> <span class="n">n_n</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">X</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">n_sim</span><span class="p">,</span> <span class="n">n_t</span><span class="p">,</span> <span class="n">n_n</span><span class="p">,</span> <span class="n">n_dn</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">x_dt</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">X_dt</span> <span class="o">=</span> <span class="n">x_dt</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">n_sim</span><span class="p">,</span> <span class="n">n_t</span><span class="p">,</span> <span class="n">n_n</span><span class="p">,</span> <span class="n">n_dn</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">X</span><span class="p">,</span> <span class="n">X_dt</span>
+    <span class="c1"># return ndim=3 states</span>
+    <span class="k">elif</span> <span class="n">n_f</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">X</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">n_sim</span><span class="p">,</span> <span class="n">n_t</span><span class="p">,</span> <span class="n">n_f</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">x_dt</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">X_dt</span> <span class="o">=</span> <span class="n">x_dt</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">n_sim</span><span class="p">,</span> <span class="n">n_t</span><span class="p">,</span> <span class="n">n_f</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">X</span><span class="p">,</span> <span class="n">X_dt</span>
+    <span class="k">return</span> <span class="n">X</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Jonas Kneifl, Johannes Rettberg, Julius Herb.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

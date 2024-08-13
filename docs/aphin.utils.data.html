@@ -1,0 +1,1875 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>aphin.utils.data package &mdash; ApHIN 0.1.3 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=360bc84d"></script>
+        <script src="_static/doctools.js?v=9a2dae69"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Contact" href="contact.html" />
+    <link rel="prev" title="aphin.utils package" href="aphin.utils.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            ApHIN
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="aphin.html">aphin package</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="aphin.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="aphin.identification.html">aphin.identification package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="aphin.layers.html">aphin.layers package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="aphin.operators.html">aphin.operators package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="aphin.systems.html">aphin.systems package</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="aphin.utils.html">aphin.utils package</a><ul class="current">
+<li class="toctree-l4 current"><a class="reference internal" href="aphin.utils.html#subpackages">Subpackages</a></li>
+<li class="toctree-l4"><a class="reference internal" href="aphin.utils.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="aphin.utils.html#module-aphin.utils.callbacks_tensorflow">aphin.utils.callbacks_tensorflow module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="aphin.utils.html#module-aphin.utils.configuration">aphin.utils.configuration module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="aphin.utils.html#module-aphin.utils.experiments">aphin.utils.experiments module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="aphin.utils.html#module-aphin.utils.integrators">aphin.utils.integrators module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="aphin.utils.html#module-aphin.utils.print_matrices">aphin.utils.print_matrices module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="aphin.utils.html#module-aphin.utils.save_results">aphin.utils.save_results module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="aphin.utils.html#module-aphin.utils.transformations">aphin.utils.transformations module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="aphin.utils.html#module-aphin.utils.visualizations">aphin.utils.visualizations module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="aphin.utils.html#module-aphin.utils">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="aphin.html#module-aphin">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="contact.html">Contact</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">ApHIN</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="aphin.html">aphin package</a></li>
+          <li class="breadcrumb-item"><a href="aphin.utils.html">aphin.utils package</a></li>
+      <li class="breadcrumb-item active">aphin.utils.data package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/aphin.utils.data.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="aphin-utils-data-package">
+<h1>aphin.utils.data package<a class="headerlink" href="#aphin-utils-data-package" title="Link to this heading"></a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
+</section>
+<section id="module-aphin.utils.data.data">
+<span id="aphin-utils-data-data-module"></span><h2>aphin.utils.data.data module<a class="headerlink" href="#module-aphin.utils.data.data" title="Link to this heading"></a></h2>
+<p>Encapsulate data loading and data generation</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="aphin.utils.data.data.Data">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">aphin.utils.data.data.</span></span><span class="sig-name descname"><span class="pre">Data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">X_dt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">U</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Mu</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">J</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">R</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Q</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">B</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/utils/data/data.html#Data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.utils.data.data.Data" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">ABC</span></code></p>
+<p>Container class for datasets in a linear dynamical system framework.</p>
+<p>This class is designed to store and manage various datasets required for system analysis and identification, including states, time derivatives, inputs, parameters, and port-Hamiltonian matrices.</p>
+<dl class="py property">
+<dt class="sig sig-object py" id="aphin.utils.data.data.Data.Data">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Data</span></span><a class="headerlink" href="#aphin.utils.data.data.Data.Data" title="Link to this definition"></a></dt>
+<dd><p>Retrieve the state and derivative data from the container.</p>
+<section id="returns">
+<h3>Returns:<a class="headerlink" href="#returns" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>tuple</dt><dd><p>A tuple containing:
+- X: States array with shape (n_sim, n_t, n_n, n_dn).
+- X_dt: Time derivatives of the states with the same shape as X.
+- U: Input array with shape (n_sim, n_t, n_u), if available.
+- Mu: Parameters array with shape (n_sim, n_mu), if available.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="aphin.utils.data.data.Data.calculate_errors">
+<span class="sig-name descname"><span class="pre">calculate_errors</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ph_identified_data_instance</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">domain_split_vals</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/utils/data/data.html#Data.calculate_errors"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.utils.data.data.Data.calculate_errors" title="Link to this definition"></a></dt>
+<dd><p>Calculate and store RMS and latent errors between true and predicted states.</p>
+<p>This method computes the Root Mean Square (RMS) errors for the states and latent variables between
+the true and predicted values. It calculates the RMS errors for each domain, computes the mean RMS
+error across all simulations, and, if available, computes the latent variable errors.</p>
+<section id="parameters">
+<h3>Parameters:<a class="headerlink" href="#parameters" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>ph_identified_data_instance<span class="classifier">Data</span></dt><dd><p>An instance of the Data class containing the predicted state variables and latent variables
+(if applicable). This instance is used to compute errors against the true states stored in
+the current instance.</p>
+</dd>
+<dt>domain_split_vals<span class="classifier">list of int, optional</span></dt><dd><p>List specifying the number of degrees of freedom (DOFs) for each domain. If provided, it splits
+the states into domains for more granular error analysis.</p>
+</dd>
+</dl>
+</section>
+<section id="id1">
+<h3>Returns:<a class="headerlink" href="#id1" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>None</dt><dd><p>The method updates internal attributes to store the computed state errors and latent errors
+(if latent variables are present).</p>
+</dd>
+</dl>
+</section>
+<section id="notes">
+<h3>Notes:<a class="headerlink" href="#notes" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p><cite>self.state_error_list</cite> contains the RMS errors for each domain.</p></li>
+<li><p><cite>self.state_error_mean</cite> is the mean RMS error averaged over all simulations.</p></li>
+<li><p><cite>self.latent_error</cite> and <cite>self.latent_error_mean</cite> are computed only if the <cite>ph_identified_data_instance</cite></p></li>
+</ul>
+<p>contains latent variables (<cite>Z</cite>).</p>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="aphin.utils.data.data.Data.calculate_latent_errors">
+<span class="sig-name descname"><span class="pre">calculate_latent_errors</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ph_identified_data_instance</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/utils/data/data.html#Data.calculate_latent_errors"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.utils.data.data.Data.calculate_latent_errors" title="Link to this definition"></a></dt>
+<dd><p>Compute RMS errors for latent variables between true and predicted values.</p>
+<p>This method calculates the Root Mean Square (RMS) error between the true latent variables (<cite>Z</cite>)
+and the predicted latent variables (<cite>Z_ph</cite>) from an identified data instance.</p>
+<section id="id2">
+<h3>Parameters:<a class="headerlink" href="#id2" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>ph_identified_data_instance<span class="classifier">instance of Data</span></dt><dd><p>An instance of the Data class containing the predicted latent variables (<cite>Z_ph</cite>) and
+true latent variables (<cite>Z</cite>) used for comparison.</p>
+</dd>
+</dl>
+</section>
+<section id="id3">
+<h3>Returns:<a class="headerlink" href="#id3" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>ndarray</dt><dd><p>Array of RMS errors for the latent variables, with shape consistent with the latent variable dimensions.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="aphin.utils.data.data.Data.calculate_rms_error">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">calculate_rms_error</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X_or_Z</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">X_or_Z_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/utils/data/data.html#Data.calculate_rms_error"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.utils.data.data.Data.calculate_rms_error" title="Link to this definition"></a></dt>
+<dd><p>Calculates the root mean square (RMS) error between the given dataset and its identified counterpart.</p>
+<section id="id4">
+<h3>Parameters:<a class="headerlink" href="#id4" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>X_or_Z<span class="classifier">ndarray</span></dt><dd><p>Array of states (X) or latent states (Z) with shape (n_sim, n_t, n_n, n_dn) or (n_sim, n_t, r) respectively.</p>
+</dd>
+<dt>X_or_Z_id<span class="classifier">ndarray</span></dt><dd><p>Array of identified states (X_id) or identified latent states (Z_id) with the same shape as X_or_Z.</p>
+</dd>
+</dl>
+</section>
+<section id="id5">
+<h3>Returns:<a class="headerlink" href="#id5" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>norm_rms_error<span class="classifier">ndarray</span></dt><dd><p>Array of normalized RMS errors with shape (n_sim, n_t).</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="aphin.utils.data.data.Data.calculate_state_errors">
+<span class="sig-name descname"><span class="pre">calculate_state_errors</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ph_identified_data_instance</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">domain_split_vals</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/utils/data/data.html#Data.calculate_state_errors"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.utils.data.data.Data.calculate_state_errors" title="Link to this definition"></a></dt>
+<dd><p>Calculate the normalized RMS error and the relative error between true states and predicted states.</p>
+<p>This method computes errors by comparing the true state values (<cite>self.X</cite>) with the predicted
+state values from an identified data instance (<cite>ph_identified_data_instance</cite>). Errors are
+calculated for each domain if specified.</p>
+<section id="id6">
+<h3>Parameters:<a class="headerlink" href="#id6" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>ph_identified_data_instance<span class="classifier">instance of Data</span></dt><dd><p>An instance of the Data class containing the predicted states used for comparison.</p>
+</dd>
+<dt>domain_split_vals<span class="classifier">list of int, optional</span></dt><dd><p>List specifying the number of degrees of freedom in each domain. This is used to split the
+state arrays into different domains for error calculation. The sum of these values must
+match the total number of dofs per node (<cite>self.n_dn</cite>). If <cite>None</cite>, the entire state is
+considered as a single domain.</p>
+</dd>
+</dl>
+</section>
+<section id="id7">
+<h3>Returns:<a class="headerlink" href="#id7" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>list of ndarray</dt><dd><p>A list of normalized RMS errors for each domain. Each element of the list represents the
+RMS error for a specific domain, calculated as the difference between the true and predicted
+states, normalized by the total number of samples and features.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="aphin.utils.data.data.Data.data">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">data</span></span><a class="headerlink" href="#aphin.utils.data.data.Data.data" title="Link to this definition"></a></dt>
+<dd><p>Returns the stored datasets for time, states, state derivatives, inputs, and parameters.</p>
+<section id="id8">
+<h3>Returns:<a class="headerlink" href="#id8" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>tuple</dt><dd><p>A tuple containing:
+- t: Array of time steps.
+- x: States array.
+- dx_dt: Time derivatives of the states.
+- u: Input array.
+- mu: Parameters array.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="aphin.utils.data.data.Data.decrease_num_simulations">
+<span class="sig-name descname"><span class="pre">decrease_num_simulations</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">num_sim</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/utils/data/data.html#Data.decrease_num_simulations"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.utils.data.data.Data.decrease_num_simulations" title="Link to this definition"></a></dt>
+<dd><p>Reduces the number of simulations to speed up training by selecting a random subset.</p>
+<p>This method randomly selects a specified number of simulations from the available data,
+which can be useful for speeding up computations or experiments.</p>
+<section id="id9">
+<h3>Parameters:<a class="headerlink" href="#id9" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>num_sim<span class="classifier">int</span></dt><dd><p>The target number of simulations to retain. The data is reduced to this number of simulations.</p>
+</dd>
+<dt>seed<span class="classifier">int, optional</span></dt><dd><p>Random seed for reproducibility. If provided, it initializes the random number generator.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="aphin.utils.data.data.Data.decrease_num_time_steps">
+<span class="sig-name descname"><span class="pre">decrease_num_time_steps</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">num_time_steps</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/utils/data/data.html#Data.decrease_num_time_steps"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.utils.data.data.Data.decrease_num_time_steps" title="Link to this definition"></a></dt>
+<dd><p>Reduces the number of time steps in the dataset by truncating the time series.</p>
+<p>This method selects a subset of time steps from the original time series to reduce its length.
+It ensures that the number of remaining time steps matches the specified target.</p>
+<section id="id10">
+<h3>Parameters:<a class="headerlink" href="#id10" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>num_time_steps<span class="classifier">int</span></dt><dd><p>The target number of time steps to retain. Must be less than or equal to the current number of time steps.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="aphin.utils.data.data.Data.features_to_states">
+<span class="sig-name descname"><span class="pre">features_to_states</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/utils/data/data.html#Data.features_to_states"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.utils.data.data.Data.features_to_states" title="Link to this definition"></a></dt>
+<dd><p>Transforms the feature array back into the state array required for validation.</p>
+<p>This method reshapes the feature arrays <cite>x</cite> and <cite>dx_dt</cite> back into the original state arrays <cite>X</cite>
+and <cite>X_dt</cite>. The transformation restores the dimensions to match the number of simulations,
+time steps, nodes, and degrees of freedom per node.</p>
+<section id="id11">
+<h3>Parameters:<a class="headerlink" href="#id11" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>None</dt><dd><p>The method uses internal attributes <cite>x</cite>, <cite>dx_dt</cite>, <cite>n_sim</cite>, <cite>n_t</cite>, <cite>n_n</cite>, and <cite>n_dn</cite> to perform
+the transformation.</p>
+</dd>
+</dl>
+</section>
+<section id="id12">
+<h3>Returns:<a class="headerlink" href="#id12" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>None</dt><dd><p>The method updates the internal state of the object with the reshaped state arrays <cite>X</cite>
+and <cite>X_dt</cite>.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="aphin.utils.data.data.Data.filter_data">
+<span class="sig-name descname"><span class="pre">filter_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">window</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">order</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">interp_equidis_t</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/utils/data/data.html#Data.filter_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.utils.data.data.Data.filter_data" title="Link to this definition"></a></dt>
+<dd><p>Apply Savitzky-Golay filtering to the state data to smooth it and compute the time derivatives.</p>
+<p>This method filters the state data <cite>X</cite> and its derivative <cite>X_dt</cite> using the Savitzky-Golay filter to reduce noise and smooth the
+data. If <cite>interp_equidis_t</cite> is set to True, the method will first interpolate the data to equally spaced
+time points before applying the filter.</p>
+<section id="id13">
+<h3>Parameters:<a class="headerlink" href="#id13" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>window<span class="classifier">int, optional</span></dt><dd><p>The length of the filter window (i.e., the number of points used to calculate the smoothing).
+It must be an odd integer. Default is 10.</p>
+</dd>
+<dt>order<span class="classifier">int, optional</span></dt><dd><p>The order of the polynomial used to fit the samples. It must be less than the window length.
+Default is 3.</p>
+</dd>
+<dt>interp_equidis_t<span class="classifier">bool, optional</span></dt><dd><p>If True, interpolate the data to equally spaced time points before filtering.
+Default is False.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="aphin.utils.data.data.Data.from_data">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_path</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/utils/data/data.html#Data.from_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.utils.data.data.Data.from_data" title="Link to this definition"></a></dt>
+<dd><p>Loads a dataset from a .npz file and creates an instance of the class.</p>
+<p>This class method reads time steps, state data, and inputs from a <cite>.npz</cite> file and initializes
+an instance of the class using the loaded data. The file should contain arrays for time steps (<cite>t</cite>),
+states (<cite>X</cite>), and inputs (<cite>U</cite>), and optionally other parameters.</p>
+<section id="id14">
+<h3>Parameters:<a class="headerlink" href="#id14" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>data_path<span class="classifier">str</span></dt><dd><p>Path to the <cite>.npz</cite> file containing the dataset.</p>
+</dd>
+<dt><a href="#id15"><span class="problematic" id="id16">**</span></a>kwargs<span class="classifier">keyword arguments</span></dt><dd><p>Additional parameters to pass to the class constructor.</p>
+</dd>
+</dl>
+</section>
+<section id="id17">
+<h3>Returns:<a class="headerlink" href="#id17" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>instance of cls</dt><dd><p>An instance of the class initialized with the data from the <cite>.npz</cite> file and any additional parameters provided.</p>
+</dd>
+</dl>
+</section>
+<section id="id18">
+<h3>Notes:<a class="headerlink" href="#id18" title="Link to this heading"></a></h3>
+<p>The <cite>.npz</cite> file should contain the following arrays:
+- ‘t’ : ndarray with shape (n_t,)
+- ‘X’ : ndarray with shape (n_sim, n_t, n_n, n_dn)
+- ‘U’ : ndarray with shape (n_sim, n_t, n_u)</p>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="aphin.utils.data.data.Data.get_initial_conditions">
+<span class="sig-name descname"><span class="pre">get_initial_conditions</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/utils/data/data.html#Data.get_initial_conditions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.utils.data.data.Data.get_initial_conditions" title="Link to this definition"></a></dt>
+<dd><p>Retrieve the initial conditions from the dataset.</p>
+<section id="id19">
+<h3>Returns:<a class="headerlink" href="#id19" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>ndarray</dt><dd><p>Initial conditions with shape (n_sim, n_f), where <cite>n_f</cite> is derived from reshaping the data.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="aphin.utils.data.data.Data.ph_matrices">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">ph_matrices</span></span><a class="headerlink" href="#aphin.utils.data.data.Data.ph_matrices" title="Link to this definition"></a></dt>
+<dd><p>Returns the port-Hamiltonian matrices used in the data container.</p>
+<section id="id20">
+<h3>Returns:<a class="headerlink" href="#id20" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>tuple</dt><dd><p>A tuple containing:
+- J: Port-Hamiltonian interconnection matrix.
+- R: Port-Hamiltonian dissipation matrix.
+- Q: Port-Hamiltonian energy matrix.
+- B: Port-Hamiltonian input matrix.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="aphin.utils.data.data.Data.read_data_from_npz">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">read_data_from_npz</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/utils/data/data.html#Data.read_data_from_npz"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.utils.data.data.Data.read_data_from_npz" title="Link to this definition"></a></dt>
+<dd><p>Reads data from a .npz file and returns it as a dictionary.</p>
+<section id="id21">
+<h3>Parameters:<a class="headerlink" href="#id21" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>data_path<span class="classifier">str</span></dt><dd><p>Path to the .npz file or the directory containing the .npz file. If a directory
+is provided, the method searches for the first .npz file in the directory.</p>
+</dd>
+</dl>
+</section>
+<section id="id22">
+<h3>Returns:<a class="headerlink" href="#id22" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>dict</dt><dd><p>Dictionary containing the following keys:
+- ‘t’: ndarray, array of time steps.
+- ‘X’: ndarray, states array.
+- ‘X_dt’: ndarray, time derivatives of the states (optional, may be None).
+- ‘U’: ndarray, input array (optional, may be None).
+- ‘Mu’: ndarray, parameters array (optional, may be None).
+- ‘J’: ndarray, pH interconnection matrix (optional, may be None).
+- ‘R’: ndarray, pH dissipation matrix (optional, may be None).
+- ‘Q’: ndarray, pH energy matrix (optional, may be None).
+- ‘B’: ndarray, pH input matrix (optional, may be None).</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="aphin.utils.data.data.Data.rescale_X">
+<span class="sig-name descname"><span class="pre">rescale_X</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/utils/data/data.html#Data.rescale_X"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.utils.data.data.Data.rescale_X" title="Link to this definition"></a></dt>
+<dd><p>Undo the scaling of states and time derivatives.</p>
+<p>This method reverses the scaling applied to the state array <cite>X</cite> with shape (n_sim, n_t, n_n, n_dn)
+and the time derivatives <cite>X_dt</cite>. It must be called after <cite>scale_X</cite> has been performed to restore the
+original data values. The method assumes that scaling has been previously applied and will raise an
+error if no scaling has been performed.</p>
+<section id="id23">
+<h3>Parameters:<a class="headerlink" href="#id23" title="Link to this heading"></a></h3>
+<p>None</p>
+</section>
+<section id="id24">
+<h3>Returns:<a class="headerlink" href="#id24" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>None</dt><dd><p>The method updates the internal state to reflect the rescaled data and sets <cite>self.is_scaled</cite> to False.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="aphin.utils.data.data.Data.save_data">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">save_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">U</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Mu</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/utils/data/data.html#Data.save_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.utils.data.data.Data.save_data" title="Link to this definition"></a></dt>
+<dd><p>Saves time steps, state data, and inputs to a compressed .npz file.</p>
+<p>This method saves the provided time steps, state data, inputs, and optional parameters to a <cite>.npz</cite> file
+for efficient storage and retrieval.</p>
+<section id="id25">
+<h3>Parameters:<a class="headerlink" href="#id25" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>data_path<span class="classifier">str</span></dt><dd><p>The path to the <cite>.npz</cite> file where the data will be saved.</p>
+</dd>
+<dt>t<span class="classifier">ndarray</span></dt><dd><p>Array of time steps with shape (n_t,).</p>
+</dd>
+<dt>X<span class="classifier">ndarray</span></dt><dd><p>Array of system states at all time steps with shape (n_sim, n_t, n_n, n_dn).</p>
+</dd>
+<dt>U<span class="classifier">ndarray</span></dt><dd><p>Array of system inputs with shape (n_sim, n_t, n_u).</p>
+</dd>
+<dt>Mu<span class="classifier">ndarray, optional</span></dt><dd><p>Array of parameters with shape (n_sim, n_mu). Default is None. If provided, it will be saved along with the other data.</p>
+</dd>
+</dl>
+</section>
+<section id="id26">
+<h3>Returns:<a class="headerlink" href="#id26" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>None</dt><dd><p>This method does not return any value. It saves the data to the specified file path.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="aphin.utils.data.data.Data.save_state_traj_as_csv">
+<span class="sig-name descname"><span class="pre">save_state_traj_as_csv</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dof</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">second_oder</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'state_trajectories'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/utils/data/data.html#Data.save_state_traj_as_csv"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.utils.data.data.Data.save_state_traj_as_csv" title="Link to this definition"></a></dt>
+<dd><p>Save the state trajectories and their time derivatives as CSV files.</p>
+<p>This method saves the state trajectories and, if applicable, their time derivatives
+to CSV files. The method can handle both first-order and second-order systems,
+with the option to exclude redundant derivative data for second-order systems.</p>
+<section id="id27">
+<h3>Parameters:<a class="headerlink" href="#id27" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>path<span class="classifier">str</span></dt><dd><p>Directory path where the CSV files will be saved.</p>
+</dd>
+<dt>dof<span class="classifier">int, optional</span></dt><dd><p>Degree of freedom (dof) index to save. Default is 0.</p>
+</dd>
+<dt>second_order<span class="classifier">bool, optional</span></dt><dd><p>If True, the system is treated as second-order, and additional processing is applied
+to handle state derivatives accordingly. Default is False.</p>
+</dd>
+<dt>filename<span class="classifier">str, optional</span></dt><dd><p>Base name for the output CSV files. Default is “state_trajectories”.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="aphin.utils.data.data.Data.save_traj_as_csv">
+<span class="sig-name descname"><span class="pre">save_traj_as_csv</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">state</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">state_dt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_dn</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">state_var</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'x'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">derivatives</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">['',</span> <span class="pre">'_dt']</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'state_trajectories'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/utils/data/data.html#Data.save_traj_as_csv"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.utils.data.data.Data.save_traj_as_csv" title="Link to this definition"></a></dt>
+<dd><p>Save state trajectories and their time derivatives to a CSV file.</p>
+<p>This method concatenates state trajectories with their time derivatives and saves them
+to a CSV file. The CSV file includes time steps, state variables, and their derivatives.
+The output file is saved in the specified directory with a filename that can be customized.</p>
+<section id="id28">
+<h3>Parameters:<a class="headerlink" href="#id28" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>state<span class="classifier">np.ndarray</span></dt><dd><p>Array of state trajectories with shape (n_sim, n_t, n_dn), where n_sim is the number
+of simulations, n_t is the number of time steps, and n_dn is the number of degrees of
+freedom per node.</p>
+</dd>
+<dt>state_dt<span class="classifier">np.ndarray</span></dt><dd><p>Array of state time derivatives with shape (n_sim, n_t, n_dn), where n_sim, n_t,
+and n_dn are as defined above.</p>
+</dd>
+<dt>n_dn<span class="classifier">int</span></dt><dd><p>Number of degrees of freedom per node.</p>
+</dd>
+<dt>path<span class="classifier">str</span></dt><dd><p>Directory path where the CSV file will be saved.</p>
+</dd>
+<dt>state_var<span class="classifier">str, optional</span></dt><dd><p>Prefix for the state variables in the CSV header. Default is “x”.</p>
+</dd>
+<dt>derivatives<span class="classifier">list of str, optional</span></dt><dd><p>List of strings representing the derivatives to include in the header. Default is
+[“”, “_dt”] for state and its first time derivative.</p>
+</dd>
+<dt>filename<span class="classifier">str, optional</span></dt><dd><p>Base name for the output CSV file. The file will be saved with this name and a “.csv”
+extension. Default is “state_trajectories”.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="aphin.utils.data.data.Data.scale_Mu">
+<span class="sig-name descname"><span class="pre">scale_Mu</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mu_train_bounds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">desired_bounds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[-1,</span> <span class="pre">1]</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/utils/data/data.html#Data.scale_Mu"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.utils.data.data.Data.scale_Mu" title="Link to this definition"></a></dt>
+<dd><p>Scale parameter values to the specified range and return the scaled values along with scaling factors.</p>
+<p>This method scales the parameter values in <cite>Mu</cite> to fit within the <cite>desired_bounds</cite> range. Each parameter
+dimension is scaled individually. Scaling can be based on maximum values, a scalar, or provided training
+bounds.</p>
+<section id="id29">
+<h3>Parameters:<a class="headerlink" href="#id29" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>desired_bounds<span class="classifier">list, scalar, or “max”, optional</span></dt><dd><p>Desired range for the scaled values. It can be:
+- A list of two values (e.g., [-1, 1]) specifying the lower and upper bounds.
+- A scalar, where all values are scaled by this single value.
+- The string “max”, where scaling is based on the maximum value in <cite>Mu</cite>.</p>
+</dd>
+<dt>mu_train_bounds<span class="classifier">np.ndarray, optional</span></dt><dd><p>Scaling factors obtained from the training parameter dataset. Expected shape is (2, n_mu), where
+n_mu is the number of parameter dimensions in <cite>Mu</cite>. If not provided, scaling factors are computed from
+the data.</p>
+</dd>
+</dl>
+</section>
+<section id="id30">
+<h3>Returns:<a class="headerlink" href="#id30" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>scaled_Mu<span class="classifier">np.ndarray</span></dt><dd><p>The scaled values of <cite>Mu</cite> with the same shape as the input.</p>
+</dd>
+<dt>mu_train_bounds<span class="classifier">np.ndarray</span></dt><dd><p>The computed or provided scaling factors used for scaling.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="aphin.utils.data.data.Data.scale_U">
+<span class="sig-name descname"><span class="pre">scale_U</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">u_train_bounds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">desired_bounds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[-1,</span> <span class="pre">1]</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/utils/data/data.html#Data.scale_U"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.utils.data.data.Data.scale_U" title="Link to this definition"></a></dt>
+<dd><p>Scale input values to a specified range.</p>
+<p>This method scales the input values <cite>U</cite> to the range defined by <cite>desired_bounds</cite>, which is typically
+[-1, 1]. Each dimension of the input is scaled individually. The scaling factors are either provided
+through <cite>u_train_bounds</cite> or computed based on the provided data.</p>
+<section id="id31">
+<h3>Parameters:<a class="headerlink" href="#id31" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>u_train_bounds<span class="classifier">np.ndarray, optional</span></dt><dd><p>Scaling factors obtained from the training parameter dataset. Expected shape is (2, n_u), where
+n_u is the number of input dimensions. If provided, these factors are used for scaling the input values.</p>
+</dd>
+<dt>desired_bounds<span class="classifier">list or scalar, optional</span></dt><dd><p>Desired range for the scaled inputs. Can be:
+- A list of two values (e.g., [-1, 1]) to specify the lower and upper bounds.
+- A scalar to scale all input values by this value.
+- The string “max” to scale all input values by the maximum value observed.</p>
+</dd>
+</dl>
+</section>
+<section id="id32">
+<h3>Returns:<a class="headerlink" href="#id32" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>None</dt><dd><p>The method updates the internal state by scaling the input values <cite>U</cite>, setting <cite>self.u_train_bounds</cite>,
+and updating <cite>self.desired_bounds_u</cite>. The scaled inputs are reshaped into feature format.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="aphin.utils.data.data.Data.scale_X">
+<span class="sig-name descname"><span class="pre">scale_X</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">scaling_values</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">domain_split_vals</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/utils/data/data.html#Data.scale_X"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.utils.data.data.Data.scale_X" title="Link to this definition"></a></dt>
+<dd><p>Scale the state array based on specified scaling values.</p>
+<p>This method scales the state array <cite>X</cite> with shape (n_sim, n_t, n_n, n_dn) and afterwards the feature array <cite>x</cite>
+with shape (n_t * n_s, n) using provided scaling values. It can handle multiple domains if specified
+by <cite>domain_split_vals</cite>. If scaling values are not provided, it defaults to scaling by the maximum value
+in each domain.</p>
+<section id="id33">
+<h3>Parameters:<a class="headerlink" href="#id33" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>scaling_values<span class="classifier">list of float, optional</span></dt><dd><p>Scalar values used to scale each domain, as defined by <cite>domain_split_vals</cite>. If <cite>None</cite>, scaling
+is performed by the maximum value of each domain.</p>
+</dd>
+<dt>domain_split_vals<span class="classifier">list of int, optional</span></dt><dd><p>List of integers specifying the number of degrees of freedom (DOFs) for each domain. The sum of
+these values must equal <cite>n_dn</cite>. If <cite>None</cite>, the data is treated as a single domain.</p>
+</dd>
+</dl>
+</section>
+<section id="id34">
+<h3>Returns:<a class="headerlink" href="#id34" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>None</dt><dd><p>The method updates the internal state to reflect the scaled data and sets <cite>self.is_scaled</cite> to True.</p>
+</dd>
+</dl>
+</section>
+<section id="id35">
+<h3>Notes:<a class="headerlink" href="#id35" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p>The method performs scaling for both the state data (<cite>X</cite>) and its time derivatives (<cite>X_dt</cite>).</p></li>
+<li><p>If <cite>scaling_values</cite> are not provided, the maximum value for each domain is used for scaling.</p></li>
+<li><p>The method assumes that the domains defined by <cite>domain_split_vals</cite> add up to the total number of DOFs (<cite>n_dn</cite>).</p></li>
+<li><p>After scaling, the feature representation of states is updated using <cite>self.states_to_features()</cite>.</p></li>
+</ul>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="aphin.utils.data.data.Data.scale_all">
+<span class="sig-name descname"><span class="pre">scale_all</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">scaling_values</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">domain_split_vals</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">u_train_bounds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">u_desired_bounds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[-1,</span> <span class="pre">1]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mu_train_bounds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mu_desired_bounds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[-1,</span> <span class="pre">1]</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/utils/data/data.html#Data.scale_all"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.utils.data.data.Data.scale_all" title="Link to this definition"></a></dt>
+<dd><p>Scales states X, inputs and parameters
+:param scaling_values: see scale_X
+:param domain_split_vals: see scale_X</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="aphin.utils.data.data.Data.scale_quantity">
+<span class="sig-name descname"><span class="pre">scale_quantity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Quantity</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">train_bounds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">desired_bounds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[-1,</span> <span class="pre">1]</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/utils/data/data.html#Data.scale_quantity"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.utils.data.data.Data.scale_quantity" title="Link to this definition"></a></dt>
+<dd><p>Scale a given quantity to a specified range and return the scaled values along with scaling factors.</p>
+<p>This method scales the input <cite>Quantity</cite> values to fit within the <cite>desired_bounds</cite> range. Each dimension
+of the input is scaled individually. The scaling can be based on maximum values, a scalar, or training
+bounds if provided.</p>
+<section id="id36">
+<h3>Parameters:<a class="headerlink" href="#id36" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>Quantity<span class="classifier">np.ndarray</span></dt><dd><p>The data to be scaled. It can be of shape (n_sim, n_quantity) for time-independent data or
+(n_sim, n_t, n_quantity) for time-dependent data, where:
+- n_sim: number of simulations
+- n_t: number of time steps
+- n_quantity: number of quantities to be scaled</p>
+</dd>
+<dt>train_bounds<span class="classifier">np.ndarray, optional</span></dt><dd><p>Scaling factors obtained from the training parameter dataset. Expected shape is (2, n_q), where
+n_q is the number of dimensions in <cite>Quantity</cite>. If not provided, scaling factors are computed from
+the data.</p>
+</dd>
+<dt>desired_bounds<span class="classifier">list, scalar, or “max”, optional</span></dt><dd><p>Desired range for the scaled values. It can be:
+- A list of two values (e.g., [-1, 1]) specifying the lower and upper bounds.
+- A scalar, where all values are scaled by this single value.
+- The string “max”, where scaling is based on the maximum value in <cite>Quantity</cite>.</p>
+</dd>
+</dl>
+</section>
+<section id="id37">
+<h3>Returns:<a class="headerlink" href="#id37" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>scaled_Quantity<span class="classifier">np.ndarray</span></dt><dd><p>The scaled values of <cite>Quantity</cite> with the same shape as the input.</p>
+</dd>
+<dt>train_bounds<span class="classifier">np.ndarray</span></dt><dd><p>The computed or provided scaling factors used for scaling.</p>
+</dd>
+<dt>desired_bounds<span class="classifier">list</span></dt><dd><p>The bounds used for scaling, as provided or computed.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="aphin.utils.data.data.Data.shape">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">shape</span></span><a class="headerlink" href="#aphin.utils.data.data.Data.shape" title="Link to this definition"></a></dt>
+<dd><p>Return the shape of the dataset.</p>
+<section id="id38">
+<h3>Returns:<a class="headerlink" href="#id38" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>tuple</dt><dd><p>A tuple containing:
+- n_sim: number of simulations
+- n_t: number of time steps
+- n_n: number of nodes
+- n_dn: number of degrees of freedom per node
+- n_u: number of inputs
+- n_mu: number of parameters</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="aphin.utils.data.data.Data.split_state_into_domains">
+<span class="sig-name descname"><span class="pre">split_state_into_domains</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">domain_split_vals</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/utils/data/data.html#Data.split_state_into_domains"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.utils.data.data.Data.split_state_into_domains" title="Link to this definition"></a></dt>
+<dd><p>Splits the state array into different domains based on the specified dimensions.</p>
+<p>This method divides the state array <cite>X</cite> into multiple domains according to the given
+<cite>domain_split_vals</cite>. Each domain corresponds to a subset of degrees of freedom (dofs), and
+the sum of these values must equal the total number of dofs per node (<cite>self.n_dn</cite>).</p>
+<section id="id39">
+<h3>Parameters:<a class="headerlink" href="#id39" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>domain_split_vals<span class="classifier">list of int, optional</span></dt><dd><p>List specifying the number of dofs in each domain. For example, <cite>[1, 2, 2]</cite> indicates three
+domains with 1, 2, and 2 dofs, respectively. The sum of these values must equal <cite>self.n_dn</cite>.
+If <cite>None</cite>, the entire state is considered as a single domain.</p>
+</dd>
+</dl>
+</section>
+<section id="id40">
+<h3>Returns:<a class="headerlink" href="#id40" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>list of ndarray</dt><dd><p>A list where each element is a state array corresponding to a specific domain. The length
+of the list equals the number of domains specified by <cite>domain_split_vals</cite>.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="aphin.utils.data.data.Data.states_to_features">
+<span class="sig-name descname"><span class="pre">states_to_features</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/utils/data/data.html#Data.states_to_features"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.utils.data.data.Data.states_to_features" title="Link to this definition"></a></dt>
+<dd><p>Transforms the state array into a feature array for identification purposes.</p>
+<p>This method reshapes the state array <cite>X</cite> and its time derivatives <cite>X_dt</cite> into feature arrays
+that are required for system identification. It also reshapes the input array <cite>U</cite> and parameter
+array <cite>Mu</cite> if they are provided.</p>
+<p>The transformation results in:
+- <cite>x</cite>: a feature array of shape (n_s, n_f), where:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><cite>n_s</cite> is the number of samples (<cite>n_sim * n_t</cite>)</p></li>
+<li><p><cite>n_f</cite> is the number of features (<cite>n_n * n_dn</cite>)</p></li>
+</ul>
+</div></blockquote>
+<ul class="simple">
+<li><p><cite>u</cite>: reshaped input array of shape (n_s, n_u) if <cite>U</cite> is provided</p></li>
+<li><p><cite>mu</cite>: reshaped parameters array of shape (n_s, n_mu) if <cite>Mu</cite> is provided</p></li>
+</ul>
+<section id="id41">
+<h3>Returns:<a class="headerlink" href="#id41" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>None</dt><dd><p>The method updates the internal state of the object with the transformed feature arrays.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="aphin.utils.data.data.Data.train_test_split">
+<span class="sig-name descname"><span class="pre">train_test_split</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">test_size</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/utils/data/data.html#Data.train_test_split"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.utils.data.data.Data.train_test_split" title="Link to this definition"></a></dt>
+<dd><p>see Dataset.train_test_split</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="aphin.utils.data.data.Data.train_test_split_sim_idx">
+<span class="sig-name descname"><span class="pre">train_test_split_sim_idx</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sim_idx_train</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sim_idx_test</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/utils/data/data.html#Data.train_test_split_sim_idx"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.utils.data.data.Data.train_test_split_sim_idx" title="Link to this definition"></a></dt>
+<dd><p>see Dataset.train_test_split_sim_idx</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="aphin.utils.data.data.Data.truncate_time">
+<span class="sig-name descname"><span class="pre">truncate_time</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">trunc_time_ratio</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/utils/data/data.html#Data.truncate_time"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.utils.data.data.Data.truncate_time" title="Link to this definition"></a></dt>
+<dd><p>Truncates the time values of states for performing time generalization experiments.</p>
+<p>This method shortens the time series of states and associated data based on the given ratio.
+The truncation is applied to time steps, states, time derivatives, inputs, and parameters,
+if they are provided.</p>
+<section id="id42">
+<h3>Parameters:<a class="headerlink" href="#id42" title="Link to this heading"></a></h3>
+<blockquote>
+<div><dl class="simple">
+<dt>trunc_time_ratio<span class="classifier">float</span></dt><dd><p>Ratio of the time series to retain. A value of 1.0 means no truncation, while a value
+between 0 and 1 truncates the time series to the specified proportion of the total time steps.</p>
+</dd>
+</dl>
+</div></blockquote>
+</section>
+<section id="id43">
+<h3>Returns:<a class="headerlink" href="#id43" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>None</dt><dd><p>The method modifies the internal state of the object to reflect the truncated time series.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="aphin.utils.data.data.LTIDataset">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">aphin.utils.data.data.</span></span><span class="sig-name descname"><span class="pre">LTIDataset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">U</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">X_dt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/utils/data/data.html#LTIDataset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.utils.data.data.LTIDataset" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#aphin.utils.data.data.Data" title="aphin.utils.data.data.Data"><code class="xref py py-class docutils literal notranslate"><span class="pre">Data</span></code></a></p>
+<p>Dataset class for Linear Time-Invariant (LTI) systems.</p>
+<p>Inherits from the <cite>Data</cite> class and is designed to handle datasets specifically for LTI systems.
+This class extends the functionality of the base <cite>Data</cite> class by including data that might be used
+for LTI system identification or analysis.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="aphin.utils.data.data.PHIdentifiedData">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">aphin.utils.data.data.</span></span><span class="sig-name descname"><span class="pre">PHIdentifiedData</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">X_dt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">U</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Mu</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x_ph</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dx_dt_ph</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Z</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z_dt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Z_dt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x_rec</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">X_rec</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x_rec_dt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">X_rec_dt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z_dt_ph_map</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Z_dt_ph_map</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z_ph</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Z_ph</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z_dt_ph</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Z_dt_ph</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">H_ph</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_red</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">J</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">R</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">B</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Q</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/utils/data/data.html#PHIdentifiedData"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.utils.data.data.PHIdentifiedData" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#aphin.utils.data.data.Data" title="aphin.utils.data.data.Data"><code class="xref py py-class docutils literal notranslate"><span class="pre">Data</span></code></a></p>
+<p>Class representing the identified port-Hamiltonian data which was obtained through the aphin framework.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="aphin.utils.data.data.PHIdentifiedData.from_identification">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_identification</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">system_layer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ph_network</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">integrator_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'IMR'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">decomp_option</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'lu'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/utils/data/data.html#PHIdentifiedData.from_identification"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.utils.data.data.PHIdentifiedData.from_identification" title="Link to this definition"></a></dt>
+<dd><p>Create an instance of PHIdentifiedData from the identified pH system.</p>
+<p>This method initializes an instance of the PHIdentifiedData class using results obtained from an identified
+port-Hamiltonian (pH) system. It calculates latent variables, their time derivatives, and reconstructed states,
+and performs simulation using the identified pH system. The method supports both APHIN and PHIN networks.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>cls</strong> (<em>type</em>) – The class to instantiate.</p></li>
+<li><p><strong>data</strong> (<a class="reference internal" href="#aphin.utils.data.data.Data" title="aphin.utils.data.data.Data"><em>Data</em></a>) – The dataset object containing the initial conditions and other data.</p></li>
+<li><p><strong>system_layer</strong> (<a class="reference internal" href="aphin.layers.html#aphin.layers.system_layer.SystemLayer" title="aphin.layers.system_layer.SystemLayer"><em>SystemLayer</em></a>) – The system layer object used to extract system matrices.</p></li>
+<li><p><strong>ph_network</strong> (<a class="reference internal" href="aphin.identification.html#aphin.identification.aphin.APHIN" title="aphin.identification.aphin.APHIN"><em>APHIN</em></a><em> or </em><a class="reference internal" href="aphin.identification.html#aphin.identification.phin.PHIN" title="aphin.identification.phin.PHIN"><em>PHIN</em></a>) – The pH network object used for encoding, reconstructing, and calculating time derivatives.</p></li>
+<li><p><strong>integrator_type</strong> (<em>str</em><em>, </em><em>optional</em>) – The type of integrator used for simulation (default is “IMR”).</p></li>
+<li><p><strong>decomp_option</strong> (<em>str</em><em>, </em><em>optional</em>) – The decomposition option for solving the system (default is “lu”).</p></li>
+<li><p><strong>**kwargs</strong> (<em>dict</em>) – Additional keyword arguments to pass to the PHIdentifiedData class constructor.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>An instance of the PHIdentifiedData class initialized with results from the identified pH system.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#aphin.utils.data.data.PHIdentifiedData" title="aphin.utils.data.data.PHIdentifiedData">PHIdentifiedData</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="aphin.utils.data.data.PHIdentifiedData.obtain_ph_data">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">obtain_ph_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ph_network</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">system_layer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">J_ph</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">R_ph</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">B_ph</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Q_ph</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">integrator_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">decomp_option</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/utils/data/data.html#PHIdentifiedData.obtain_ph_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.utils.data.data.PHIdentifiedData.obtain_ph_data" title="Link to this definition"></a></dt>
+<dd><p>Obtain the port-Hamiltonian (pH) system data, including latent variables, time derivatives,
+reconstructed states, and Hamiltonian values.</p>
+<p>This method computes the reduced trajectories for the identified pH system based on the provided
+data, pH network, and system parameters. It calculates latent variables and their time derivatives,
+reconstructs states and their time derivatives, and computes the Hamiltonian for each simulation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<a class="reference internal" href="#aphin.utils.data.data.Data" title="aphin.utils.data.data.Data"><em>Data</em></a>) – Dataset object containing the input data and initial conditions.</p></li>
+<li><p><strong>ph_network</strong> (<a class="reference internal" href="aphin.identification.html#aphin.identification.aphin.APHIN" title="aphin.identification.aphin.APHIN"><em>APHIN</em></a><em> or </em><a class="reference internal" href="aphin.identification.html#aphin.identification.phin.PHIN" title="aphin.identification.phin.PHIN"><em>PHIN</em></a>) – Port-Hamiltonian autoencoder object used for encoding, reconstructing, and computing derivatives.</p></li>
+<li><p><strong>system_layer</strong> (<a class="reference internal" href="aphin.layers.html#aphin.layers.system_layer.SystemLayer" title="aphin.layers.system_layer.SystemLayer"><em>SystemLayer</em></a>) – System layer object defining the latent space dimensionality and configuration.</p></li>
+<li><p><strong>J_ph</strong> (<em>numpy.ndarray</em>) – System matrix J for the pH system.</p></li>
+<li><p><strong>R_ph</strong> (<em>numpy.ndarray</em>) – System matrix R for the pH system.</p></li>
+<li><p><strong>B_ph</strong> (<em>numpy.ndarray</em><em>, </em><em>optional</em>) – System matrix B for the pH system, by default None.</p></li>
+<li><p><strong>Q_ph</strong> (<em>numpy.ndarray</em><em>, </em><em>optional</em>) – System matrix Q for the pH system, by default None.</p></li>
+<li><p><strong>integrator_type</strong> (<em>str</em>) – Type of integrator used for solving the pH system.</p></li>
+<li><p><strong>decomp_option</strong> (<em>str</em>) – Decomposition option for solving the pH system.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><p>A tuple containing:
+- z_ph : numpy.ndarray</p>
+<blockquote>
+<div><p>Latent variables for each simulation.</p>
+</div></blockquote>
+<ul class="simple">
+<li><dl class="simple">
+<dt>dz_dt_ph<span class="classifier">numpy.ndarray</span></dt><dd><p>Time derivatives of the latent variables.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>x_ph<span class="classifier">numpy.ndarray</span></dt><dd><p>Reconstructed states for each simulation.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>dx_dt_ph<span class="classifier">numpy.ndarray</span></dt><dd><p>Time derivatives of the reconstructed states.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>Z_ph<span class="classifier">numpy.ndarray</span></dt><dd><p>Reshaped latent variables into state array format.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>Z_dt_ph<span class="classifier">numpy.ndarray</span></dt><dd><p>Reshaped time derivatives of the latent variables into state array format.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>X_ph<span class="classifier">numpy.ndarray</span></dt><dd><p>Reshaped reconstructed states into state array format.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>X_dt_ph<span class="classifier">numpy.ndarray</span></dt><dd><p>Reshaped time derivatives of the reconstructed states into state array format.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>H_ph<span class="classifier">numpy.ndarray</span></dt><dd><p>Hamiltonian values for each simulation.</p>
+</dd>
+</dl>
+</li>
+</ul>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="aphin.utils.data.data.PHIdentifiedData.obtain_ph_map_data">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">obtain_ph_map_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ph_network</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_f</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/utils/data/data.html#PHIdentifiedData.obtain_ph_map_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.utils.data.data.PHIdentifiedData.obtain_ph_map_data" title="Link to this definition"></a></dt>
+<dd><p>Obtain time derivatives of latent variables using the pH network and reshape them into state format.</p>
+<p>This method calculates the time derivatives of latent variables using the pH network and reshapes
+them into a format consistent with the state arrays.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ph_network</strong> (<em>PHNetwork</em>) – pH network object used to compute time derivatives.</p></li>
+<li><p><strong>z</strong> (<em>numpy.ndarray</em>) – Latent variables for which the time derivatives are to be computed.</p></li>
+<li><p><strong>data</strong> (<a class="reference internal" href="#aphin.utils.data.data.Data" title="aphin.utils.data.data.Data"><em>Data</em></a>) – Dataset object containing input data and parameters.</p></li>
+<li><p><strong>n_f</strong> (<em>int</em>) – Number of latent variables (features) used in reshaping.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><p>A tuple containing:
+- z_dt_ph_map : numpy.ndarray</p>
+<blockquote>
+<div><p>Time derivatives of the latent variables as computed by the pH network.</p>
+</div></blockquote>
+<ul class="simple">
+<li><dl class="simple">
+<dt>Z_dt_ph_map<span class="classifier">numpy.ndarray</span></dt><dd><p>Reshaped time derivatives of the latent variables into state array format.</p>
+</dd>
+</dl>
+</li>
+</ul>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="aphin.utils.data.data.PHIdentifiedData.obtain_results_from_ph_autoencoder">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">obtain_results_from_ph_autoencoder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">system_layer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ph_network</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/utils/data/data.html#PHIdentifiedData.obtain_results_from_ph_autoencoder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.utils.data.data.PHIdentifiedData.obtain_results_from_ph_autoencoder" title="Link to this definition"></a></dt>
+<dd><p>Obtain relevant results from the identified port-Hamiltonian autoencoder (APHIN), including latent variables,
+time derivatives, and reconstructed states.</p>
+<p>This method extracts and computes the following from the port-Hamiltonian autoencoder:
+- Latent variables and their time derivatives.
+- Reconstructed states and their time derivatives.
+It also reshapes the feature arrays into state arrays suitable for further analysis.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<a class="reference internal" href="#aphin.utils.data.data.Data" title="aphin.utils.data.data.Data"><em>Data</em></a>) – Dataset object containing the input data used for encoding and reconstructing.</p></li>
+<li><p><strong>system_layer</strong> (<a class="reference internal" href="aphin.layers.html#aphin.layers.system_layer.SystemLayer" title="aphin.layers.system_layer.SystemLayer"><em>SystemLayer</em></a>) – System layer object defining the system’s latent space dimensionality and configuration.</p></li>
+<li><p><strong>ph_network</strong> (<a class="reference internal" href="aphin.identification.html#aphin.identification.aphin.APHIN" title="aphin.identification.aphin.APHIN"><em>APHIN</em></a>) – Port-Hamiltonian autoencoder object used for encoding, reconstructing, and computing time derivatives.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><p>A tuple containing:
+- z : numpy.ndarray</p>
+<blockquote>
+<div><p>Latent variables obtained from encoding the input data.</p>
+</div></blockquote>
+<ul class="simple">
+<li><dl class="simple">
+<dt>z_dt<span class="classifier">numpy.ndarray</span></dt><dd><p>Time derivatives of the latent variables.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>x_rec<span class="classifier">numpy.ndarray</span></dt><dd><p>Reconstructed states from the latent variables.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>x_rec_dt<span class="classifier">numpy.ndarray</span></dt><dd><p>Time derivatives of the reconstructed states.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>Z<span class="classifier">numpy.ndarray</span></dt><dd><p>Reshaped latent variables into state array format.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>Z_dt<span class="classifier">numpy.ndarray</span></dt><dd><p>Reshaped time derivatives of the latent variables into state array format.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>X_rec<span class="classifier">numpy.ndarray</span></dt><dd><p>Reshaped reconstructed states into state array format.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>X_rec_dt<span class="classifier">numpy.ndarray</span></dt><dd><p>Reshaped time derivatives of the reconstructed states into state array format.</p>
+</dd>
+</dl>
+</li>
+</ul>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="aphin.utils.data.data.PHIdentifiedData.obtain_results_from_ph_network">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">obtain_results_from_ph_network</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">system_layer</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/utils/data/data.html#PHIdentifiedData.obtain_results_from_ph_network"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.utils.data.data.PHIdentifiedData.obtain_results_from_ph_network" title="Link to this definition"></a></dt>
+<dd><p>Obtain relevant results from the identified pH network, including state variables and time derivatives.</p>
+<p>This method extracts and reshapes the state variables and their time derivatives from the provided
+dataset. It also prepares placeholders for the reconstructed states and their time derivatives
+to ensure conformity with the expected output format.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<a class="reference internal" href="#aphin.utils.data.data.Data" title="aphin.utils.data.data.Data"><em>Data</em></a>) – Dataset object containing the input data and time derivatives.</p></li>
+<li><p><strong>system_layer</strong> (<a class="reference internal" href="aphin.layers.html#aphin.layers.system_layer.SystemLayer" title="aphin.layers.system_layer.SystemLayer"><em>SystemLayer</em></a>) – System layer object defining the latent space dimensionality.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><p>A tuple containing:
+- z : numpy.ndarray</p>
+<blockquote>
+<div><p>Latent variables (high-dimensional states).</p>
+</div></blockquote>
+<ul class="simple">
+<li><dl class="simple">
+<dt>z_dt<span class="classifier">numpy.ndarray</span></dt><dd><p>Time derivatives of the latent variables.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>x_rec<span class="classifier">numpy.ndarray</span></dt><dd><p>Reconstructed states (if applicable, otherwise None).</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>x_rec_dt<span class="classifier">numpy.ndarray</span></dt><dd><p>Time derivatives of the reconstructed states (if applicable, otherwise None).</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>Z<span class="classifier">numpy.ndarray</span></dt><dd><p>Reshaped latent variables into state array format.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>Z_dt<span class="classifier">numpy.ndarray</span></dt><dd><p>Reshaped time derivatives of the latent variables into state array format.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>X_rec<span class="classifier">numpy.ndarray</span></dt><dd><p>Reshaped reconstructed states into state array format (if applicable, otherwise None).</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>X_rec_dt<span class="classifier">numpy.ndarray</span></dt><dd><p>Reshaped time derivatives of the reconstructed states into state array format (if applicable, otherwise None).</p>
+</dd>
+</dl>
+</li>
+</ul>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="aphin.utils.data.data.PHIdentifiedData.save_latent_traj_as_csv">
+<span class="sig-name descname"><span class="pre">save_latent_traj_as_csv</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'latent_trajectories'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/utils/data/data.html#PHIdentifiedData.save_latent_traj_as_csv"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.utils.data.data.PHIdentifiedData.save_latent_traj_as_csv" title="Link to this definition"></a></dt>
+<dd><p>Save latent trajectories to a CSV file with the following format:
+t, z_0_isim, z_1_isim, …, z_{r-1}_isim, z_0_dt_isim, z_1_dt_isim, …, z_{r-1}_dt_isim</p>
+<p>This method saves both the predicted latent trajectories (<cite>Z_ph</cite>) and their time derivatives (<cite>Z_dt_ph</cite>)
+as well as the reference latent trajectories (<cite>Z</cite>) and their time derivatives (<cite>Z_dt</cite>) to CSV files.
+Each file includes the time vector <cite>t</cite>, followed by the latent variables and their time derivatives.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>path</strong> (<em>str</em>) – The directory path where the CSV files will be saved.</p></li>
+<li><p><strong>filename</strong> (<em>str</em><em>, </em><em>optional</em>) – The base filename for the CSV files. The default is “latent_trajectories”. Additional suffixes
+will be added to differentiate between predicted and reference trajectories.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-aphin.utils.data.dataset">
+<span id="aphin-utils-data-dataset-module"></span><h2>aphin.utils.data.dataset module<a class="headerlink" href="#module-aphin.utils.data.dataset" title="Link to this heading"></a></h2>
+<p>Encapsulate data loading and data generation</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="aphin.utils.data.dataset.Dataset">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">aphin.utils.data.dataset.</span></span><span class="sig-name descname"><span class="pre">Dataset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">X_dt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">U</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Mu</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">J</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">R</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Q</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">B</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/utils/data/dataset.html#Dataset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.utils.data.dataset.Dataset" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#aphin.utils.data.data.Data" title="aphin.utils.data.data.Data"><code class="xref py py-class docutils literal notranslate"><span class="pre">Data</span></code></a></p>
+<p>Container for multiple datasets (train and test) with states, inputs, and parameters.</p>
+<section id="id44">
+<h3>Parameters:<a class="headerlink" href="#id44" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>t<span class="classifier">ndarray</span></dt><dd><p>Array of time steps.</p>
+</dd>
+<dt>X<span class="classifier">ndarray</span></dt><dd><p>States array with shape (n_sim, n_t, n_n, n_dn).</p>
+</dd>
+<dt>X_dt<span class="classifier">ndarray</span></dt><dd><p>Time derivatives of the states, with the same shape as X.</p>
+</dd>
+<dt>U<span class="classifier">ndarray, optional</span></dt><dd><p>Input array with shape (n_sim, n_t, n_u). Default is None.</p>
+</dd>
+<dt>Mu<span class="classifier">ndarray, optional</span></dt><dd><p>Parameters array with shape (n_sim, n_mu). Default is None.</p>
+</dd>
+<dt>J<span class="classifier">ndarray, optional</span></dt><dd><p>pH interconnection matrix with shape (r, r, n_sim). Default is None.</p>
+</dd>
+<dt>R<span class="classifier">ndarray, optional</span></dt><dd><p>pH dissipation matrix with shape (r, r, n_sim). Default is None.</p>
+</dd>
+<dt>Q<span class="classifier">ndarray, optional</span></dt><dd><p>pH energy matrix with shape (r, r, n_sim). Default is None.</p>
+</dd>
+<dt>B<span class="classifier">ndarray, optional</span></dt><dd><p>pH input matrix with shape (r, n_u, n_sim). Default is None.</p>
+</dd>
+</dl>
+</section>
+<section id="attributes">
+<h3>Attributes:<a class="headerlink" href="#attributes" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>TRAIN<span class="classifier">Dataset or None</span></dt><dd><p>Training dataset. Initialized to None.</p>
+</dd>
+<dt>TEST<span class="classifier">Dataset or None</span></dt><dd><p>Testing dataset. Initialized to None.</p>
+</dd>
+</dl>
+</section>
+<section id="id45">
+<h3>Notes:<a class="headerlink" href="#id45" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p>Inherits from the <cite>Data</cite> class, which handles the initialization and validation of the time steps,
+states, inputs, and parameters.</p></li>
+<li><p>This class is designed to facilitate the handling of multiple datasets, including training and testing datasets.</p></li>
+</ul>
+<dl class="py property">
+<dt class="sig sig-object py" id="aphin.utils.data.dataset.Dataset.Data">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Data</span></span><a class="headerlink" href="#aphin.utils.data.dataset.Dataset.Data" title="Link to this definition"></a></dt>
+<dd><p>Retrieve the state and derivative data from the container for the training dataset.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A tuple containing:
+- X: States array with shape (n_sim, n_t, n_n, n_dn).
+- X_dt: Time derivatives of the states, with the same shape as X.
+- U: Input array with shape (n_sim, n_t, n_u), if available.
+- Mu: Parameters array with shape (n_sim, n_mu), if available.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>tuple</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="aphin.utils.data.dataset.Dataset.Data_test">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Data_test</span></span><a class="headerlink" href="#aphin.utils.data.dataset.Dataset.Data_test" title="Link to this definition"></a></dt>
+<dd><p>Retrieve the state and derivative data from the test dataset.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A tuple containing:
+- X: States array with shape (n_sim, n_t, n_n, n_dn) from the test dataset.
+- X_dt: Time derivatives of the states, with the same shape as X, from the test dataset.
+- U: Input array with shape (n_sim, n_t, n_u) from the test dataset, if available.
+- Mu: Parameters array with shape (n_sim, n_mu) from the test dataset, if available.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>tuple</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="aphin.utils.data.dataset.Dataset.calculate_errors">
+<span class="sig-name descname"><span class="pre">calculate_errors</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ph_identified_data_instance</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">domain_split_vals</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_to_txt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">result_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/utils/data/dataset.html#Dataset.calculate_errors"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.utils.data.dataset.Dataset.calculate_errors" title="Link to this definition"></a></dt>
+<dd><p>Calculate and store RMS and latent errors between true and predicted states.</p>
+<p>This method computes the Root Mean Square (RMS) errors for the states and latent variables between
+the true and predicted values. It calculates the RMS errors for each domain, computes the mean RMS
+error across all simulations, and, if available, computes the latent variable errors.</p>
+<section id="id46">
+<h4>Parameters:<a class="headerlink" href="#id46" title="Link to this heading"></a></h4>
+<dl class="simple">
+<dt>ph_identified_data_instance<span class="classifier">Data</span></dt><dd><p>An instance of the Data class containing the predicted state variables and latent variables
+(if applicable). This instance is used to compute errors against the true states stored in
+the current instance.</p>
+</dd>
+<dt>domain_split_vals<span class="classifier">list of int, optional</span></dt><dd><p>List specifying the number of degrees of freedom (DOFs) for each domain. If provided, it splits
+the states into domains for more granular error analysis.</p>
+</dd>
+</dl>
+</section>
+<section id="id47">
+<h4>Returns:<a class="headerlink" href="#id47" title="Link to this heading"></a></h4>
+<dl class="simple">
+<dt>None</dt><dd><p>The method updates internal attributes to store the computed state errors and latent errors
+(if latent variables are present).</p>
+</dd>
+</dl>
+</section>
+<section id="id48">
+<h4>Notes:<a class="headerlink" href="#id48" title="Link to this heading"></a></h4>
+<ul class="simple">
+<li><p><cite>self.state_error_list</cite> contains the RMS errors for each domain.</p></li>
+<li><p><cite>self.state_error_mean</cite> is the mean RMS error averaged over all simulations.</p></li>
+<li><p><cite>self.latent_error</cite> and <cite>self.latent_error_mean</cite> are computed only if the <cite>ph_identified_data_instance</cite></p></li>
+</ul>
+<p>contains latent variables (<cite>Z</cite>).</p>
+</section>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="aphin.utils.data.dataset.Dataset.data">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">data</span></span><a class="headerlink" href="#aphin.utils.data.dataset.Dataset.data" title="Link to this definition"></a></dt>
+<dd><p>Get training data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The training dataset object. This property returns the data associated
+with the training dataset, which is accessible through <cite>self.TRAIN.data</cite>.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#aphin.utils.data.data.Data" title="aphin.utils.data.data.Data">Data</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="aphin.utils.data.dataset.Dataset.decrease_num_simulations">
+<span class="sig-name descname"><span class="pre">decrease_num_simulations</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">num_sim</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/utils/data/dataset.html#Dataset.decrease_num_simulations"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.utils.data.dataset.Dataset.decrease_num_simulations" title="Link to this definition"></a></dt>
+<dd><p>Reduce the number of training simulations to a specified target number by randomly selecting a subset.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>num_sim</strong> (<em>int</em>) – The target number of simulations to retain.</p></li>
+<li><p><strong>seed</strong> (<em>int</em><em>, </em><em>optional</em>) – Random seed for reproducibility of the selection process. If not provided, a random seed is used.</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<ul class="simple">
+<li><p>This method only affects the training dataset (<cite>TRAIN</cite>), not the test dataset (<cite>TEST</cite>).</p></li>
+</ul>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="aphin.utils.data.dataset.Dataset.decrease_num_time_steps">
+<span class="sig-name descname"><span class="pre">decrease_num_time_steps</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">num_time_steps</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/utils/data/dataset.html#Dataset.decrease_num_time_steps"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.utils.data.dataset.Dataset.decrease_num_time_steps" title="Link to this definition"></a></dt>
+<dd><p>Truncate the number of time steps in both the training and testing datasets to the specified target.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>num_time_steps</strong> (<em>int</em>) – The target number of time steps to retain in the datasets.</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<ul class="simple">
+<li><p>This method applies the truncation to both the training dataset (<cite>TRAIN</cite>) and the testing dataset (<cite>TEST</cite>).</p></li>
+</ul>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="aphin.utils.data.dataset.Dataset.features_to_states">
+<span class="sig-name descname"><span class="pre">features_to_states</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/utils/data/dataset.html#Dataset.features_to_states"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.utils.data.dataset.Dataset.features_to_states" title="Link to this definition"></a></dt>
+<dd><p>Transforms the state array into a feature array for identification purposes.</p>
+<p>This method reshapes the state array <cite>X</cite> and its time derivatives <cite>X_dt</cite> into feature arrays
+that are required for system identification. It also reshapes the input array <cite>U</cite> and parameter
+array <cite>Mu</cite> if they are provided.</p>
+<p>The transformation results in:
+- <cite>x</cite>: a feature array of shape (n_s, n_f), where:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><cite>n_s</cite> is the number of samples (<cite>n_sim * n_t</cite>)</p></li>
+<li><p><cite>n_f</cite> is the number of features (<cite>n_n * n_dn</cite>)</p></li>
+</ul>
+</div></blockquote>
+<ul class="simple">
+<li><p><cite>u</cite>: reshaped input array of shape (n_s, n_u) if <cite>U</cite> is provided</p></li>
+<li><p><cite>mu</cite>: reshaped parameters array of shape (n_s, n_mu) if <cite>Mu</cite> is provided</p></li>
+</ul>
+<section id="id49">
+<h4>Returns:<a class="headerlink" href="#id49" title="Link to this heading"></a></h4>
+<dl class="simple">
+<dt>None</dt><dd><p>The method updates the internal state of the object with the transformed feature arrays.</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<ul class="simple">
+<li><p>The transformation applies to both the training and testing datasets.</p></li>
+</ul>
+</section>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="aphin.utils.data.dataset.Dataset.ph_matrices">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">ph_matrices</span></span><a class="headerlink" href="#aphin.utils.data.dataset.Dataset.ph_matrices" title="Link to this definition"></a></dt>
+<dd><p>Get port-Hamiltonian matrices from the training dataset.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A tuple containing the port-Hamiltonian matrices associated with
+the training dataset, accessible through <cite>self.TRAIN.ph_matrices</cite>.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>tuple</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="aphin.utils.data.dataset.Dataset.ph_matrices_test">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">ph_matrices_test</span></span><a class="headerlink" href="#aphin.utils.data.dataset.Dataset.ph_matrices_test" title="Link to this definition"></a></dt>
+<dd><p>Get port-Hamiltonian matrices from the testing dataset.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A tuple containing the port-Hamiltonian matrices associated with
+the testing dataset, accessible through <cite>self.TEST.ph_matrices</cite>.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>tuple</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="aphin.utils.data.dataset.Dataset.rescale_X">
+<span class="sig-name descname"><span class="pre">rescale_X</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/utils/data/dataset.html#Dataset.rescale_X"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.utils.data.dataset.Dataset.rescale_X" title="Link to this definition"></a></dt>
+<dd><p>Undo the scaling of states and time derivatives.
+The scaling is applied to both the training and testing datasets.</p>
+<p>This method reverses the scaling applied to the state array <cite>X</cite> with shape (n_sim, n_t, n_n, n_dn)
+and the time derivatives <cite>X_dt</cite>. It must be called after <cite>scale_X</cite> has been performed to restore the
+original data values. The method assumes that scaling has been previously applied and will raise an
+error if no scaling has been performed.</p>
+<section id="id50">
+<h4>Parameters:<a class="headerlink" href="#id50" title="Link to this heading"></a></h4>
+<p>None</p>
+</section>
+<section id="id51">
+<h4>Returns:<a class="headerlink" href="#id51" title="Link to this heading"></a></h4>
+<dl class="simple">
+<dt>None</dt><dd><p>The method updates the internal state to reflect the rescaled data and sets <cite>self.is_scaled</cite> to False.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="aphin.utils.data.dataset.Dataset.scale_Mu">
+<span class="sig-name descname"><span class="pre">scale_Mu</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mu_train_bounds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">desired_bounds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[-1,</span> <span class="pre">1]</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/utils/data/dataset.html#Dataset.scale_Mu"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.utils.data.dataset.Dataset.scale_Mu" title="Link to this definition"></a></dt>
+<dd><p>Scale parameter values to the specified range and return the scaled values along with scaling factors.
+The scaling is applied to both the training and testing datasets.</p>
+<p>This method scales the parameter values in <cite>Mu</cite> to fit within the <cite>desired_bounds</cite> range. Each parameter
+dimension is scaled individually. Scaling can be based on maximum values, a scalar, or provided training
+bounds.</p>
+<section id="id52">
+<h4>Parameters:<a class="headerlink" href="#id52" title="Link to this heading"></a></h4>
+<dl class="simple">
+<dt>desired_bounds<span class="classifier">list, scalar, or “max”, optional</span></dt><dd><p>Desired range for the scaled values. It can be:
+- A list of two values (e.g., [-1, 1]) specifying the lower and upper bounds.
+- A scalar, where all values are scaled by this single value.
+- The string “max”, where scaling is based on the maximum value in <cite>Mu</cite>.</p>
+</dd>
+<dt>mu_train_bounds<span class="classifier">np.ndarray, optional</span></dt><dd><p>Scaling factors obtained from the training parameter dataset. Expected shape is (2, n_mu), where
+n_mu is the number of parameter dimensions in <cite>Mu</cite>. If not provided, scaling factors are computed from
+the data and scaling values from the training dataset are used for the testing dataset.</p>
+</dd>
+</dl>
+</section>
+<section id="id53">
+<h4>Returns:<a class="headerlink" href="#id53" title="Link to this heading"></a></h4>
+<dl class="simple">
+<dt>None</dt><dd><p>The method updates the internal state to reflect the rescaled parameters.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="aphin.utils.data.dataset.Dataset.scale_U">
+<span class="sig-name descname"><span class="pre">scale_U</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">u_train_bounds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">desired_bounds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[-1,</span> <span class="pre">1]</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/utils/data/dataset.html#Dataset.scale_U"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.utils.data.dataset.Dataset.scale_U" title="Link to this definition"></a></dt>
+<dd><p>Scale input values to a specified range.
+The scaling is applied to both the training and testing datasets.</p>
+<p>This method scales the input values <cite>U</cite> to the range defined by <cite>desired_bounds</cite>, which is typically
+[-1, 1]. Each dimension of the input is scaled individually. The scaling factors are either provided
+through <cite>u_train_bounds</cite> or computed based on the provided data.</p>
+<section id="id54">
+<h4>Parameters:<a class="headerlink" href="#id54" title="Link to this heading"></a></h4>
+<dl class="simple">
+<dt>u_train_bounds<span class="classifier">np.ndarray, optional</span></dt><dd><p>Scaling factors obtained from the training parameter dataset. Expected shape is (2, n_u), where
+n_u is the number of input dimensions. If provided, these factors are used for scaling the input values.
+If not provided, bounds are computed from the data and these values from the training dataset are used
+for the testing dataset.</p>
+</dd>
+<dt>desired_bounds<span class="classifier">list or scalar, optional</span></dt><dd><p>Desired range for the scaled inputs. Can be:
+- A list of two values (e.g., [-1, 1]) to specify the lower and upper bounds.
+- A scalar to scale all input values by this value.
+- The string “max” to scale all input values by the maximum value observed.</p>
+</dd>
+</dl>
+</section>
+<section id="id55">
+<h4>Returns:<a class="headerlink" href="#id55" title="Link to this heading"></a></h4>
+<dl class="simple">
+<dt>None</dt><dd><p>The method updates the internal state by scaling the input values <cite>U</cite>, setting <cite>self.u_train_bounds</cite>,
+and updating <cite>self.desired_bounds_u</cite>. The scaled inputs are reshaped into feature format.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="aphin.utils.data.dataset.Dataset.scale_X">
+<span class="sig-name descname"><span class="pre">scale_X</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">scaling_values</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">domain_split_vals</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/utils/data/dataset.html#Dataset.scale_X"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.utils.data.dataset.Dataset.scale_X" title="Link to this definition"></a></dt>
+<dd><p>Scale the state array based on specified scaling values.
+The scaling is applied to both the training and testing datasets.</p>
+<p>This method scales the state array <cite>X</cite> with shape (n_sim, n_t, n_n, n_dn) and afterwards the feature array <cite>x</cite>
+with shape (n_t * n_s, n) using provided scaling values. It can handle multiple domains if specified
+by <cite>domain_split_vals</cite>. If scaling values are not provided, it defaults to scaling by the maximum value
+in each domain.</p>
+<section id="id56">
+<h4>Parameters:<a class="headerlink" href="#id56" title="Link to this heading"></a></h4>
+<dl class="simple">
+<dt>scaling_values<span class="classifier">list of float, optional</span></dt><dd><p>Scalar values used to scale each domain, as defined by <cite>domain_split_vals</cite>. If <cite>None</cite>, scaling
+values of the training dataset are used for the testing dataset</p>
+</dd>
+<dt>domain_split_vals<span class="classifier">list of int, optional</span></dt><dd><p>List of integers specifying the number of degrees of freedom (DOFs) for each domain. The sum of
+these values must equal <cite>n_dn</cite>. If <cite>None</cite>, the data is treated as a single domain.</p>
+</dd>
+</dl>
+</section>
+<section id="id57">
+<h4>Returns:<a class="headerlink" href="#id57" title="Link to this heading"></a></h4>
+<dl class="simple">
+<dt>None</dt><dd><p>The method updates the internal state to reflect the scaled data and sets <cite>self.is_scaled</cite> to True.</p>
+</dd>
+</dl>
+</section>
+<section id="id58">
+<h4>Notes:<a class="headerlink" href="#id58" title="Link to this heading"></a></h4>
+<ul class="simple">
+<li><p>The method performs scaling for both the state data (<cite>X</cite>) and its time derivatives (<cite>X_dt</cite>).</p></li>
+<li><p>If <cite>scaling_values</cite> are not provided, the maximum value for each domain is used for scaling.</p></li>
+<li><p>The method assumes that the domains defined by <cite>domain_split_vals</cite> add up to the total number of DOFs (<cite>n_dn</cite>).</p></li>
+<li><p>After scaling, the feature representation of states is updated using <cite>self.states_to_features()</cite>.</p></li>
+</ul>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="aphin.utils.data.dataset.Dataset.scale_all">
+<span class="sig-name descname"><span class="pre">scale_all</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">scaling_values</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">domain_split_vals</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">u_train_bounds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">u_desired_bounds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[-1,</span> <span class="pre">1]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mu_train_bounds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mu_desired_bounds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[-1,</span> <span class="pre">1]</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/utils/data/dataset.html#Dataset.scale_all"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.utils.data.dataset.Dataset.scale_all" title="Link to this definition"></a></dt>
+<dd><p>Scales states <cite>X</cite>, inputs <cite>U</cite>, and parameters <cite>Mu</cite>.</p>
+<p>This method applies scaling to the states, inputs, and parameters of both the training and testing datasets.
+It first scales the state data using the specified scaling values and domain splits, then scales the inputs
+and parameters according to the given bounds.</p>
+<section id="id59">
+<h4>Parameters:<a class="headerlink" href="#id59" title="Link to this heading"></a></h4>
+<dl class="simple">
+<dt>scaling_values<span class="classifier">list of float, optional</span></dt><dd><p>Scalar values used to scale each domain of the state data. If <cite>None</cite>, scaling is based on the
+maximum value of each domain. See <cite>scale_X</cite> for more details.</p>
+</dd>
+<dt>domain_split_vals<span class="classifier">list of int, optional</span></dt><dd><p>List specifying the number of degrees of freedom (DOFs) in each domain. The sum of these values
+must equal the total number of DOFs per node (<cite>self.n_dn</cite>). If <cite>None</cite>, the data is treated as a
+single domain. See <cite>scale_X</cite> for more details.</p>
+</dd>
+<dt>u_train_bounds<span class="classifier">np.ndarray, optional</span></dt><dd><p>Scaling factors obtained from the training parameter dataset. Expected shape is (2, n_u).
+The lower and upper bounds of the training input data <cite>U</cite>. If <cite>None</cite>, the bounds are automatically
+determined from the training data.</p>
+</dd>
+<dt>u_desired_bounds<span class="classifier">list or scalar, optional</span></dt><dd><p>Desired range for the scaled inputs. Can be:
+- A list of two values (e.g., [-1, 1]) to specify the lower and upper bounds.
+- A scalar to scale all input values by this value.
+- The string “max” to scale all input values by the maximum value observed. Default is <cite>[-1, 1]</cite>.</p>
+</dd>
+<dt>mu_train_bounds<span class="classifier">np.ndarray, optional</span></dt><dd><p>Scaling factors obtained from the training parameter dataset. Expected shape is (2, n_mu).
+The lower and upper bounds of the training parameter data <cite>Mu</cite>. If <cite>None</cite>, the bounds are automatically
+determined from the training data.</p>
+</dd>
+<dt>mu_desired_bounds<span class="classifier">list, scalar, or “max”, optional</span></dt><dd><p>Desired range for the scaled values. It can be:
+- A list of two values (e.g., [-1, 1]) specifying the lower and upper bounds.
+- A scalar, where all values are scaled by this single value.
+- The string “max”, where scaling is based on the maximum value in <cite>Mu</cite>. Default is <cite>[-1, 1]</cite>.</p>
+</dd>
+</dl>
+</section>
+<section id="id60">
+<h4>Returns:<a class="headerlink" href="#id60" title="Link to this heading"></a></h4>
+<dl class="simple">
+<dt>None</dt><dd><p>The method updates the internal state, input, and parameter data to reflect the scaled values.</p>
+</dd>
+</dl>
+</section>
+<section id="id61">
+<h4>Notes:<a class="headerlink" href="#id61" title="Link to this heading"></a></h4>
+<ul class="simple">
+<li><p>This method scales the state data <cite>X</cite>, input data <cite>U</cite>, and parameter data <cite>Mu</cite> of both the training</p></li>
+</ul>
+<p>and testing datasets.
+- After scaling, the feature representation of the states is updated using <cite>self.scale_X</cite>.
+- The scaling for inputs and parameters is performed based on the specified or automatically determined
+bounds.</p>
+</section>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="aphin.utils.data.dataset.Dataset.shape">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">shape</span></span><a class="headerlink" href="#aphin.utils.data.dataset.Dataset.shape" title="Link to this definition"></a></dt>
+<dd><p>Return the shape of the training dataset.</p>
+<section id="id62">
+<h4>Returns:<a class="headerlink" href="#id62" title="Link to this heading"></a></h4>
+<dl class="simple">
+<dt>tuple</dt><dd><p>A tuple containing:
+- n_sim: number of simulations
+- n_t: number of time steps
+- n_n: number of nodes
+- n_dn: number of degrees of freedom per node
+- n_u: number of inputs
+- n_mu: number of parameters</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="aphin.utils.data.dataset.Dataset.shape_test">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">shape_test</span></span><a class="headerlink" href="#aphin.utils.data.dataset.Dataset.shape_test" title="Link to this definition"></a></dt>
+<dd><p>Return the shape of the testing dataset.</p>
+<section id="id63">
+<h4>Returns:<a class="headerlink" href="#id63" title="Link to this heading"></a></h4>
+<dl class="simple">
+<dt>tuple</dt><dd><p>A tuple containing:
+- n_sim: number of simulations
+- n_t: number of time steps
+- n_n: number of nodes
+- n_dn: number of degrees of freedom per node
+- n_u: number of inputs
+- n_mu: number of parameters</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="aphin.utils.data.dataset.Dataset.split_state_into_domains">
+<span class="sig-name descname"><span class="pre">split_state_into_domains</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">domain_split_vals</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/utils/data/dataset.html#Dataset.split_state_into_domains"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.utils.data.dataset.Dataset.split_state_into_domains" title="Link to this definition"></a></dt>
+<dd><p>Splits the state array into different domains based on the specified dimensions.
+The splitting is applied to both the training and testing datasets.</p>
+<p>This method divides the state array <cite>X</cite> into multiple domains according to the given
+<cite>domain_split_vals</cite>. Each domain corresponds to a subset of degrees of freedom (dofs), and
+the sum of these values must equal the total number of dofs per node (<cite>self.n_dn</cite>).</p>
+<section id="id64">
+<h4>Parameters:<a class="headerlink" href="#id64" title="Link to this heading"></a></h4>
+<dl class="simple">
+<dt>domain_split_vals<span class="classifier">list of int, optional</span></dt><dd><p>List specifying the number of dofs in each domain. For example, <cite>[1, 2, 2]</cite> indicates three
+domains with 1, 2, and 2 dofs, respectively. The sum of these values must equal <cite>self.n_dn</cite>.
+If <cite>None</cite>, the entire state is considered as a single domain.</p>
+</dd>
+</dl>
+</section>
+<section id="id65">
+<h4>Returns:<a class="headerlink" href="#id65" title="Link to this heading"></a></h4>
+<dl class="simple">
+<dt>X_dom_list: list of ndarray</dt><dd><p>A list where each element is a state array of the training dataset corresponding to a specific domain. The length
+of the list equals the number of domains specified by <cite>domain_split_vals</cite>.</p>
+</dd>
+<dt>X_dom_test_list: list of ndarray</dt><dd><p>A list where each element is a state of the testing dataset array corresponding to a specific domain. The length
+of the list equals the number of domains specified by <cite>domain_split_vals</cite>.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="aphin.utils.data.dataset.Dataset.states_to_features">
+<span class="sig-name descname"><span class="pre">states_to_features</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/utils/data/dataset.html#Dataset.states_to_features"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.utils.data.dataset.Dataset.states_to_features" title="Link to this definition"></a></dt>
+<dd><p>Transforms the state array into a feature array for identification purposes.</p>
+<p>This method reshapes the state array <cite>X</cite> and its time derivatives <cite>X_dt</cite> into feature arrays
+that are required for system identification. It also reshapes the input array <cite>U</cite> and parameter
+array <cite>Mu</cite> if they are provided.</p>
+<p>The transformation results in:
+- <cite>x</cite>: a feature array of shape (n_s, n_f), where:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><cite>n_s</cite> is the number of samples (<cite>n_sim * n_t</cite>)</p></li>
+<li><p><cite>n_f</cite> is the number of features (<cite>n_n * n_dn</cite>)</p></li>
+</ul>
+</div></blockquote>
+<ul class="simple">
+<li><p><cite>u</cite>: reshaped input array of shape (n_s, n_u) if <cite>U</cite> is provided</p></li>
+<li><p><cite>mu</cite>: reshaped parameters array of shape (n_s, n_mu) if <cite>Mu</cite> is provided</p></li>
+</ul>
+<section id="id66">
+<h4>Returns:<a class="headerlink" href="#id66" title="Link to this heading"></a></h4>
+<dl class="simple">
+<dt>None</dt><dd><p>The method updates the internal state of the object with the transformed feature arrays.</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<ul class="simple">
+<li><p>The transformation applies to both the training and testing datasets.</p></li>
+</ul>
+</section>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="aphin.utils.data.dataset.Dataset.test_data">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">test_data</span></span><a class="headerlink" href="#aphin.utils.data.dataset.Dataset.test_data" title="Link to this definition"></a></dt>
+<dd><p>Get test data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The testing dataset object. This property returns the data associated
+with the testing dataset, which is accessible through <cite>self.TEST.data</cite>.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#aphin.utils.data.data.Data" title="aphin.utils.data.data.Data">Data</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="aphin.utils.data.dataset.Dataset.train_test_split">
+<span class="sig-name descname"><span class="pre">train_test_split</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">test_size</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/utils/data/dataset.html#Dataset.train_test_split"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.utils.data.dataset.Dataset.train_test_split" title="Link to this definition"></a></dt>
+<dd><p>Split the data into training and testing sets.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>test_size</strong> (<em>float</em><em> or </em><em>int</em>) – Proportion of the dataset to include in the test split if a float, or the absolute number of test samples if an integer.</p></li>
+<li><p><strong>seed</strong> (<em>int</em>) – Random seed for reproducibility of the split.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>This method does not return any values. Instead, it assigns the split datasets to the <cite>TRAIN</cite> and <cite>TEST</cite> attributes of the instance.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="aphin.utils.data.dataset.Dataset.train_test_split_sim_idx">
+<span class="sig-name descname"><span class="pre">train_test_split_sim_idx</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sim_idx_train</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sim_idx_test</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/utils/data/dataset.html#Dataset.train_test_split_sim_idx"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.utils.data.dataset.Dataset.train_test_split_sim_idx" title="Link to this definition"></a></dt>
+<dd><p>Manually split the data into training and testing sets based on simulation indices.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sim_idx_train</strong> (<em>list</em><em> or </em><em>array-like</em>) – List or array of indices for selecting the training simulations.</p></li>
+<li><p><strong>sim_idx_test</strong> (<em>list</em><em> or </em><em>array-like</em>) – List or array of indices for selecting the testing simulations.</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<ul class="simple">
+<li><p>The method ensures that there are no overlapping indices between the training and testing sets.</p></li>
+<li><p>The method updates the <cite>TRAIN</cite> and <cite>TEST</cite> attributes with the corresponding subsets of data, including states, time derivatives, inputs, parameters, and pH matrices.</p></li>
+</ul>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="aphin.utils.data.dataset.Dataset.truncate_time">
+<span class="sig-name descname"><span class="pre">truncate_time</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">trunc_time_ratio</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/utils/data/dataset.html#Dataset.truncate_time"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.utils.data.dataset.Dataset.truncate_time" title="Link to this definition"></a></dt>
+<dd><p>Truncates the time values of states for performing time generalization experiments.
+Only training data is truncated!</p>
+<p>This method shortens the time series of states and associated data based on the given ratio.
+The truncation is applied to time steps, states, time derivatives, inputs, and parameters,
+if they are provided.</p>
+<section id="id67">
+<h4>Parameters:<a class="headerlink" href="#id67" title="Link to this heading"></a></h4>
+<blockquote>
+<div><dl class="simple">
+<dt>trunc_time_ratio<span class="classifier">float</span></dt><dd><p>Ratio of the time series to retain. A value of 1.0 means no truncation, while a value
+between 0 and 1 truncates the time series to the specified proportion of the total time steps.</p>
+</dd>
+</dl>
+</div></blockquote>
+</section>
+<section id="id68">
+<h4>Returns:<a class="headerlink" href="#id68" title="Link to this heading"></a></h4>
+<dl class="simple">
+<dt>None</dt><dd><p>The method modifies the internal state of the object to reflect the truncated time series.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+</section>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="aphin.utils.data.dataset.DiscBrakeDataset">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">aphin.utils.data.dataset.</span></span><span class="sig-name descname"><span class="pre">DiscBrakeDataset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">X_dt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">U</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Mu</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_velocities</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/utils/data/dataset.html#DiscBrakeDataset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.utils.data.dataset.DiscBrakeDataset" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#aphin.utils.data.dataset.Dataset" title="aphin.utils.data.dataset.Dataset"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dataset</span></code></a></p>
+<p>A dataset class specifically for handling data related to the linear thermoelastic disc brake model.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="aphin.utils.data.dataset.DiscBrakeDataset.from_data">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_velocities</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/utils/data/dataset.html#DiscBrakeDataset.from_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.utils.data.dataset.DiscBrakeDataset.from_data" title="Link to this definition"></a></dt>
+<dd><p>Reads data from a .npz file and returns it as a dictionary.</p>
+<section id="id69">
+<h3>Parameters:<a class="headerlink" href="#id69" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>data_path<span class="classifier">str</span></dt><dd><p>Path to the .npz file or the directory containing the .npz file. If a directory
+is provided, the method searches for the first .npz file in the directory.</p>
+</dd>
+</dl>
+</section>
+<section id="id70">
+<h3>Returns:<a class="headerlink" href="#id70" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>dict</dt><dd><p>Dictionary containing the following keys:
+- ‘t’: ndarray, array of time steps.
+- ‘X’: ndarray, states array.
+- ‘X_dt’: ndarray, time derivatives of the states (optional, may be None).
+- ‘U’: ndarray, input array (optional, may be None).
+- ‘Mu’: ndarray, parameters array (optional, may be None).
+- ‘J’: ndarray, pH interconnection matrix (optional, may be None).
+- ‘R’: ndarray, pH dissipation matrix (optional, may be None).
+- ‘Q’: ndarray, pH energy matrix (optional, may be None).
+- ‘B’: ndarray, pH input matrix (optional, may be None).</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="aphin.utils.data.dataset.DiscBrakeDataset.from_txt">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_txt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">txt_paths</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">idx_mu</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_t</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t_start</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_cache</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cache_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_velocities</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/utils/data/dataset.html#DiscBrakeDataset.from_txt"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.utils.data.dataset.DiscBrakeDataset.from_txt" title="Link to this definition"></a></dt>
+<dd><p>Load a disc brake dataset from .txt files generated by Abaqus and postprocessed with Abaqus-Python.</p>
+<p>This method reads temperature and displacement values for all nodes from a specified directory containing
+.txt files obtained from the Abaqus field outputs. The method handles the parsing and processing of these files,
+including optional downsampling of time steps and extraction of parameters that influence the system. The order
+of the trajectories and parameters <cite>Mu</cite> may not match the sample numbers from the data files obtained after the
+postprocessing with Abaqus-Python.</p>
+<section id="id71">
+<h3>Parameters:<a class="headerlink" href="#id71" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>txt_paths<span class="classifier">str</span></dt><dd><p>Path to the folder containing the .txt files.</p>
+</dd>
+<dt>idx_mu<span class="classifier">array-like, optional</span></dt><dd><p>Index numbers of the columns corresponding to parameters (not inputs) that influence the system.
+If <cite>None</cite>, parameter extraction is skipped. Default is <cite>None</cite>.</p>
+</dd>
+<dt>n_t<span class="classifier">int, optional</span></dt><dd><p>Number of time steps after downsampling. If <cite>None</cite>, all time steps are used. Default is <cite>None</cite>.</p>
+</dd>
+<dt>t_start<span class="classifier">float, optional</span></dt><dd><p>The starting time for the data. Data before this time is discarded. Default is <cite>0.0</cite>.</p>
+</dd>
+<dt>save_cache<span class="classifier">bool, optional</span></dt><dd><p>If <cite>True</cite>, the processed dataset will be saved to a cache file at <cite>cache_path</cite>. Default is <cite>False</cite>.</p>
+</dd>
+<dt>cache_path<span class="classifier">str, optional</span></dt><dd><p>Path where the cached dataset will be saved if <cite>save_cache</cite> is <cite>True</cite>. Default is <cite>None</cite>.</p>
+</dd>
+<dt>use_velocities<span class="classifier">bool, optional</span></dt><dd><p>If <cite>True</cite>, the dataset will include velocity information by augmenting the state arrays. Default is <cite>False</cite>.</p>
+</dd>
+<dt><a href="#id72"><span class="problematic" id="id73">**</span></a>kwargs<span class="classifier">dict, optional</span></dt><dd><p>Additional arguments passed to the <cite>DiscBrakeDataset</cite> constructor.</p>
+</dd>
+</dl>
+</section>
+<section id="id74">
+<h3>Returns:<a class="headerlink" href="#id74" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>DiscBrakeDataset</dt><dd><p>An instance of the <cite>DiscBrakeDataset</cite> class containing the loaded and processed data.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="aphin.utils.data.dataset.PHIdentifiedDataset">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">aphin.utils.data.dataset.</span></span><span class="sig-name descname"><span class="pre">PHIdentifiedDataset</span></span><a class="reference internal" href="_modules/aphin/utils/data/dataset.html#PHIdentifiedDataset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.utils.data.dataset.PHIdentifiedDataset" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#aphin.utils.data.dataset.Dataset" title="aphin.utils.data.dataset.Dataset"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dataset</span></code></a></p>
+<p>Class representing the identified port-Hamiltonian data which was obtained through the aphin framework.
+Used to store the PHIdentifiedDataset(Data) class of the training and testing dataset.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="aphin.utils.data.dataset.PHIdentifiedDataset.from_identification">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_identification</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">system_layer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ph_network</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">integrator_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'IMR'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">decomp_option</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'lu'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/utils/data/dataset.html#PHIdentifiedDataset.from_identification"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.utils.data.dataset.PHIdentifiedDataset.from_identification" title="Link to this definition"></a></dt>
+<dd><p>Create an instance of <cite>PHIdentifiedDataset</cite> from the identified pH system.
+Creates these instances under TRAIN and TEST.</p>
+<p>This method generates both the training and testing datasets by processing the results
+obtained from a port-Hamiltonian identification procedure. It uses the specified system
+layer, pH network, integrator type, and decomposition option to compute the relevant data.</p>
+<section id="id75">
+<h3>Parameters:<a class="headerlink" href="#id75" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>data<span class="classifier">Dataset</span></dt><dd><p>The dataset containing the raw data for training and testing.</p>
+</dd>
+<dt>system_layer<span class="classifier">PHLayer or PHQLayer</span></dt><dd><p>The port-Hamiltonian system layer that defines the system matrices.</p>
+</dd>
+<dt>ph_network<span class="classifier">PHIN or APHIN</span></dt><dd><p>The network responsible for the identification of the pH system.</p>
+</dd>
+<dt>integrator_type<span class="classifier">str, optional</span></dt><dd><p>The type of integrator to use for time integration (default is “IMR”).</p>
+</dd>
+<dt>decomp_option<span class="classifier">str, optional</span></dt><dd><p>The decomposition option for the pH matrices (default is “lu”).</p>
+</dd>
+<dt><a href="#id76"><span class="problematic" id="id77">**</span></a>kwargs<span class="classifier">dict, optional</span></dt><dd><p>Additional parameters to pass to the identification process.</p>
+</dd>
+</dl>
+</section>
+<section id="id78">
+<h3>Returns:<a class="headerlink" href="#id78" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>PHIdentifiedDataset</dt><dd><p>An instance of <cite>PHIdentifiedDataset</cite> containing the training and testing datasets
+with the identified pH system results.</p>
+</dd>
+</dl>
+</section>
+<section id="id79">
+<h3>Notes:<a class="headerlink" href="#id79" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p>This method logs the progress of obtaining results for both the training and testing datasets.</p></li>
+<li><p>The <cite>PHIdentifiedData.from_identification</cite> method is called separately for training and testing datasets.</p></li>
+</ul>
+</section>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-aphin.utils.data">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-aphin.utils.data" title="Link to this heading"></a></h2>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="aphin.utils.html" class="btn btn-neutral float-left" title="aphin.utils package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="contact.html" class="btn btn-neutral float-right" title="Contact" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Jonas Kneifl, Johannes Rettberg, Julius Herb.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

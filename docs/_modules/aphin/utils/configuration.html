@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>aphin.utils.configuration &mdash; ApHIN 0.1.3 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../_static/documentation_options.js?v=360bc84d"></script>
+        <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            ApHIN
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../aphin.html">aphin package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../contact.html">Contact</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">ApHIN</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">aphin.utils.configuration</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for aphin.utils.configuration</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">yaml</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">datetime</span>
+<span class="kn">from</span> <span class="nn">aphin.utils.save_results</span> <span class="kn">import</span> <span class="n">save_config</span>
+
+
+<div class="viewcode-block" id="Configuration">
+<a class="viewcode-back" href="../../../aphin.utils.html#aphin.utils.configuration.Configuration">[docs]</a>
+<span class="k">class</span> <span class="nc">Configuration</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Handles the setup and management of configuration for an experiment.</span>
+
+<span class="sd">    This class manages the reading of configuration files, creation of necessary directories,</span>
+<span class="sd">    and saving of the configuration to ensure all necessary data is stored and organized. It</span>
+<span class="sd">    supports both identifying and loading results based on the provided configuration information.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">working_dir</span><span class="p">,</span> <span class="n">config_info</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">overwrite_results</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initializes the Configuration instance.</span>
+
+<span class="sd">        Sets up the working directory, reads the configuration file, creates necessary directories,</span>
+<span class="sd">        and saves the configuration file. The behavior of this method depends on the provided</span>
+<span class="sd">        `config_info` parameter, which determines whether to use default configurations,</span>
+<span class="sd">        specific configuration files, or result directories.</span>
+
+<span class="sd">        Parameters:</span>
+<span class="sd">        -----------</span>
+<span class="sd">        working_dir : str</span>
+<span class="sd">            Absolute path to the working directory where all needed folders are set up.</span>
+<span class="sd">        config_info : str or None</span>
+<span class="sd">            Specifies the source of the configuration file or directory:</span>
+<span class="sd">            - None: Uses the default `config.yml` in the working directory for identification.</span>
+<span class="sd">                    If `load_network` is True in the config, it checks for the existence of</span>
+<span class="sd">                    weights in the default path.</span>
+<span class="sd">            - config_filename.yml: An absolute path to a custom configuration file ending with `.yml` for identification.</span>
+<span class="sd">                                It uses the specified config file, and if `load_network` is True,</span>
+<span class="sd">                                checks for the weights in the file path.</span>
+<span class="sd">            - /folder/name/: An absolute path to a directory containing `config.yml` and `.weights.h5`.</span>
+<span class="sd">                            This is used for loading results.</span>
+<span class="sd">            - result_folder_name: A folder name under the working directory that contains</span>
+<span class="sd">                                `config.yml` and `.weights.h5`. This is also used for loading results.</span>
+<span class="sd">        overwrite_results : bool, optional</span>
+<span class="sd">            Flag indicating whether to overwrite existing results if they are found in the result directory.</span>
+<span class="sd">            Defaults to `False`.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">        --------</span>
+<span class="sd">        None</span>
+<span class="sd">            Initializes the instance and sets up necessary configurations and directories.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">working_dir</span> <span class="o">=</span> <span class="n">working_dir</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">datetime_str</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%Y%m</span><span class="si">%d</span><span class="s2">-%H%M%S&quot;</span><span class="p">)</span>
+        <span class="c1"># read config and get weight directory</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">read_config</span><span class="p">(</span><span class="n">config_info</span><span class="p">)</span>
+        <span class="c1"># check for mandatory config entries</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">check_config_dict</span><span class="p">()</span>
+        <span class="c1"># create directories</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">create_directories</span><span class="p">(</span><span class="n">overwrite_results</span><span class="o">=</span><span class="n">overwrite_results</span><span class="p">)</span>
+        <span class="c1"># save configuration (if not load_network)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">save_config</span><span class="p">()</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">directories</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns the paths to the directories used in the experiment setup.</span>
+
+<span class="sd">        This property provides access to the directory paths for data, logs, weights, and results.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">        --------</span>
+<span class="sd">        tuple of str</span>
+<span class="sd">            A tuple containing the paths to the following directories:</span>
+<span class="sd">            - `data_dir`: Directory for data storage.</span>
+<span class="sd">            - `log_dir`: Directory for log files.</span>
+<span class="sd">            - `weight_dir`: Directory for storing model weights.</span>
+<span class="sd">            - `result_dir`: Directory for storing results.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_dir</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">log_dir</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">weight_dir</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">result_dir</span>
+
+<div class="viewcode-block" id="Configuration.read_config">
+<a class="viewcode-back" href="../../../aphin.utils.html#aphin.utils.configuration.Configuration.read_config">[docs]</a>
+    <span class="k">def</span> <span class="nf">read_config</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_info</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Reads and loads configuration settings from a specified source, determining whether to proceed</span>
+<span class="sd">        with model identification or to load existing results. The method sets up paths to configuration</span>
+<span class="sd">        files, weight directories, and checks the existence of necessary files.</span>
+
+<span class="sd">        Parameters:</span>
+<span class="sd">        -----------</span>
+<span class="sd">        config_info : str or None</span>
+<span class="sd">            Specifies the source of the configuration file or directory:</span>
+<span class="sd">            - None: Uses the default `config.yml` in the working directory for identification.</span>
+<span class="sd">                    If `load_network` is True in the config, it checks for the existence of</span>
+<span class="sd">                    weights in the default path.</span>
+<span class="sd">            - config_filename.yml: An absolute path to a custom configuration file ending with `.yml` for identification.</span>
+<span class="sd">                                It uses the specified config file, and if `load_network` is True,</span>
+<span class="sd">                                checks for the weights in the file path.</span>
+<span class="sd">            - /folder/name/: An absolute path to a directory containing `config.yml` and `.weights.h5`.</span>
+<span class="sd">                            This is used for loading results.</span>
+<span class="sd">            - result_folder_name: A folder name under the working directory that contains</span>
+<span class="sd">                                `config.yml` and `.weights.h5`. This is also used for loading results.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">        --------</span>
+<span class="sd">        None</span>
+<span class="sd">            This method sets up internal paths and configuration dictionary (self.cfg_dict) based on the provided input.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">assert</span> <span class="n">config_info</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">config_info</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">config_info</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># %% default config file for identification</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">path_to_config</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">working_dir</span><span class="p">,</span> <span class="s2">&quot;config.yml&quot;</span><span class="p">)</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Using default configuration from </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">path_to_config</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cfg_dict</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">safe_load</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path_to_config</span><span class="p">))</span>
+
+            <span class="c1"># default weights folder</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">weight_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">working_dir</span><span class="p">,</span> <span class="s2">&quot;weights&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cfg_dict</span><span class="p">[</span><span class="s2">&quot;experiment&quot;</span><span class="p">]</span>
+            <span class="p">)</span>
+
+            <span class="c1"># check if weights exist if network is loaded</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">cfg_dict</span><span class="p">[</span><span class="s2">&quot;load_network&quot;</span><span class="p">]:</span>
+                <span class="k">assert</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">weight_dir</span><span class="p">,</span> <span class="s2">&quot;.weights.h5&quot;</span><span class="p">))</span>
+
+        <span class="k">elif</span> <span class="n">config_info</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.yml&quot;</span><span class="p">):</span>
+            <span class="c1"># %% manually given config.yml file for identification</span>
+            <span class="k">assert</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">config_info</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">path_to_config</span> <span class="o">=</span> <span class="n">config_info</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Using specified configuration from </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">path_to_config</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cfg_dict</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">safe_load</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path_to_config</span><span class="p">))</span>
+
+            <span class="c1"># default weights folder</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">weight_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">working_dir</span><span class="p">,</span> <span class="s2">&quot;weights&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cfg_dict</span><span class="p">[</span><span class="s2">&quot;experiment&quot;</span><span class="p">]</span>
+            <span class="p">)</span>
+
+            <span class="c1"># check if weights exist if network is loaded</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">cfg_dict</span><span class="p">[</span><span class="s2">&quot;load_network&quot;</span><span class="p">]:</span>
+                <span class="k">assert</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">weight_dir</span><span class="p">,</span> <span class="s2">&quot;.weights.h5&quot;</span><span class="p">))</span>
+
+        <span class="k">elif</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">config_info</span><span class="p">):</span>
+            <span class="c1"># %% path to result folder in which results are stored</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">path_to_config</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">config_info</span><span class="p">,</span> <span class="s2">&quot;config.yml&quot;</span><span class="p">)</span>
+            <span class="n">path_to_weights</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">config_info</span><span class="p">,</span> <span class="s2">&quot;.weights.h5&quot;</span><span class="p">)</span>
+            <span class="k">assert</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path_to_config</span><span class="p">)</span>
+            <span class="k">assert</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">path_to_weights</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">weight_dir</span> <span class="o">=</span> <span class="n">config_info</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cfg_dict</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">safe_load</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path_to_config</span><span class="p">))</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># %% result folder name somewhere under working_dir</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">path_to_config</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="k">for</span> <span class="n">root</span><span class="p">,</span> <span class="n">dirs</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">walk</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">working_dir</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">config_info</span> <span class="ow">in</span> <span class="n">dirs</span><span class="p">:</span>
+                    <span class="n">path_to_config_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="n">config_info</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">path_to_config</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path_to_config_dir</span><span class="p">,</span> <span class="s2">&quot;config.yml&quot;</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">cfg_dict</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">safe_load</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path_to_config</span><span class="p">))</span>
+                    <span class="n">path_to_weights</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path_to_config_dir</span><span class="p">,</span> <span class="s2">&quot;.weights.h5&quot;</span><span class="p">)</span>
+                    <span class="k">assert</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">path_to_weights</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">weight_dir</span> <span class="o">=</span> <span class="n">path_to_config_dir</span>
+                    <span class="c1"># set load_network to true, since it is loaded</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">cfg_dict</span><span class="p">[</span><span class="s2">&quot;load_network&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">load_results</span> <span class="o">=</span> <span class="kc">True</span>
+                    <span class="k">break</span>  <span class="c1"># stop after result folder has been found</span>
+
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">path_to_config</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;The result folder </span><span class="si">{</span><span class="n">config_info</span><span class="si">}</span><span class="s2"> was not found.&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Configuration.create_directories">
+<a class="viewcode-back" href="../../../aphin.utils.html#aphin.utils.configuration.Configuration.create_directories">[docs]</a>
+    <span class="k">def</span> <span class="nf">create_directories</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">overwrite_results</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Creates necessary directories for storing data, logs, weights, and results based on the current configuration.</span>
+<span class="sd">        If the directories already exist, they are preserved unless `overwrite_results` is explicitly set to True.</span>
+
+<span class="sd">        Parameters:</span>
+<span class="sd">        -----------</span>
+<span class="sd">        overwrite_results : bool, optional</span>
+<span class="sd">            If set to True, existing result directories and files (e.g., `.weights.h5`) are overwritten.</span>
+<span class="sd">            Default is False, meaning that the method will abort if existing results are found.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">        --------</span>
+<span class="sd">        None</span>
+<span class="sd">            This method does not return any value. It sets up the directory structure required for the experiment.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">experiment</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cfg_dict</span><span class="p">[</span><span class="s2">&quot;experiment&quot;</span><span class="p">]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">data_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">working_dir</span><span class="p">,</span> <span class="s2">&quot;data&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">log_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">working_dir</span><span class="p">,</span> <span class="s2">&quot;logs&quot;</span><span class="p">,</span> <span class="n">experiment</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">datetime_str</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">result_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">working_dir</span><span class="p">,</span> <span class="s2">&quot;results&quot;</span><span class="p">,</span> <span class="n">experiment</span><span class="p">)</span>
+
+        <span class="c1"># create paths if they do not exist</span>
+        <span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">data_dir</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">log_dir</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">weight_dir</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">result_dir</span><span class="p">]:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+                <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+
+        <span class="c1"># default: do not overwrite results</span>
+        <span class="k">if</span> <span class="p">(</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">result_dir</span><span class="p">,</span> <span class="s2">&quot;.weights.h5&quot;</span><span class="p">))</span>
+            <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">cfg_dict</span><span class="p">[</span><span class="s2">&quot;load_network&quot;</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">False</span>
+            <span class="ow">and</span> <span class="ow">not</span> <span class="p">(</span><span class="n">overwrite_results</span><span class="p">)</span>
+        <span class="p">):</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Results in </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">result_dir</span><span class="si">}</span><span class="s2"> already exist. Run is aborted.&quot;</span>
+            <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Configuration.check_config_dict">
+<a class="viewcode-back" href="../../../aphin.utils.html#aphin.utils.configuration.Configuration.check_config_dict">[docs]</a>
+    <span class="k">def</span> <span class="nf">check_config_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Validates the configuration dictionary by ensuring all mandatory keys are present.</span>
+
+<span class="sd">        This method checks that the configuration dictionary (`self.cfg_dict`) contains all required entries</span>
+<span class="sd">        necessary for the proper functioning of the experiment setup. If any mandatory key is missing,</span>
+<span class="sd">        an exception is raised, prompting the user to update the configuration file.</span>
+
+<span class="sd">        Parameters:</span>
+<span class="sd">        -----------</span>
+<span class="sd">        None</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">        -------</span>
+<span class="sd">        ValueError</span>
+<span class="sd">            If any mandatory key is missing from `self.cfg_dict`, a `ValueError` is raised,</span>
+<span class="sd">            specifying the missing key.</span>
+
+<span class="sd">        Notes:</span>
+<span class="sd">        ------</span>
+<span class="sd">        - The method checks for the presence of the following mandatory keys in `self.cfg_dict`:</span>
+<span class="sd">            - `experiment`: Specifies the name of the experiment.</span>
+<span class="sd">            - `load_network`: Indicates whether to load a pre-existing network.</span>
+<span class="sd">        - This validation ensures that critical configuration settings are not overlooked, helping prevent runtime errors due to missing configurations.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">mandatory_keys</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;experiment&quot;</span><span class="p">,</span> <span class="s2">&quot;load_network&quot;</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">mandatory_keys</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">cfg_dict</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2"> is mandatory in the config file. Please add.&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Configuration.save_config">
+<a class="viewcode-back" href="../../../aphin.utils.html#aphin.utils.configuration.Configuration.save_config">[docs]</a>
+    <span class="k">def</span> <span class="nf">save_config</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Saves the configuration file to the results directory.</span>
+
+<span class="sd">        This method uses the `save_config` function to copy the current configuration file</span>
+<span class="sd">        (`config.yml`) to the results directory (`result_dir`). It consolidates all experiment</span>
+<span class="sd">        data and configuration in one location. The method checks if the network is loaded</span>
+<span class="sd">        by referring to the `load_network` flag in the configuration dictionary.</span>
+
+<span class="sd">        Parameters:</span>
+<span class="sd">        -----------</span>
+<span class="sd">        None</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">        --------</span>
+<span class="sd">        None</span>
+<span class="sd">            This method does not return any value. It performs the file copy operation.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">save_config</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">path_to_config</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">result_dir</span><span class="p">,</span>
+            <span class="n">load_network</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">cfg_dict</span><span class="p">[</span><span class="s2">&quot;load_network&quot;</span><span class="p">],</span>
+        <span class="p">)</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Jonas Kneifl, Johannes Rettberg, Julius Herb.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

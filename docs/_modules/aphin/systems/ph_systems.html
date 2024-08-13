@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>aphin.systems.ph_systems &mdash; ApHIN 0.1.3 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../_static/documentation_options.js?v=360bc84d"></script>
+        <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            ApHIN
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../aphin.html">aphin package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../contact.html">Contact</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">ApHIN</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">aphin.systems.ph_systems</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for aphin.systems.ph_systems</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Define and simulate dynamical systems</span>
+<span class="sd">e.g. LTI systems (LTISystem), port-Hamiltonian systems (PHSystem), ...</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">warnings</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">from</span> <span class="nn">aphin.systems</span> <span class="kn">import</span> <span class="n">LTISystem</span><span class="p">,</span> <span class="n">DescrLTISystem</span>
+<span class="kn">from</span> <span class="nn">aphin.utils.transformations</span> <span class="kn">import</span> <span class="n">transform_pH_to_Q_identity</span>
+
+
+<div class="viewcode-block" id="CheckPHProperties">
+<a class="viewcode-back" href="../../../aphin.systems.html#aphin.systems.ph_systems.CheckPHProperties">[docs]</a>
+<span class="k">class</span> <span class="nc">CheckPHProperties</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A class for checking properties of matrices related to port-Hamiltonian (pH) systems.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="CheckPHProperties.check_pH_properties">
+<a class="viewcode-back" href="../../../aphin.systems.html#aphin.systems.ph_systems.CheckPHProperties.check_pH_properties">[docs]</a>
+    <span class="k">def</span> <span class="nf">check_pH_properties</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">J</span><span class="p">,</span> <span class="n">R</span><span class="p">,</span> <span class="n">Q</span><span class="p">,</span> <span class="n">E</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="mf">1e-05</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1e-08</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Check if the matrices J, R, and Q (with optional descriptor E) satisfy port-Hamiltonian system properties.</span>
+
+<span class="sd">        This method verifies the following properties:</span>
+<span class="sd">        - J is skew-symmetric.</span>
+<span class="sd">        - R is symmetric positive definite.</span>
+<span class="sd">        - transpose(E)@Q is symmetric positive definite</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        J : array-like, shape (n, n)</span>
+<span class="sd">            Skew-symmetric matrix related to the port-Hamiltonian system.</span>
+<span class="sd">        R : array-like, shape (n, n)</span>
+<span class="sd">            Symmetric positive definite matrix.</span>
+<span class="sd">        Q : array-like, shape (n, n), optional</span>
+<span class="sd">            Matrix to be checked for positive definiteness.</span>
+<span class="sd">        E : array-like, shape (n, n), optional</span>
+<span class="sd">            Descriptor matrix. If not provided, defaults to the identity matrix.</span>
+<span class="sd">        rtol : float, optional</span>
+<span class="sd">            Relative tolerance for numerical comparison (default is 1e-05).</span>
+<span class="sd">        atol : float, optional</span>
+<span class="sd">            Absolute tolerance for numerical comparison (default is 1e-08).</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        bool</span>
+<span class="sd">            True if all properties are satisfied, False otherwise.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">J_check</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">J</span><span class="p">,</span> <span class="o">-</span><span class="n">J</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="n">rtol</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="n">atol</span><span class="p">)</span>
+        <span class="n">R_check</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">check_spd</span><span class="p">(</span><span class="n">R</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">E</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">E</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="n">J</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="k">if</span> <span class="n">Q</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">Q_check</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">check_spd</span><span class="p">(</span><span class="n">E</span><span class="o">.</span><span class="n">T</span> <span class="o">@</span> <span class="n">Q</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">Q_check</span> <span class="o">=</span> <span class="kc">True</span>
+
+        <span class="k">return</span> <span class="n">J_check</span> <span class="ow">and</span> <span class="n">R_check</span> <span class="ow">and</span> <span class="n">Q_check</span></div>
+
+
+<div class="viewcode-block" id="CheckPHProperties.check_spd">
+<a class="viewcode-back" href="../../../aphin.systems.html#aphin.systems.ph_systems.CheckPHProperties.check_spd">[docs]</a>
+    <span class="k">def</span> <span class="nf">check_spd</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="mf">1e-06</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1e-08</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Check if a matrix is symmetric positive definite.</span>
+
+<span class="sd">        This method verifies if the matrix `A` is symmetric and positive definite. It does so by attempting</span>
+<span class="sd">        a Cholesky decomposition. If the decomposition fails due to the matrix not being positive definite,</span>
+<span class="sd">        a small regularization term is added to the matrix to try and make it positive definite.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        A : array-like, shape (n, n)</span>
+<span class="sd">            The matrix to be checked for symmetric positive definiteness.</span>
+<span class="sd">        rtol : float, optional</span>
+<span class="sd">            Relative tolerance for checking symmetry of the matrix (default is 1e-06).</span>
+<span class="sd">        atol : float, optional</span>
+<span class="sd">            Absolute tolerance for checking symmetry of the matrix (default is 1e-08).</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        bool</span>
+<span class="sd">            True if the matrix is symmetric positive definite, False otherwise.</span>
+
+<span class="sd">        References</span>
+<span class="sd">        ----------</span>
+<span class="sd">        Adapted from [MorandinNicodemusUnger22].</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">A</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="n">rtol</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="n">atol</span><span class="p">):</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">cholesky</span><span class="p">(</span><span class="n">A</span><span class="p">)</span>
+                <span class="k">return</span> <span class="kc">True</span>
+            <span class="k">except</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">LinAlgError</span><span class="p">:</span>
+                <span class="n">A</span> <span class="o">+=</span> <span class="mf">1e-8</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="n">A</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">cholesky</span><span class="p">(</span><span class="n">A</span><span class="p">)</span>
+                    <span class="k">return</span> <span class="kc">True</span>
+                <span class="k">except</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">LinAlgError</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="PHSystem">
+<a class="viewcode-back" href="../../../aphin.systems.html#aphin.systems.ph_systems.PHSystem">[docs]</a>
+<span class="k">class</span> <span class="nc">PHSystem</span><span class="p">(</span><span class="n">LTISystem</span><span class="p">,</span> <span class="n">CheckPHProperties</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    General linear, port-Hamiltonian (pH) system with constant system matrices.</span>
+
+<span class="sd">    This class represents a linear port-Hamiltonian system, defined by the differential equation:</span>
+
+<span class="sd">        x&#39;(t) = (J - R) * x(t) + B * u(t), x(0) = x_init</span>
+
+<span class="sd">    where:</span>
+<span class="sd">    - `J` is a skew-symmetric matrix (J = -J.T).</span>
+<span class="sd">    - `R` is a symmetric positive semi-definite matrix (R = R.T &gt;= 0).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">J_ph</span><span class="p">,</span> <span class="n">R_ph</span><span class="p">,</span> <span class="n">B</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">Q_ph</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initializes the port-Hamiltonian system with the given matrices.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        J_ph : array-like, shape (n, n)</span>
+<span class="sd">            The port-Hamiltonian J matrix, which should be skew-symmetric.</span>
+<span class="sd">        R_ph : array-like, shape (n, n)</span>
+<span class="sd">            The port-Hamiltonian R matrix, which should be symmetric positive semi-definite.</span>
+<span class="sd">        B : array-like, shape (n, n_u), optional</span>
+<span class="sd">            The input matrix.</span>
+<span class="sd">        Q_ph : array-like, shape (n, n), optional</span>
+<span class="sd">            The Q matrix associated with the port-Hamiltonian system. If not provided, the identity matrix is used.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">J_ph</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="n">J_ph</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">R_ph</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="n">R_ph</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">Q_ph</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">Q_ph</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">J_ph</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">Q_is_identity</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">Q_ph</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="n">Q_ph</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">Q_is_identity</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">J_ph</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">J_ph</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">R_ph</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">R_ph</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">J_ph</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">R_ph</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">J_ph</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">3</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">R_ph</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">3</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">Q_ph</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Insert pH square matrix of size (r,r)&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">check_pH_properties</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">J_ph</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">R_ph</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">Q_ph</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">B</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">B_ph</span> <span class="o">=</span> <span class="n">B</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">C_ph</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">B_ph</span><span class="o">.</span><span class="n">T</span> <span class="o">@</span> <span class="bp">self</span><span class="o">.</span><span class="n">Q_ph</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">B_ph</span> <span class="o">=</span> <span class="n">B</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">C_ph</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">A</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">J_ph</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">R_ph</span><span class="p">)</span> <span class="o">@</span> <span class="bp">self</span><span class="o">.</span><span class="n">Q_ph</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">PHSystem</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">B</span><span class="p">)</span>
+
+<div class="viewcode-block" id="PHSystem.H">
+<a class="viewcode-back" href="../../../aphin.systems.html#aphin.systems.ph_systems.PHSystem.H">[docs]</a>
+    <span class="k">def</span> <span class="nf">H</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calculate the Hamiltonian for a time series of states.</span>
+
+<span class="sd">        Computes the Hamiltonian for a time series of states `x`, given by the quadratic form:</span>
+
+<span class="sd">            H(x) = 0.5 * x.T @ Q_ph @ x</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        x : array-like, shape (n_t, n)</span>
+<span class="sd">            Time series of states where `n_t` is the number of time steps and `n` is the dimension of the state vector.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        ndarray, shape (n_t,)</span>
+<span class="sd">        The Hamiltonian values corresponding to each time step.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">quad</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">Q_ph</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="PHSystem.transform_pH_to_Q_identity">
+<a class="viewcode-back" href="../../../aphin.systems.html#aphin.systems.ph_systems.PHSystem.transform_pH_to_Q_identity">[docs]</a>
+    <span class="k">def</span> <span class="nf">transform_pH_to_Q_identity</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">solver</span><span class="o">=</span><span class="s2">&quot;Q&quot;</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Transform the current port-Hamiltonian (pH) system to a Q = I (identity matrix) form, if possible.</span>
+
+<span class="sd">        This method attempts to transform the port-Hamiltonian system described by the matrices</span>
+<span class="sd">        `J_ph`, `R_ph`, `Q_ph`, `B_ph`, and `C_ph` to a new system where `Q` is replaced by the identity matrix.</span>
+<span class="sd">        If the transformation is successful, it returns a new `PHSystem` instance with the transformed matrices.</span>
+<span class="sd">        If the transformation fails, it logs a message and returns the current instance.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        solver : {&#39;scipy&#39;, &#39;pymor&#39;, &#39;Q&#39;}, optional</span>
+<span class="sd">            Method for solving the transformation:</span>
+<span class="sd">            - &#39;scipy&#39; or &#39;pymor&#39;: Use the Riccati equation solver.</span>
+<span class="sd">            - &#39;Q&#39;: Use the provided Q matrix directly.</span>
+<span class="sd">        seed : int, optional</span>
+<span class="sd">            Random seed for generating a dummy input matrix when solving the Riccati equation.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        PHSystem or self</span>
+<span class="sd">            If the transformation to Q = I is successful, returns a new `PHSystem` instance with the transformed matrices.</span>
+<span class="sd">            Otherwise, returns the current instance.</span>
+<span class="sd">        T : ndarray, shape (n, n)</span>
+<span class="sd">            The transformation matrix, only returned if the transformation is successful.</span>
+<span class="sd">        T_inv : ndarray, shape (n, n)</span>
+<span class="sd">            The inverse of the transformation matrix, only returned if the transformation is successful.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">J_T</span><span class="p">,</span> <span class="n">R_T</span><span class="p">,</span> <span class="n">B_T_ph</span><span class="p">,</span> <span class="n">C_T_ph</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">T_inv</span><span class="p">,</span> <span class="n">input_used</span><span class="p">,</span> <span class="n">Qeye_system_exists</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">transform_pH_to_Q_identity</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">J_ph</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">R_ph</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">Q_ph</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">B_ph</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">C_ph</span><span class="p">,</span>
+                <span class="n">solver</span><span class="o">=</span><span class="n">solver</span><span class="p">,</span>
+                <span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">Qeye_system_exists</span><span class="p">:</span>
+            <span class="c1"># change the pH system to Q identity form</span>
+            <span class="k">return</span> <span class="n">PHSystem</span><span class="p">(</span><span class="n">J_T</span><span class="p">,</span> <span class="n">R_T</span><span class="p">,</span> <span class="n">B_T_ph</span><span class="p">),</span> <span class="n">T</span><span class="p">,</span> <span class="n">T_inv</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;The Q identity form could not be found. PHSystem instance is not changed.&quot;</span>
+            <span class="p">)</span>
+            <span class="k">return</span> <span class="bp">self</span></div>
+
+
+<div class="viewcode-block" id="PHSystem.get_system_matrix">
+<a class="viewcode-back" href="../../../aphin.systems.html#aphin.systems.ph_systems.PHSystem.get_system_matrix">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_system_matrix</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">J_ph</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">R_ph</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">B_ph</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">Q_ph</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="DescrPHSystem">
+<a class="viewcode-back" href="../../../aphin.systems.html#aphin.systems.ph_systems.DescrPHSystem">[docs]</a>
+<span class="k">class</span> <span class="nc">DescrPHSystem</span><span class="p">(</span><span class="n">DescrLTISystem</span><span class="p">,</span> <span class="n">CheckPHProperties</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Linear port-Hamiltonian (pH) system in descriptor form with constant system matrices.</span>
+
+<span class="sd">    This class represents a linear port-Hamiltonian system described by the following differential equation:</span>
+<span class="sd">    E * x&#39;(t) = (J - R) * x(t) + B * u(t), with x(0) = x_init, where:</span>
+<span class="sd">    - J is skew-symmetric: J = -J.T</span>
+<span class="sd">    - R is symmetric positive semi-definite: R = R.T &gt;= 0</span>
+<span class="sd">    - E is a descriptor matrix</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">J_ph</span><span class="p">,</span> <span class="n">R_ph</span><span class="p">,</span> <span class="n">E</span><span class="p">,</span> <span class="n">B</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">Q_ph</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">         Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        J_ph : ndarray, shape (n, n)</span>
+<span class="sd">            Port-Hamiltonian J matrix. Must be skew-symmetric.</span>
+<span class="sd">        R_ph : ndarray, shape (n, n)</span>
+<span class="sd">            Port-Hamiltonian R matrix. Must be symmetric positive semi-definite.</span>
+<span class="sd">        E : ndarray, shape (n, n)</span>
+<span class="sd">            Descriptor matrix.</span>
+<span class="sd">        B : ndarray, shape (n, n_u), optional</span>
+<span class="sd">            Input matrix. Defaults to None if not provided.</span>
+<span class="sd">        Q_ph : ndarray, shape (n, n), optional</span>
+<span class="sd">            Port-Hamiltonian Q matrix. Defaults to the identity matrix if not provided.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">J_ph</span> <span class="o">=</span> <span class="n">J_ph</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">R_ph</span> <span class="o">=</span> <span class="n">R_ph</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">E</span> <span class="o">=</span> <span class="n">E</span>
+        <span class="k">if</span> <span class="n">Q_ph</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">Q_ph</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">J_ph</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">Q_ph</span> <span class="o">=</span> <span class="n">Q_ph</span>
+        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">J_ph</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">J_ph</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">R_ph</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">R_ph</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">J_ph</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">R_ph</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">check_pH_properties</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">J_ph</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">R_ph</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">Q_ph</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">E</span><span class="p">)</span>
+        <span class="n">A</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">J_ph</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">R_ph</span><span class="p">)</span> <span class="o">@</span> <span class="bp">self</span><span class="o">.</span><span class="n">Q_ph</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">DescrPHSystem</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">A</span><span class="o">=</span><span class="n">A</span><span class="p">,</span> <span class="n">B</span><span class="o">=</span><span class="n">B</span><span class="p">,</span> <span class="n">E</span><span class="o">=</span><span class="n">E</span><span class="p">)</span>
+
+<div class="viewcode-block" id="DescrPHSystem.solve">
+<a class="viewcode-back" href="../../../aphin.systems.html#aphin.systems.ph_systems.DescrPHSystem.solve">[docs]</a>
+    <span class="k">def</span> <span class="nf">solve</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">z_init</span><span class="p">,</span> <span class="n">u</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">integrator_type</span><span class="o">=</span><span class="s2">&quot;IMR&quot;</span><span class="p">,</span> <span class="n">decomp_option</span><span class="o">=</span><span class="s2">&quot;lu&quot;</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Solve the descriptor port-Hamiltonian system using the specified integration method.</span>
+
+<span class="sd">        Computes the solution to the differential equation system E * x&#39;(t) = (J - R) * x(t) + B * u(t)</span>
+<span class="sd">        over the given time steps with the provided initial conditions and inputs.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        t : ndarray, shape (n_t,)</span>
+<span class="sd">            Array of time steps for the solution.</span>
+<span class="sd">        z_init : ndarray, shape (n,) or (n, n_s)</span>
+<span class="sd">            Initial conditions for the system state.</span>
+<span class="sd">        u : ndarray, shape (n_t, n_u) or (n_t, n_u, n_s), optional</span>
+<span class="sd">            Input signal to the system. If not provided, assumes zero input.</span>
+<span class="sd">        integrator_type : str, optional</span>
+<span class="sd">            Integration method to use. Default is &quot;IMR&quot; (Implicit Midpoint Rule).</span>
+<span class="sd">        decomp_option : str, optional</span>
+<span class="sd">            Decomposition method for the integrator. Default is &quot;lu&quot;. Other options may be available depending on the integrator.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        x : ndarray, shape (n_t, n, n_s)</span>
+<span class="sd">            Solution of the ODE system at each time step.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">DescrPHSystem</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span>
+            <span class="n">t</span><span class="p">,</span> <span class="n">z_init</span><span class="p">,</span> <span class="n">u</span><span class="o">=</span><span class="n">u</span><span class="p">,</span> <span class="n">integrator_type</span><span class="o">=</span><span class="s2">&quot;IMR&quot;</span><span class="p">,</span> <span class="n">decomp_option</span><span class="o">=</span><span class="s2">&quot;lu&quot;</span>
+        <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="DescrPHSystem.H">
+<a class="viewcode-back" href="../../../aphin.systems.html#aphin.systems.ph_systems.DescrPHSystem.H">[docs]</a>
+    <span class="k">def</span> <span class="nf">H</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calculate the Hamiltonian for a time series of states.</span>
+
+<span class="sd">        Computes the Hamiltonian function H(x) = 0.5 * x.T @ (E.T @ Q_ph) @ x for each time step in the time series x.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        x : ndarray, shape (n_t, n)</span>
+<span class="sd">            Time series of states where n_t is the number of time steps and n is the dimension of the state vector.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        ndarray, shape (n_t,)</span>
+<span class="sd">            The Hamiltonian values computed for each time step in the time series x.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">quad</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">E</span><span class="o">.</span><span class="n">T</span> <span class="o">@</span> <span class="bp">self</span><span class="o">.</span><span class="n">Q_ph</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Jonas Kneifl, Johannes Rettberg, Julius Herb.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

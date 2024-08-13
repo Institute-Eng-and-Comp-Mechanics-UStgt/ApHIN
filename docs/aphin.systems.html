@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>aphin.systems package &mdash; ApHIN 0.1.3 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=360bc84d"></script>
+        <script src="_static/doctools.js?v=9a2dae69"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="aphin.utils package" href="aphin.utils.html" />
+    <link rel="prev" title="aphin.operators package" href="aphin.operators.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            ApHIN
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="aphin.html">aphin package</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="aphin.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="aphin.identification.html">aphin.identification package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="aphin.layers.html">aphin.layers package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="aphin.operators.html">aphin.operators package</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">aphin.systems package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-aphin.systems.lti_systems">aphin.systems.lti_systems module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-aphin.systems.ph_systems">aphin.systems.ph_systems module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-aphin.systems">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="aphin.utils.html">aphin.utils package</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="aphin.html#module-aphin">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="contact.html">Contact</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">ApHIN</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="aphin.html">aphin package</a></li>
+      <li class="breadcrumb-item active">aphin.systems package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/aphin.systems.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="aphin-systems-package">
+<h1>aphin.systems package<a class="headerlink" href="#aphin-systems-package" title="Link to this heading"></a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
+</section>
+<section id="module-aphin.systems.lti_systems">
+<span id="aphin-systems-lti-systems-module"></span><h2>aphin.systems.lti_systems module<a class="headerlink" href="#module-aphin.systems.lti_systems" title="Link to this heading"></a></h2>
+<p>Define and simulate dynamical systems
+e.g. LTI systems (LTISystem), port-Hamiltonian systems (PHSystem), …</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="aphin.systems.lti_systems.DescrLTISystem">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">aphin.systems.lti_systems.</span></span><span class="sig-name descname"><span class="pre">DescrLTISystem</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">A</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">B</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">E</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/systems/lti_systems.html#DescrLTISystem"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.systems.lti_systems.DescrLTISystem" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#aphin.systems.lti_systems.LTISystem" title="aphin.systems.lti_systems.LTISystem"><code class="xref py py-class docutils literal notranslate"><span class="pre">LTISystem</span></code></a></p>
+<p>Linear time-invariant (LTI) system with descriptor formulation.</p>
+<p>This class represents a linear time-invariant ODE system in a descriptor formulation, where
+the system is described by the equation:
+E * x’(t) = A * x(t) + B * u(t), with initial condition x(0) = x_init.</p>
+<p>The descriptor matrix E allows for more general system representations, including
+differential-algebraic equations (DAEs) if E is singular.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="aphin.systems.lti_systems.DescrLTISystem.solve">
+<span class="sig-name descname"><span class="pre">solve</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z_init</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">u</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">integrator_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'IMR'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">decomp_option</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'lu'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/systems/lti_systems.html#DescrLTISystem.solve"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.systems.lti_systems.DescrLTISystem.solve" title="Link to this definition"></a></dt>
+<dd><p>Solve the descriptor linear time-invariant (LTI) system for given times, initial conditions, and inputs.</p>
+<p>This method integrates the system’s differential-algebraic equations over the specified time steps.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>t</strong> (<em>array-like</em><em>, </em><em>shape</em><em> (</em><em>n_t</em><em>,</em><em>)</em>) – Array of time steps for which the solution is computed.</p></li>
+<li><p><strong>z_init</strong> (<em>array-like</em><em>, </em><em>shape</em><em> (</em><em>n</em><em>,</em><em>) or </em><em>(</em><em>n</em><em>, </em><em>n_s</em><em>)</em>) – Initial conditions of the system. If multiple simulations are run, this should have shape (n, n_s).</p></li>
+<li><p><strong>u</strong> (<em>array-like</em><em>, </em><em>shape</em><em> (</em><em>n_t</em><em>, </em><em>n_u</em><em>) or </em><em>(</em><em>n_t</em><em>, </em><em>n_u</em><em>, </em><em>n_s</em><em>)</em><em>, </em><em>optional</em>) – Input signal for the system. If not provided, defaults to zero input. If multiple simulations are run,
+the shape should be (n_t, n_u, n_s).</p></li>
+<li><p><strong>integrator_type</strong> (<em>{'IMR'}</em><em>, </em><em>optional</em>) – The type of integrator to use. Only ‘IMR’ (Implicit Midpoint Rule) is supported for descriptor systems.</p></li>
+<li><p><strong>decomp_option</strong> (<em>{'lu'</em><em>, </em><em>'linalg_solve'}</em><em>, </em><em>optional</em>) – Option for decomposition in the IMR integrator. Options are ‘lu’ for LU decomposition or ‘linalg_solve’
+for solving without decomposition.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The solution of the ODE system at each time step.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>ndarray, shape (n_t, n, n_s)</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="aphin.systems.lti_systems.LTISystem">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">aphin.systems.lti_systems.</span></span><span class="sig-name descname"><span class="pre">LTISystem</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">A</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">B</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/systems/lti_systems.html#LTISystem"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.systems.lti_systems.LTISystem" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>General linear, time invariant ODE system (LTI system) with constant system matrices</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="aphin.systems.lti_systems.LTISystem.get_system_matrix">
+<span class="sig-name descname"><span class="pre">get_system_matrix</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/systems/lti_systems.html#LTISystem.get_system_matrix"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.systems.lti_systems.LTISystem.get_system_matrix" title="Link to this definition"></a></dt>
+<dd><p>Retrieve the system matrices A, B, and C.</p>
+<p>This method returns the matrices that define the linear time-invariant (LTI) system.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><p>A tuple containing the system matrices:
+- A : array-like, shape (n, n)</p>
+<blockquote>
+<div><p>The state matrix.</p>
+</div></blockquote>
+<ul class="simple">
+<li><dl class="simple">
+<dt>B<span class="classifier">array-like, shape (n, n_u)</span></dt><dd><p>The input matrix.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>C<span class="classifier">array-like, shape (n, n)</span></dt><dd><p>The output matrix.</p>
+</dd>
+</dl>
+</li>
+</ul>
+</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>tuple of array-like</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="aphin.systems.lti_systems.LTISystem.is_pos_def">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">is_pos_def</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">M</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/systems/lti_systems.html#LTISystem.is_pos_def"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.systems.lti_systems.LTISystem.is_pos_def" title="Link to this definition"></a></dt>
+<dd><p>Check if a matrix M is positive semi-definite.</p>
+<p>This method checks whether all eigenvalues of the matrix M are non-negative. The matrix is considered
+positive semi-definite if the smallest eigenvalue is greater than or equal to a small threshold
+determined by the machine precision.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>M</strong> (<em>array-like</em><em>, </em><em>shape</em><em> (</em><em>n</em><em>, </em><em>n</em><em>)</em>) – The matrix to be checked for positive semi-definiteness.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>True if the matrix M is positive semi-definite, False otherwise.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="aphin.systems.lti_systems.LTISystem.is_regular">
+<span class="sig-name descname"><span class="pre">is_regular</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">M</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/systems/lti_systems.html#LTISystem.is_regular"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.systems.lti_systems.LTISystem.is_regular" title="Link to this definition"></a></dt>
+<dd><p>Check if a matrix M is regular.</p>
+<p>A matrix is considered regular if it has full rank and a condition number below a specified threshold.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>M</strong> (<em>array-like</em><em>, </em><em>shape</em><em> (</em><em>n</em><em>, </em><em>n</em><em>)</em>) – The matrix to be checked for regularity.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>True if the matrix M is regular, False otherwise.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="aphin.systems.lti_systems.LTISystem.is_skew_sym">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">is_skew_sym</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">M</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/systems/lti_systems.html#LTISystem.is_skew_sym"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.systems.lti_systems.LTISystem.is_skew_sym" title="Link to this definition"></a></dt>
+<dd><p>Check if a matrix M is skew-symmetric.</p>
+<p>This method checks whether the matrix M is equal to the negative of its transpose.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>M</strong> (<em>array-like</em><em>, </em><em>shape</em><em> (</em><em>n</em><em>, </em><em>n</em><em>)</em>) – The matrix to be checked for skew-symmetry.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>True if the matrix M is skew-symmetric, False otherwise.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="aphin.systems.lti_systems.LTISystem.is_sym">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">is_sym</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">M</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/systems/lti_systems.html#LTISystem.is_sym"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.systems.lti_systems.LTISystem.is_sym" title="Link to this definition"></a></dt>
+<dd><p>Check if a matrix M is symmetric.</p>
+<p>This method checks whether the matrix M is equal to its transpose.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>M</strong> (<em>array-like</em><em>, </em><em>shape</em><em> (</em><em>n</em><em>, </em><em>n</em><em>)</em>) – The matrix to be checked for symmetry.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>True if the matrix M is symmetric, False otherwise.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="aphin.systems.lti_systems.LTISystem.quad">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">quad</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xl</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">M</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/systems/lti_systems.html#LTISystem.quad"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.systems.lti_systems.LTISystem.quad" title="Link to this definition"></a></dt>
+<dd><p>Calculate the quadratic form ( xl^T &#64; M &#64; xr ).</p>
+<p>This method computes the quadratic form given by the expression:
+xl^T &#64; M &#64; xr, where xl and xr are vectors and M is a matrix.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>xl</strong> (<em>array-like</em><em>, </em><em>shape</em><em> (</em><em>n</em><em>,</em><em>)</em>) – Vector on the left side of the matrix M.</p></li>
+<li><p><strong>M</strong> (<em>array-like</em><em>, </em><em>shape</em><em> (</em><em>n</em><em>, </em><em>n</em><em>)</em>) – Matrix representing the quadratic form.</p></li>
+<li><p><strong>xr</strong> (<em>array-like</em><em>, </em><em>shape</em><em> (</em><em>n</em><em>,</em><em>)</em><em>, </em><em>optional</em>) – Vector on the right side of the matrix M. If not provided, xr is assumed to be equal to xl.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The result of the quadratic form.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="aphin.systems.lti_systems.LTISystem.solve">
+<span class="sig-name descname"><span class="pre">solve</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z_init</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">u</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">integrator_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'IMR'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">decomp_option</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'lu'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/systems/lti_systems.html#LTISystem.solve"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.systems.lti_systems.LTISystem.solve" title="Link to this definition"></a></dt>
+<dd><p>Solve the system for given times, initial conditions, and inputs.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>t</strong> (<em>array-like</em><em>, </em><em>shape</em><em> (</em><em>n_t</em><em>,</em><em>)</em>) – Array with time steps for the solution.</p></li>
+<li><p><strong>z_init</strong> (<em>array-like</em><em>, </em><em>shape</em><em> (</em><em>n</em><em>,</em><em>) or </em><em>(</em><em>n</em><em>, </em><em>n_sim</em><em>)</em>) – Initial conditions of the system. If the shape is (n,), it represents a single simulation;
+if the shape is (n, n_sim), it represents multiple simulations.</p></li>
+<li><p><strong>u</strong> (<em>array-like</em><em>, </em><em>shape</em><em> (</em><em>n_t</em><em>, </em><em>n_u</em><em>) or </em><em>(</em><em>n_sim</em><em>, </em><em>n_t</em><em>, </em><em>n_u</em><em>)</em><em>, </em><em>optional</em>) – Input signal for the system. If not provided, it defaults to zeros.
+The shape should match the dimensions of the input matrix B.</p></li>
+<li><p><strong>integrator_type</strong> (<em>{'IMR'</em><em>, </em><em>'lsim'}</em><em>, </em><em>optional</em>) – The integration method to use. ‘IMR’ stands for implicit midpoint rule, and ‘lsim’ uses the matrix exponential.
+Default is ‘IMR’.</p></li>
+<li><p><strong>decomp_option</strong> (<em>{'lu'</em><em>, </em><em>'linalg_solve'}</em><em>, </em><em>optional</em>) – The decomposition option for the IMR integrator. ‘lu’ uses LU decomposition,
+and ‘linalg_solve’ solves without decomposition. Default is ‘lu’.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>z_sol</strong> – The solution of the ODE system. If multiple simulations are performed,
+the result is a 3D array where each slice corresponds to a simulation.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>ndarray, shape (n_sim, n_t, n_f)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="aphin.systems.lti_systems.LTISystem.solve_dt">
+<span class="sig-name descname"><span class="pre">solve_dt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z_init</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">U</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">integrator_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'IMR'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">decomp_option</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'lu'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/systems/lti_systems.html#LTISystem.solve_dt"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.systems.lti_systems.LTISystem.solve_dt" title="Link to this definition"></a></dt>
+<dd><p>Solves the system of ordinary differential equations (ODEs) for given time steps, initial conditions, and inputs.
+Also computes the exact time derivative of the solution.</p>
+<section id="parameters">
+<h3>Parameters:<a class="headerlink" href="#parameters" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>t<span class="classifier">ndarray</span></dt><dd><p>Array of time steps with shape (n_t,).</p>
+</dd>
+<dt>z_init<span class="classifier">ndarray</span></dt><dd><p>Initial conditions with shape (n_f, n_sim) or (n_f,).</p>
+</dd>
+<dt>U<span class="classifier">ndarray, optional</span></dt><dd><p>Input signal with shape (n_t, n_u) or (n_sim, n_t, n_u). Default is None.
+If None, a zero input is used.</p>
+</dd>
+<dt>integrator_type<span class="classifier">str, optional</span></dt><dd><p>Type of integrator to use. Choices are:
+- ‘IMR’ : Implicit Midpoint Rule
+- ‘LSIM’ : Matrix Exponential (Default is ‘IMR’).</p>
+</dd>
+<dt>decomp_option<span class="classifier">str, optional</span></dt><dd><p>Decomposition option for the Implicit Midpoint Rule. Choices are:
+- ‘lu’ : LU decomposition
+- ‘linalg_solve’ : Solve without decomposition (Default is ‘lu’).</p>
+</dd>
+</dl>
+</section>
+<section id="returns">
+<h3>Returns:<a class="headerlink" href="#returns" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>x<span class="classifier">ndarray</span></dt><dd><p>Solution of the ODE system with shape (n_sim, n_t, n_f).</p>
+</dd>
+<dt>dx_dt<span class="classifier">ndarray</span></dt><dd><p>Time derivative of the solution with shape (n_sim, n_t, n_f).</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="aphin.systems.lti_systems.LTISystem.stable">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">stable</span></span><a class="headerlink" href="#aphin.systems.lti_systems.LTISystem.stable" title="Link to this definition"></a></dt>
+<dd><p>Check if the system is stable.</p>
+<p>This property calculates the eigenvalues of the matrix <cite>E_inv&#64;A</cite> and checks if the real part
+of the largest eigenvalue is less than a negative threshold, indicating stability.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>eps</strong> (<em>float</em><em>, </em><em>optional</em>) – A small positive threshold to determine stability. Default is 1e-4.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>True if the system is stable, False otherwise.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-aphin.systems.ph_systems">
+<span id="aphin-systems-ph-systems-module"></span><h2>aphin.systems.ph_systems module<a class="headerlink" href="#module-aphin.systems.ph_systems" title="Link to this heading"></a></h2>
+<p>Define and simulate dynamical systems
+e.g. LTI systems (LTISystem), port-Hamiltonian systems (PHSystem), …</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="aphin.systems.ph_systems.CheckPHProperties">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">aphin.systems.ph_systems.</span></span><span class="sig-name descname"><span class="pre">CheckPHProperties</span></span><a class="reference internal" href="_modules/aphin/systems/ph_systems.html#CheckPHProperties"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.systems.ph_systems.CheckPHProperties" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A class for checking properties of matrices related to port-Hamiltonian (pH) systems.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="aphin.systems.ph_systems.CheckPHProperties.check_pH_properties">
+<span class="sig-name descname"><span class="pre">check_pH_properties</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">J</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">R</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Q</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">E</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rtol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-05</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">atol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-08</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/systems/ph_systems.html#CheckPHProperties.check_pH_properties"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.systems.ph_systems.CheckPHProperties.check_pH_properties" title="Link to this definition"></a></dt>
+<dd><p>Check if the matrices J, R, and Q (with optional descriptor E) satisfy port-Hamiltonian system properties.</p>
+<p>This method verifies the following properties:
+- J is skew-symmetric.
+- R is symmetric positive definite.
+- transpose(E)&#64;Q is symmetric positive definite</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>J</strong> (<em>array-like</em><em>, </em><em>shape</em><em> (</em><em>n</em><em>, </em><em>n</em><em>)</em>) – Skew-symmetric matrix related to the port-Hamiltonian system.</p></li>
+<li><p><strong>R</strong> (<em>array-like</em><em>, </em><em>shape</em><em> (</em><em>n</em><em>, </em><em>n</em><em>)</em>) – Symmetric positive definite matrix.</p></li>
+<li><p><strong>Q</strong> (<em>array-like</em><em>, </em><em>shape</em><em> (</em><em>n</em><em>, </em><em>n</em><em>)</em><em>, </em><em>optional</em>) – Matrix to be checked for positive definiteness.</p></li>
+<li><p><strong>E</strong> (<em>array-like</em><em>, </em><em>shape</em><em> (</em><em>n</em><em>, </em><em>n</em><em>)</em><em>, </em><em>optional</em>) – Descriptor matrix. If not provided, defaults to the identity matrix.</p></li>
+<li><p><strong>rtol</strong> (<em>float</em><em>, </em><em>optional</em>) – Relative tolerance for numerical comparison (default is 1e-05).</p></li>
+<li><p><strong>atol</strong> (<em>float</em><em>, </em><em>optional</em>) – Absolute tolerance for numerical comparison (default is 1e-08).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>True if all properties are satisfied, False otherwise.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="aphin.systems.ph_systems.CheckPHProperties.check_spd">
+<span class="sig-name descname"><span class="pre">check_spd</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">A</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rtol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-06</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">atol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-08</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/systems/ph_systems.html#CheckPHProperties.check_spd"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.systems.ph_systems.CheckPHProperties.check_spd" title="Link to this definition"></a></dt>
+<dd><p>Check if a matrix is symmetric positive definite.</p>
+<p>This method verifies if the matrix <cite>A</cite> is symmetric and positive definite. It does so by attempting
+a Cholesky decomposition. If the decomposition fails due to the matrix not being positive definite,
+a small regularization term is added to the matrix to try and make it positive definite.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>A</strong> (<em>array-like</em><em>, </em><em>shape</em><em> (</em><em>n</em><em>, </em><em>n</em><em>)</em>) – The matrix to be checked for symmetric positive definiteness.</p></li>
+<li><p><strong>rtol</strong> (<em>float</em><em>, </em><em>optional</em>) – Relative tolerance for checking symmetry of the matrix (default is 1e-06).</p></li>
+<li><p><strong>atol</strong> (<em>float</em><em>, </em><em>optional</em>) – Absolute tolerance for checking symmetry of the matrix (default is 1e-08).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>True if the matrix is symmetric positive definite, False otherwise.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+<p class="rubric">References</p>
+<p>Adapted from [MorandinNicodemusUnger22].</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="aphin.systems.ph_systems.DescrPHSystem">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">aphin.systems.ph_systems.</span></span><span class="sig-name descname"><span class="pre">DescrPHSystem</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">J_ph</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">R_ph</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">E</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">B</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Q_ph</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/systems/ph_systems.html#DescrPHSystem"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.systems.ph_systems.DescrPHSystem" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#aphin.systems.lti_systems.DescrLTISystem" title="aphin.systems.lti_systems.DescrLTISystem"><code class="xref py py-class docutils literal notranslate"><span class="pre">DescrLTISystem</span></code></a>, <a class="reference internal" href="#aphin.systems.ph_systems.CheckPHProperties" title="aphin.systems.ph_systems.CheckPHProperties"><code class="xref py py-class docutils literal notranslate"><span class="pre">CheckPHProperties</span></code></a></p>
+<p>Linear port-Hamiltonian (pH) system in descriptor form with constant system matrices.</p>
+<p>This class represents a linear port-Hamiltonian system described by the following differential equation:
+E * x’(t) = (J - R) * x(t) + B * u(t), with x(0) = x_init, where:
+- J is skew-symmetric: J = -J.T
+- R is symmetric positive semi-definite: R = R.T &gt;= 0
+- E is a descriptor matrix</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="aphin.systems.ph_systems.DescrPHSystem.H">
+<span class="sig-name descname"><span class="pre">H</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/systems/ph_systems.html#DescrPHSystem.H"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.systems.ph_systems.DescrPHSystem.H" title="Link to this definition"></a></dt>
+<dd><p>Calculate the Hamiltonian for a time series of states.</p>
+<p>Computes the Hamiltonian function H(x) = 0.5 * x.T &#64; (E.T &#64; Q_ph) &#64; x for each time step in the time series x.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>x</strong> (<em>ndarray</em><em>, </em><em>shape</em><em> (</em><em>n_t</em><em>, </em><em>n</em><em>)</em>) – Time series of states where n_t is the number of time steps and n is the dimension of the state vector.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The Hamiltonian values computed for each time step in the time series x.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>ndarray, shape (n_t,)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="aphin.systems.ph_systems.DescrPHSystem.solve">
+<span class="sig-name descname"><span class="pre">solve</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z_init</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">u</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">integrator_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'IMR'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">decomp_option</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'lu'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/systems/ph_systems.html#DescrPHSystem.solve"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.systems.ph_systems.DescrPHSystem.solve" title="Link to this definition"></a></dt>
+<dd><p>Solve the descriptor port-Hamiltonian system using the specified integration method.</p>
+<p>Computes the solution to the differential equation system E * x’(t) = (J - R) * x(t) + B * u(t)
+over the given time steps with the provided initial conditions and inputs.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>t</strong> (<em>ndarray</em><em>, </em><em>shape</em><em> (</em><em>n_t</em><em>,</em><em>)</em>) – Array of time steps for the solution.</p></li>
+<li><p><strong>z_init</strong> (<em>ndarray</em><em>, </em><em>shape</em><em> (</em><em>n</em><em>,</em><em>) or </em><em>(</em><em>n</em><em>, </em><em>n_s</em><em>)</em>) – Initial conditions for the system state.</p></li>
+<li><p><strong>u</strong> (<em>ndarray</em><em>, </em><em>shape</em><em> (</em><em>n_t</em><em>, </em><em>n_u</em><em>) or </em><em>(</em><em>n_t</em><em>, </em><em>n_u</em><em>, </em><em>n_s</em><em>)</em><em>, </em><em>optional</em>) – Input signal to the system. If not provided, assumes zero input.</p></li>
+<li><p><strong>integrator_type</strong> (<em>str</em><em>, </em><em>optional</em>) – Integration method to use. Default is “IMR” (Implicit Midpoint Rule).</p></li>
+<li><p><strong>decomp_option</strong> (<em>str</em><em>, </em><em>optional</em>) – Decomposition method for the integrator. Default is “lu”. Other options may be available depending on the integrator.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>x</strong> – Solution of the ODE system at each time step.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>ndarray, shape (n_t, n, n_s)</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="aphin.systems.ph_systems.PHSystem">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">aphin.systems.ph_systems.</span></span><span class="sig-name descname"><span class="pre">PHSystem</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">J_ph</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">R_ph</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">B</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Q_ph</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/systems/ph_systems.html#PHSystem"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.systems.ph_systems.PHSystem" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#aphin.systems.lti_systems.LTISystem" title="aphin.systems.lti_systems.LTISystem"><code class="xref py py-class docutils literal notranslate"><span class="pre">LTISystem</span></code></a>, <a class="reference internal" href="#aphin.systems.ph_systems.CheckPHProperties" title="aphin.systems.ph_systems.CheckPHProperties"><code class="xref py py-class docutils literal notranslate"><span class="pre">CheckPHProperties</span></code></a></p>
+<p>General linear, port-Hamiltonian (pH) system with constant system matrices.</p>
+<p>This class represents a linear port-Hamiltonian system, defined by the differential equation:</p>
+<blockquote>
+<div><p>x’(t) = (J - R) * x(t) + B * u(t), x(0) = x_init</p>
+</div></blockquote>
+<p>where:
+- <cite>J</cite> is a skew-symmetric matrix (J = -J.T).
+- <cite>R</cite> is a symmetric positive semi-definite matrix (R = R.T &gt;= 0).</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="aphin.systems.ph_systems.PHSystem.H">
+<span class="sig-name descname"><span class="pre">H</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/systems/ph_systems.html#PHSystem.H"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.systems.ph_systems.PHSystem.H" title="Link to this definition"></a></dt>
+<dd><p>Calculate the Hamiltonian for a time series of states.</p>
+<p>Computes the Hamiltonian for a time series of states <cite>x</cite>, given by the quadratic form:</p>
+<blockquote>
+<div><p>H(x) = 0.5 * x.T &#64; Q_ph &#64; x</p>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>x</strong> (<em>array-like</em><em>, </em><em>shape</em><em> (</em><em>n_t</em><em>, </em><em>n</em><em>)</em>) – Time series of states where <cite>n_t</cite> is the number of time steps and <cite>n</cite> is the dimension of the state vector.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><em>ndarray, shape (n_t,)</em></p></li>
+<li><p><em>The Hamiltonian values corresponding to each time step.</em></p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="aphin.systems.ph_systems.PHSystem.get_system_matrix">
+<span class="sig-name descname"><span class="pre">get_system_matrix</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/systems/ph_systems.html#PHSystem.get_system_matrix"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.systems.ph_systems.PHSystem.get_system_matrix" title="Link to this definition"></a></dt>
+<dd><p>Retrieve the system matrices A, B, and C.</p>
+<p>This method returns the matrices that define the linear time-invariant (LTI) system.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><p>A tuple containing the system matrices:
+- A : array-like, shape (n, n)</p>
+<blockquote>
+<div><p>The state matrix.</p>
+</div></blockquote>
+<ul class="simple">
+<li><dl class="simple">
+<dt>B<span class="classifier">array-like, shape (n, n_u)</span></dt><dd><p>The input matrix.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>C<span class="classifier">array-like, shape (n, n)</span></dt><dd><p>The output matrix.</p>
+</dd>
+</dl>
+</li>
+</ul>
+</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>tuple of array-like</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="aphin.systems.ph_systems.PHSystem.transform_pH_to_Q_identity">
+<span class="sig-name descname"><span class="pre">transform_pH_to_Q_identity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">solver</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Q'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/systems/ph_systems.html#PHSystem.transform_pH_to_Q_identity"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.systems.ph_systems.PHSystem.transform_pH_to_Q_identity" title="Link to this definition"></a></dt>
+<dd><p>Transform the current port-Hamiltonian (pH) system to a Q = I (identity matrix) form, if possible.</p>
+<p>This method attempts to transform the port-Hamiltonian system described by the matrices
+<cite>J_ph</cite>, <cite>R_ph</cite>, <cite>Q_ph</cite>, <cite>B_ph</cite>, and <cite>C_ph</cite> to a new system where <cite>Q</cite> is replaced by the identity matrix.
+If the transformation is successful, it returns a new <cite>PHSystem</cite> instance with the transformed matrices.
+If the transformation fails, it logs a message and returns the current instance.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>solver</strong> (<em>{'scipy'</em><em>, </em><em>'pymor'</em><em>, </em><em>'Q'}</em><em>, </em><em>optional</em>) – Method for solving the transformation:
+- ‘scipy’ or ‘pymor’: Use the Riccati equation solver.
+- ‘Q’: Use the provided Q matrix directly.</p></li>
+<li><p><strong>seed</strong> (<em>int</em><em>, </em><em>optional</em>) – Random seed for generating a dummy input matrix when solving the Riccati equation.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><em>PHSystem or self</em> – If the transformation to Q = I is successful, returns a new <cite>PHSystem</cite> instance with the transformed matrices.
+Otherwise, returns the current instance.</p></li>
+<li><p><strong>T</strong> (<em>ndarray, shape (n, n)</em>) – The transformation matrix, only returned if the transformation is successful.</p></li>
+<li><p><strong>T_inv</strong> (<em>ndarray, shape (n, n)</em>) – The inverse of the transformation matrix, only returned if the transformation is successful.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-aphin.systems">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-aphin.systems" title="Link to this heading"></a></h2>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="aphin.operators.html" class="btn btn-neutral float-left" title="aphin.operators package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="aphin.utils.html" class="btn btn-neutral float-right" title="aphin.utils package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Jonas Kneifl, Johannes Rettberg, Julius Herb.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

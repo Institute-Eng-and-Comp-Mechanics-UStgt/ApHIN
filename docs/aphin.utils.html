@@ -1,0 +1,2046 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>aphin.utils package &mdash; ApHIN 0.1.3 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=360bc84d"></script>
+        <script src="_static/doctools.js?v=9a2dae69"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="aphin.utils.data package" href="aphin.utils.data.html" />
+    <link rel="prev" title="aphin.systems package" href="aphin.systems.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            ApHIN
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="aphin.html">aphin package</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="aphin.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="aphin.identification.html">aphin.identification package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="aphin.layers.html">aphin.layers package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="aphin.operators.html">aphin.operators package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="aphin.systems.html">aphin.systems package</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">aphin.utils package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#subpackages">Subpackages</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-aphin.utils.callbacks_tensorflow">aphin.utils.callbacks_tensorflow module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-aphin.utils.configuration">aphin.utils.configuration module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-aphin.utils.experiments">aphin.utils.experiments module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-aphin.utils.integrators">aphin.utils.integrators module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-aphin.utils.print_matrices">aphin.utils.print_matrices module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-aphin.utils.save_results">aphin.utils.save_results module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-aphin.utils.transformations">aphin.utils.transformations module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-aphin.utils.visualizations">aphin.utils.visualizations module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-aphin.utils">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="aphin.html#module-aphin">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="contact.html">Contact</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">ApHIN</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="aphin.html">aphin package</a></li>
+      <li class="breadcrumb-item active">aphin.utils package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/aphin.utils.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="aphin-utils-package">
+<h1>aphin.utils package<a class="headerlink" href="#aphin-utils-package" title="Link to this heading"></a></h1>
+<section id="subpackages">
+<h2>Subpackages<a class="headerlink" href="#subpackages" title="Link to this heading"></a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="aphin.utils.data.html">aphin.utils.data package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="aphin.utils.data.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="aphin.utils.data.html#module-aphin.utils.data.data">aphin.utils.data.data module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="aphin.utils.data.html#aphin.utils.data.data.Data"><code class="docutils literal notranslate"><span class="pre">Data</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="aphin.utils.data.html#aphin.utils.data.data.Data.Data"><code class="docutils literal notranslate"><span class="pre">Data.Data</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="aphin.utils.data.html#aphin.utils.data.data.Data.calculate_errors"><code class="docutils literal notranslate"><span class="pre">Data.calculate_errors()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="aphin.utils.data.html#aphin.utils.data.data.Data.calculate_latent_errors"><code class="docutils literal notranslate"><span class="pre">Data.calculate_latent_errors()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="aphin.utils.data.html#aphin.utils.data.data.Data.calculate_rms_error"><code class="docutils literal notranslate"><span class="pre">Data.calculate_rms_error()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="aphin.utils.data.html#aphin.utils.data.data.Data.calculate_state_errors"><code class="docutils literal notranslate"><span class="pre">Data.calculate_state_errors()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="aphin.utils.data.html#aphin.utils.data.data.Data.data"><code class="docutils literal notranslate"><span class="pre">Data.data</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="aphin.utils.data.html#aphin.utils.data.data.Data.decrease_num_simulations"><code class="docutils literal notranslate"><span class="pre">Data.decrease_num_simulations()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="aphin.utils.data.html#aphin.utils.data.data.Data.decrease_num_time_steps"><code class="docutils literal notranslate"><span class="pre">Data.decrease_num_time_steps()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="aphin.utils.data.html#aphin.utils.data.data.Data.features_to_states"><code class="docutils literal notranslate"><span class="pre">Data.features_to_states()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="aphin.utils.data.html#aphin.utils.data.data.Data.filter_data"><code class="docutils literal notranslate"><span class="pre">Data.filter_data()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="aphin.utils.data.html#aphin.utils.data.data.Data.from_data"><code class="docutils literal notranslate"><span class="pre">Data.from_data()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="aphin.utils.data.html#aphin.utils.data.data.Data.get_initial_conditions"><code class="docutils literal notranslate"><span class="pre">Data.get_initial_conditions()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="aphin.utils.data.html#aphin.utils.data.data.Data.ph_matrices"><code class="docutils literal notranslate"><span class="pre">Data.ph_matrices</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="aphin.utils.data.html#aphin.utils.data.data.Data.read_data_from_npz"><code class="docutils literal notranslate"><span class="pre">Data.read_data_from_npz()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="aphin.utils.data.html#aphin.utils.data.data.Data.rescale_X"><code class="docutils literal notranslate"><span class="pre">Data.rescale_X()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="aphin.utils.data.html#aphin.utils.data.data.Data.save_data"><code class="docutils literal notranslate"><span class="pre">Data.save_data()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="aphin.utils.data.html#aphin.utils.data.data.Data.save_state_traj_as_csv"><code class="docutils literal notranslate"><span class="pre">Data.save_state_traj_as_csv()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="aphin.utils.data.html#aphin.utils.data.data.Data.save_traj_as_csv"><code class="docutils literal notranslate"><span class="pre">Data.save_traj_as_csv()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="aphin.utils.data.html#aphin.utils.data.data.Data.scale_Mu"><code class="docutils literal notranslate"><span class="pre">Data.scale_Mu()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="aphin.utils.data.html#aphin.utils.data.data.Data.scale_U"><code class="docutils literal notranslate"><span class="pre">Data.scale_U()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="aphin.utils.data.html#aphin.utils.data.data.Data.scale_X"><code class="docutils literal notranslate"><span class="pre">Data.scale_X()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="aphin.utils.data.html#aphin.utils.data.data.Data.scale_all"><code class="docutils literal notranslate"><span class="pre">Data.scale_all()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="aphin.utils.data.html#aphin.utils.data.data.Data.scale_quantity"><code class="docutils literal notranslate"><span class="pre">Data.scale_quantity()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="aphin.utils.data.html#aphin.utils.data.data.Data.shape"><code class="docutils literal notranslate"><span class="pre">Data.shape</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="aphin.utils.data.html#aphin.utils.data.data.Data.split_state_into_domains"><code class="docutils literal notranslate"><span class="pre">Data.split_state_into_domains()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="aphin.utils.data.html#aphin.utils.data.data.Data.states_to_features"><code class="docutils literal notranslate"><span class="pre">Data.states_to_features()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="aphin.utils.data.html#aphin.utils.data.data.Data.train_test_split"><code class="docutils literal notranslate"><span class="pre">Data.train_test_split()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="aphin.utils.data.html#aphin.utils.data.data.Data.train_test_split_sim_idx"><code class="docutils literal notranslate"><span class="pre">Data.train_test_split_sim_idx()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="aphin.utils.data.html#aphin.utils.data.data.Data.truncate_time"><code class="docutils literal notranslate"><span class="pre">Data.truncate_time()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="aphin.utils.data.html#aphin.utils.data.data.LTIDataset"><code class="docutils literal notranslate"><span class="pre">LTIDataset</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="aphin.utils.data.html#aphin.utils.data.data.PHIdentifiedData"><code class="docutils literal notranslate"><span class="pre">PHIdentifiedData</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="aphin.utils.data.html#aphin.utils.data.data.PHIdentifiedData.from_identification"><code class="docutils literal notranslate"><span class="pre">PHIdentifiedData.from_identification()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="aphin.utils.data.html#aphin.utils.data.data.PHIdentifiedData.obtain_ph_data"><code class="docutils literal notranslate"><span class="pre">PHIdentifiedData.obtain_ph_data()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="aphin.utils.data.html#aphin.utils.data.data.PHIdentifiedData.obtain_ph_map_data"><code class="docutils literal notranslate"><span class="pre">PHIdentifiedData.obtain_ph_map_data()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="aphin.utils.data.html#aphin.utils.data.data.PHIdentifiedData.obtain_results_from_ph_autoencoder"><code class="docutils literal notranslate"><span class="pre">PHIdentifiedData.obtain_results_from_ph_autoencoder()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="aphin.utils.data.html#aphin.utils.data.data.PHIdentifiedData.obtain_results_from_ph_network"><code class="docutils literal notranslate"><span class="pre">PHIdentifiedData.obtain_results_from_ph_network()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="aphin.utils.data.html#aphin.utils.data.data.PHIdentifiedData.save_latent_traj_as_csv"><code class="docutils literal notranslate"><span class="pre">PHIdentifiedData.save_latent_traj_as_csv()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="aphin.utils.data.html#module-aphin.utils.data.dataset">aphin.utils.data.dataset module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="aphin.utils.data.html#aphin.utils.data.dataset.Dataset"><code class="docutils literal notranslate"><span class="pre">Dataset</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="aphin.utils.data.html#aphin.utils.data.dataset.Dataset.Data"><code class="docutils literal notranslate"><span class="pre">Dataset.Data</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="aphin.utils.data.html#aphin.utils.data.dataset.Dataset.Data_test"><code class="docutils literal notranslate"><span class="pre">Dataset.Data_test</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="aphin.utils.data.html#aphin.utils.data.dataset.Dataset.calculate_errors"><code class="docutils literal notranslate"><span class="pre">Dataset.calculate_errors()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="aphin.utils.data.html#aphin.utils.data.dataset.Dataset.data"><code class="docutils literal notranslate"><span class="pre">Dataset.data</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="aphin.utils.data.html#aphin.utils.data.dataset.Dataset.decrease_num_simulations"><code class="docutils literal notranslate"><span class="pre">Dataset.decrease_num_simulations()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="aphin.utils.data.html#aphin.utils.data.dataset.Dataset.decrease_num_time_steps"><code class="docutils literal notranslate"><span class="pre">Dataset.decrease_num_time_steps()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="aphin.utils.data.html#aphin.utils.data.dataset.Dataset.features_to_states"><code class="docutils literal notranslate"><span class="pre">Dataset.features_to_states()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="aphin.utils.data.html#aphin.utils.data.dataset.Dataset.ph_matrices"><code class="docutils literal notranslate"><span class="pre">Dataset.ph_matrices</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="aphin.utils.data.html#aphin.utils.data.dataset.Dataset.ph_matrices_test"><code class="docutils literal notranslate"><span class="pre">Dataset.ph_matrices_test</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="aphin.utils.data.html#aphin.utils.data.dataset.Dataset.rescale_X"><code class="docutils literal notranslate"><span class="pre">Dataset.rescale_X()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="aphin.utils.data.html#aphin.utils.data.dataset.Dataset.scale_Mu"><code class="docutils literal notranslate"><span class="pre">Dataset.scale_Mu()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="aphin.utils.data.html#aphin.utils.data.dataset.Dataset.scale_U"><code class="docutils literal notranslate"><span class="pre">Dataset.scale_U()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="aphin.utils.data.html#aphin.utils.data.dataset.Dataset.scale_X"><code class="docutils literal notranslate"><span class="pre">Dataset.scale_X()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="aphin.utils.data.html#aphin.utils.data.dataset.Dataset.scale_all"><code class="docutils literal notranslate"><span class="pre">Dataset.scale_all()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="aphin.utils.data.html#aphin.utils.data.dataset.Dataset.shape"><code class="docutils literal notranslate"><span class="pre">Dataset.shape</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="aphin.utils.data.html#aphin.utils.data.dataset.Dataset.shape_test"><code class="docutils literal notranslate"><span class="pre">Dataset.shape_test</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="aphin.utils.data.html#aphin.utils.data.dataset.Dataset.split_state_into_domains"><code class="docutils literal notranslate"><span class="pre">Dataset.split_state_into_domains()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="aphin.utils.data.html#aphin.utils.data.dataset.Dataset.states_to_features"><code class="docutils literal notranslate"><span class="pre">Dataset.states_to_features()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="aphin.utils.data.html#aphin.utils.data.dataset.Dataset.test_data"><code class="docutils literal notranslate"><span class="pre">Dataset.test_data</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="aphin.utils.data.html#aphin.utils.data.dataset.Dataset.train_test_split"><code class="docutils literal notranslate"><span class="pre">Dataset.train_test_split()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="aphin.utils.data.html#aphin.utils.data.dataset.Dataset.train_test_split_sim_idx"><code class="docutils literal notranslate"><span class="pre">Dataset.train_test_split_sim_idx()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="aphin.utils.data.html#aphin.utils.data.dataset.Dataset.truncate_time"><code class="docutils literal notranslate"><span class="pre">Dataset.truncate_time()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="aphin.utils.data.html#aphin.utils.data.dataset.DiscBrakeDataset"><code class="docutils literal notranslate"><span class="pre">DiscBrakeDataset</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="aphin.utils.data.html#aphin.utils.data.dataset.DiscBrakeDataset.from_data"><code class="docutils literal notranslate"><span class="pre">DiscBrakeDataset.from_data()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="aphin.utils.data.html#aphin.utils.data.dataset.DiscBrakeDataset.from_txt"><code class="docutils literal notranslate"><span class="pre">DiscBrakeDataset.from_txt()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="aphin.utils.data.html#aphin.utils.data.dataset.PHIdentifiedDataset"><code class="docutils literal notranslate"><span class="pre">PHIdentifiedDataset</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="aphin.utils.data.html#aphin.utils.data.dataset.PHIdentifiedDataset.from_identification"><code class="docutils literal notranslate"><span class="pre">PHIdentifiedDataset.from_identification()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="aphin.utils.data.html#module-aphin.utils.data">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
+</section>
+<section id="module-aphin.utils.callbacks_tensorflow">
+<span id="aphin-utils-callbacks-tensorflow-module"></span><h2>aphin.utils.callbacks_tensorflow module<a class="headerlink" href="#module-aphin.utils.callbacks_tensorflow" title="Link to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="aphin.utils.callbacks_tensorflow.callbacks">
+<span class="sig-prename descclassname"><span class="pre">aphin.utils.callbacks_tensorflow.</span></span><span class="sig-name descname"><span class="pre">callbacks</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">weight_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">monitor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'loss'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tensorboard</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">earlystopping</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">patience</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/utils/callbacks_tensorflow.html#callbacks"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.utils.callbacks_tensorflow.callbacks" title="Link to this definition"></a></dt>
+<dd><p>Create a list of TensorFlow Keras callbacks for model training.</p>
+<p>This function generates a set of callbacks to be used during model training in TensorFlow Keras.
+It includes mandatory callback for saving the best model weights and optional callbacks for
+TensorBoard logging, early stopping, and learning rate scheduling.</p>
+<section id="parameters">
+<h3>Parameters:<a class="headerlink" href="#parameters" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>weight_dir<span class="classifier">str</span></dt><dd><p>Path to the directory where the best model weights will be saved.</p>
+</dd>
+<dt>monitor<span class="classifier">str, optional</span></dt><dd><p>The metric to monitor for saving the best model and early stopping. Default is “loss”.</p>
+</dd>
+<dt>tensorboard<span class="classifier">bool, optional</span></dt><dd><p>If <cite>True</cite>, enables TensorBoard logging. Default is <cite>True</cite>.</p>
+</dd>
+<dt>log_dir<span class="classifier">str, optional</span></dt><dd><p>Path to the directory where TensorBoard logs will be saved. If <cite>None</cite>, a default log directory
+with a timestamp is created. Default is <cite>None</cite>.</p>
+</dd>
+<dt>earlystopping<span class="classifier">bool, optional</span></dt><dd><p>If <cite>True</cite>, enables early stopping based on the monitored metric. Default is <cite>False</cite>.</p>
+</dd>
+<dt>patience<span class="classifier">int, optional</span></dt><dd><p>Number of epochs with no improvement after which training will be stopped if early stopping is enabled.
+Default is <cite>100</cite>.</p>
+</dd>
+</dl>
+</section>
+<section id="returns">
+<h3>Returns:<a class="headerlink" href="#returns" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>list of tf.keras.callbacks.Callback</dt><dd><p>A list of TensorFlow Keras callbacks configured according to the provided parameters.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+</section>
+<section id="module-aphin.utils.configuration">
+<span id="aphin-utils-configuration-module"></span><h2>aphin.utils.configuration module<a class="headerlink" href="#module-aphin.utils.configuration" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="aphin.utils.configuration.Configuration">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">aphin.utils.configuration.</span></span><span class="sig-name descname"><span class="pre">Configuration</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">working_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config_info</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overwrite_results</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/utils/configuration.html#Configuration"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.utils.configuration.Configuration" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Handles the setup and management of configuration for an experiment.</p>
+<p>This class manages the reading of configuration files, creation of necessary directories,
+and saving of the configuration to ensure all necessary data is stored and organized. It
+supports both identifying and loading results based on the provided configuration information.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="aphin.utils.configuration.Configuration.check_config_dict">
+<span class="sig-name descname"><span class="pre">check_config_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/utils/configuration.html#Configuration.check_config_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.utils.configuration.Configuration.check_config_dict" title="Link to this definition"></a></dt>
+<dd><p>Validates the configuration dictionary by ensuring all mandatory keys are present.</p>
+<p>This method checks that the configuration dictionary (<cite>self.cfg_dict</cite>) contains all required entries
+necessary for the proper functioning of the experiment setup. If any mandatory key is missing,
+an exception is raised, prompting the user to update the configuration file.</p>
+<section id="id1">
+<h3>Parameters:<a class="headerlink" href="#id1" title="Link to this heading"></a></h3>
+<p>None</p>
+</section>
+<section id="raises">
+<h3>Raises:<a class="headerlink" href="#raises" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>ValueError</dt><dd><p>If any mandatory key is missing from <cite>self.cfg_dict</cite>, a <cite>ValueError</cite> is raised,
+specifying the missing key.</p>
+</dd>
+</dl>
+</section>
+<section id="notes">
+<h3>Notes:<a class="headerlink" href="#notes" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><dl class="simple">
+<dt>The method checks for the presence of the following mandatory keys in <cite>self.cfg_dict</cite>:</dt><dd><ul>
+<li><p><cite>experiment</cite>: Specifies the name of the experiment.</p></li>
+<li><p><cite>load_network</cite>: Indicates whether to load a pre-existing network.</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><p>This validation ensures that critical configuration settings are not overlooked, helping prevent runtime errors due to missing configurations.</p></li>
+</ul>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="aphin.utils.configuration.Configuration.create_directories">
+<span class="sig-name descname"><span class="pre">create_directories</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">overwrite_results</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/utils/configuration.html#Configuration.create_directories"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.utils.configuration.Configuration.create_directories" title="Link to this definition"></a></dt>
+<dd><p>Creates necessary directories for storing data, logs, weights, and results based on the current configuration.
+If the directories already exist, they are preserved unless <cite>overwrite_results</cite> is explicitly set to True.</p>
+<section id="id2">
+<h3>Parameters:<a class="headerlink" href="#id2" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>overwrite_results<span class="classifier">bool, optional</span></dt><dd><p>If set to True, existing result directories and files (e.g., <cite>.weights.h5</cite>) are overwritten.
+Default is False, meaning that the method will abort if existing results are found.</p>
+</dd>
+</dl>
+</section>
+<section id="id3">
+<h3>Returns:<a class="headerlink" href="#id3" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>None</dt><dd><p>This method does not return any value. It sets up the directory structure required for the experiment.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="aphin.utils.configuration.Configuration.directories">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">directories</span></span><a class="headerlink" href="#aphin.utils.configuration.Configuration.directories" title="Link to this definition"></a></dt>
+<dd><p>Returns the paths to the directories used in the experiment setup.</p>
+<p>This property provides access to the directory paths for data, logs, weights, and results.</p>
+<section id="id4">
+<h3>Returns:<a class="headerlink" href="#id4" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>tuple of str</dt><dd><p>A tuple containing the paths to the following directories:
+- <cite>data_dir</cite>: Directory for data storage.
+- <cite>log_dir</cite>: Directory for log files.
+- <cite>weight_dir</cite>: Directory for storing model weights.
+- <cite>result_dir</cite>: Directory for storing results.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="aphin.utils.configuration.Configuration.read_config">
+<span class="sig-name descname"><span class="pre">read_config</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config_info</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/utils/configuration.html#Configuration.read_config"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.utils.configuration.Configuration.read_config" title="Link to this definition"></a></dt>
+<dd><p>Reads and loads configuration settings from a specified source, determining whether to proceed
+with model identification or to load existing results. The method sets up paths to configuration
+files, weight directories, and checks the existence of necessary files.</p>
+<section id="id5">
+<h3>Parameters:<a class="headerlink" href="#id5" title="Link to this heading"></a></h3>
+<dl>
+<dt>config_info<span class="classifier">str or None</span></dt><dd><p>Specifies the source of the configuration file or directory:
+- None: Uses the default <cite>config.yml</cite> in the working directory for identification.</p>
+<blockquote>
+<div><p>If <cite>load_network</cite> is True in the config, it checks for the existence of
+weights in the default path.</p>
+</div></blockquote>
+<ul class="simple">
+<li><dl class="simple">
+<dt>config_filename.yml: An absolute path to a custom configuration file ending with <cite>.yml</cite> for identification.</dt><dd><p>It uses the specified config file, and if <cite>load_network</cite> is True,
+checks for the weights in the file path.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>/folder/name/: An absolute path to a directory containing <cite>config.yml</cite> and <cite>.weights.h5</cite>.</dt><dd><p>This is used for loading results.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>result_folder_name: A folder name under the working directory that contains</dt><dd><p><cite>config.yml</cite> and <cite>.weights.h5</cite>. This is also used for loading results.</p>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+</dl>
+</section>
+<section id="id6">
+<h3>Returns:<a class="headerlink" href="#id6" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>None</dt><dd><p>This method sets up internal paths and configuration dictionary (self.cfg_dict) based on the provided input.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="aphin.utils.configuration.Configuration.save_config">
+<span class="sig-name descname"><span class="pre">save_config</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/utils/configuration.html#Configuration.save_config"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.utils.configuration.Configuration.save_config" title="Link to this definition"></a></dt>
+<dd><p>Saves the configuration file to the results directory.</p>
+<p>This method uses the <cite>save_config</cite> function to copy the current configuration file
+(<cite>config.yml</cite>) to the results directory (<cite>result_dir</cite>). It consolidates all experiment
+data and configuration in one location. The method checks if the network is loaded
+by referring to the <cite>load_network</cite> flag in the configuration dictionary.</p>
+<section id="id7">
+<h3>Parameters:<a class="headerlink" href="#id7" title="Link to this heading"></a></h3>
+<p>None</p>
+</section>
+<section id="id8">
+<h3>Returns:<a class="headerlink" href="#id8" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>None</dt><dd><p>This method does not return any value. It performs the file copy operation.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-aphin.utils.experiments">
+<span id="aphin-utils-experiments-module"></span><h2>aphin.utils.experiments module<a class="headerlink" href="#module-aphin.utils.experiments" title="Link to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="aphin.utils.experiments.create_modified_config_files">
+<span class="sig-prename descclassname"><span class="pre">aphin.utils.experiments.</span></span><span class="sig-name descname"><span class="pre">create_modified_config_files</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parameter_variation_dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">basis_config_yml_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">result_dir</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/utils/experiments.html#create_modified_config_files"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.utils.experiments.create_modified_config_files" title="Link to this definition"></a></dt>
+<dd><p>Generate modified YAML configuration files based on variations in parameter values.</p>
+<p>This function takes a base configuration file and creates new configuration files for each combination of parameter values provided. Each generated configuration file is named uniquely based on the experiment name and parameter values. If a parameter value is a float, it is formatted to avoid scientific notation and unnecessary decimal points.</p>
+<section id="id9">
+<h3>Parameters:<a class="headerlink" href="#id9" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>parameter_variation_dict<span class="classifier">dict</span></dt><dd><p>Dictionary where keys are configuration parameter names and values are lists of possible values for those parameters. The function will generate configuration files for every combination of these parameter values.</p>
+</dd>
+<dt>basis_config_yml_path<span class="classifier">str</span></dt><dd><p>File path to the base YAML configuration file used as the template for modifications.</p>
+</dd>
+<dt>result_dir<span class="classifier">str</span></dt><dd><p>Directory where the modified configuration files will be saved.</p>
+</dd>
+</dl>
+</section>
+<section id="id10">
+<h3>Returns:<a class="headerlink" href="#id10" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>yaml_paths_list<span class="classifier">list of str</span></dt><dd><p>List of file paths to the generated YAML configuration files.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="aphin.utils.experiments.dict_product">
+<span class="sig-prename descclassname"><span class="pre">aphin.utils.experiments.</span></span><span class="sig-name descname"><span class="pre">dict_product</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/utils/experiments.html#dict_product"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.utils.experiments.dict_product" title="Link to this definition"></a></dt>
+<dd><p>Generate all possible combinations of parameter values from a dictionary.</p>
+<p>This function yields all combinations of the values in the dictionary <cite>d</cite>, where each key
+in the dictionary corresponds to a parameter with multiple possible values. The combinations
+are generated by creating a Cartesian product of the values for all keys.</p>
+<section id="id11">
+<h3>Parameters:<a class="headerlink" href="#id11" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>d<span class="classifier">dict</span></dt><dd><p>A dictionary where each key is a parameter and the corresponding value is a list of possible
+values for that parameter. The function will generate all combinations of these values.</p>
+</dd>
+</dl>
+</section>
+<section id="yields">
+<h3>Yields:<a class="headerlink" href="#yields" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>dict</dt><dd><p>A dictionary representing a single combination of parameter values. Each dictionary has the same
+keys as the input dictionary <cite>d</cite>, with values corresponding to one combination of the possible
+values.</p>
+</dd>
+</dl>
+</section>
+<section id="examples">
+<h3>Examples:<a class="headerlink" href="#examples" title="Link to this heading"></a></h3>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">param_dict</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;param1&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="s1">&#39;param2&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">]}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">list</span><span class="p">(</span><span class="n">dict_product</span><span class="p">(</span><span class="n">param_dict</span><span class="p">))</span>
+<span class="go">[{&#39;param1&#39;: 1, &#39;param2&#39;: &#39;a&#39;}, {&#39;param1&#39;: 1, &#39;param2&#39;: &#39;b&#39;}, {&#39;param1&#39;: 2, &#39;param2&#39;: &#39;a&#39;}, {&#39;param1&#39;: 2, &#39;param2&#39;: &#39;b&#39;}]</span>
+</pre></div>
+</div>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="aphin.utils.experiments.find_all_yaml_files">
+<span class="sig-prename descclassname"><span class="pre">aphin.utils.experiments.</span></span><span class="sig-name descname"><span class="pre">find_all_yaml_files</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">working_dir</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/utils/experiments.html#find_all_yaml_files"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.utils.experiments.find_all_yaml_files" title="Link to this definition"></a></dt>
+<dd><p>Locate all YAML files (.yml) within a specified directory and its subdirectories.</p>
+<p>This function searches through the given working directory and all its subfolders to find files with a <cite>.yml</cite> extension.</p>
+<section id="id12">
+<h3>Parameters:<a class="headerlink" href="#id12" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>working_dir<span class="classifier">str</span></dt><dd><p>The root directory where the search for YAML files begins.</p>
+</dd>
+</dl>
+</section>
+<section id="id13">
+<h3>Returns:<a class="headerlink" href="#id13" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>yaml_files<span class="classifier">list of str</span></dt><dd><p>A list of file paths to all YAML files found within the working directory and its subfolders.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="aphin.utils.experiments.run_all_yaml_files">
+<span class="sig-prename descclassname"><span class="pre">aphin.utils.experiments.</span></span><span class="sig-name descname"><span class="pre">run_all_yaml_files</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">experiment_main_script</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yaml_paths_list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_dir</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/utils/experiments.html#run_all_yaml_files"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.utils.experiments.run_all_yaml_files" title="Link to this definition"></a></dt>
+<dd><p>Execute a main experiment script for each YAML configuration file and log the results.</p>
+<p>This function iterates over a list of YAML configuration file paths, executes the provided
+<cite>experiment_main_script</cite> for each configuration, and logs the results to a separate log file
+for each experiment.</p>
+<section id="id14">
+<h3>Parameters:<a class="headerlink" href="#id14" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>experiment_main_script<span class="classifier">callable</span></dt><dd><p>A function that executes the main experiment. It should accept a <cite>config_path_to_file</cite>
+keyword argument, which is the path to the YAML configuration file. This function runs
+the experiment based on the provided configuration.</p>
+</dd>
+<dt>yaml_paths_list<span class="classifier">list of str</span></dt><dd><p>A list of file paths to YAML configuration files. Each file specifies a different set
+of parameters for the experiment.</p>
+</dd>
+<dt>log_dir<span class="classifier">str</span></dt><dd><p>Directory where the log files will be saved. Each experiment will have a corresponding
+log file named after the experiment.</p>
+</dd>
+</dl>
+</section>
+<section id="id15">
+<h3>Returns:<a class="headerlink" href="#id15" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>None</dt><dd><p>This function does not return any value.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="aphin.utils.experiments.run_various_experiments">
+<span class="sig-prename descclassname"><span class="pre">aphin.utils.experiments.</span></span><span class="sig-name descname"><span class="pre">run_various_experiments</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">experiment_main_script</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parameter_variation_dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">basis_config_yml_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">result_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force_calculation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/utils/experiments.html#run_various_experiments"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.utils.experiments.run_various_experiments" title="Link to this definition"></a></dt>
+<dd><p>Runs multiple experiments by creating several config files.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>experiment_main_script</strong> (<em>function</em>) – main script that runs the desired example</p></li>
+<li><p><strong>parameter_variation_dict</strong> (<em>dict</em>) – <p>dict.keys need to match with keyword in basic config file
+dict.values are a list of desired configurations
+e.g. {“scaling_values”:[“Null”,[10,100,0.1]],</p>
+<blockquote>
+<div><p>”r”: [2,6,10]}</p>
+</div></blockquote>
+</p></li>
+<li><p><strong>basis_config_yml_path</strong> (<em>(</em><em>str</em><em>)</em>) – absolute path to basic config file which shall be manipulated</p></li>
+<li><p><strong>result_dir</strong> (<em>(</em><em>str</em><em>)</em>) – absolute path to where the results</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-aphin.utils.integrators">
+<span id="aphin-utils-integrators-module"></span><h2>aphin.utils.integrators module<a class="headerlink" href="#module-aphin.utils.integrators" title="Link to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="aphin.utils.integrators.implicit_midpoint">
+<span class="sig-prename descclassname"><span class="pre">aphin.utils.integrators.</span></span><span class="sig-name descname"><span class="pre">implicit_midpoint</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">E</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">A</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z_init</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">B</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">u</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">decomp_option</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'lu'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/utils/integrators.html#implicit_midpoint"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.utils.integrators.implicit_midpoint" title="Link to this definition"></a></dt>
+<dd><p>Calculate time integration of a linear ODE system using the implicit midpoint rule.</p>
+<dl class="simple">
+<dt>This function solves the ODE system defined by:</dt><dd><p>E * dz_dt = A * z + B * u</p>
+</dd>
+</dl>
+<section id="id16">
+<h3>Parameters:<a class="headerlink" href="#id16" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>E<span class="classifier">numpy.ndarray</span></dt><dd><p>Descriptor matrix of the ODE system.</p>
+</dd>
+<dt>A<span class="classifier">numpy.ndarray</span></dt><dd><p>System matrix of the ODE system.</p>
+</dd>
+<dt>t<span class="classifier">numpy.ndarray</span></dt><dd><p>Time vector with equidistant time steps.</p>
+</dd>
+<dt>z_init<span class="classifier">numpy.ndarray</span></dt><dd><p>Initial state vector.</p>
+</dd>
+<dt>B<span class="classifier">numpy.ndarray, optional</span></dt><dd><p>Input matrix. Defaults to None, which sets B to zero.</p>
+</dd>
+<dt>u<span class="classifier">numpy.ndarray, optional</span></dt><dd><p>Input function at time midpoints. Defaults to None, which sets u to zero.</p>
+</dd>
+<dt>decomp_option<span class="classifier">str, optional</span></dt><dd><p>Option for matrix decomposition or solving. Choices are ‘lu’ for LU decomposition or
+‘linalg_solve’ for solving without decomposition. Defaults to ‘lu’.</p>
+</dd>
+</dl>
+</section>
+<section id="id17">
+<h3>Returns:<a class="headerlink" href="#id17" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>z<span class="classifier">numpy.ndarray</span></dt><dd><p>Array of state vectors at each time step.</p>
+</dd>
+<dt>t<span class="classifier">numpy.ndarray</span></dt><dd><p>Array of time points.</p>
+</dd>
+</dl>
+</section>
+<section id="theory">
+<h3>Theory:<a class="headerlink" href="#theory" title="Link to this heading"></a></h3>
+<p>we got a pH-system E*Dx = (J-R)*Q*x + B*u
+we define A:=(J-R)*Q and the RHS as f(t,x)
+use the differential slope equation at midpoint
+(x(t+h)-x(t))/h=Dx(t+h/2)=E^-1 * f(t+h/2,x(t+h/2))
+since x(t+h/2) is unknown we use the approximation
+x(t+h/2) = 1/2*(x(t)+x(t+h))
+insert the linear system into the differential equation leads to
+x(t+h) = x(t) + h * E^-1 <a href="#id18"><span class="problematic" id="id19">*</span></a>(1/2*A*(x(t)+x(t+h))+ B*u(t+h/2))
+reformulate the equation to
+(E-h/2*A)x(t+h) = (E+h/2*A)*x(t) + h*B*u(t+h/2)
+solve the linear equation system, e.g. via LU-decomposition</p>
+<p>The linear system is solved for x(t + h) using the specified decomposition method.</p>
+</section>
+<section id="id20">
+<h3>Examples:<a class="headerlink" href="#id20" title="Link to this heading"></a></h3>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">E</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">A</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">z_init</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">z</span><span class="p">,</span> <span class="n">t</span> <span class="o">=</span> <span class="n">implicit_midpoint</span><span class="p">(</span><span class="n">E</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">z_init</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</dd></dl>
+
+</section>
+<section id="module-aphin.utils.print_matrices">
+<span id="aphin-utils-print-matrices-module"></span><h2>aphin.utils.print_matrices module<a class="headerlink" href="#module-aphin.utils.print_matrices" title="Link to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="aphin.utils.print_matrices.matprint">
+<span class="sig-prename descclassname"><span class="pre">aphin.utils.print_matrices.</span></span><span class="sig-name descname"><span class="pre">matprint</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mat</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">decimals</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/utils/print_matrices.html#matprint"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.utils.print_matrices.matprint" title="Link to this definition"></a></dt>
+<dd><p>Pretty print a matrix with specified formatting.</p>
+<p>This function prints the matrix with a label and formats the floating-point numbers
+to a specified number of decimal places for better readability.</p>
+<section id="id21">
+<h3>Parameters:<a class="headerlink" href="#id21" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>name<span class="classifier">str</span></dt><dd><p>Label to display before printing the matrix.</p>
+</dd>
+<dt>mat<span class="classifier">numpy.ndarray</span></dt><dd><p>The matrix to be printed.</p>
+</dd>
+<dt>decimals<span class="classifier">int, optional</span></dt><dd><p>Number of decimal places to format the floating-point numbers. Defaults to 2.</p>
+</dd>
+</dl>
+</section>
+<section id="id22">
+<h3>Examples:<a class="headerlink" href="#id22" title="Link to this heading"></a></h3>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">mat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mf">1.123456</span><span class="p">,</span> <span class="mf">2.345678</span><span class="p">],</span> <span class="p">[</span><span class="mf">3.456789</span><span class="p">,</span> <span class="mf">4.567890</span><span class="p">]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">matprint</span><span class="p">(</span><span class="s2">&quot;My Matrix&quot;</span><span class="p">,</span> <span class="n">mat</span><span class="p">,</span> <span class="n">decimals</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+<span class="go">My Matrix:</span>
+<span class="go">[[1.123 2.346]</span>
+<span class="go"> [3.457 4.568]]</span>
+</pre></div>
+</div>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="aphin.utils.print_matrices.print_matrices">
+<span class="sig-prename descclassname"><span class="pre">aphin.utils.print_matrices.</span></span><span class="sig-name descname"><span class="pre">print_matrices</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">layer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mu</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_t</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sim_idx</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">decimals</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_train_data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/utils/print_matrices.html#print_matrices"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.utils.print_matrices.print_matrices" title="Link to this definition"></a></dt>
+<dd><p>Print system matrices and their original counterparts, if available.</p>
+<p>This function extracts and prints the system matrices (J, R, B, Q) from a given layer
+and compares them with their original counterparts if provided. It also logs the minimum
+eigenvalues of matrices Q and R.</p>
+<section id="id23">
+<h3>Parameters:<a class="headerlink" href="#id23" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>layer<span class="classifier">instance of LTILayer or its children</span></dt><dd><p>An object that provides the <cite>get_system_matrices</cite> method to retrieve the system matrices.</p>
+</dd>
+<dt>mu<span class="classifier">array-like, optional</span></dt><dd><p>Parameter values. Defaults to None.</p>
+</dd>
+<dt>n_t<span class="classifier">int or None, optional</span></dt><dd><p>Number of time steps. Defaults to None.</p>
+</dd>
+<dt>sim_idx<span class="classifier">int, optional</span></dt><dd><p>Simulation index for selecting specific matrices from a list of matrices. Defaults to 0.</p>
+</dd>
+<dt>data<span class="classifier">object from PHIdentifiedDataset or None, optional</span></dt><dd><p>An object containing original matrices for comparison. Defaults to None.</p>
+</dd>
+<dt>decimals<span class="classifier">int, optional</span></dt><dd><p>Number of decimal places to format the matrix values. Defaults to 2.</p>
+</dd>
+<dt>use_train_data<span class="classifier">bool, optional</span></dt><dd><p>If True, uses training data for original matrices; otherwise, uses test data. Defaults to False.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+</section>
+<section id="module-aphin.utils.save_results">
+<span id="aphin-utils-save-results-module"></span><h2>aphin.utils.save_results module<a class="headerlink" href="#module-aphin.utils.save_results" title="Link to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="aphin.utils.save_results.save_config">
+<span class="sig-prename descclassname"><span class="pre">aphin.utils.save_results.</span></span><span class="sig-name descname"><span class="pre">save_config</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path_to_config</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">result_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">load_network</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/utils/save_results.html#save_config"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.utils.save_results.save_config" title="Link to this definition"></a></dt>
+<dd><p>Copies the configuration file to the results directory to consolidate all relevant data.</p>
+<p>This function ensures that the configuration file (<cite>config.yml</cite>) is copied to the specified
+<cite>result_dir</cite> for convenience. This helps in keeping all experiment data and configuration
+in a single folder. If <cite>load_network</cite> is <cite>True</cite>, the function does not perform any action.</p>
+<section id="id24">
+<h3>Parameters:<a class="headerlink" href="#id24" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>path_to_config<span class="classifier">str</span></dt><dd><p>The path to the configuration file (<cite>config.yml</cite>). This file should be a YAML file with
+the experiment’s configuration.</p>
+</dd>
+<dt>result_dir<span class="classifier">str</span></dt><dd><p>The destination directory where the results are stored. The configuration file will be
+copied to this directory.</p>
+</dd>
+<dt>load_network<span class="classifier">bool</span></dt><dd><p>A flag indicating whether a network is loaded in this experiment run. If <cite>True</cite>, no action
+is taken. If <cite>False</cite>, the configuration file is copied.</p>
+</dd>
+</dl>
+</section>
+<section id="id25">
+<h3>Returns:<a class="headerlink" href="#id25" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>None</dt><dd><p>The function does not return any value. It performs a file copy operation.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="aphin.utils.save_results.save_results">
+<span class="sig-prename descclassname"><span class="pre">aphin.utils.save_results.</span></span><span class="sig-name descname"><span class="pre">save_results</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">weight_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path_to_config</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config_dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">result_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">load_network</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/utils/save_results.html#save_results"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.utils.save_results.save_results" title="Link to this definition"></a></dt>
+<dd><p>calls the functions to save weights, config and writes to overview .csv
+param weight_dir:   directory where to NN weights are saved
+param path_to_config:  path to config.yml file
+param config_dict:  (dict) config dictionary usually obtained from the Configuration class
+param result_dir:   destination directory where the results are stored
+param load_network: (bool) boolean if network is loaded in this experiment run</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="aphin.utils.save_results.save_weights">
+<span class="sig-prename descclassname"><span class="pre">aphin.utils.save_results.</span></span><span class="sig-name descname"><span class="pre">save_weights</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">weight_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">result_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">load_network</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/utils/save_results.html#save_weights"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.utils.save_results.save_weights" title="Link to this definition"></a></dt>
+<dd><p>Copy neural network weights from the weight directory to the result directory.</p>
+<p>This function copies the weights file from <cite>weight_dir</cite> to <cite>result_dir</cite>, ensuring that all relevant data
+is consolidated in one location. If <cite>load_network</cite> is True, no action is taken.</p>
+<section id="id26">
+<h3>Parameters:<a class="headerlink" href="#id26" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>weight_dir<span class="classifier">str</span></dt><dd><p>Directory where the neural network weights are saved.</p>
+</dd>
+<dt>result_dir<span class="classifier">str</span></dt><dd><p>Destination directory where the results are stored.</p>
+</dd>
+<dt>load_network<span class="classifier">bool</span></dt><dd><p>Boolean indicating if the network is loaded in this experiment run. If True, weights are not copied.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="aphin.utils.save_results.write_to_experiment_overview">
+<span class="sig-prename descclassname"><span class="pre">aphin.utils.save_results.</span></span><span class="sig-name descname"><span class="pre">write_to_experiment_overview</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config_dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">result_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">load_network</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/utils/save_results.html#write_to_experiment_overview"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.utils.save_results.write_to_experiment_overview" title="Link to this definition"></a></dt>
+<dd><p>Append experiment configuration details to an overview CSV file.</p>
+<p>This function updates a CSV file named <cite>experiments_overview.csv</cite> with the configuration details of
+the current experiment. If <cite>load_network</cite> is True, no new entry is added. If False, the configuration
+is added to the overview.</p>
+<section id="id27">
+<h3>Parameters:<a class="headerlink" href="#id27" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>config_dict<span class="classifier">dict</span></dt><dd><p>Configuration dictionary, typically obtained from the Configuration class.</p>
+</dd>
+<dt>result_dir<span class="classifier">str</span></dt><dd><p>Destination directory where the results are stored. The overview CSV is written to the parent directory.</p>
+</dd>
+<dt>load_network<span class="classifier">bool</span></dt><dd><p>Boolean indicating if the network is loaded in this experiment run. If True, no new entry is added to the CSV.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+</section>
+<section id="module-aphin.utils.transformations">
+<span id="aphin-utils-transformations-module"></span><h2>aphin.utils.transformations module<a class="headerlink" href="#module-aphin.utils.transformations" title="Link to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="aphin.utils.transformations.Q_to_I_transformation">
+<span class="sig-prename descclassname"><span class="pre">aphin.utils.transformations.</span></span><span class="sig-name descname"><span class="pre">Q_to_I_transformation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Qeye_system_exists</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">A_ph</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">B</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">C</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">D</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">X</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/utils/transformations.html#Q_to_I_transformation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.utils.transformations.Q_to_I_transformation" title="Link to this definition"></a></dt>
+<dd><p>Perform a transformation of the system matrices based on the solution of the Riccati equation.</p>
+<p>This function checks the properties of the solution <cite>X</cite> to the Riccati equation, verifies the
+Kalman-Yakubovich-Popov (KYP) inequality, and performs a transformation to obtain a pH representation
+in transformed coordinates. It returns the transformed system matrices and the transformation matrices.</p>
+<section id="id28">
+<h3>Parameters:<a class="headerlink" href="#id28" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>Qeye_system_exists<span class="classifier">bool</span></dt><dd><p>Flag indicating whether the Riccati equation was successfully solved.</p>
+</dd>
+<dt>A_ph<span class="classifier">numpy.ndarray</span></dt><dd><p>Descriptor matrix of the system.</p>
+</dd>
+<dt>B<span class="classifier">numpy.ndarray</span></dt><dd><p>Input matrix of the system.</p>
+</dd>
+<dt>C<span class="classifier">numpy.ndarray</span></dt><dd><p>Output matrix of the system.</p>
+</dd>
+<dt>D<span class="classifier">numpy.ndarray</span></dt><dd><p>Direct transmission matrix of the system.</p>
+</dd>
+<dt>X<span class="classifier">numpy.ndarray</span></dt><dd><p>Solution to the Riccati equation.</p>
+</dd>
+</dl>
+</section>
+<section id="id29">
+<h3>Returns:<a class="headerlink" href="#id29" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>J_T<span class="classifier">numpy.ndarray</span></dt><dd><p>Transformed matrix representing the pH system in T-coordinates.</p>
+</dd>
+<dt>R_T<span class="classifier">numpy.ndarray</span></dt><dd><p>Transformed matrix representing the pH system in T-coordinates.</p>
+</dd>
+<dt>B_T_ph<span class="classifier">numpy.ndarray</span></dt><dd><p>Transformed input matrix in T-coordinates.</p>
+</dd>
+<dt>C_T_ph<span class="classifier">numpy.ndarray</span></dt><dd><p>Transformed output matrix in T-coordinates.</p>
+</dd>
+<dt>T<span class="classifier">numpy.ndarray</span></dt><dd><p>Transformation matrix used for the coordinate change.</p>
+</dd>
+<dt>T_inv<span class="classifier">numpy.ndarray</span></dt><dd><p>Inverse of the transformation matrix.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="aphin.utils.transformations.checkPR">
+<span class="sig-prename descclassname"><span class="pre">aphin.utils.transformations.</span></span><span class="sig-name descname"><span class="pre">checkPR</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">A_ph</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">B</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">C</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">D</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/utils/transformations.html#checkPR"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.utils.transformations.checkPR" title="Link to this definition"></a></dt>
+<dd><p>Check if a system is positive-real.</p>
+<p>This function evaluates the positive-realness of a linear system defined by the matrices (A_{ph}), (B), (C), and (D).
+It checks if the system’s transfer function matrix is positive semidefinite for several frequencies on the imaginary axis.</p>
+<section id="id30">
+<h3>Parameters:<a class="headerlink" href="#id30" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>A_ph<span class="classifier">numpy.ndarray</span></dt><dd><p>System matrix of the system.</p>
+</dd>
+<dt>B<span class="classifier">numpy.ndarray</span></dt><dd><p>Input matrix of the system.</p>
+</dd>
+<dt>C<span class="classifier">numpy.ndarray</span></dt><dd><p>Output matrix of the system.</p>
+</dd>
+<dt>D<span class="classifier">numpy.ndarray</span></dt><dd><p>Feedthrough matrix of the system.</p>
+</dd>
+</dl>
+</section>
+<section id="id31">
+<h3>Notes:<a class="headerlink" href="#id31" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p>Positive-realness requires that (Phi(s) = T(-s)^dagger + T(s)) is positive semidefinite for all (omega) in (mathbb{R}).</p></li>
+<li><p>The function checks this for 100 points between 0.1 and 1000 rad/s.</p></li>
+<li><p>For stability, it is sufficient to check if the (1,1) block of (W(X)) is positive semidefinite.</p></li>
+</ul>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="aphin.utils.transformations.reshape_features_to_states">
+<span class="sig-prename descclassname"><span class="pre">aphin.utils.transformations.</span></span><span class="sig-name descname"><span class="pre">reshape_features_to_states</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_sim</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_t</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x_dt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_n</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_dn</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_f</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/utils/transformations.html#reshape_features_to_states"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.utils.transformations.reshape_features_to_states" title="Link to this definition"></a></dt>
+<dd><p>Transforms the feature array ‘x’ back into a state array ‘X’, either 3-dimensional or 4-dimensional.</p>
+<section id="id32">
+<h3>Parameters:<a class="headerlink" href="#id32" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>x<span class="classifier">ndarray</span></dt><dd><p>Feature array of size (n_s, n_f), where:
+- n_s: number of samples (n_sim * n_t)
+- n_f: number of features (n_n * n_dn) if n_n and n_dn are provided, otherwise it is n_f.</p>
+</dd>
+<dt>n_sim<span class="classifier">int</span></dt><dd><p>Number of simulations.</p>
+</dd>
+<dt>n_t<span class="classifier">int</span></dt><dd><p>Number of time steps.</p>
+</dd>
+<dt>x_dt<span class="classifier">ndarray, optional</span></dt><dd><p>Feature array of the time derivatives with the same shape as ‘x’. Default is None.</p>
+</dd>
+<dt>n_n<span class="classifier">int, optional</span></dt><dd><p>Number of nodes. Required if n_dn is provided. Default is None.</p>
+</dd>
+<dt>n_dn<span class="classifier">int, optional</span></dt><dd><p>Number of degrees of freedom per node. Required if n_n is provided. Default is None.</p>
+</dd>
+<dt>n_f<span class="classifier">int, optional</span></dt><dd><p>Number of features. Default is None.</p>
+</dd>
+</dl>
+</section>
+<section id="id33">
+<h3>Returns:<a class="headerlink" href="#id33" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>X<span class="classifier">ndarray</span></dt><dd><p>State array of size (n_sim, n_t, n_n, n_dn) if n_n and n_dn are provided, otherwise (n_sim, n_t, n_f).</p>
+</dd>
+<dt>X_dt<span class="classifier">ndarray, optional</span></dt><dd><p>State array of the time derivatives with the same shape as ‘X’. Returned only if x_dt is not None.</p>
+</dd>
+</dl>
+</section>
+<section id="id34">
+<h3>Raises:<a class="headerlink" href="#id34" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>ValueError</dt><dd><p>If both (n_n and n_dn) and n_f are provided.</p>
+</dd>
+</dl>
+</section>
+<section id="id35">
+<h3>Notes:<a class="headerlink" href="#id35" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p>Either n_f should be provided or both n_n and n_dn should be provided, but not both.</p></li>
+<li><p>If n_n and n_dn are provided, the function reshapes the feature array to (n_sim, n_t, n_n, n_dn).</p></li>
+<li><p>If n_f is provided, the function reshapes the feature array to (n_sim, n_t, n_f).</p></li>
+<li><p>If x_dt is provided, it is reshaped similarly and returned alongside X.</p></li>
+</ul>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="aphin.utils.transformations.reshape_inputs_to_features">
+<span class="sig-prename descclassname"><span class="pre">aphin.utils.transformations.</span></span><span class="sig-name descname"><span class="pre">reshape_inputs_to_features</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">U</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/utils/transformations.html#reshape_inputs_to_features"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.utils.transformations.reshape_inputs_to_features" title="Link to this definition"></a></dt>
+<dd><p>Transforms the input array ‘U’ into a feature array ‘u’, which is required for identification.
+The function reshapes the input array from (n_sim, n_t, n_u) to (n_s, n_u).</p>
+<section id="id36">
+<h3>Parameters:<a class="headerlink" href="#id36" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>U<span class="classifier">ndarray</span></dt><dd><p>Input array of size (n_sim, n_t, n_u), where:
+- n_sim: number of simulations
+- n_t: number of time steps
+- n_u: number of input features</p>
+</dd>
+</dl>
+</section>
+<section id="id37">
+<h3>Returns:<a class="headerlink" href="#id37" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>u<span class="classifier">ndarray</span></dt><dd><p>Feature array of size (n_s, n_u), where:
+- n_s: number of samples (n_sim * n_t)
+- n_u: number of input features</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="aphin.utils.transformations.reshape_states_to_features">
+<span class="sig-prename descclassname"><span class="pre">aphin.utils.transformations.</span></span><span class="sig-name descname"><span class="pre">reshape_states_to_features</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">X_dt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/utils/transformations.html#reshape_states_to_features"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.utils.transformations.reshape_states_to_features" title="Link to this definition"></a></dt>
+<dd><p>Transforms the state array ‘X’ into a feature array ‘x’, which is required for identification.</p>
+<section id="id38">
+<h3>Parameters:<a class="headerlink" href="#id38" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>X<span class="classifier">ndarray</span></dt><dd><p>State array of size (n_sim, n_t, n_n, n_dn) or (n_sim, n_t, n_f), where:
+- n_sim: number of simulations
+- n_t: number of time steps
+- n_n: number of nodes (only if X has 4 dimensions)
+- n_dn: number of degrees of freedom per node (only if X has 4 dimensions)
+- n_f: number of features (only if X has 3 dimensions)</p>
+</dd>
+<dt>X_dt<span class="classifier">ndarray, optional</span></dt><dd><p>Time derivatives of the state array with the same shape as X. Default is None.</p>
+</dd>
+</dl>
+</section>
+<section id="id39">
+<h3>Returns:<a class="headerlink" href="#id39" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>x<span class="classifier">ndarray</span></dt><dd><p>Feature array of size (n_s, n_f), where:
+- n_s: number of samples (n_sim * n_t)
+- n_f: number of features (n_n * n_dn) or n_f</p>
+</dd>
+<dt>dx_dt<span class="classifier">ndarray, optional</span></dt><dd><p>Feature array of the time derivatives of size (n_s, n_f). Returned only if X_dt is not None.</p>
+</dd>
+</dl>
+</section>
+<section id="id40">
+<h3>Notes:<a class="headerlink" href="#id40" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p>If X has 4 dimensions, it is reshaped from (n_sim, n_t, n_n, n_dn) to (n_s, n_f).</p></li>
+<li><p>If X has 3 dimensions, it is assumed to be already in the shape (n_sim, n_t, n_f).</p></li>
+<li><p>If X_dt is provided, it is reshaped similarly and returned alongside x.</p></li>
+</ul>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="aphin.utils.transformations.solve_Riccati">
+<span class="sig-prename descclassname"><span class="pre">aphin.utils.transformations.</span></span><span class="sig-name descname"><span class="pre">solve_Riccati</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">A_ph</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">B</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">C</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">D</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">solver</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/utils/transformations.html#solve_Riccati"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.utils.transformations.solve_Riccati" title="Link to this definition"></a></dt>
+<dd><p>Solve the continuous-time algebraic Riccati equation (CARE) for a given system.
+The function supports solving using two different solvers:
+<cite>scipy</cite> and <cite>pymor</cite>.</p>
+<section id="id41">
+<h3>Parameters:<a class="headerlink" href="#id41" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>A_ph<span class="classifier">numpy.ndarray</span></dt><dd><p>System matrix of the system.</p>
+</dd>
+<dt>B<span class="classifier">numpy.ndarray</span></dt><dd><p>Input matrix of the system.</p>
+</dd>
+<dt>C<span class="classifier">numpy.ndarray</span></dt><dd><p>Output matrix of the system.</p>
+</dd>
+<dt>D<span class="classifier">numpy.ndarray</span></dt><dd><p>Feedthrough matrix of the system.</p>
+</dd>
+<dt>solver<span class="classifier">str</span></dt><dd><p>Solver to use for solving the Riccati equation. Options are:
+- “scipy”: Uses <cite>scipy.linalg.solve_continuous_are</cite>.
+- “pymor”: Uses <cite>pymor</cite>’s LTIModel for solution.</p>
+</dd>
+</dl>
+</section>
+<section id="id42">
+<h3>Returns:<a class="headerlink" href="#id42" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>X<span class="classifier">numpy.ndarray</span></dt><dd><p>Solution to the Riccati equation, if the solver was successful.</p>
+</dd>
+<dt>Qeye_system_exists<span class="classifier">bool</span></dt><dd><p>Flag indicating whether the Riccati equation was successfully solved.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="aphin.utils.transformations.transform_pH_to_Q_identity">
+<span class="sig-prename descclassname"><span class="pre">aphin.utils.transformations.</span></span><span class="sig-name descname"><span class="pre">transform_pH_to_Q_identity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">J</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">R</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Q</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">B</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">C</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">solver</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Q'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/utils/transformations.html#transform_pH_to_Q_identity"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.utils.transformations.transform_pH_to_Q_identity" title="Link to this definition"></a></dt>
+<dd><p>Transform a port-Hamiltonian (pH) system to one with Q = I (identity matrix).</p>
+<p>This function transforms a given port-Hamiltonian system to a new representation where the matrix <cite>Q</cite> is replaced
+by the identity matrix. The transformation is described in [BeattieMehrmannVanDooren18] and involves solving a
+Riccati equation or using <cite>Q</cite> directly as a solution to the KYP (Kalman-Yakubovich-Popov) inequality.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>J</strong> (<em>array-like</em><em>, </em><em>shape</em><em> (</em><em>n</em><em>, </em><em>n</em><em>)</em>) – The port-Hamiltonian J matrix, which should be skew-symmetric.</p></li>
+<li><p><strong>R</strong> (<em>array-like</em><em>, </em><em>shape</em><em> (</em><em>n</em><em>, </em><em>n</em><em>)</em>) – The port-Hamiltonian R matrix, which should be symmetric positive semi-definite.</p></li>
+<li><p><strong>Q</strong> (<em>array-like</em><em>, </em><em>shape</em><em> (</em><em>n</em><em>, </em><em>n</em><em>)</em>) – The port-Hamiltonian Q matrix to be transformed to the identity matrix.</p></li>
+<li><p><strong>B</strong> (<em>array-like</em><em>, </em><em>shape</em><em> (</em><em>n</em><em>, </em><em>n_u</em><em>)</em>) – The input matrix of the system.</p></li>
+<li><p><strong>C</strong> (<em>array-like</em><em>, </em><em>shape</em><em> (</em><em>n_u</em><em>, </em><em>n</em><em>)</em>) – The output matrix of the system.</p></li>
+<li><p><strong>solver</strong> (<em>{'scipy'</em><em>, </em><em>'pymor'</em><em>, </em><em>'Q'}</em><em>, </em><em>optional</em>) – Method for solving the transformation:
+- ‘scipy’ or ‘pymor’: Use the Riccati equation solver.
+- ‘Q’: Use the provided Q matrix directly.</p></li>
+<li><p><strong>seed</strong> (<em>int</em><em>, </em><em>optional</em>) – Random seed for generating a dummy input matrix when the Riccati equation is solved.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>J_T</strong> (<em>ndarray, shape (n, n)</em>) – The transformed J matrix.</p></li>
+<li><p><strong>R_T</strong> (<em>ndarray, shape (n, n)</em>) – The transformed R matrix.</p></li>
+<li><p><strong>B_T_ph</strong> (<em>ndarray, shape (n, n_u)</em>) – The transformed input matrix.</p></li>
+<li><p><strong>C_T_ph</strong> (<em>ndarray, shape (n_u, n)</em>) – The transformed output matrix.</p></li>
+<li><p><strong>T</strong> (<em>ndarray, shape (n, n)</em>) – The transformation matrix.</p></li>
+<li><p><strong>T_inv</strong> (<em>ndarray, shape (n, n)</em>) – The inverse of the transformation matrix.</p></li>
+<li><p><strong>input_used</strong> (<em>bool</em>) – Whether the input matrix was used in the transformation.</p></li>
+<li><p><strong>Qeye_system_exists</strong> (<em>bool</em>) – Whether a valid transformation to Q = I was found.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-aphin.utils.visualizations">
+<span id="aphin-utils-visualizations-module"></span><h2>aphin.utils.visualizations module<a class="headerlink" href="#module-aphin.utils.visualizations" title="Link to this heading"></a></h2>
+<p>Utilities for the use in the examples</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="aphin.utils.visualizations.animate_parameter_sweep">
+<span class="sig-prename descclassname"><span class="pre">aphin.utils.visualizations.</span></span><span class="sig-name descname"><span class="pre">animate_parameter_sweep</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ph_layer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mu</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mu_names</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">param_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">directory</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'results'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/utils/visualizations.html#animate_parameter_sweep"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.utils.visualizations.animate_parameter_sweep" title="Link to this definition"></a></dt>
+<dd><p>Creates an animation of the parameter sweep for system matrices and saves it as a GIF.</p>
+<p>This function generates an animation that visualizes the effect of varying a specific parameter
+on the system matrices ( J ), ( R ), ( B ), and ( Q ). The animation is created by sweeping
+through a range of values for the selected parameter and updating the plot accordingly.</p>
+<section id="id43">
+<h3>Parameters:<a class="headerlink" href="#id43" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>ph_layer<span class="classifier">object</span></dt><dd><p>The layer object responsible for computing the system matrices. It should have a method
+<cite>get_system_matrices</cite> that returns the matrices based on the input parameters.</p>
+</dd>
+<dt>mu<span class="classifier">numpy.ndarray</span></dt><dd><p>An array of parameters used to compute the system matrices. It should have dimensions
+(n_parameters, n_samples).</p>
+</dd>
+<dt>mu_names<span class="classifier">list of str</span></dt><dd><p>A list of names for the parameters, where each name corresponds to a column in <cite>mu</cite>.</p>
+</dd>
+<dt>param_id<span class="classifier">int, optional</span></dt><dd><p>The index of the parameter to sweep through. Defaults to 0.</p>
+</dd>
+<dt>directory<span class="classifier">str, optional</span></dt><dd><p>Directory where the animation GIF will be saved if <cite>save</cite> is <cite>True</cite>. Defaults to “results”.</p>
+</dd>
+<dt>save<span class="classifier">bool, optional</span></dt><dd><p>If <cite>True</cite>, saves the animation as a GIF in the specified <cite>directory</cite>. Defaults to <cite>False</cite>.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="aphin.utils.visualizations.chessboard_visualisation">
+<span class="sig-prename descclassname"><span class="pre">aphin.utils.visualizations.</span></span><span class="sig-name descname"><span class="pre">chessboard_visualisation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">test_ids</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">system_layer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">result_dir</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/utils/visualizations.html#chessboard_visualisation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.utils.visualizations.chessboard_visualisation" title="Link to this definition"></a></dt>
+<dd><p>Visualizes and compares predicted and test matrices by generating various plots.</p>
+<p>This function generates a comprehensive visualization of the predicted and test matrices from a system layer.
+It creates a grid of images showing the matrices and their absolute errors, saves these images, and exports
+the colormap used for visualizations. Additionally, it visualizes the matrices as animations and saves them as images.</p>
+<section id="id44">
+<h3>Parameters:<a class="headerlink" href="#id44" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>test_ids<span class="classifier">list of int</span></dt><dd><p>List of indices for the test samples to visualize and compare.</p>
+</dd>
+<dt>system_layer<span class="classifier">object</span></dt><dd><p>The system layer object that provides methods to get predicted system matrices.</p>
+</dd>
+<dt>data<span class="classifier">object</span></dt><dd><p>The dataset containing test data and matrices. This object should have attributes such as <cite>test_data</cite> and <cite>ph_matrices_test</cite>.</p>
+</dd>
+<dt>result_dir<span class="classifier">str</span></dt><dd><p>The directory path where the result images, colormaps, and limits will be saved.</p>
+</dd>
+</dl>
+</section>
+<section id="id45">
+<h3>Returns:<a class="headerlink" href="#id45" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>None</dt><dd><p>The function generates and saves various plots and files related to matrix visualizations and comparisons.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="aphin.utils.visualizations.get_quantities_of_interest">
+<span class="sig-prename descclassname"><span class="pre">aphin.utils.visualizations.</span></span><span class="sig-name descname"><span class="pre">get_quantities_of_interest</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">quantity_1</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">quantity_2</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_train_data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'X'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">idx_gen</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'rand'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/utils/visualizations.html#get_quantities_of_interest"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.utils.visualizations.get_quantities_of_interest" title="Link to this definition"></a></dt>
+<dd><p>Extracts and returns selected quantities of interest from a dataset for further analysis.</p>
+<p>This function retrieves two specified quantities (e.g., state variables, time derivatives, etc.) from either the training or test
+data of a given dataset object. It also generates indices for simulation, nodes, and features, which can be used for subsequent
+plotting or analysis tasks.</p>
+<section id="id46">
+<h3>Parameters:<a class="headerlink" href="#id46" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>data<span class="classifier">object</span></dt><dd><p>The dataset object containing the time series data. The object should have attributes for accessing the training and test data,
+as well as the time variable (<cite>t</cite>).</p>
+</dd>
+<dt>quantity_1<span class="classifier">str</span></dt><dd><p>The name of the first quantity to retrieve from the dataset object (e.g., “X”, “dx_dt”, etc.).</p>
+</dd>
+<dt>quantity_2<span class="classifier">str</span></dt><dd><p>The name of the second quantity to retrieve from the dataset object. This can be another state variable or a reconstructed quantity.</p>
+</dd>
+<dt>use_train_data<span class="classifier">bool, optional</span></dt><dd><p>If True, the function retrieves the data from the training dataset; otherwise, it uses the test dataset. Default is False.</p>
+</dd>
+<dt>data_type<span class="classifier">str, optional</span></dt><dd><p>The type of data being analyzed, such as “X” for state variables or “Z” for latent variables. Default is “X”.</p>
+</dd>
+<dt>idx_gen<span class="classifier">str, optional</span></dt><dd><p>Method for generating indices for selecting nodes, degrees of freedom, or features. Options are “rand” (random selection)
+or “first” (select the first N features). Default is “rand”.</p>
+</dd>
+</dl>
+</section>
+<section id="id47">
+<h3>Returns:<a class="headerlink" href="#id47" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>tuple</dt><dd><p>A tuple containing the following elements:
+- t (array-like): The time variable from the dataset.
+- quantity_1 (array-like): The first quantity of interest from the dataset.
+- quantity_2 (array-like): The second quantity of interest from the dataset.
+- idx_n_n (array-like): Indices for the nodes.
+- idx_n_dn (array-like): Indices for the degrees of freedom.
+- idx_sim (int): The index of the selected simulation.
+- idx_n_f (array-like): Indices for the selected features.
+- num_plots (int): The number of plots to be generated.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="aphin.utils.visualizations.get_quantity_of_interest">
+<span class="sig-prename descclassname"><span class="pre">aphin.utils.visualizations.</span></span><span class="sig-name descname"><span class="pre">get_quantity_of_interest</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">original_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">identified_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">og_quantity</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">id_quantity</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_train_data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'X'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">idx_gen</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'rand'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/utils/visualizations.html#get_quantity_of_interest"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.utils.visualizations.get_quantity_of_interest" title="Link to this definition"></a></dt>
+<dd><p>Retrieves and prepares quantities of interest for comparison between original and identified data.</p>
+<p>This function extracts specified quantities from both the original and identified datasets,
+based on the type of data (training or test) and the indices generation method. It provides the
+necessary time vector, quantities for comparison, and indices for plotting.</p>
+<section id="id48">
+<h3>Parameters:<a class="headerlink" href="#id48" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>original_data<span class="classifier">object</span></dt><dd><p>Dataset containing the original state variables. Should have attributes for training and testing data.</p>
+</dd>
+<dt>identified_data<span class="classifier">object</span></dt><dd><p>Dataset containing the identified state variables. Should have attributes for training and testing data.</p>
+</dd>
+<dt>og_quantity<span class="classifier">str</span></dt><dd><p>The name of the quantity to retrieve from the original data.</p>
+</dd>
+<dt>id_quantity<span class="classifier">str</span></dt><dd><p>The name of the quantity to retrieve from the identified data.</p>
+</dd>
+<dt>use_train_data<span class="classifier">bool, optional</span></dt><dd><p>If <cite>True</cite>, the training data will be used from both datasets. If <cite>False</cite>, the test data will be used. Defaults to <cite>False</cite>.</p>
+</dd>
+<dt>data_type<span class="classifier">str, optional</span></dt><dd><p>Specifies the type of data to be retrieved. Defaults to “X”.</p>
+</dd>
+<dt>idx_gen<span class="classifier">str, optional</span></dt><dd><p>Method for generating indices. Defaults to “rand” for random indices.</p>
+</dd>
+</dl>
+</section>
+<section id="id49">
+<h3>Returns:<a class="headerlink" href="#id49" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>t<span class="classifier">array-like</span></dt><dd><p>Time vector from the identified data.</p>
+</dd>
+<dt>quantity_1<span class="classifier">array-like</span></dt><dd><p>Quantity retrieved from the original data.</p>
+</dd>
+<dt>quantity_2<span class="classifier">array-like</span></dt><dd><p>Quantity retrieved from the identified data.</p>
+</dd>
+<dt>idx_n_n<span class="classifier">list</span></dt><dd><p>Indices for the nodes variables.</p>
+</dd>
+<dt>idx_n_dn<span class="classifier">list</span></dt><dd><p>Indices for the dof per node variables.</p>
+</dd>
+<dt>idx_sim<span class="classifier">int</span></dt><dd><p>Index for simulation selection.</p>
+</dd>
+<dt>idx_n_f<span class="classifier">list</span></dt><dd><p>Indices for the feature variables.</p>
+</dd>
+<dt>num_plots<span class="classifier">int</span></dt><dd><p>Number of plots to be generated.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="aphin.utils.visualizations.get_sim_idx">
+<span class="sig-prename descclassname"><span class="pre">aphin.utils.visualizations.</span></span><span class="sig-name descname"><span class="pre">get_sim_idx</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_instance</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'X'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_plots_max</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">6</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">idx_gen</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'rand'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/utils/visualizations.html#get_sim_idx"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.utils.visualizations.get_sim_idx" title="Link to this definition"></a></dt>
+<dd><p>Generates indices for plotting based on the type of data and the number of plots desired.</p>
+<p>This function determines which indices to use for plotting the results based on the data type
+(<cite>“X”</cite> for state results or <cite>“Z”</cite> for latent results), the maximum number of plots, and the
+method for index generation. It provides indices for states or latent variables, as well as a
+random simulation index.</p>
+<section id="id50">
+<h3>Parameters:<a class="headerlink" href="#id50" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>data_instance<span class="classifier">object</span></dt><dd><p>The instance of the data containing the results and necessary attributes for indexing.</p>
+</dd>
+<dt>data_type<span class="classifier">str, optional</span></dt><dd><p>The type of data to be indexed. Can be <cite>“X”</cite> for state results or <cite>“Z”</cite> for latent results. Defaults to <cite>“X”</cite>.</p>
+</dd>
+<dt>num_plots_max<span class="classifier">int, optional</span></dt><dd><p>The maximum number of plots to be generated. Defaults to 6.</p>
+</dd>
+<dt>idx_gen<span class="classifier">str, optional</span></dt><dd><p>Method for generating indices. Options are <cite>“rand”</cite> for random indices or <cite>“first”</cite> for sequential indices. Defaults to <cite>“rand”</cite>.</p>
+</dd>
+</dl>
+</section>
+<section id="id51">
+<h3>Returns:<a class="headerlink" href="#id51" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>idx_n_n<span class="classifier">np.ndarray</span></dt><dd><p>Indices for the state variables (nodes).</p>
+</dd>
+<dt>idx_n_dn<span class="classifier">np.ndarray</span></dt><dd><p>Indices for the state variables (degrees of freedom).</p>
+</dd>
+<dt>idx_sim<span class="classifier">int</span></dt><dd><p>Random index for simulation selection.</p>
+</dd>
+<dt>idx_n_f<span class="classifier">np.ndarray</span></dt><dd><p>Indices for the feature variables (states or latent variables).</p>
+</dd>
+<dt>num_plots<span class="classifier">int</span></dt><dd><p>The actual number of plots to be generated.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="aphin.utils.visualizations.new_fig">
+<span class="sig-prename descclassname"><span class="pre">aphin.utils.visualizations.</span></span><span class="sig-name descname"><span class="pre">new_fig</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">num_plots</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/utils/visualizations.html#new_fig"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.utils.visualizations.new_fig" title="Link to this definition"></a></dt>
+<dd><p>Creates a new figure with subplots for plotting.</p>
+<p>This function generates a figure and a set of subplots that can be used for plotting multiple variables or features
+in a vertically stacked layout.</p>
+<section id="id52">
+<h3>Parameters:<a class="headerlink" href="#id52" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>num_plots<span class="classifier">int</span></dt><dd><p>The number of subplots to create. Each subplot will be arranged vertically in a single column.</p>
+</dd>
+</dl>
+</section>
+<section id="id53">
+<h3>Returns:<a class="headerlink" href="#id53" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>fig<span class="classifier">matplotlib.figure.Figure</span></dt><dd><p>The created figure object containing the subplots.</p>
+</dd>
+<dt>ax<span class="classifier">numpy.ndarray or matplotlib.axes.Axes</span></dt><dd><p>An array of Axes objects for the subplots. If <cite>num_plots</cite> is 1, <cite>ax</cite> will be a single Axes object;
+otherwise, it will be an array of Axes objects.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="aphin.utils.visualizations.plot_X">
+<span class="sig-prename descclassname"><span class="pre">aphin.utils.visualizations.</span></span><span class="sig-name descname"><span class="pre">plot_X</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">num_plots</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">X_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">idx_n_n</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">idx_n_dn</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">idx_sim</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">variable_names</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/utils/visualizations.html#plot_X"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.utils.visualizations.plot_X" title="Link to this definition"></a></dt>
+<dd><p>Plots multiple time series of the states from the provided data and optionally saves the plot.
+Data needs to be in the state format (n_sim, n_t, n_n, n_dn).</p>
+<p>This function creates a series of plots comparing the time evolution of system variables
+across different indices. Each plot shows the simulated variable and its corresponding reference
+or ideal value. The function also supports saving the plot to a specified directory.</p>
+<section id="id54">
+<h3>Parameters:<a class="headerlink" href="#id54" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>num_plots<span class="classifier">int</span></dt><dd><p>The number of individual plots to generate.</p>
+</dd>
+<dt>t<span class="classifier">numpy.ndarray</span></dt><dd><p>The time vector for the x-axis.</p>
+</dd>
+<dt>X<span class="classifier">numpy.ndarray of size (n_sim, n_t, n_n, n_dn)</span></dt><dd><p>The simulated data array with shape (num_simulations, num_time_points, num_n, num_dn).</p>
+</dd>
+<dt>X_id<span class="classifier">numpy.ndarray of size (n_sim, n_t, n_n, n_dn)</span></dt><dd><p>The reference or ideal data array with the same shape as <cite>X</cite>.</p>
+</dd>
+<dt>idx_n_n<span class="classifier">list of int</span></dt><dd><p>List of indices for the ‘n_n’ dimension of <cite>X</cite> and <cite>X_id</cite>.</p>
+</dd>
+<dt>idx_n_dn<span class="classifier">list of int</span></dt><dd><p>List of indices for the ‘n_dn’ dimension of <cite>X</cite> and <cite>X_id</cite>.</p>
+</dd>
+<dt>idx_sim<span class="classifier">int</span></dt><dd><p>Index of the simulation to plot.</p>
+</dd>
+<dt>variable_names<span class="classifier">list of str</span></dt><dd><p>List of two variable names used for labeling the plot.</p>
+</dd>
+<dt>save_name<span class="classifier">str, optional</span></dt><dd><p>The name of the file to save the plot as. If <cite>None</cite>, uses the first variable name from <cite>variable_names</cite>.</p>
+</dd>
+<dt>save_path<span class="classifier">str, optional</span></dt><dd><p>The directory path where the plot image will be saved if <cite>save_name</cite> is provided. Defaults to the current directory.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="aphin.utils.visualizations.plot_X_comparison">
+<span class="sig-prename descclassname"><span class="pre">aphin.utils.visualizations.</span></span><span class="sig-name descname"><span class="pre">plot_X_comparison</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">original_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">identified_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_train_data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">idx_gen</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'rand'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/utils/visualizations.html#plot_X_comparison"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.utils.visualizations.plot_X_comparison" title="Link to this definition"></a></dt>
+<dd><p>Plots a comparison of state results between original and identified data.
+Identified state means that the results are time integrated in the latent space and decoded.</p>
+<p>This function generates plots comparing the state variables of the original and identified
+data instances. The comparison is made using randomly selected or sequentially generated
+indices for the state variables, based on the specified <cite>idx_gen</cite> method.</p>
+<section id="id55">
+<h3>Parameters:<a class="headerlink" href="#id55" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>original_data<span class="classifier">object</span></dt><dd><p>The instance of the original data containing the true state results.</p>
+</dd>
+<dt>identified_data<span class="classifier">object</span></dt><dd><p>The instance of the identified data containing the identified state results.</p>
+</dd>
+<dt>use_train_data<span class="classifier">bool, optional</span></dt><dd><p>If <cite>True</cite>, use training data for plotting. If <cite>False</cite>, use test data. Defaults to <cite>False</cite>.</p>
+</dd>
+<dt>idx_gen<span class="classifier">str, optional</span></dt><dd><p>Method for generating indices. Options are <cite>“rand”</cite> for random indices or <cite>“first”</cite> for sequential indices. Defaults to <cite>“rand”</cite>.</p>
+</dd>
+<dt>save_path<span class="classifier">str, optional</span></dt><dd><p>Directory path to save the plot image. If empty, the plot will not be saved. Defaults to <cite>“”</cite>.</p>
+</dd>
+</dl>
+</section>
+<section id="id56">
+<h3>Returns:<a class="headerlink" href="#id56" title="Link to this heading"></a></h3>
+<p>None</p>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="aphin.utils.visualizations.plot_X_dt_comparison">
+<span class="sig-prename descclassname"><span class="pre">aphin.utils.visualizations.</span></span><span class="sig-name descname"><span class="pre">plot_X_dt_comparison</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">original_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">identified_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_train_data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">idx_gen</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'rand'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/utils/visualizations.html#plot_X_dt_comparison"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.utils.visualizations.plot_X_dt_comparison" title="Link to this definition"></a></dt>
+<dd><p>Plots a comparison of state derivatives between original and identified data.
+Identified state derivative means that the results are time integrated in the latent space and retransformed/decoded through automatic differentiation.</p>
+<p>This function generates plots comparing the state derivatives (i.e., time derivatives of the states)
+of the original and identified data instances. The comparison is made using randomly selected
+or sequentially generated indices for the state variables, based on the specified <cite>idx_gen</cite> method.</p>
+<section id="id57">
+<h3>Parameters:<a class="headerlink" href="#id57" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>original_data<span class="classifier">object</span></dt><dd><p>The instance of the original data containing the true state derivatives.</p>
+</dd>
+<dt>identified_data<span class="classifier">object</span></dt><dd><p>The instance of the identified data containing the estimated state derivatives.</p>
+</dd>
+<dt>use_train_data<span class="classifier">bool, optional</span></dt><dd><p>If <cite>True</cite>, use training data for plotting. If <cite>False</cite>, use test data. Defaults to <cite>False</cite>.</p>
+</dd>
+<dt>idx_gen<span class="classifier">str, optional</span></dt><dd><p>Method for generating indices. Options are <cite>“rand”</cite> for random indices or <cite>“first”</cite> for sequential indices. Defaults to <cite>“rand”</cite>.</p>
+</dd>
+<dt>save_path<span class="classifier">str, optional</span></dt><dd><p>Directory path to save the plot image. If empty, the plot will not be saved. Defaults to <cite>“”</cite>.</p>
+</dd>
+</dl>
+</section>
+<section id="id58">
+<h3>Returns:<a class="headerlink" href="#id58" title="Link to this heading"></a></h3>
+<p>None</p>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="aphin.utils.visualizations.plot_X_dt_reconstruction">
+<span class="sig-prename descclassname"><span class="pre">aphin.utils.visualizations.</span></span><span class="sig-name descname"><span class="pre">plot_X_dt_reconstruction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">original_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">identified_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_train_data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">idx_gen</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'rand'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/utils/visualizations.html#plot_X_dt_reconstruction"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.utils.visualizations.plot_X_dt_reconstruction" title="Link to this definition"></a></dt>
+<dd><p>Plots a comparison of original state derivatives and reconstructed state derivatives from an autoencoder.
+The data is only encoded and decoded, the pHIN layer is not involved.</p>
+<p>This function generates plots comparing the original time derivatives of the states with the state derivatives
+reconstructed by an autoencoder from the identified data. It selects a specified number of indices for plotting
+based on the <cite>idx_gen</cite> method.</p>
+<section id="id59">
+<h3>Parameters:<a class="headerlink" href="#id59" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>original_data<span class="classifier">object</span></dt><dd><p>The instance of the original data containing the true state derivatives.</p>
+</dd>
+<dt>identified_data<span class="classifier">object</span></dt><dd><p>The instance of the identified data containing the state derivatives reconstructed by the autoencoder.</p>
+</dd>
+<dt>use_train_data<span class="classifier">bool, optional</span></dt><dd><p>If <cite>True</cite>, use training data for plotting. If <cite>False</cite>, use test data. Defaults to <cite>False</cite>.</p>
+</dd>
+<dt>idx_gen<span class="classifier">str, optional</span></dt><dd><p>Method for generating indices. Options are <cite>“rand”</cite> for random indices or <cite>“first”</cite> for sequential indices. Defaults to <cite>“rand”</cite>.</p>
+</dd>
+<dt>save_path<span class="classifier">str, optional</span></dt><dd><p>Directory path to save the plot image. If empty, the plot will not be saved. Defaults to <cite>“”</cite>.</p>
+</dd>
+</dl>
+</section>
+<section id="id60">
+<h3>Returns:<a class="headerlink" href="#id60" title="Link to this heading"></a></h3>
+<p>None</p>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="aphin.utils.visualizations.plot_X_reconstruction">
+<span class="sig-prename descclassname"><span class="pre">aphin.utils.visualizations.</span></span><span class="sig-name descname"><span class="pre">plot_X_reconstruction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">original_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">identified_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_train_data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">idx_gen</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'rand'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/utils/visualizations.html#plot_X_reconstruction"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.utils.visualizations.plot_X_reconstruction" title="Link to this definition"></a></dt>
+<dd><p>Plots a comparison of original states and reconstructed states from an autoencoder.
+The data is only encoded and decoded, the pHIN layer is not involved.</p>
+<p>This function generates plots comparing the original states with the states reconstructed
+by an autoencoder from the identified data. It selects a specified number of indices to plot
+based on the <cite>idx_gen</cite> method.</p>
+<section id="id61">
+<h3>Parameters:<a class="headerlink" href="#id61" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>original_data<span class="classifier">object</span></dt><dd><p>The instance of the original data containing the true states.</p>
+</dd>
+<dt>identified_data<span class="classifier">object</span></dt><dd><p>The instance of the identified data containing the reconstructed states from the autoencoder.</p>
+</dd>
+<dt>use_train_data<span class="classifier">bool, optional</span></dt><dd><p>If <cite>True</cite>, use training data for plotting. If <cite>False</cite>, use test data. Defaults to <cite>False</cite>.</p>
+</dd>
+<dt>idx_gen<span class="classifier">str, optional</span></dt><dd><p>Method for generating indices. Options are <cite>“rand”</cite> for random indices or <cite>“first”</cite> for sequential indices. Defaults to <cite>“rand”</cite>.</p>
+</dd>
+<dt>save_path<span class="classifier">str, optional</span></dt><dd><p>Directory path to save the plot image. If empty, the plot will not be saved. Defaults to <cite>“”</cite>.</p>
+</dd>
+</dl>
+</section>
+<section id="id62">
+<h3>Returns:<a class="headerlink" href="#id62" title="Link to this heading"></a></h3>
+<p>None</p>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="aphin.utils.visualizations.plot_Z">
+<span class="sig-prename descclassname"><span class="pre">aphin.utils.visualizations.</span></span><span class="sig-name descname"><span class="pre">plot_Z</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">num_plots</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Z</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Z_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">idx_n_f</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">idx_sim</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">variable_names</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/utils/visualizations.html#plot_Z"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.utils.visualizations.plot_Z" title="Link to this definition"></a></dt>
+<dd><p>Plots the comparison between original and identified latent variables over time.
+Data needs to be in the latent state format (n_sim, n_t, n_f).</p>
+<p>This function generates a series of subplots comparing the original latent variables (<cite>Z</cite>) with their identified counterparts
+(<cite>Z_id</cite>) for a specified number of features. The plots are generated for a selected simulation, and each subplot represents a
+different feature.</p>
+<section id="id63">
+<h3>Parameters:<a class="headerlink" href="#id63" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>num_plots<span class="classifier">int</span></dt><dd><p>The number of subplots to generate.</p>
+</dd>
+<dt>t<span class="classifier">array-like</span></dt><dd><p>The time variable, common to both the original and identified data.</p>
+</dd>
+<dt>Z<span class="classifier">array-like of size (n_sim, n_t, n_f).</span></dt><dd><p>The original latent variables, with shape (num_simulations, num_time_steps, num_features).</p>
+</dd>
+<dt>Z_id<span class="classifier">array-like of size (n_sim, n_t, n_f).</span></dt><dd><p>The identified or reconstructed latent variables, with the same shape as <cite>Z</cite>.</p>
+</dd>
+<dt>idx_n_f<span class="classifier">array-like</span></dt><dd><p>Indices of the selected features to plot.</p>
+</dd>
+<dt>idx_sim<span class="classifier">int</span></dt><dd><p>Index of the simulation to plot.</p>
+</dd>
+<dt>variable_names<span class="classifier">list of str</span></dt><dd><p>A list containing the names of the variables to be used in the plot labels. The first element should be the label for <cite>Z</cite>,
+and the second element should be the label for <cite>Z_id</cite>.</p>
+</dd>
+<dt>save_name<span class="classifier">str, optional</span></dt><dd><p>The base name for the saved plot image. If not provided, the first element of <cite>variable_names</cite> is used. Default is None.</p>
+</dd>
+<dt>save_path<span class="classifier">str, optional</span></dt><dd><p>The directory path where the plot image will be saved. Default is an empty string (current directory).</p>
+</dd>
+</dl>
+</section>
+<section id="id64">
+<h3>Returns:<a class="headerlink" href="#id64" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>None</dt><dd><p>The function generates and displays the plots, and saves the image to the specified path.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="aphin.utils.visualizations.plot_Z_dt_ph">
+<span class="sig-prename descclassname"><span class="pre">aphin.utils.visualizations.</span></span><span class="sig-name descname"><span class="pre">plot_Z_dt_ph</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">identified_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_train_data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">idx_gen</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'rand'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/utils/visualizations.html#plot_Z_dt_ph"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.utils.visualizations.plot_Z_dt_ph" title="Link to this definition"></a></dt>
+<dd><p>Plots the comparison between the time derivatives of the reduced latent features (<cite>Z_dt</cite>) and their corresponding
+port-Hamiltonian versions (<cite>Z_dt_ph</cite>).
+Where</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Z_dt: obtained through automatic differentiation (chain rule) of the original data through the encoder</p></li>
+<li><p>Z_dt_ph: obtained through time integration of the identified system in the latent space and inserting Z into the pH system Z_dt = (J-R)QZ + Bu</p></li>
+</ul>
+</div></blockquote>
+<p>The function allows the selection of data from either the training or test set, and indices can be generated either randomly or sequentially.</p>
+<section id="id65">
+<h3>Parameters:<a class="headerlink" href="#id65" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>identified_data<span class="classifier">object</span></dt><dd><p>The dataset containing the identified features. This object should have attributes <cite>TRAIN</cite> and <cite>TEST</cite>
+representing the training and testing data, respectively.</p>
+</dd>
+<dt>use_train_data<span class="classifier">bool, optional</span></dt><dd><p>If True, the function will use the training data for plotting. If False, it will use the test data.
+Default is False.</p>
+</dd>
+<dt>idx_gen<span class="classifier">str, optional</span></dt><dd><p>Method for generating indices of features to plot. Options are:
+- “rand”: Randomly selects indices.
+- “first”: Selects the first few indices.
+Default is “rand”.</p>
+</dd>
+<dt>save_path<span class="classifier">str, optional</span></dt><dd><p>The directory path where the plot will be saved. If not provided, the plot will not be saved.</p>
+</dd>
+</dl>
+</section>
+<section id="id66">
+<h3>Returns:<a class="headerlink" href="#id66" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>None</dt><dd><p>The function does not return anything. It generates and displays the plot(s), and optionally saves them.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="aphin.utils.visualizations.plot_Z_dt_ph_map">
+<span class="sig-prename descclassname"><span class="pre">aphin.utils.visualizations.</span></span><span class="sig-name descname"><span class="pre">plot_Z_dt_ph_map</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">identified_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_train_data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">idx_gen</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'rand'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/utils/visualizations.html#plot_Z_dt_ph_map"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.utils.visualizations.plot_Z_dt_ph_map" title="Link to this definition"></a></dt>
+<dd><p>Plots the comparison between the time derivatives of the latent features (Z_dt) and their corresponding port-Hamiltonian mapped versions (Z_dt_ph_map).
+Where</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Z_dt: obtained through automatic differentiation (chain rule) of the original data through the encoder</p></li>
+<li><p>Z_dt_ph_map: obtained by inserting the encoded original state into the pH network, i.e. inserting z into the pH equation. z_dt=(J-R)Q + Bu (no time integration)</p></li>
+</ul>
+</div></blockquote>
+<p>This function generates a series of plots that compare the time derivatives of the latent features <cite>Z_dt</cite> with
+their port-Hamiltonian mapped counterparts <cite>Z_dt_ph_map</cite>, as extracted from a dataset. The data can be selected
+from either the training or test set, and specific indices can be chosen either randomly or sequentially.</p>
+<section id="id67">
+<h3>Parameters:<a class="headerlink" href="#id67" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>identified_data<span class="classifier">object</span></dt><dd><p>The dataset containing the identified features. This object should have attributes <cite>TRAIN</cite> and <cite>TEST</cite>
+representing the training and testing data, respectively.</p>
+</dd>
+<dt>use_train_data<span class="classifier">bool, optional</span></dt><dd><p>If True, the function will use the training data for plotting. If False, it will use the test data.
+Default is False.</p>
+</dd>
+<dt>idx_gen<span class="classifier">str, optional</span></dt><dd><p>Method for generating indices of features to plot. Options are:
+- “rand”: Randomly selects indices.
+- “first”: Selects the first few indices.
+Default is “rand”.</p>
+</dd>
+<dt>save_path<span class="classifier">str, optional</span></dt><dd><p>The directory path where the plot will be saved. If not provided, the plot will not be saved.</p>
+</dd>
+</dl>
+</section>
+<section id="id68">
+<h3>Returns:<a class="headerlink" href="#id68" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>None</dt><dd><p>The function does not return anything. It generates and displays the plot(s), and optionally saves them.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="aphin.utils.visualizations.plot_Z_ph">
+<span class="sig-prename descclassname"><span class="pre">aphin.utils.visualizations.</span></span><span class="sig-name descname"><span class="pre">plot_Z_ph</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">identified_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_train_data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">idx_gen</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'rand'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/utils/visualizations.html#plot_Z_ph"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.utils.visualizations.plot_Z_ph" title="Link to this definition"></a></dt>
+<dd><p>Plots the comparison between identified latent variables (Z) and their corresponding port-Hamiltonian versions (Z_ph).
+where</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Z: obtained from the encoded original data</p></li>
+<li><p>Z_ph: obtained through the encoded initial condition of x0 and time integration with the identified system</p></li>
+</ul>
+</div></blockquote>
+<p>This function generates a series of plots that compare the latent variables <cite>Z</cite> with their port-Hamiltonian
+counterparts <cite>Z_ph</cite>, as computed by a model. The data can be selected from either the training or test set,
+and specific indices can be chosen randomly or in a sequential manner.</p>
+<section id="id69">
+<h3>Parameters:<a class="headerlink" href="#id69" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>identified_data<span class="classifier">object</span></dt><dd><p>The dataset containing the identified variables. This object should have attributes <cite>TRAIN</cite> and <cite>TEST</cite>
+representing the training and testing data, respectively.</p>
+</dd>
+<dt>use_train_data<span class="classifier">bool, optional</span></dt><dd><p>If True, the function will use the training data for plotting. If False, it will use the test data.
+Default is False.</p>
+</dd>
+<dt>idx_gen<span class="classifier">str, optional</span></dt><dd><p>Method for generating indices of features to plot. Options are:
+- “rand”: Randomly selects indices.
+- “first”: Selects the first few indices.
+Default is “rand”.</p>
+</dd>
+<dt>save_path<span class="classifier">str, optional</span></dt><dd><p>The directory path where the plot will be saved. If not provided, the plot will not be saved.</p>
+</dd>
+</dl>
+</section>
+<section id="id70">
+<h3>Returns:<a class="headerlink" href="#id70" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>None</dt><dd><p>The function does not return anything. It generates and displays the plot(s), and optionally saves them.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="aphin.utils.visualizations.plot_errors">
+<span class="sig-prename descclassname"><span class="pre">aphin.utils.visualizations.</span></span><span class="sig-name descname"><span class="pre">plot_errors</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_train_data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'rms_error'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">domain_names</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_to_csv</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yscale</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'linear'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/utils/visualizations.html#plot_errors"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.utils.visualizations.plot_errors" title="Link to this definition"></a></dt>
+<dd><p>Generates and saves plots of RMS errors for state and latent errors from the given dataset.</p>
+<p>This function plots RMS errors for different domains and latent features. The plots can be saved as PNG files and
+optionally as CSV files. The function handles multiple domains by iterating over them and calling <cite>single_error_plot</cite>
+for each domain’s state error. It also plots the latent error if available.</p>
+<section id="id71">
+<h3>Parameters:<a class="headerlink" href="#id71" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>data<span class="classifier">object</span></dt><dd><p>The dataset containing error information. This object should have attributes <cite>TRAIN</cite> and <cite>TEST</cite> representing the
+training and testing data, respectively, and <cite>state_error_list</cite> and <cite>latent_error</cite> containing the RMS errors.</p>
+</dd>
+<dt>use_train_data<span class="classifier">bool, optional</span></dt><dd><p>If True, the function will use the training data for plotting. If False, it will use the test data. Default is False.</p>
+</dd>
+<dt>t<span class="classifier">numpy.ndarray or None, optional</span></dt><dd><p>A 1D array representing time points corresponding to the error data. If None, defaults to the range of indices for
+the time points. Default is None.</p>
+</dd>
+<dt>save_name<span class="classifier">str, optional</span></dt><dd><p>The base name for the files to which the plots will be saved. The name will be prefixed with “<a href="#id99"><span class="problematic" id="id100">state_</span></a>” for state
+errors and “<a href="#id101"><span class="problematic" id="id102">latent_</span></a>” for latent errors. Default is “rms_error”.</p>
+</dd>
+<dt>domain_names<span class="classifier">list of str or None, optional</span></dt><dd><p>A list of domain names corresponding to the state errors. If None, domain names will be generated automatically
+based on the number of state error domains. The length of the list must match the length of <cite>data.state_error_list</cite>.
+Default is None.</p>
+</dd>
+<dt>save_to_csv<span class="classifier">bool, optional</span></dt><dd><p>If True, the error data will be saved to a CSV file. Default is False.</p>
+</dd>
+<dt>yscale<span class="classifier">str, optional</span></dt><dd><p>The scale of the y-axis for the plots. Options are “linear” or “log”. Default is “linear”.</p>
+</dd>
+</dl>
+</section>
+<section id="id72">
+<h3>Returns:<a class="headerlink" href="#id72" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>None</dt><dd><p>The function does not return anything. It generates and displays plots, and optionally saves them to files.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="aphin.utils.visualizations.plot_time_trajectories_all">
+<span class="sig-prename descclassname"><span class="pre">aphin.utils.visualizations.</span></span><span class="sig-name descname"><span class="pre">plot_time_trajectories_all</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_train_data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">idx_gen</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'rand'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">result_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/utils/visualizations.html#plot_time_trajectories_all"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.utils.visualizations.plot_time_trajectories_all" title="Link to this definition"></a></dt>
+<dd><p>Generates and saves a series of plots comparing and reconstructing time trajectories of state and latent features.</p>
+<p>This function iterates through predefined lists of plotting functions for state and latent features, calling each
+function to generate and save the corresponding plots. It allows for plotting time trajectories, comparing
+reconstructed states, and visualizing latent feature errors and reconstructions.</p>
+<section id="id73">
+<h3>Parameters:<a class="headerlink" href="#id73" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>data<span class="classifier">object</span></dt><dd><p>The dataset containing state and latent feature information. This object should have attributes suitable for
+plotting functions such as <cite>plot_X_comparison</cite> and <cite>plot_Z_ph</cite>.</p>
+</dd>
+<dt>data_id<span class="classifier">object</span></dt><dd><p>The dataset containing identified features and results used for comparison and reconstruction. This object should
+have attributes for plotting functions that need identified data.</p>
+</dd>
+<dt>use_train_data<span class="classifier">bool, optional</span></dt><dd><p>If True, the function will use the training data for plotting. If False, it will use the test data. Default is False.</p>
+</dd>
+<dt>idx_gen<span class="classifier">str, optional</span></dt><dd><p>Method for generating indices of features to plot. Options are:
+- “rand”: Randomly selects indices.
+- “first”: Selects the first few indices.
+Default is “rand”.</p>
+</dd>
+<dt>result_dir<span class="classifier">str, optional</span></dt><dd><p>The directory path where the plots will be saved. If not provided, the plots will not be saved. Default is an empty string.</p>
+</dd>
+</dl>
+</section>
+<section id="id74">
+<h3>Returns:<a class="headerlink" href="#id74" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>None</dt><dd><p>The function does not return anything. It generates and displays plots, and optionally saves them to files.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="aphin.utils.visualizations.plot_train_history">
+<span class="sig-prename descclassname"><span class="pre">aphin.utils.visualizations.</span></span><span class="sig-name descname"><span class="pre">plot_train_history</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">train_hist</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/utils/visualizations.html#plot_train_history"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.utils.visualizations.plot_train_history" title="Link to this definition"></a></dt>
+<dd><p>Plots the training history of a machine learning model.</p>
+<p>This function generates a plot of the training history for different loss metrics,
+including the overall loss, derivative losses, reconstruction loss, and regularization loss.
+The losses are plotted on a logarithmic scale to better visualize the convergence and performance
+of the training process.</p>
+<section id="id75">
+<h3>Parameters:<a class="headerlink" href="#id75" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>train_hist<span class="classifier">object</span></dt><dd><p>An object containing the training history. This object should have a <cite>history</cite> attribute,
+which is a dictionary with keys corresponding to different loss metrics (e.g., “loss”, “dz_loss”,
+“dx_loss”, “rec_loss”, “reg_loss”) and values as lists or arrays of loss values recorded during training.</p>
+</dd>
+</dl>
+</section>
+<section id="id76">
+<h3>Returns:<a class="headerlink" href="#id76" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>None</dt><dd><p>The function does not return any value. It generates and displays a plot of the training history.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="aphin.utils.visualizations.plot_x">
+<span class="sig-prename descclassname"><span class="pre">aphin.utils.visualizations.</span></span><span class="sig-name descname"><span class="pre">plot_x</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">num_plots</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">idx_n_f</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">variable_names</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/utils/visualizations.html#plot_x"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.utils.visualizations.plot_x" title="Link to this definition"></a></dt>
+<dd><p>Plots and compares multiple time series data from the state in the feature shape.
+Data needs to be in the feature format (n_s, n_f)</p>
+<p>This function creates a series of subplots to compare the provided time series data (<cite>x</cite>) with identified data (<cite>x_id</cite>)
+for multiple features. Each subplot shows the data for one feature, with the original data plotted as a solid line and
+the identified data plotted as a dashed line. The function allows for saving the resulting figure as a PNG file.</p>
+<section id="id77">
+<h3>Parameters:<a class="headerlink" href="#id77" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>num_plots<span class="classifier">int</span></dt><dd><p>The number of subplots to create. Determines how many features will be plotted.</p>
+</dd>
+<dt>x<span class="classifier">np.ndarray of size (n_s, n_f)</span></dt><dd><p>Array containing the original time series data. Expected shape is (n_time_steps, n_features).</p>
+</dd>
+<dt>x_id<span class="classifier">np.ndarray of size (n_s, n_f)</span></dt><dd><p>Array containing the identified or reconstructed time series data. Expected shape is (n_time_steps, n_features).</p>
+</dd>
+<dt>idx_n_f<span class="classifier">list or np.ndarray</span></dt><dd><p>Indices of the features to be plotted. Should have the same length as <cite>num_plots</cite>.</p>
+</dd>
+<dt>variable_names<span class="classifier">list of str</span></dt><dd><p>Names of the variables to be used in the plot labels. Should contain two elements: the name for <cite>x</cite> and the name for <cite>x_id</cite>.</p>
+</dd>
+<dt>save_name<span class="classifier">str, optional</span></dt><dd><p>The name of the file to save the plot as (without file extension). If None, uses the first element of <cite>variable_names</cite>.</p>
+</dd>
+<dt>save_path<span class="classifier">str, optional</span></dt><dd><p>Directory where the plot will be saved. If not provided, the plot will be saved in the current working directory.</p>
+</dd>
+</dl>
+</section>
+<section id="id78">
+<h3>Returns:<a class="headerlink" href="#id78" title="Link to this heading"></a></h3>
+<p>None</p>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="aphin.utils.visualizations.plot_x_comparison">
+<span class="sig-prename descclassname"><span class="pre">aphin.utils.visualizations.</span></span><span class="sig-name descname"><span class="pre">plot_x_comparison</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">original_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">identified_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_train_data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">idx_gen</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'rand'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/utils/visualizations.html#plot_x_comparison"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.utils.visualizations.plot_x_comparison" title="Link to this definition"></a></dt>
+<dd><p>Plots a comparison of the original latent features with their identified counterparts.
+Identified state means that the results are time integrated in the latent space and decoded.</p>
+<p>This function generates plots to compare the original latent features (<cite>x</cite>) with their corresponding
+identified or predicted features (<cite>x_id</cite>). It uses either training or test data based on the <cite>use_train_data</cite>
+parameter, and the indices of features to be plotted can be chosen either randomly or sequentially.</p>
+<section id="id79">
+<h3>Parameters:<a class="headerlink" href="#id79" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>original_data<span class="classifier">object</span></dt><dd><p>The dataset containing the original latent features. This object should have attributes <cite>TRAIN</cite> and <cite>TEST</cite>
+representing the training and testing data, respectively.</p>
+</dd>
+<dt>identified_data<span class="classifier">object</span></dt><dd><p>The dataset containing the identified or predicted latent features. This object should also have attributes
+<cite>TRAIN</cite> and <cite>TEST</cite> similar to <cite>original_data</cite>.</p>
+</dd>
+<dt>use_train_data<span class="classifier">bool, optional</span></dt><dd><p>If True, the function will use the training data for plotting. If False, it will use the test data.
+Default is False.</p>
+</dd>
+<dt>idx_gen<span class="classifier">str, optional</span></dt><dd><p>Method for generating indices of features to plot. Options are:
+- “rand”: Randomly selects indices.
+- “first”: Selects the first few indices.
+Default is “rand”.</p>
+</dd>
+<dt>save_path<span class="classifier">str, optional</span></dt><dd><p>The directory path where the plot will be saved. If not provided, the plot will not be saved.</p>
+</dd>
+</dl>
+</section>
+<section id="id80">
+<h3>Returns:<a class="headerlink" href="#id80" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>None</dt><dd><p>The function does not return anything. It generates and displays the plot(s), and optionally saves them.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="aphin.utils.visualizations.plot_x_dt_reconstruction">
+<span class="sig-prename descclassname"><span class="pre">aphin.utils.visualizations.</span></span><span class="sig-name descname"><span class="pre">plot_x_dt_reconstruction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">original_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">identified_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_train_data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">idx_gen</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'rand'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/utils/visualizations.html#plot_x_dt_reconstruction"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.utils.visualizations.plot_x_dt_reconstruction" title="Link to this definition"></a></dt>
+<dd><p>Plots and compares the original and autoencoder-reconstructed time derivative of the data.
+The data is only encoded and decoded, the pHIN layer is not involved.</p>
+<p>This function generates plots comparing the original time derivative data (<cite>dx_dt</cite>) with the reconstructed data (<cite>x_rec_dt</cite>)
+produced by an autoencoder model. It creates subplots for each feature, displaying both the original and reconstructed time derivatives.
+The resulting figure can be saved as a PNG file if specified.</p>
+<section id="id81">
+<h3>Parameters:<a class="headerlink" href="#id81" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>original_data<span class="classifier">object</span></dt><dd><p>The dataset object containing the original time derivative data. Must have attributes to access time series data.</p>
+</dd>
+<dt>identified_data<span class="classifier">object</span></dt><dd><p>The dataset object containing the autoencoder-reconstructed time derivative data. Must have attributes to access time series data.</p>
+</dd>
+<dt>use_train_data<span class="classifier">bool, optional</span></dt><dd><p>If True, use the training data from <cite>original_data</cite> and <cite>identified_data</cite>; otherwise, use the test data. Default is False.</p>
+</dd>
+<dt>idx_gen<span class="classifier">str, optional</span></dt><dd><p>Method for generating indices for the features to plot. Options are “rand” (random) or “first” (first N features). Default is “rand”.</p>
+</dd>
+<dt>save_path<span class="classifier">str, optional</span></dt><dd><p>Directory where the plot will be saved. If not provided, the plot will be saved in the current working directory.</p>
+</dd>
+</dl>
+</section>
+<section id="id82">
+<h3>Returns:<a class="headerlink" href="#id82" title="Link to this heading"></a></h3>
+<p>None</p>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="aphin.utils.visualizations.plot_x_reconstruction">
+<span class="sig-prename descclassname"><span class="pre">aphin.utils.visualizations.</span></span><span class="sig-name descname"><span class="pre">plot_x_reconstruction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">original_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">identified_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_train_data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">idx_gen</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'rand'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/utils/visualizations.html#plot_x_reconstruction"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.utils.visualizations.plot_x_reconstruction" title="Link to this definition"></a></dt>
+<dd><p>Plots and compares the original and autoencoder-reconstructed time series data for multiple features. The data is only encoded and decoded, the pHIN layer is not involved.</p>
+<p>This function generates plots comparing the original time series data (<cite>x</cite>) with the reconstructed data (<cite>x_rec</cite>)
+produced by an autoencoder model. The function creates subplots for each feature, displaying both the original and
+reconstructed data. It saves the resulting figure as a PNG file if specified.</p>
+<section id="id83">
+<h3>Parameters:<a class="headerlink" href="#id83" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>original_data<span class="classifier">object</span></dt><dd><p>The dataset object containing the original data. Must have attributes to access time series data.</p>
+</dd>
+<dt>identified_data<span class="classifier">object</span></dt><dd><p>The dataset object containing the autoencoder-reconstructed data. Must have attributes to access time series data.</p>
+</dd>
+<dt>use_train_data<span class="classifier">bool, optional</span></dt><dd><p>If True, use the training data from <cite>original_data</cite> and <cite>identified_data</cite>; otherwise, use the test data. Default is False.</p>
+</dd>
+<dt>idx_gen<span class="classifier">str, optional</span></dt><dd><p>Method for generating indices for the features to plot. Options are “rand” (random) or “first” (first N features). Default is “rand”.</p>
+</dd>
+<dt>save_path<span class="classifier">str, optional</span></dt><dd><p>Directory where the plot will be saved. If not provided, the plot will be saved in the current working directory.</p>
+</dd>
+</dl>
+</section>
+<section id="id84">
+<h3>Returns:<a class="headerlink" href="#id84" title="Link to this heading"></a></h3>
+<p>None</p>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="aphin.utils.visualizations.plot_z">
+<span class="sig-prename descclassname"><span class="pre">aphin.utils.visualizations.</span></span><span class="sig-name descname"><span class="pre">plot_z</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">num_plots</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">idx_n_f</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">variable_names</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/utils/visualizations.html#plot_z"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.utils.visualizations.plot_z" title="Link to this definition"></a></dt>
+<dd><p>Plots a comparison between original and identified latent variables.
+Data needs to be in the feature format (n_s, n_f).</p>
+<p>This function creates a series of subplots to compare the original latent variables (<cite>z</cite>) with the identified or reconstructed
+ones (<cite>z_id</cite>). Each subplot corresponds to a specific feature as indicated by <cite>idx_n_f</cite>.</p>
+<section id="id85">
+<h3>Parameters:<a class="headerlink" href="#id85" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>num_plots<span class="classifier">int</span></dt><dd><p>The number of subplots to create, corresponding to the number of features to plot.</p>
+</dd>
+<dt>z<span class="classifier">array-like, shape (n_s, n_f)</span></dt><dd><p>The original latent variables, where <cite>n_s</cite> is the number of samples (time steps) and <cite>n_f</cite> is the number of features.</p>
+</dd>
+<dt>z_id<span class="classifier">array-like, shape (n_s, n_f)</span></dt><dd><p>The identified or reconstructed latent variables, with the same shape as <cite>z</cite>.</p>
+</dd>
+<dt>idx_n_f<span class="classifier">array-like</span></dt><dd><p>Indices of the selected features to plot, corresponding to columns of <cite>z</cite> and <cite>z_id</cite>.</p>
+</dd>
+<dt>variable_names<span class="classifier">list of str</span></dt><dd><p>A list containing the names of the variables for the plot labels. The first element should correspond to <cite>z</cite>, and the
+second element to <cite>z_id</cite>.</p>
+</dd>
+<dt>save_name<span class="classifier">str, optional</span></dt><dd><p>The base name for the saved plot image. If not provided, the first element of <cite>variable_names</cite> is used. Default is None.</p>
+</dd>
+<dt>save_path<span class="classifier">str, optional</span></dt><dd><p>The directory path where the plot image will be saved. Default is an empty string (current directory).</p>
+</dd>
+</dl>
+</section>
+<section id="id86">
+<h3>Returns:<a class="headerlink" href="#id86" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>None</dt><dd><p>The function generates and displays the plots, and saves the image to the specified path.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="aphin.utils.visualizations.plot_z_dt_ph">
+<span class="sig-prename descclassname"><span class="pre">aphin.utils.visualizations.</span></span><span class="sig-name descname"><span class="pre">plot_z_dt_ph</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">identified_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_train_data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">idx_gen</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'rand'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/utils/visualizations.html#plot_z_dt_ph"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.utils.visualizations.plot_z_dt_ph" title="Link to this definition"></a></dt>
+<dd><p>Plots the comparison between the time derivatives of the reduced latent features (<cite>z_dt</cite>) and their corresponding
+port-Hamiltonian versions (<cite>z_dt_ph</cite>).
+Where</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>z_dt: obtained through automatic differentiation (chain rule) of the original data through the encoder</p></li>
+<li><p>z_dt_ph: obtained through time integration of the identified system in the latent space and inserting z into the pH system z_dt = (J-R)Qz + Bu</p></li>
+</ul>
+</div></blockquote>
+<p>The function allows the selection of data from either the training or test set, and indices can be generated either randomly or sequentially.</p>
+<section id="id87">
+<h3>Parameters:<a class="headerlink" href="#id87" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>identified_data<span class="classifier">object</span></dt><dd><p>The dataset containing the identified features. This object should have attributes <cite>TRAIN</cite> and <cite>TEST</cite>
+representing the training and testing data, respectively.</p>
+</dd>
+<dt>use_train_data<span class="classifier">bool, optional</span></dt><dd><p>If True, the function will use the training data for plotting. If False, it will use the test data.
+Default is False.</p>
+</dd>
+<dt>idx_gen<span class="classifier">str, optional</span></dt><dd><p>Method for generating indices of features to plot. Options are:
+- “rand”: Randomly selects indices.
+- “first”: Selects the first few indices.
+Default is “rand”.</p>
+</dd>
+<dt>save_path<span class="classifier">str, optional</span></dt><dd><p>The directory path where the plot will be saved. If not provided, the plot will not be saved.</p>
+</dd>
+</dl>
+</section>
+<section id="id88">
+<h3>Returns:<a class="headerlink" href="#id88" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>None</dt><dd><p>The function does not return anything. It generates and displays the plot(s), and optionally saves them.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="aphin.utils.visualizations.plot_z_dt_ph_map">
+<span class="sig-prename descclassname"><span class="pre">aphin.utils.visualizations.</span></span><span class="sig-name descname"><span class="pre">plot_z_dt_ph_map</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">identified_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_train_data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">idx_gen</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'rand'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/utils/visualizations.html#plot_z_dt_ph_map"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.utils.visualizations.plot_z_dt_ph_map" title="Link to this definition"></a></dt>
+<dd><p>Plots a comparison of the derivative of latent features (<cite>z_dt</cite>) with their corresponding port-Hamiltonian variables
+(<cite>z_dt_ph_map</cite>) from the identified data.
+Where</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>z_dt: obtained through automatic differentiation (chain rule) of the original data through the encoder</p></li>
+<li><p>z_dt_ph_map: obtained by inserting the encoded original state into the pH network, i.e. inserting z into the pH equation. z_dt=(J-R)Qz + Bu (no time integration)</p></li>
+</ul>
+</div></blockquote>
+<p>This function generates plots to compare the derivative of latent features (<cite>z_dt</cite>) with their
+corresponding phase map (<cite>z_dt_ph_map</cite>). The function uses either training or test data based on the
+<cite>use_train_data</cite> parameter. The indices of features to be plotted are chosen based on the <cite>idx_gen</cite>
+parameter, which can either be random or sequential.</p>
+<section id="id89">
+<h3>Parameters:<a class="headerlink" href="#id89" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>identified_data<span class="classifier">object</span></dt><dd><p>The dataset containing the identified or predicted latent features. This object should have attributes
+<cite>TRAIN</cite> and <cite>TEST</cite> representing the training and testing data, respectively.</p>
+</dd>
+<dt>use_train_data<span class="classifier">bool, optional</span></dt><dd><p>If True, the function will use the training data for plotting. If False, it will use the test data.
+Default is False.</p>
+</dd>
+<dt>idx_gen<span class="classifier">str, optional</span></dt><dd><p>Method for generating indices of features to plot. Options are:
+- “rand”: Randomly selects indices.
+- “first”: Selects the first few indices.
+Default is “rand”.</p>
+</dd>
+<dt>save_path<span class="classifier">str, optional</span></dt><dd><p>The directory path where the plot will be saved. If not provided, the plot will not be saved.</p>
+</dd>
+</dl>
+</section>
+<section id="id90">
+<h3>Returns:<a class="headerlink" href="#id90" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>None</dt><dd><p>The function does not return anything. It generates and displays the plot(s), and optionally saves them.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="aphin.utils.visualizations.plot_z_ph">
+<span class="sig-prename descclassname"><span class="pre">aphin.utils.visualizations.</span></span><span class="sig-name descname"><span class="pre">plot_z_ph</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">identified_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_train_data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">idx_gen</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'rand'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/utils/visualizations.html#plot_z_ph"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.utils.visualizations.plot_z_ph" title="Link to this definition"></a></dt>
+<dd><p>Plots the comparison between identified latent variables (Z) and their corresponding port-Hamiltonian versions (Z_ph).
+where</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Z: obtained from the encoded original data</p></li>
+<li><p>Z_ph: obtained through the encoded initial condition of x0 and time integration with the identified system</p></li>
+</ul>
+</div></blockquote>
+<p>This function generates a series of plots that compare the latent features <cite>z</cite> with their port-Hamiltonian
+counterparts <cite>z_ph</cite>, as extracted from a dataset. The data can be selected from either the training or test set,
+and specific indices can be chosen either randomly or sequentially.</p>
+<section id="id91">
+<h3>Parameters:<a class="headerlink" href="#id91" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>identified_data<span class="classifier">object</span></dt><dd><p>The dataset containing the identified features. This object should have attributes <cite>TRAIN</cite> and <cite>TEST</cite>
+representing the training and testing data, respectively.</p>
+</dd>
+<dt>use_train_data<span class="classifier">bool, optional</span></dt><dd><p>If True, the function will use the training data for plotting. If False, it will use the test data.
+Default is False.</p>
+</dd>
+<dt>idx_gen<span class="classifier">str, optional</span></dt><dd><p>Method for generating indices of features to plot. Options are:
+- “rand”: Randomly selects indices.
+- “first”: Selects the first few indices.
+Default is “rand”.</p>
+</dd>
+<dt>save_path<span class="classifier">str, optional</span></dt><dd><p>The directory path where the plot will be saved. If not provided, the plot will not be saved.</p>
+</dd>
+</dl>
+</section>
+<section id="id92">
+<h3>Returns:<a class="headerlink" href="#id92" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>None</dt><dd><p>The function does not return anything. It generates and displays the plot(s), and optionally saves them.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="aphin.utils.visualizations.save_as_png">
+<span class="sig-prename descclassname"><span class="pre">aphin.utils.visualizations.</span></span><span class="sig-name descname"><span class="pre">save_as_png</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">save_path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/utils/visualizations.html#save_as_png"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.utils.visualizations.save_as_png" title="Link to this definition"></a></dt>
+<dd><p>Saves the current matplotlib figure as a PNG file.</p>
+<p>This function saves the current matplotlib figure to the specified path as a PNG file. If the provided path does not
+end with “.png”, the function appends “.png” to the path. If a file already exists at the path, it is removed before
+saving the new PNG file. The function handles potential runtime errors related to saving figures, including issues with
+LaTeX processing and unsupported backends. If an error occurs, the function attempts to use different matplotlib backends
+to save the figure.</p>
+<section id="id93">
+<h3>Parameters:<a class="headerlink" href="#id93" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>save_path<span class="classifier">str</span></dt><dd><p>The file path where the PNG file will be saved. The path should include the desired filename and, optionally, the directory.</p>
+</dd>
+</dl>
+</section>
+<section id="id94">
+<h3>Returns:<a class="headerlink" href="#id94" title="Link to this heading"></a></h3>
+<p>None</p>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="aphin.utils.visualizations.setup_matplotlib">
+<span class="sig-prename descclassname"><span class="pre">aphin.utils.visualizations.</span></span><span class="sig-name descname"><span class="pre">setup_matplotlib</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">save_plots</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/utils/visualizations.html#setup_matplotlib"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.utils.visualizations.setup_matplotlib" title="Link to this definition"></a></dt>
+<dd><p>Set up matplotlib for generating plots, with an option to save them as PGF files.</p>
+<p>This function configures matplotlib to produce high-quality plots with LaTeX formatting.
+If <cite>save_plots</cite> is set to <cite>True</cite>, the plots will be saved directly as PGF files, and the
+necessary directories will be created if they do not exist.</p>
+<section id="id95">
+<h3>Parameters:<a class="headerlink" href="#id95" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>save_plots<span class="classifier">bool, optional</span></dt><dd><p>If <cite>True</cite>, plots will be saved directly to PGF files in the “results” directory instead of being shown.
+Defaults to <cite>False</cite>.</p>
+</dd>
+</dl>
+</section>
+<section id="id96">
+<h3>Notes:<a class="headerlink" href="#id96" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p>When <cite>save_plots</cite> is <cite>True</cite>, matplotlib is configured to use PGF backend for creating plots, which
+are suitable for LaTeX documents.</p></li>
+<li><p>The function also sets up the LaTeX preamble to include packages like <cite>amsmath</cite> and <cite>bm</cite> for advanced
+mathematical typesetting.</p></li>
+<li><p>The default settings ensure that the font used is “Computer Modern Roman” with a font size of 11, and
+labels on the axes are large.</p></li>
+<li><p>The function updates <cite>rcParams</cite> multiple times to apply the desired settings for either saving or displaying plots.</p></li>
+</ul>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="aphin.utils.visualizations.single_error_plot">
+<span class="sig-prename descclassname"><span class="pre">aphin.utils.visualizations.</span></span><span class="sig-name descname"><span class="pre">single_error_plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">norm_rms_error</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title_label</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'rms_error'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_to_csv</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yscale</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'linear'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/utils/visualizations.html#single_error_plot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.utils.visualizations.single_error_plot" title="Link to this definition"></a></dt>
+<dd><p>Generates a plot of RMS error across simulations and optionally saves it to a PNG file and/or a CSV file.</p>
+<p>This function plots the root mean square (RMS) error values over time for a set of simulations. It computes
+the mean RMS error across all simulations and plots both the individual simulation errors and the mean error.
+The plot can be customized with a title, and the y-axis scale can be adjusted. Optionally, the data can be saved
+to a CSV file.</p>
+<section id="id97">
+<h3>Parameters:<a class="headerlink" href="#id97" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>norm_rms_error<span class="classifier">numpy.ndarray</span></dt><dd><p>A 2D array where each row represents RMS errors from a different simulation, and each column represents
+errors at a specific time point. Shape should be (n_simulations, n_time_points).</p>
+</dd>
+<dt>t<span class="classifier">numpy.ndarray or None, optional</span></dt><dd><p>A 1D array representing time points corresponding to the columns of <cite>norm_rms_error</cite>. If None, default
+to the range of indices for the time points. Default is None.</p>
+</dd>
+<dt>title_label<span class="classifier">str, optional</span></dt><dd><p>A string to be appended to the plot title to provide additional context or labeling. Default is an empty string.</p>
+</dd>
+<dt>save_name<span class="classifier">str, optional</span></dt><dd><p>The name of the file (without extension) to which the plot will be saved as a PNG. Default is “rms_error”.</p>
+</dd>
+<dt>save_to_csv<span class="classifier">bool, optional</span></dt><dd><p>If True, the RMS error data along with the mean error will be saved to a CSV file. Default is False.</p>
+</dd>
+<dt>yscale<span class="classifier">str, optional</span></dt><dd><p>The scale of the y-axis. Options are “linear” or “log”. Default is “linear”.</p>
+</dd>
+</dl>
+</section>
+<section id="id98">
+<h3>Returns:<a class="headerlink" href="#id98" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>None</dt><dd><p>The function does not return anything. It generates and displays the plot(s), and optionally saves them
+as a PNG and/or CSV file.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+</section>
+<section id="module-aphin.utils">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-aphin.utils" title="Link to this heading"></a></h2>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="aphin.systems.html" class="btn btn-neutral float-left" title="aphin.systems package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="aphin.utils.data.html" class="btn btn-neutral float-right" title="aphin.utils.data package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Jonas Kneifl, Johannes Rettberg, Julius Herb.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

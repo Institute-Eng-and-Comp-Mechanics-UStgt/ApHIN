@@ -1,0 +1,1262 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>aphin.identification package &mdash; ApHIN 0.1.3 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=360bc84d"></script>
+        <script src="_static/doctools.js?v=9a2dae69"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="aphin.layers package" href="aphin.layers.html" />
+    <link rel="prev" title="aphin package" href="aphin.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            ApHIN
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="aphin.html">aphin package</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="aphin.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l3 current"><a class="current reference internal" href="#">aphin.identification package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-aphin.identification.aphin">aphin.identification.aphin module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-aphin.identification.conv_aphin">aphin.identification.conv_aphin module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-aphin.identification.ph_basemodel">aphin.identification.ph_basemodel module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-aphin.identification.phin">aphin.identification.phin module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-aphin.identification.projection_aphin">aphin.identification.projection_aphin module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-aphin.identification">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="aphin.layers.html">aphin.layers package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="aphin.operators.html">aphin.operators package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="aphin.systems.html">aphin.systems package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="aphin.utils.html">aphin.utils package</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="aphin.html#module-aphin">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="contact.html">Contact</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">ApHIN</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="aphin.html">aphin package</a></li>
+      <li class="breadcrumb-item active">aphin.identification package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/aphin.identification.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="aphin-identification-package">
+<h1>aphin.identification package<a class="headerlink" href="#aphin-identification-package" title="Link to this heading"></a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
+</section>
+<section id="module-aphin.identification.aphin">
+<span id="aphin-identification-aphin-module"></span><h2>aphin.identification.aphin module<a class="headerlink" href="#module-aphin.identification.aphin" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="aphin.identification.aphin.APHIN">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">aphin.identification.aphin.</span></span><span class="sig-name descname"><span class="pre">APHIN</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/identification/aphin.html#APHIN"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.identification.aphin.APHIN" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#aphin.identification.ph_basemodel.PHBasemodel" title="aphin.identification.ph_basemodel.PHBasemodel"><code class="xref py py-class docutils literal notranslate"><span class="pre">PHBasemodel</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">ABC</span></code></p>
+<p>Autoencoder-based port-Hamiltonian Identification Network (ApHIN)</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="aphin.identification.aphin.APHIN.build_autoencoder">
+<span class="sig-name descname"><span class="pre">build_autoencoder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/identification/aphin.html#APHIN.build_autoencoder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.identification.aphin.APHIN.build_autoencoder" title="Link to this definition"></a></dt>
+<dd><p>Build the encoder and decoder of the autoencoder.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>x</strong> (<em>array-like</em>) – Input data.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Tuple containing inputs and outputs of the autoencoder.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="aphin.identification.aphin.APHIN.build_model">
+<span class="sig-name descname"><span class="pre">build_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">u</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mu</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/identification/aphin.html#APHIN.build_model"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.identification.aphin.APHIN.build_model" title="Link to this definition"></a></dt>
+<dd><p>Build the model.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>array-like</em>) – Full state with shape (n_samples, n_features).</p></li>
+<li><p><strong>u</strong> (<em>array-like</em><em>, </em><em>optional</em>) – Inputs with shape (n_samples, n_inputs).</p></li>
+<li><p><strong>mu</strong> (<em>array-like</em><em>, </em><em>optional</em>) – Parameters with shape (n_samples, n_params).</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="aphin.identification.aphin.APHIN.build_nonlinear_autoencoder">
+<span class="sig-name descname"><span class="pre">build_nonlinear_autoencoder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">z_pca</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/identification/aphin.html#APHIN.build_nonlinear_autoencoder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.identification.aphin.APHIN.build_nonlinear_autoencoder" title="Link to this definition"></a></dt>
+<dd><p>Build a fully connected autoencoder with layers of size layer_sizes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>z_pca</strong> (<em>tf.Tensor</em>) – Input to the autoencoder.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Tuple containing encoded and decoded tensors.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="aphin.identification.aphin.APHIN.build_pca_decoder">
+<span class="sig-name descname"><span class="pre">build_pca_decoder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">z_dec</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/identification/aphin.html#APHIN.build_pca_decoder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.identification.aphin.APHIN.build_pca_decoder" title="Link to this definition"></a></dt>
+<dd><p>Build a linear decoder which is equivalent to the backprojection of the PCA.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>z_dec</strong> (<em>tf.Tensor</em>) – Decoded PCA tensor.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Decoded tensor.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tf.Tensor</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="aphin.identification.aphin.APHIN.build_pca_encoder">
+<span class="sig-name descname"><span class="pre">build_pca_encoder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x_input</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/identification/aphin.html#APHIN.build_pca_encoder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.identification.aphin.APHIN.build_pca_encoder" title="Link to this definition"></a></dt>
+<dd><p>Calculate the PCA of the data and build a linear encoder which is equivalent to the PCA.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>array-like</em>) – Input data.</p></li>
+<li><p><strong>x_input</strong> (<em>tf.Tensor</em>) – Input tensor.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Encoded PCA tensor.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tf.Tensor</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="aphin.identification.aphin.APHIN.calc_latent_time_derivatives">
+<span class="sig-name descname"><span class="pre">calc_latent_time_derivatives</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dx_dt</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/identification/aphin.html#APHIN.calc_latent_time_derivatives"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.identification.aphin.APHIN.calc_latent_time_derivatives" title="Link to this definition"></a></dt>
+<dd><p>Calculate time derivatives of latent variables given the time derivatives of the input variables.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>array-like</em>) – Full state with shape (n_samples, n_features).</p></li>
+<li><p><strong>dx_dt</strong> (<em>array-like</em>) – Time derivative of state with shape (n_samples, n_features).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Tuple containing latent variables and their time derivatives.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="aphin.identification.aphin.APHIN.calc_pca_time_derivatives">
+<span class="sig-name descname"><span class="pre">calc_pca_time_derivatives</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dx_dt</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/identification/aphin.html#APHIN.calc_pca_time_derivatives"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.identification.aphin.APHIN.calc_pca_time_derivatives" title="Link to this definition"></a></dt>
+<dd><p>Calculate time derivatives of PCA variables given the time derivatives of the input variables.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>array-like</em>) – Full state with shape (n_samples, n_features).</p></li>
+<li><p><strong>dx_dt</strong> (<em>array-like</em>) – Time derivative of state with shape (n_samples, n_features).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Tuple containing PCA coordinates and their time derivatives.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="aphin.identification.aphin.APHIN.calc_physical_time_derivatives">
+<span class="sig-name descname"><span class="pre">calc_physical_time_derivatives</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">z</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dz_dt</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/identification/aphin.html#APHIN.calc_physical_time_derivatives"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.identification.aphin.APHIN.calc_physical_time_derivatives" title="Link to this definition"></a></dt>
+<dd><p>Calculate time derivatives of physical variables given the time derivatives of the latent variables.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>z</strong> (<em>array-like</em>) – Latent state with shape (n_samples, r).</p></li>
+<li><p><strong>dz_dt</strong> (<em>array-like</em>) – Time derivative of latent state with shape (n_samples, r).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Tuple containing physical variables and their time derivatives.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="aphin.identification.aphin.APHIN.decode">
+<span class="sig-name descname"><span class="pre">decode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">z</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/identification/aphin.html#APHIN.decode"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.identification.aphin.APHIN.decode" title="Link to this definition"></a></dt>
+<dd><p>Decode latent variable.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>z</strong> (<em>array-like</em>) – Latent variable with shape (n_samples, reduced_order).</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>x</strong> – Full state with shape (n_samples, n_features, n_dof_per_feature).</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>array-like</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="aphin.identification.aphin.APHIN.encode">
+<span class="sig-name descname"><span class="pre">encode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/identification/aphin.html#APHIN.encode"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.identification.aphin.APHIN.encode" title="Link to this definition"></a></dt>
+<dd><p>Encode full state.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>x</strong> (<em>array-like</em>) – Full state with shape (n_samples, n_features, n_dof_per_feature).</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>z</strong> – Latent variable with shape (n_samples, reduced_order).</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>array-like</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="aphin.identification.aphin.APHIN.get_loss_second_part">
+<span class="sig-name descname"><span class="pre">get_loss_second_part</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dz_dxr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dxr_dt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">u</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mu</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/identification/aphin.html#APHIN.get_loss_second_part"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.identification.aphin.APHIN.get_loss_second_part" title="Link to this definition"></a></dt>
+<dd><p>Second part of loss calculation (loss calclulation is split into two parts as the second part differs for
+the different autoencoder implementations, while the first part remains the same).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>xr</strong> (<em>tf.Tensor</em>) – Intermediate latent space tensor.</p></li>
+<li><p><strong>dz_dxr</strong> (<em>tf.Tensor</em>) – Jacobian of latent variables with respect to intermediate latent space.</p></li>
+<li><p><strong>dxr_dt</strong> (<em>tf.Tensor</em>) – Time derivative of intermediate latent space.</p></li>
+<li><p><strong>z</strong> (<em>tf.Tensor</em>) – Latent variables.</p></li>
+<li><p><strong>u</strong> (<em>tf.Tensor</em>) – System inputs.</p></li>
+<li><p><strong>mu</strong> (<em>tf.Tensor</em>) – System parameters.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Tuple containing individual losses.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="aphin.identification.aphin.APHIN.get_projection_properties">
+<span class="sig-name descname"><span class="pre">get_projection_properties</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x_test</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/identification/aphin.html#APHIN.get_projection_properties"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.identification.aphin.APHIN.get_projection_properties" title="Link to this definition"></a></dt>
+<dd><p>Compute and save the projection and Jacobian error.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>array-like</em><em>, </em><em>optional</em>) – Training data.</p></li>
+<li><p><strong>x_test</strong> (<em>array-like</em><em>, </em><em>optional</em>) – Test data.</p></li>
+<li><p><strong>file_dir</strong> (<em>str</em><em>, </em><em>optional</em>) – Directory to save the projection properties.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Tuple containing projection and Jacobian errors for training and test data.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="aphin.identification.aphin.APHIN.get_trainable_weights">
+<span class="sig-name descname"><span class="pre">get_trainable_weights</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/identification/aphin.html#APHIN.get_trainable_weights"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.identification.aphin.APHIN.get_trainable_weights" title="Link to this definition"></a></dt>
+<dd><p>Returns the trainable weights of the model.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>List of trainable weights.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="aphin.identification.aphin.APHIN.implicit_midpoint">
+<span class="sig-name descname"><span class="pre">implicit_midpoint</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t_bound</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step_size</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">B</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">u</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">decomp_option</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/identification/aphin.html#APHIN.implicit_midpoint"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.identification.aphin.APHIN.implicit_midpoint" title="Link to this definition"></a></dt>
+<dd><p>Calculate time integration of linear ODE through implicit midpoint rule
+ODE system E*dz_dt = A*z + B*u
+Theory:
+We got a pH-system E*Dx = (J-D)*Q*x + B*u
+we define A:=(J-D)*Q and the RHS as f(t,x)
+use the differential slope equation at midpoint
+(x(t+h)-x(t))/h=Dx(t+h/2)=E^-1 * f(t+h/2,x(t+h/2))
+since x(t+h/2) is unknown we use the approximation
+x(t+h/2) = 1/2*(x(t)+x(t+h))
+insert the linear system into the differential equation leads to
+x(t+h) = x(t) + h * E^-1 <a href="#id1"><span class="problematic" id="id2">*</span></a>(1/2*A*(x(t)+x(t+h))+ B*u(t+h/2))
+reformulate the equation to
+(E-h/2*A)x(t+h) = (E+h/2*A)*x(t) + h*B*u(t+h/2)
+solve the linear equation system, e.g. via LU-decomposition</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>t0</strong> (<em>float</em>) – Initial time.</p></li>
+<li><p><strong>z0</strong> (<em>array-like</em>) – Initial state vector.</p></li>
+<li><p><strong>t_bound</strong> (<em>float</em>) – End time.</p></li>
+<li><p><strong>step_size</strong> (<em>float</em>) – Constant step width.</p></li>
+<li><p><strong>B</strong> (<em>array-like</em><em>, </em><em>optional</em>) – Input matrix, default is None (will be set to zero).</p></li>
+<li><p><strong>u</strong> (<em>callable</em><em>, </em><em>optional</em>) – Input function at time midpoints, default is None (will be set to zero).</p></li>
+<li><p><strong>decomp_option</strong> (<em>int</em><em>, </em><em>optional</em>) – Option for decomposition (1-lu_solve), default is 1.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>z</strong> (<em>array-like</em>) – Integrated state vector.</p></li>
+<li><p><em>———————————————————————–</em></p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="aphin.identification.aphin.APHIN.projection_properties">
+<span class="sig-name descname"><span class="pre">projection_properties</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/identification/aphin.html#APHIN.projection_properties"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.identification.aphin.APHIN.projection_properties" title="Link to this definition"></a></dt>
+<dd><p>Compute the projection and Jacobian error.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>x</strong> (<em>array-like</em>) – Input data.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Tuple containing projection error and Jacobian error.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="aphin.identification.aphin.APHIN.reconstruct">
+<span class="sig-name descname"><span class="pre">reconstruct</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/identification/aphin.html#APHIN.reconstruct"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.identification.aphin.APHIN.reconstruct" title="Link to this definition"></a></dt>
+<dd><p>Reconstruct full state.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>x</strong> (<em>array-like</em>) – Full state with shape (n_samples, n_features, n_dof_per_feature).</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>x_rec</strong> – Reconstructed full state with shape (n_samples, n_features, n_dof_per_feature).</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>array-like</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="aphin.identification.aphin.APHIN.reshape_dxr_dz">
+<span class="sig-name descname"><span class="pre">reshape_dxr_dz</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dxr_dz</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/identification/aphin.html#APHIN.reshape_dxr_dz"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.identification.aphin.APHIN.reshape_dxr_dz" title="Link to this definition"></a></dt>
+<dd><p>Reshape data for conformity with Convolutional Autoencoder.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>dxr_dz</strong> (<em>tf.Tensor</em>) – Jacobian of reconstructed state with respect to latent variables.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>dxr_dz</strong> – Same as input</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tf.Tensor</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="aphin.identification.aphin.APHIN.test_step">
+<span class="sig-name descname"><span class="pre">test_step</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inputs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/identification/aphin.html#APHIN.test_step"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.identification.aphin.APHIN.test_step" title="Link to this definition"></a></dt>
+<dd><p>Perform one test step.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>inputs</strong> (<em>array-like</em>) – Input data.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Dictionary containing loss values.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="aphin.identification.aphin.APHIN.train_step">
+<span class="sig-name descname"><span class="pre">train_step</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inputs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/identification/aphin.html#APHIN.train_step"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.identification.aphin.APHIN.train_step" title="Link to this definition"></a></dt>
+<dd><p>Perform one training step.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>inputs</strong> (<em>array-like</em>) – Input data.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Dictionary containing loss values.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="aphin.identification.aphin.APHIN.vis_modes">
+<span class="sig-name descname"><span class="pre">vis_modes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode_ids</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">latent_ids</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">block</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/identification/aphin.html#APHIN.vis_modes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.identification.aphin.APHIN.vis_modes" title="Link to this definition"></a></dt>
+<dd><p>Visualize the reconstruction of the reduced coefficients of the PCA modes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>array-like</em>) – Original dataset.</p></li>
+<li><p><strong>mode_ids</strong> (<em>int</em><em> or </em><em>array-like</em><em>, </em><em>optional</em>) – Scalar (plots mode_ids) or array (plots modes with indices from mode_ids).</p></li>
+<li><p><strong>latent_ids</strong> (<em>int</em><em> or </em><em>array-like</em><em>, </em><em>optional</em>) – Scalar (plots latent_ids) or array (plots modes with indices from latent_ids).</p></li>
+<li><p><strong>block</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether to block the display of the plot.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-aphin.identification.conv_aphin">
+<span id="aphin-identification-conv-aphin-module"></span><h2>aphin.identification.conv_aphin module<a class="headerlink" href="#module-aphin.identification.conv_aphin" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="aphin.identification.conv_aphin.ConvAPHIN">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">aphin.identification.conv_aphin.</span></span><span class="sig-name descname"><span class="pre">ConvAPHIN</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/identification/conv_aphin.html#ConvAPHIN"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.identification.conv_aphin.ConvAPHIN" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#aphin.identification.aphin.APHIN" title="aphin.identification.aphin.APHIN"><code class="xref py py-class docutils literal notranslate"><span class="pre">APHIN</span></code></a></p>
+<p>Convolutional autoencoder-based port-Hamiltonian Identification Network (Conv-ApHIN).
+Model to discover low-dimensional dynamics of a high-dimensional system using a convolutional autoencoder and pHIN</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="aphin.identification.conv_aphin.ConvAPHIN.build_autoencoder">
+<span class="sig-name descname"><span class="pre">build_autoencoder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/identification/conv_aphin.html#ConvAPHIN.build_autoencoder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.identification.conv_aphin.ConvAPHIN.build_autoencoder" title="Link to this definition"></a></dt>
+<dd><p>Build the encoder and decoder of the autoencoder.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>x</strong> (<em>array-like</em>) – Input data.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Tuple containing the input tensor, dummy PCA tensor, encoded tensor, decoded tensor, and reconstructed tensor.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="aphin.identification.conv_aphin.ConvAPHIN.build_nonlinear_autoencoder">
+<span class="sig-name descname"><span class="pre">build_nonlinear_autoencoder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x_input</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/identification/conv_aphin.html#ConvAPHIN.build_nonlinear_autoencoder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.identification.conv_aphin.ConvAPHIN.build_nonlinear_autoencoder" title="Link to this definition"></a></dt>
+<dd><p>Build the convolutional autoencoder with specified layers and filter sizes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>x_input</strong> (<em>tf.Tensor</em>) – Input tensor to the encoder.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Tuple containing the encoded tensor and the decoded tensor.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="aphin.identification.conv_aphin.ConvAPHIN.get_loss_second_part">
+<span class="sig-name descname"><span class="pre">get_loss_second_part</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dz_dxr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dxr_dt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">u</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mu</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/identification/conv_aphin.html#ConvAPHIN.get_loss_second_part"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.identification.conv_aphin.ConvAPHIN.get_loss_second_part" title="Link to this definition"></a></dt>
+<dd><p>Calculate the second part of the loss function.
+In contrast to the classic APHIN, our data (and its time derivative) are multidimensional.
+Consequently, we need to vectorize the data before we can calculate the loss.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>xr</strong> (<em>array-like</em>) – Reconstructed data.</p></li>
+<li><p><strong>dz_dxr</strong> (<em>array-like</em>) – Derivative of the latent variables with respect to the reconstructed data.</p></li>
+<li><p><strong>dxr_dt</strong> (<em>array-like</em>) – Time derivative of the reconstructed data.</p></li>
+<li><p><strong>z</strong> (<em>array-like</em>) – Latent variables.</p></li>
+<li><p><strong>u</strong> (<em>array-like</em>) – Control inputs.</p></li>
+<li><p><strong>mu</strong> (<em>array-like</em>) – Parameters.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The second part of the loss.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tf.Tensor</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="aphin.identification.conv_aphin.ConvAPHIN.reshape_conv_data">
+<span class="sig-name descname"><span class="pre">reshape_conv_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dz_dxr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dxr_dt</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/identification/conv_aphin.html#ConvAPHIN.reshape_conv_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.identification.conv_aphin.ConvAPHIN.reshape_conv_data" title="Link to this definition"></a></dt>
+<dd><p>In contrast to the classic APHIN, our data (and its time derivative) are multidimensional.
+Consequently, we need to vectorize the data before we can calculate the loss.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dz_dxr</strong> (<em>array-like</em>) – Derivative of the latent variables with respect to the reconstructed data.</p></li>
+<li><p><strong>dxr_dt</strong> (<em>array-like</em>) – Time derivative of the reconstructed data.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Tuple containing the reshaped derivatives and time derivatives.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="aphin.identification.conv_aphin.ConvAPHIN.reshape_dxr_dz">
+<span class="sig-name descname"><span class="pre">reshape_dxr_dz</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dxr_dz</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/identification/conv_aphin.html#ConvAPHIN.reshape_dxr_dz"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.identification.conv_aphin.ConvAPHIN.reshape_dxr_dz" title="Link to this definition"></a></dt>
+<dd><p>Reshape the derivative of the reconstructed data with respect to the latent variables.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>dxr_dz</strong> (<em>array-like</em>) – Derivative of the reconstructed data with respect to the latent variables.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Reshaped derivative tensor.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tf.Tensor</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-aphin.identification.ph_basemodel">
+<span id="aphin-identification-ph-basemodel-module"></span><h2>aphin.identification.ph_basemodel module<a class="headerlink" href="#module-aphin.identification.ph_basemodel" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="aphin.identification.ph_basemodel.PHBasemodel">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">aphin.identification.ph_basemodel.</span></span><span class="sig-name descname"><span class="pre">PHBasemodel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/identification/ph_basemodel.html#PHBasemodel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.identification.ph_basemodel.PHBasemodel" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Model</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">ABC</span></code></p>
+<p>Base model for port-Hamiltonian identification networks.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="aphin.identification.ph_basemodel.PHBasemodel.build_loss">
+<span class="sig-name descname"><span class="pre">build_loss</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inputs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/identification/ph_basemodel.html#PHBasemodel.build_loss"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.identification.ph_basemodel.PHBasemodel.build_loss" title="Link to this definition"></a></dt>
+<dd><p>Split input into state, its derivative, and the parameters, perform the forward pass, calculate the loss,
+and update the weights.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>inputs</strong> (<em>list</em><em> of </em><em>array-like</em>) – Input data.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>List of loss values.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="aphin.identification.ph_basemodel.PHBasemodel.fit">
+<span class="sig-name descname"><span class="pre">fit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">validation_data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/identification/ph_basemodel.html#PHBasemodel.fit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.identification.ph_basemodel.PHBasemodel.fit" title="Link to this definition"></a></dt>
+<dd><p>Wrapper for the fit function of the Keras model to flatten the data if necessary.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>array-like</em>) – Training data.</p></li>
+<li><p><strong>y</strong> (<em>array-like</em><em>, </em><em>optional</em>) – Target data, by default None.</p></li>
+<li><p><strong>validation_data</strong> (<em>tuple</em><em> or </em><em>array-like</em><em>, </em><em>optional</em>) – Data for validation, by default None.</p></li>
+<li><p><strong>**kwargs</strong> (<em>dict</em>) – Additional arguments for the fit function.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>A <cite>History</cite> object. Its <cite>History.history</cite> attribute is a record of training loss values and metrics values</dt><dd><p>at successive epochs, as well as validation loss values and validation metrics values (if applicable).</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>History</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="aphin.identification.ph_basemodel.PHBasemodel.get_system_weights">
+<span class="sig-name descname"><span class="pre">get_system_weights</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/identification/ph_basemodel.html#PHBasemodel.get_system_weights"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.identification.ph_basemodel.PHBasemodel.get_system_weights" title="Link to this definition"></a></dt>
+<dd><p>Get the weights of the system identification part of the model.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>List of system weights.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="aphin.identification.ph_basemodel.PHBasemodel.get_trainable_weights">
+<span class="sig-name descname"><span class="pre">get_trainable_weights</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/identification/ph_basemodel.html#PHBasemodel.get_trainable_weights"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.identification.ph_basemodel.PHBasemodel.get_trainable_weights" title="Link to this definition"></a></dt>
+<dd><p>Get the trainable weights of the model.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>List of trainable weights.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="aphin.identification.ph_basemodel.PHBasemodel.load">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">load</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ph_network</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">u</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mu</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kwargs_overwrite</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/identification/ph_basemodel.html#PHBasemodel.load"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.identification.ph_basemodel.PHBasemodel.load" title="Link to this definition"></a></dt>
+<dd><p>Load the model from the given path.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ph_network</strong> (<em>callable</em>) – The port-Hamiltonian network to be loaded.</p></li>
+<li><p><strong>x</strong> (<em>array-like</em><em>, </em><em>optional</em>) – Data needed to initialize the model, by default None.</p></li>
+<li><p><strong>u</strong> (<em>array-like</em><em>, </em><em>optional</em>) – Control inputs, by default None.</p></li>
+<li><p><strong>mu</strong> (<em>array-like</em><em>, </em><em>optional</em>) – Parameters used to create the model the first time, by default None.</p></li>
+<li><p><strong>path</strong> (<em>str</em><em>, </em><em>optional</em>) – Path to the model, by default None.</p></li>
+<li><p><strong>kwargs_overwrite</strong> (<em>dict</em><em>, </em><em>optional</em>) – Additional kwargs to overwrite the config, by default None.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Loaded model.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#aphin.identification.ph_basemodel.PHBasemodel" title="aphin.identification.ph_basemodel.PHBasemodel">PHBasemodel</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="aphin.identification.ph_basemodel.PHBasemodel.save">
+<span class="sig-name descname"><span class="pre">save</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/identification/ph_basemodel.html#PHBasemodel.save"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.identification.ph_basemodel.PHBasemodel.save" title="Link to this definition"></a></dt>
+<dd><p>Save the model weights and configuration to a given path.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>path</strong> (<em>str</em><em>, </em><em>optional</em>) – Path to the folder where the model should be saved, by default None.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="aphin.identification.ph_basemodel.PHBasemodel.split_inputs">
+<span class="sig-name descname"><span class="pre">split_inputs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inputs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/identification/ph_basemodel.html#PHBasemodel.split_inputs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.identification.ph_basemodel.PHBasemodel.split_inputs" title="Link to this definition"></a></dt>
+<dd><p>Split inputs into state, its derivative, and the parameters.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>inputs</strong> (<em>list</em><em> of </em><em>array-like</em>) – Input data.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Tuple containing state, its derivative, control inputs, and parameters.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-aphin.identification.phin">
+<span id="aphin-identification-phin-module"></span><h2>aphin.identification.phin module<a class="headerlink" href="#module-aphin.identification.phin" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="aphin.identification.phin.PHIN">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">aphin.identification.phin.</span></span><span class="sig-name descname"><span class="pre">PHIN</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/identification/phin.html#PHIN"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.identification.phin.PHIN" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#aphin.identification.ph_basemodel.PHBasemodel" title="aphin.identification.ph_basemodel.PHBasemodel"><code class="xref py py-class docutils literal notranslate"><span class="pre">PHBasemodel</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">ABC</span></code></p>
+<p>port-Hamiltonian identification network (phin).
+Model to discover the dynamics of a system using a layer for identification of other dynamical systems
+(see SystemLayer), e.g., a PHLayer (port-Hamiltonian).</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="aphin.identification.phin.PHIN.build_model">
+<span class="sig-name descname"><span class="pre">build_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">u</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mu</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/identification/phin.html#PHIN.build_model"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.identification.phin.PHIN.build_model" title="Link to this definition"></a></dt>
+<dd><p>Build the model.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>array-like</em>) – Full state with shape (n_samples, n_features).</p></li>
+<li><p><strong>u</strong> (<em>array-like</em><em>, </em><em>optional</em>) – Inputs with shape (n_samples, n_inputs).</p></li>
+<li><p><strong>mu</strong> (<em>array-like</em><em>, </em><em>optional</em>) – Parameters with shape (n_samples, n_params).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="aphin.identification.phin.PHIN.get_loss">
+<span class="sig-name descname"><span class="pre">get_loss</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dx_dt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">u</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mu</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/identification/phin.html#PHIN.get_loss"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.identification.phin.PHIN.get_loss" title="Link to this definition"></a></dt>
+<dd><p>Calculate loss.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>array-like</em>) – Full state with shape (n_samples, n_features).</p></li>
+<li><p><strong>dx_dt</strong> (<em>array-like</em>) – Time derivative of state with shape (n_samples, n_features).</p></li>
+<li><p><strong>u</strong> (<em>array-like</em>) – System input with shape (n_samples, n_inputs).</p></li>
+<li><p><strong>mu</strong> (<em>array-like</em><em>, </em><em>optional</em>) – System parameters with shape (n_samples, n_parameters), by default None.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Tuple containing dz_loss, reg_loss, and total loss.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="aphin.identification.phin.PHIN.test_step">
+<span class="sig-name descname"><span class="pre">test_step</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inputs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/identification/phin.html#PHIN.test_step"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.identification.phin.PHIN.test_step" title="Link to this definition"></a></dt>
+<dd><p>Perform one test step.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>inputs</strong> (<em>list</em><em> of </em><em>array-like</em>) – Input data.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Dictionary containing the loss, dz_loss, and reg_loss.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="aphin.identification.phin.PHIN.train_step">
+<span class="sig-name descname"><span class="pre">train_step</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inputs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/identification/phin.html#PHIN.train_step"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.identification.phin.PHIN.train_step" title="Link to this definition"></a></dt>
+<dd><p>Perform one training step.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>inputs</strong> (<em>list</em><em> of </em><em>array-like</em>) – Input data.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Dictionary containing the loss, dz_loss, and reg_loss.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-aphin.identification.projection_aphin">
+<span id="aphin-identification-projection-aphin-module"></span><h2>aphin.identification.projection_aphin module<a class="headerlink" href="#module-aphin.identification.projection_aphin" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="aphin.identification.projection_aphin.DecoderLatentTransformation">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">aphin.identification.projection_aphin.</span></span><span class="sig-name descname"><span class="pre">DecoderLatentTransformation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/identification/projection_aphin.html#DecoderLatentTransformation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.identification.projection_aphin.DecoderLatentTransformation" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Layer</span></code></p>
+<p>Linear Transformation of the form: z to <a href="#id3"><span class="problematic" id="id4">z_</span></a> with <a href="#id5"><span class="problematic" id="id6">z_</span></a> = (psi^T &#64; phi)^-1 &#64; z</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="aphin.identification.projection_aphin.DecoderLatentTransformation.build">
+<span class="sig-name descname"><span class="pre">build</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_shape</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/identification/projection_aphin.html#DecoderLatentTransformation.build"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.identification.projection_aphin.DecoderLatentTransformation.build" title="Link to this definition"></a></dt>
+<dd><p>Build the layer (conformity as weights are shared between many layers and are passed in the init function).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>input_shape</strong> (<em>tuple</em>) – Shape of the input.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="aphin.identification.projection_aphin.DecoderLatentTransformation.call">
+<span class="sig-name descname"><span class="pre">call</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inputs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/identification/projection_aphin.html#DecoderLatentTransformation.call"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.identification.projection_aphin.DecoderLatentTransformation.call" title="Link to this definition"></a></dt>
+<dd><p>Perform the linear transformation z to <a href="#id7"><span class="problematic" id="id8">z_</span></a> with <a href="#id9"><span class="problematic" id="id10">z_</span></a> = (psi^T &#64; phi)^-1 &#64; z = w &#64; z.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>inputs</strong> (<em>array-like</em>) – Input data.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>output</strong> – Transformed data.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>array-like</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="aphin.identification.projection_aphin.DecoderLinearProjection">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">aphin.identification.projection_aphin.</span></span><span class="sig-name descname"><span class="pre">DecoderLinearProjection</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/identification/projection_aphin.html#DecoderLinearProjection"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.identification.projection_aphin.DecoderLinearProjection" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Layer</span></code></p>
+<p>Linear backprojection/decoding following dec_lin: <a href="#id11"><span class="problematic" id="id12">z_</span></a> to x_lin with x_lin = phi &#64; <a href="#id13"><span class="problematic" id="id14">z_</span></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="aphin.identification.projection_aphin.DecoderLinearProjection.build">
+<span class="sig-name descname"><span class="pre">build</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_shape</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/identification/projection_aphin.html#DecoderLinearProjection.build"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.identification.projection_aphin.DecoderLinearProjection.build" title="Link to this definition"></a></dt>
+<dd><p>Build the layer (conformity as weights are shared between many layers and are passed in the init function).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>input_shape</strong> (<em>tuple</em>) – Shape of the input.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="aphin.identification.projection_aphin.DecoderLinearProjection.call">
+<span class="sig-name descname"><span class="pre">call</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inputs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/identification/projection_aphin.html#DecoderLinearProjection.call"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.identification.projection_aphin.DecoderLinearProjection.call" title="Link to this definition"></a></dt>
+<dd><p>Perform the linear backprojection <a href="#id15"><span class="problematic" id="id16">z_</span></a> to x_lin with x_lin = phi &#64; <a href="#id17"><span class="problematic" id="id18">z_</span></a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>inputs</strong> (<em>array-like</em>) – Input data.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>output</strong> – Backprojected data.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>array-like</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="aphin.identification.projection_aphin.DecoderNonlinearProjection">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">aphin.identification.projection_aphin.</span></span><span class="sig-name descname"><span class="pre">DecoderNonlinearProjection</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/identification/projection_aphin.html#DecoderNonlinearProjection"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.identification.projection_aphin.DecoderNonlinearProjection" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Layer</span></code></p>
+<p>Nonlinear/decoding following dec_nl: <a href="#id19"><span class="problematic" id="id20">z_</span></a> to x_nl with x_nl = (I - phi &#64; (psi^T &#64; phi)^-1 &#64; psi^T) &#64; H(<a href="#id21"><span class="problematic" id="id22">z_</span></a>)</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="aphin.identification.projection_aphin.DecoderNonlinearProjection.build">
+<span class="sig-name descname"><span class="pre">build</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_shape</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/identification/projection_aphin.html#DecoderNonlinearProjection.build"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.identification.projection_aphin.DecoderNonlinearProjection.build" title="Link to this definition"></a></dt>
+<dd><p>Build the layer (conformity as weights are shared between many layers and are passed in the init function).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>input_shape</strong> (<em>tuple</em>) – Shape of the input.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="aphin.identification.projection_aphin.DecoderNonlinearProjection.call">
+<span class="sig-name descname"><span class="pre">call</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inputs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/identification/projection_aphin.html#DecoderNonlinearProjection.call"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.identification.projection_aphin.DecoderNonlinearProjection.call" title="Link to this definition"></a></dt>
+<dd><p>Perform the nonlinear projection <a href="#id23"><span class="problematic" id="id24">z_</span></a> to x_nl with x_nl = (I - phi &#64; (psi^T &#64; phi)^-1 &#64; psi^T) &#64; H(<a href="#id25"><span class="problematic" id="id26">z_</span></a>).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>inputs</strong> (<em>array-like</em>) – Input data.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>output</strong> – Nonlinear projected data.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>array-like</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="aphin.identification.projection_aphin.DecoderNonlinearTransformation">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">aphin.identification.projection_aphin.</span></span><span class="sig-name descname"><span class="pre">DecoderNonlinearTransformation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/identification/projection_aphin.html#DecoderNonlinearTransformation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.identification.projection_aphin.DecoderNonlinearTransformation" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Layer</span></code></p>
+<p>Nonlinear transformation in the latent space on the decoder side (needs to be inverse of the latent correspondent):
+z_1 to z_2 with z_2 = (act^-1(z_1) - b) &#64; W^-1</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="aphin.identification.projection_aphin.DecoderNonlinearTransformation.build">
+<span class="sig-name descname"><span class="pre">build</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_shape</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/identification/projection_aphin.html#DecoderNonlinearTransformation.build"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.identification.projection_aphin.DecoderNonlinearTransformation.build" title="Link to this definition"></a></dt>
+<dd><p>Build the layer (conformity as weights are shared between many layers and are passed in the init function).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>input_shape</strong> (<em>tuple</em>) – Shape of the input.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="aphin.identification.projection_aphin.DecoderNonlinearTransformation.call">
+<span class="sig-name descname"><span class="pre">call</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inputs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/identification/projection_aphin.html#DecoderNonlinearTransformation.call"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.identification.projection_aphin.DecoderNonlinearTransformation.call" title="Link to this definition"></a></dt>
+<dd><p>Perform the inverse nonlinear transformation z_1 to z_2 with z_2 = (act^-1(z_1) - b) &#64; W^-1.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>inputs</strong> (<em>array-like</em>) – Input data.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>output</strong> – Transformed data.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>array-like</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="aphin.identification.projection_aphin.EncoderNonlinearTransformation">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">aphin.identification.projection_aphin.</span></span><span class="sig-name descname"><span class="pre">EncoderNonlinearTransformation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/identification/projection_aphin.html#EncoderNonlinearTransformation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.identification.projection_aphin.EncoderNonlinearTransformation" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Layer</span></code></p>
+<p>Nonlinear transformation in the latent space on the encoder side following: z to <a href="#id27"><span class="problematic" id="id28">z_</span></a> with <a href="#id29"><span class="problematic" id="id30">z_</span></a> = act(W &#64; z + b)</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="aphin.identification.projection_aphin.EncoderNonlinearTransformation.build">
+<span class="sig-name descname"><span class="pre">build</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_shape</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/identification/projection_aphin.html#EncoderNonlinearTransformation.build"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.identification.projection_aphin.EncoderNonlinearTransformation.build" title="Link to this definition"></a></dt>
+<dd><p>Build the layer (conformity as weights are shared between many layers and are passed in the init function).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>input_shape</strong> (<em>tuple</em>) – Shape of the input.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="aphin.identification.projection_aphin.EncoderNonlinearTransformation.call">
+<span class="sig-name descname"><span class="pre">call</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inputs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/identification/projection_aphin.html#EncoderNonlinearTransformation.call"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.identification.projection_aphin.EncoderNonlinearTransformation.call" title="Link to this definition"></a></dt>
+<dd><p>Perform the nonlinear transformation z to <a href="#id31"><span class="problematic" id="id32">z_</span></a> with <a href="#id33"><span class="problematic" id="id34">z_</span></a> = act(W &#64; z + b).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>inputs</strong> (<em>array-like</em>) – Input data.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>output</strong> – Transformed data.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>array-like</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="aphin.identification.projection_aphin.EncoderProjection">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">aphin.identification.projection_aphin.</span></span><span class="sig-name descname"><span class="pre">EncoderProjection</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/identification/projection_aphin.html#EncoderProjection"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.identification.projection_aphin.EncoderProjection" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Layer</span></code></p>
+<p>Linear projection/encoding following enc: x to z with z = psi^T &#64; x</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="aphin.identification.projection_aphin.EncoderProjection.build">
+<span class="sig-name descname"><span class="pre">build</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_shape</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/identification/projection_aphin.html#EncoderProjection.build"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.identification.projection_aphin.EncoderProjection.build" title="Link to this definition"></a></dt>
+<dd><p>Build the layer (conformity as weights are shared between many layers and are passed in the init function).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>input_shape</strong> (<em>tuple</em>) – Shape of the input.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="aphin.identification.projection_aphin.EncoderProjection.call">
+<span class="sig-name descname"><span class="pre">call</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inputs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/identification/projection_aphin.html#EncoderProjection.call"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.identification.projection_aphin.EncoderProjection.call" title="Link to this definition"></a></dt>
+<dd><p>Perform the linear projection x to z with z = psi^T &#64; x</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>inputs</strong> (<em>array-like</em>) – Input data.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>output</strong> – Projected data.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>array-like</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="aphin.identification.projection_aphin.ProjectionAPHIN">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">aphin.identification.projection_aphin.</span></span><span class="sig-name descname"><span class="pre">ProjectionAPHIN</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/identification/projection_aphin.html#ProjectionAPHIN"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.identification.projection_aphin.ProjectionAPHIN" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#aphin.identification.aphin.APHIN" title="aphin.identification.aphin.APHIN"><code class="xref py py-class docutils literal notranslate"><span class="pre">APHIN</span></code></a></p>
+<p>Projection-Conserving autoencoder-based port-Hamiltonian Identification Network (ApHIN)
+This is an implementation of an autoencoder that really is a projection, i.e. AE(x) = AE(AE(x)) with AE=Enc(Dec(x))</p>
+<dl class="simple">
+<dt>Encoder:</dt><dd><dl class="simple">
+<dt>z = h o … o h o psi^t &#64; x</dt><dd><p>with nonlinear transformation function h( )</p>
+</dd>
+</dl>
+</dd>
+<dt>Decoder:</dt><dd><dl class="simple">
+<dt>(phi + (I - phi(psi^T &#64; phi)^-1 &#64; psi^T) H) o h^-1 o … o h^-1 o (psi^t &#64; phi)^-1 &#64; z</dt><dd><p>with inverse nonlinear transformation function h( )
+and nonlinear Decoder H( )</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="aphin.identification.projection_aphin.ProjectionAPHIN.build_decoder">
+<span class="sig-name descname"><span class="pre">build_decoder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">z</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/identification/projection_aphin.html#ProjectionAPHIN.build_decoder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.identification.projection_aphin.ProjectionAPHIN.build_decoder" title="Link to this definition"></a></dt>
+<dd><p>Build the decoder part of the autoencoder.
+Decoder: (phi + (I - phi(psi^T &#64; phi)^-1 &#64; psi^T) H) o h^-1 o … o h^-1 o (psi^t &#64; phi)^-1 &#64; z
+with invertible nonlinear transformation function h( ) and nonlinear Decoder H( )</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>z</strong> (<em>array-like</em>) – Latent variable.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>z_dec</strong> – Decoded variable.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>array-like</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="aphin.identification.projection_aphin.ProjectionAPHIN.build_encoder">
+<span class="sig-name descname"><span class="pre">build_encoder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">z_pca</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/identification/projection_aphin.html#ProjectionAPHIN.build_encoder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.identification.projection_aphin.ProjectionAPHIN.build_encoder" title="Link to this definition"></a></dt>
+<dd><p>Build the encoder part of the autoencoder.
+z = h o … o h o psi^t &#64; x with nonlinear transformation function h( )</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>z_pca</strong> (<em>array-like</em>) – Input to the autoencoder.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>z</strong> – Encoded latent variable.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>array-like</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="aphin.identification.projection_aphin.ProjectionAPHIN.build_nonlinear_autoencoder">
+<span class="sig-name descname"><span class="pre">build_nonlinear_autoencoder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">z_pca</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/identification/projection_aphin.html#ProjectionAPHIN.build_nonlinear_autoencoder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.identification.projection_aphin.ProjectionAPHIN.build_nonlinear_autoencoder" title="Link to this definition"></a></dt>
+<dd><p>Build a projection-conserving autoencoder.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>z_pca</strong> (<em>array-like</em>) – Input to the autoencoder.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Tuple containing the encoded and decoded variables.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="aphin.identification.projection_aphin.ProjectionAPHIN.init_weights">
+<span class="sig-name descname"><span class="pre">init_weights</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/identification/projection_aphin.html#ProjectionAPHIN.init_weights"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.identification.projection_aphin.ProjectionAPHIN.init_weights" title="Link to this definition"></a></dt>
+<dd><p>Initialize weights (including projection matrices) for the autoencoder.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="aphin.identification.projection_aphin.activation_custom">
+<span class="sig-prename descclassname"><span class="pre">aphin.identification.projection_aphin.</span></span><span class="sig-name descname"><span class="pre">activation_custom</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.39269908169872414</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">tf.float32</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/identification/projection_aphin.html#activation_custom"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.identification.projection_aphin.activation_custom" title="Link to this definition"></a></dt>
+<dd><p>Invertible nonlinear activation function.
+see Otto, S. E. (2022). Advances in Data-Driven Modeling and Sensing for High-Dimensional Nonlinear Systems
+Doctoral dissertation, Princeton University. Eq. 3.71</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>array-like</em>) – Input data.</p></li>
+<li><p><strong>alpha</strong> (<em>float</em><em>, </em><em>optional</em>) – Parameter for the activation function, by default np.pi / 8.</p></li>
+<li><p><strong>dtype</strong> (<em>tf.DType</em><em>, </em><em>optional</em>) – Data type, by default tf.float32.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Transformed data.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>array-like</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="aphin.identification.projection_aphin.activation_custom_inv">
+<span class="sig-prename descclassname"><span class="pre">aphin.identification.projection_aphin.</span></span><span class="sig-name descname"><span class="pre">activation_custom_inv</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.39269908169872414</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">tf.float32</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/identification/projection_aphin.html#activation_custom_inv"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.identification.projection_aphin.activation_custom_inv" title="Link to this definition"></a></dt>
+<dd><p>Inverse of the nonlinear invertible activation function.
+see Otto, S. E. (2022). Advances in Data-Driven Modeling and Sensing for High-Dimensional Nonlinear Systems
+Doctoral dissertation, Princeton University. Eq. 3.71</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>array-like</em>) – Input data.</p></li>
+<li><p><strong>alpha</strong> (<em>float</em><em>, </em><em>optional</em>) – Parameter for the activation function, by default np.pi / 8.</p></li>
+<li><p><strong>dtype</strong> (<em>tf.DType</em><em>, </em><em>optional</em>) – Data type, by default tf.float32.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Transformed data.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>array-like</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="aphin.identification.projection_aphin.cosec">
+<span class="sig-prename descclassname"><span class="pre">aphin.identification.projection_aphin.</span></span><span class="sig-name descname"><span class="pre">cosec</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/identification/projection_aphin.html#cosec"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.identification.projection_aphin.cosec" title="Link to this definition"></a></dt>
+<dd><p>Calculate the cosecant of x: 1/sin(x).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>x</strong> (<em>array-like</em>) – Input data.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Cosecant of the input.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>array-like</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="aphin.identification.projection_aphin.sec">
+<span class="sig-prename descclassname"><span class="pre">aphin.identification.projection_aphin.</span></span><span class="sig-name descname"><span class="pre">sec</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/identification/projection_aphin.html#sec"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.identification.projection_aphin.sec" title="Link to this definition"></a></dt>
+<dd><p>Calculate the secant of x: 1/cos(x).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>x</strong> (<em>array-like</em>) – Input data.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Secant of the input.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>array-like</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-aphin.identification">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-aphin.identification" title="Link to this heading"></a></h2>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="aphin.html" class="btn btn-neutral float-left" title="aphin package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="aphin.layers.html" class="btn btn-neutral float-right" title="aphin.layers package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Jonas Kneifl, Johannes Rettberg, Julius Herb.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

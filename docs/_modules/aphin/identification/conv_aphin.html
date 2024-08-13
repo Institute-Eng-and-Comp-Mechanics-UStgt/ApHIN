@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>aphin.identification.conv_aphin &mdash; ApHIN 0.1.3 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../_static/documentation_options.js?v=360bc84d"></script>
+        <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            ApHIN
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../aphin.html">aphin package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../contact.html">Contact</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">ApHIN</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">aphin.identification.conv_aphin</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for aphin.identification.conv_aphin</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">from</span> <span class="nn">.aphin</span> <span class="kn">import</span> <span class="n">APHIN</span>
+<span class="kn">import</span> <span class="nn">tensorflow</span> <span class="k">as</span> <span class="nn">tf</span>
+
+<span class="n">logging</span><span class="o">.</span><span class="n">basicConfig</span><span class="p">()</span>
+<span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">()</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="ConvAPHIN">
+<a class="viewcode-back" href="../../../aphin.identification.html#aphin.identification.conv_aphin.ConvAPHIN">[docs]</a>
+<span class="k">class</span> <span class="nc">ConvAPHIN</span><span class="p">(</span><span class="n">APHIN</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convolutional autoencoder-based port-Hamiltonian Identification Network (Conv-ApHIN).</span>
+<span class="sd">    Model to discover low-dimensional dynamics of a high-dimensional system using a convolutional autoencoder and pHIN</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">reduced_order</span><span class="p">,</span>
+        <span class="n">n_filters</span><span class="p">,</span>
+        <span class="n">kernel_size</span><span class="p">,</span>
+        <span class="n">strides</span><span class="p">,</span>
+        <span class="n">system_layer</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialize the ConvAPHIN model.</span>
+<span class="sd">        A convolution has the output shape</span>
+<span class="sd">        Encoder:  4+D tensor with shape: `batch_shape + (filters, new_rows, new_cols)</span>
+<span class="sd">        Decoder: new_rows = ((rows - 1) * strides[0] + kernel_size[0] - 2 * padding[0] + output_padding[0])</span>
+<span class="sd">        new_cols = ((cols - 1) * strides[1] + kernel_size[1] - 2 * padding[1] + output_padding[1])</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        reduced_order : int</span>
+<span class="sd">            The reduced order of the system.</span>
+<span class="sd">        n_filters : list of int</span>
+<span class="sd">            Number of filters for each convolutional layer.</span>
+<span class="sd">        kernel_size : list of int</span>
+<span class="sd">            Size of the kernel for each convolutional layer.</span>
+<span class="sd">        strides : list of int</span>
+<span class="sd">            Strides for each convolutional layer.</span>
+<span class="sd">        system_layer : tf.keras.layers.Layer, optional</span>
+<span class="sd">            The system layer, by default None.</span>
+<span class="sd">        **kwargs : dict</span>
+<span class="sd">            Additional arguments for the APHIN base class.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="s2">&quot;use_pca&quot;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="k">assert</span> <span class="p">(</span>
+                <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;use_pca&quot;</span><span class="p">]</span> <span class="o">!=</span> <span class="kc">True</span>
+            <span class="p">),</span> <span class="s2">&quot;PCA cannot be used with convolutinoal autoencoder&quot;</span>
+        <span class="k">if</span> <span class="s2">&quot;pca_scaling&quot;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;pca_scaling has no effect for ConvAPHIN. No scaling applied.&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;config&quot;</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_init_to_config</span><span class="p">(</span><span class="nb">locals</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">n_filters</span> <span class="o">=</span> <span class="n">n_filters</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">kernel_size</span> <span class="o">=</span> <span class="n">kernel_size</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">strides</span> <span class="o">=</span> <span class="n">strides</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">ConvAPHIN</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">reduced_order</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+<div class="viewcode-block" id="ConvAPHIN.build_autoencoder">
+<a class="viewcode-back" href="../../../aphin.identification.html#aphin.identification.conv_aphin.ConvAPHIN.build_autoencoder">[docs]</a>
+    <span class="k">def</span> <span class="nf">build_autoencoder</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Build the encoder and decoder of the autoencoder.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        x : array-like</span>
+<span class="sd">            Input data.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        tuple</span>
+<span class="sd">            Tuple containing the input tensor, dummy PCA tensor, encoded tensor, decoded tensor, and reconstructed tensor.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">x_input</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">Input</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">2</span><span class="p">]))</span>
+        <span class="n">z_pca_dummy</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">*</span> <span class="n">x_input</span>
+        <span class="c1"># second part of the encoder and first part of the decoder is a nonlinear part</span>
+        <span class="n">z</span><span class="p">,</span> <span class="n">z_dec</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">build_nonlinear_autoencoder</span><span class="p">(</span><span class="n">z_pca_dummy</span><span class="p">)</span>
+        <span class="n">x_rec</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">*</span> <span class="n">z_dec</span>
+        <span class="k">return</span> <span class="n">x_input</span><span class="p">,</span> <span class="n">z_pca_dummy</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">z_dec</span><span class="p">,</span> <span class="n">x_rec</span></div>
+
+
+<div class="viewcode-block" id="ConvAPHIN.build_nonlinear_autoencoder">
+<a class="viewcode-back" href="../../../aphin.identification.html#aphin.identification.conv_aphin.ConvAPHIN.build_nonlinear_autoencoder">[docs]</a>
+    <span class="k">def</span> <span class="nf">build_nonlinear_autoencoder</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x_input</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Build the convolutional autoencoder with specified layers and filter sizes.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        x_input : tf.Tensor</span>
+<span class="sd">            Input tensor to the encoder.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        tuple</span>
+<span class="sd">            Tuple containing the encoded tensor and the decoded tensor.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># in case the data only consists of one channel and not multiple ones create axis for this</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">x_input</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+            <span class="n">x_input</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">Lambda</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">tf</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">))(</span>
+                <span class="n">x_input</span>
+            <span class="p">)</span>
+        <span class="n">input_shape</span> <span class="o">=</span> <span class="n">x_input</span><span class="o">.</span><span class="n">shape</span>
+
+        <span class="n">z_</span> <span class="o">=</span> <span class="n">x_input</span>
+        <span class="k">for</span> <span class="n">n_filters</span><span class="p">,</span> <span class="n">kernel_size</span><span class="p">,</span> <span class="n">strides</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">n_filters</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">kernel_size</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">strides</span>
+        <span class="p">):</span>
+            <span class="n">z_</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">Conv2D</span><span class="p">(</span>
+                <span class="n">filters</span><span class="o">=</span><span class="n">n_filters</span><span class="p">,</span>
+                <span class="n">kernel_size</span><span class="o">=</span><span class="n">kernel_size</span><span class="p">,</span>
+                <span class="n">strides</span><span class="o">=</span><span class="n">strides</span><span class="p">,</span>
+                <span class="n">padding</span><span class="o">=</span><span class="s2">&quot;same&quot;</span><span class="p">,</span>
+                <span class="n">activation</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">activation</span><span class="p">,</span>
+                <span class="n">activity_regularizer</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">regularizer</span><span class="p">,</span>
+            <span class="p">)(</span><span class="n">z_</span><span class="p">)</span>
+            <span class="c1"># pooling layer</span>
+            <span class="c1"># z_ = tf.keras.layers.MaxPooling2D(pool_size=(2, 2), strides=None, padding=&#39;valid&#39;, data_format=None)(z_)</span>
+            <span class="c1"># print(z_.shape)</span>
+        <span class="n">z_shape</span> <span class="o">=</span> <span class="n">z_</span><span class="o">.</span><span class="n">shape</span>
+        <span class="n">z_</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">Flatten</span><span class="p">()(</span><span class="n">z_</span><span class="p">)</span>
+        <span class="n">z_shape2</span> <span class="o">=</span> <span class="n">z_</span><span class="o">.</span><span class="n">shape</span>
+        <span class="n">z</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">Dense</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">reduced_order</span><span class="p">,</span>
+            <span class="n">activation</span><span class="o">=</span><span class="s2">&quot;linear&quot;</span><span class="p">,</span>
+            <span class="c1"># activity_regularizer=self.regularizer</span>
+        <span class="p">)(</span><span class="n">z_</span><span class="p">)</span>
+
+        <span class="c1"># decoder part</span>
+        <span class="n">z_dec</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">Dense</span><span class="p">(</span>
+            <span class="n">z_shape2</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+            <span class="n">activation</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">activation</span><span class="p">,</span>
+            <span class="n">activity_regularizer</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">regularizer</span><span class="p">,</span>
+        <span class="p">)(</span><span class="n">z</span><span class="p">)</span>
+        <span class="n">z_dec</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">Reshape</span><span class="p">(</span><span class="n">z_shape</span><span class="p">[</span><span class="mi">1</span><span class="p">:])(</span><span class="n">z_dec</span><span class="p">)</span>
+
+        <span class="c1"># deconvolutional part</span>
+        <span class="k">for</span> <span class="n">n_filters</span><span class="p">,</span> <span class="n">kernel_size</span><span class="p">,</span> <span class="n">strides</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">n_filters</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">::</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">kernel_size</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">::</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">strides</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="p">):</span>
+            <span class="c1"># unpooling layer</span>
+            <span class="c1"># z_dec = tf.keras.layers.UpSampling2D(size=(2, 2), data_format=None, interpolation=&#39;nearest&#39;)(z_dec)</span>
+            <span class="n">z_dec</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">Conv2DTranspose</span><span class="p">(</span>
+                <span class="n">filters</span><span class="o">=</span><span class="n">n_filters</span><span class="p">,</span>
+                <span class="n">kernel_size</span><span class="o">=</span><span class="n">kernel_size</span><span class="p">,</span>
+                <span class="n">strides</span><span class="o">=</span><span class="n">strides</span><span class="p">,</span>
+                <span class="n">padding</span><span class="o">=</span><span class="s2">&quot;same&quot;</span><span class="p">,</span>
+                <span class="n">activation</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">activation</span><span class="p">,</span>
+                <span class="n">activity_regularizer</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">regularizer</span><span class="p">,</span>
+            <span class="p">)(</span><span class="n">z_dec</span><span class="p">)</span>
+
+        <span class="n">z_dec</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">Conv2DTranspose</span><span class="p">(</span>
+            <span class="n">filters</span><span class="o">=</span><span class="n">input_shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span>
+            <span class="n">kernel_size</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">kernel_size</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+            <span class="n">strides</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">strides</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+            <span class="n">padding</span><span class="o">=</span><span class="s2">&quot;same&quot;</span><span class="p">,</span>
+            <span class="n">activation</span><span class="o">=</span><span class="s2">&quot;linear&quot;</span><span class="p">,</span>
+            <span class="c1"># activity_regularizer=self.regularizer</span>
+        <span class="p">)(</span><span class="n">z_dec</span><span class="p">)</span>
+        <span class="c1"># reshape to original shape</span>
+        <span class="c1"># z_dec = tf.keras.layers.Flatten()(z_dec)</span>
+        <span class="k">return</span> <span class="n">z</span><span class="p">,</span> <span class="n">z_dec</span></div>
+
+
+<div class="viewcode-block" id="ConvAPHIN.get_loss_second_part">
+<a class="viewcode-back" href="../../../aphin.identification.html#aphin.identification.conv_aphin.ConvAPHIN.get_loss_second_part">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_loss_second_part</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xr</span><span class="p">,</span> <span class="n">dz_dxr</span><span class="p">,</span> <span class="n">dxr_dt</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">u</span><span class="p">,</span> <span class="n">mu</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calculate the second part of the loss function.</span>
+<span class="sd">        In contrast to the classic APHIN, our data (and its time derivative) are multidimensional.</span>
+<span class="sd">        Consequently, we need to vectorize the data before we can calculate the loss.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        xr : array-like</span>
+<span class="sd">            Reconstructed data.</span>
+<span class="sd">        dz_dxr : array-like</span>
+<span class="sd">            Derivative of the latent variables with respect to the reconstructed data.</span>
+<span class="sd">        dxr_dt : array-like</span>
+<span class="sd">            Time derivative of the reconstructed data.</span>
+<span class="sd">        z : array-like</span>
+<span class="sd">            Latent variables.</span>
+<span class="sd">        u : array-like</span>
+<span class="sd">            Control inputs.</span>
+<span class="sd">        mu : array-like</span>
+<span class="sd">            Parameters.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        tf.Tensor</span>
+<span class="sd">            The second part of the loss.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># reshape data from (n_samples, n_pixels, n_pixels, n_channels) to (n_samples, n_pixels, n_pixels, n_channels)</span>
+        <span class="n">dz_dxr</span><span class="p">,</span> <span class="n">dxr_dt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">reshape_conv_data</span><span class="p">(</span><span class="n">dz_dxr</span><span class="p">,</span> <span class="n">dxr_dt</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">ConvAPHIN</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">get_loss_second_part</span><span class="p">(</span><span class="n">xr</span><span class="p">,</span> <span class="n">dz_dxr</span><span class="p">,</span> <span class="n">dxr_dt</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">u</span><span class="p">,</span> <span class="n">mu</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ConvAPHIN.reshape_conv_data">
+<a class="viewcode-back" href="../../../aphin.identification.html#aphin.identification.conv_aphin.ConvAPHIN.reshape_conv_data">[docs]</a>
+    <span class="k">def</span> <span class="nf">reshape_conv_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dz_dxr</span><span class="p">,</span> <span class="n">dxr_dt</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        In contrast to the classic APHIN, our data (and its time derivative) are multidimensional.</span>
+<span class="sd">        Consequently, we need to vectorize the data before we can calculate the loss.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        dz_dxr : array-like</span>
+<span class="sd">            Derivative of the latent variables with respect to the reconstructed data.</span>
+<span class="sd">        dxr_dt : array-like</span>
+<span class="sd">            Time derivative of the reconstructed data.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        tuple</span>
+<span class="sd">            Tuple containing the reshaped derivatives and time derivatives.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">dz_dxr</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span>
+            <span class="n">dz_dxr</span><span class="p">,</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">dz_dxr</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">dz_dxr</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">*</span> <span class="n">dz_dxr</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span>
+        <span class="p">)</span>
+        <span class="n">dxr_dt</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span>
+            <span class="n">dxr_dt</span><span class="p">,</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">dxr_dt</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">dxr_dt</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">dxr_dt</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">dz_dxr</span><span class="p">,</span> <span class="n">dxr_dt</span></div>
+
+
+<div class="viewcode-block" id="ConvAPHIN.reshape_dxr_dz">
+<a class="viewcode-back" href="../../../aphin.identification.html#aphin.identification.conv_aphin.ConvAPHIN.reshape_dxr_dz">[docs]</a>
+    <span class="k">def</span> <span class="nf">reshape_dxr_dz</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dxr_dz</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Reshape the derivative of the reconstructed data with respect to the latent variables.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        dxr_dz : array-like</span>
+<span class="sd">            Derivative of the reconstructed data with respect to the latent variables.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        tf.Tensor</span>
+<span class="sd">            Reshaped derivative tensor.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">tf</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span>
+            <span class="n">dxr_dz</span><span class="p">,</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">dxr_dz</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">dxr_dz</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">dxr_dz</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">4</span><span class="p">])</span>
+        <span class="p">)</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Jonas Kneifl, Johannes Rettberg, Julius Herb.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>aphin.utils.experiments &mdash; ApHIN 0.1.3 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../_static/documentation_options.js?v=360bc84d"></script>
+        <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            ApHIN
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../aphin.html">aphin package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../contact.html">Contact</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">ApHIN</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">aphin.utils.experiments</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for aphin.utils.experiments</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">itertools</span>
+<span class="kn">import</span> <span class="nn">yaml</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="run_various_experiments">
+<a class="viewcode-back" href="../../../aphin.utils.html#aphin.utils.experiments.run_various_experiments">[docs]</a>
+<span class="k">def</span> <span class="nf">run_various_experiments</span><span class="p">(</span>
+    <span class="n">experiment_main_script</span><span class="p">,</span>
+    <span class="n">parameter_variation_dict</span><span class="p">,</span>
+    <span class="n">basis_config_yml_path</span><span class="p">,</span>
+    <span class="n">result_dir</span><span class="p">,</span>
+    <span class="n">log_dir</span><span class="p">,</span>
+    <span class="n">force_calculation</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Runs multiple experiments by creating several config files.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    experiment_main_script : function</span>
+<span class="sd">        main script that runs the desired example</span>
+<span class="sd">    parameter_variation_dict: dict</span>
+<span class="sd">        dict.keys need to match with keyword in basic config file</span>
+<span class="sd">        dict.values are a list of desired configurations</span>
+<span class="sd">        e.g. {&quot;scaling_values&quot;:[&quot;Null&quot;,[10,100,0.1]],</span>
+<span class="sd">              &quot;r&quot;: [2,6,10]}</span>
+<span class="sd">    basis_config_yml_path: (str)</span>
+<span class="sd">        absolute path to basic config file which shall be manipulated</span>
+<span class="sd">    result_dir: (str)</span>
+<span class="sd">        absolute path to where the results</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">yaml_paths_list</span> <span class="o">=</span> <span class="n">create_modified_config_files</span><span class="p">(</span>
+        <span class="n">parameter_variation_dict</span><span class="p">,</span> <span class="n">basis_config_yml_path</span><span class="p">,</span> <span class="n">result_dir</span>
+    <span class="p">)</span>
+
+    <span class="n">run_all_yaml_files</span><span class="p">(</span>
+        <span class="n">experiment_main_script</span><span class="p">,</span>
+        <span class="n">yaml_paths_list</span><span class="p">,</span>
+        <span class="n">result_dir</span><span class="p">,</span>
+        <span class="n">log_dir</span><span class="p">,</span>
+        <span class="n">force_calculation</span><span class="o">=</span><span class="n">force_calculation</span><span class="p">,</span>
+    <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="create_modified_config_files">
+<a class="viewcode-back" href="../../../aphin.utils.html#aphin.utils.experiments.create_modified_config_files">[docs]</a>
+<span class="k">def</span> <span class="nf">create_modified_config_files</span><span class="p">(</span>
+    <span class="n">parameter_variation_dict</span><span class="p">,</span> <span class="n">basis_config_yml_path</span><span class="p">,</span> <span class="n">result_dir</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Generate modified YAML configuration files based on variations in parameter values.</span>
+
+<span class="sd">    This function takes a base configuration file and creates new configuration files for each combination of parameter values provided. Each generated configuration file is named uniquely based on the experiment name and parameter values. If a parameter value is a float, it is formatted to avoid scientific notation and unnecessary decimal points.</span>
+
+<span class="sd">    Parameters:</span>
+<span class="sd">    -----------</span>
+<span class="sd">    parameter_variation_dict : dict</span>
+<span class="sd">        Dictionary where keys are configuration parameter names and values are lists of possible values for those parameters. The function will generate configuration files for every combination of these parameter values.</span>
+
+<span class="sd">    basis_config_yml_path : str</span>
+<span class="sd">        File path to the base YAML configuration file used as the template for modifications.</span>
+
+<span class="sd">    result_dir : str</span>
+<span class="sd">        Directory where the modified configuration files will be saved.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">    --------</span>
+<span class="sd">    yaml_paths_list : list of str</span>
+<span class="sd">        List of file paths to the generated YAML configuration files.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># %% generate config files</span>
+    <span class="n">yaml_paths_list</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">experiment</span> <span class="ow">in</span> <span class="n">dict_product</span><span class="p">(</span><span class="n">parameter_variation_dict</span><span class="p">):</span>
+        <span class="c1"># %% create save name</span>
+        <span class="c1"># basic config .yml file</span>
+        <span class="c1"># basis_config_yml_path = os.path.join(working_dir, &quot;../config.yml&quot;)</span>
+        <span class="n">cfg</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">safe_load</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="n">basis_config_yml_path</span><span class="p">))</span>
+        <span class="n">experiment_name_as_prefix</span> <span class="o">=</span> <span class="n">cfg</span><span class="p">[</span><span class="s2">&quot;experiment&quot;</span><span class="p">]</span>
+
+        <span class="n">save_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">experiment_name_as_prefix</span><span class="si">}</span><span class="s2">_&quot;</span>
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">experiment</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+                <span class="n">value_str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+                <span class="k">for</span> <span class="n">string</span> <span class="ow">in</span> <span class="n">value</span><span class="p">:</span>
+                    <span class="n">value_str</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">string</span><span class="si">}</span><span class="s2">_&quot;</span>
+                <span class="n">value_str</span> <span class="o">=</span> <span class="n">value_str</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">)</span>
+                <span class="n">save_name</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">key</span><span class="si">}{</span><span class="n">value_str</span><span class="si">}</span><span class="s2">_&quot;</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">save_name</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">key</span><span class="si">}{</span><span class="n">value</span><span class="si">}</span><span class="s2">_&quot;</span>
+        <span class="n">save_name</span> <span class="o">=</span> <span class="n">save_name</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">)</span>
+        <span class="c1"># rename experiment to make it unique</span>
+        <span class="n">experiment</span><span class="p">[</span><span class="s2">&quot;experiment&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">save_name</span>
+        <span class="c1"># %% create config files for different experiment runs</span>
+        <span class="n">keyword_found_list</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">adapted_config_file_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">result_dir</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">save_name</span><span class="si">}</span><span class="s2">.yml&quot;</span><span class="p">)</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">basis_config_yml_path</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">basic_config_file</span><span class="p">:</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span>
+                <span class="n">adapted_config_file_path</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span>
+            <span class="p">)</span> <span class="k">as</span> <span class="n">adapted_config_file</span><span class="p">:</span>  <span class="c1"># basis config.yml</span>
+                <span class="c1"># loop over lines</span>
+                <span class="k">for</span> <span class="n">line_num</span><span class="p">,</span> <span class="n">line</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">basic_config_file</span><span class="p">):</span>
+                    <span class="c1"># loop over keys</span>
+                    <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">experiment</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                        <span class="c1"># check for keyword in config file</span>
+                        <span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">key</span><span class="p">):</span>
+                            <span class="n">keyword_found_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+                            <span class="n">split_comment</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span>
+                                <span class="s2">&quot;#&quot;</span>
+                            <span class="p">)</span>  <span class="c1"># check for comments and add them</span>
+                            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">float</span><span class="p">):</span>
+                                <span class="c1"># omit scientific notation</span>
+                                <span class="c1"># strip &#39;.&#39; at the end if value has no decimals</span>
+                                <span class="n">value</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">format_float_positional</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)</span>
+                            <span class="n">line</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2"> &quot;</span>
+                            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">split_comment</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                                <span class="n">line</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;# </span><span class="si">{</span><span class="n">split_comment</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>  <span class="c1"># add comment</span>
+                    <span class="n">adapted_config_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">(</span>
+                    <span class="n">ele</span> <span class="ow">in</span> <span class="n">keyword_found_list</span> <span class="k">for</span> <span class="n">ele</span> <span class="ow">in</span> <span class="n">parameter_variation_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+                <span class="p">):</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Not all keys have been found in config.yml.&quot;</span><span class="p">)</span>
+        <span class="n">yaml_paths_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">adapted_config_file_path</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">yaml_paths_list</span></div>
+
+
+
+<div class="viewcode-block" id="find_all_yaml_files">
+<a class="viewcode-back" href="../../../aphin.utils.html#aphin.utils.experiments.find_all_yaml_files">[docs]</a>
+<span class="k">def</span> <span class="nf">find_all_yaml_files</span><span class="p">(</span><span class="n">working_dir</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Locate all YAML files (.yml) within a specified directory and its subdirectories.</span>
+
+<span class="sd">    This function searches through the given working directory and all its subfolders to find files with a `.yml` extension.</span>
+
+<span class="sd">    Parameters:</span>
+<span class="sd">    -----------</span>
+<span class="sd">    working_dir : str</span>
+<span class="sd">        The root directory where the search for YAML files begins.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">    --------</span>
+<span class="sd">    yaml_files : list of str</span>
+<span class="sd">        A list of file paths to all YAML files found within the working directory and its subfolders.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">yaml_files</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">dirpath</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span>
+        <span class="k">for</span> <span class="p">(</span><span class="n">dirpath</span><span class="p">,</span> <span class="n">dirnames</span><span class="p">,</span> <span class="n">filenames</span><span class="p">)</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">walk</span><span class="p">(</span><span class="n">working_dir</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">filenames</span>
+        <span class="k">if</span> <span class="n">f</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.yml&quot;</span><span class="p">)</span>
+    <span class="p">]</span>
+    <span class="k">return</span> <span class="n">yaml_files</span></div>
+
+
+
+<div class="viewcode-block" id="run_all_yaml_files">
+<a class="viewcode-back" href="../../../aphin.utils.html#aphin.utils.experiments.run_all_yaml_files">[docs]</a>
+<span class="k">def</span> <span class="nf">run_all_yaml_files</span><span class="p">(</span>
+    <span class="n">experiment_main_script</span><span class="p">,</span>
+    <span class="n">yaml_paths_list</span><span class="p">,</span>
+    <span class="n">log_dir</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Execute a main experiment script for each YAML configuration file and log the results.</span>
+
+<span class="sd">    This function iterates over a list of YAML configuration file paths, executes the provided</span>
+<span class="sd">    `experiment_main_script` for each configuration, and logs the results to a separate log file</span>
+<span class="sd">    for each experiment.</span>
+
+<span class="sd">    Parameters:</span>
+<span class="sd">    -----------</span>
+<span class="sd">    experiment_main_script : callable</span>
+<span class="sd">        A function that executes the main experiment. It should accept a `config_path_to_file`</span>
+<span class="sd">        keyword argument, which is the path to the YAML configuration file. This function runs</span>
+<span class="sd">        the experiment based on the provided configuration.</span>
+
+<span class="sd">    yaml_paths_list : list of str</span>
+<span class="sd">        A list of file paths to YAML configuration files. Each file specifies a different set</span>
+<span class="sd">        of parameters for the experiment.</span>
+
+<span class="sd">    log_dir : str</span>
+<span class="sd">        Directory where the log files will be saved. Each experiment will have a corresponding</span>
+<span class="sd">        log file named after the experiment.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">    --------</span>
+<span class="sd">    None</span>
+<span class="sd">        This function does not return any value.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># %% loop over config files</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">yaml_file_path</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">yaml_paths_list</span><span class="p">):</span>
+
+        <span class="c1"># get experiment name</span>
+        <span class="n">cfg</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">safe_load</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="n">yaml_file_path</span><span class="p">))</span>
+        <span class="n">experiment_name</span> <span class="o">=</span> <span class="n">cfg</span><span class="p">[</span><span class="s2">&quot;experiment&quot;</span><span class="p">]</span>
+        <span class="c1"># remove old file handler</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">removeHandler</span><span class="p">(</span><span class="n">file_handler</span><span class="p">)</span>
+        <span class="c1"># setup logger</span>
+        <span class="n">logger_file_name</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">log_dir</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">experiment_name</span><span class="si">}</span><span class="s2">.log&quot;</span><span class="p">)</span>
+        <span class="n">file_handler</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">FileHandler</span><span class="p">(</span><span class="n">logger_file_name</span><span class="p">)</span>
+        <span class="n">file_handler</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">DEBUG</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">addHandler</span><span class="p">(</span><span class="n">file_handler</span><span class="p">)</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">experiment_main_script</span><span class="p">(</span><span class="n">config_path_to_file</span><span class="o">=</span><span class="n">yaml_file_path</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Run ended with error </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="dict_product">
+<a class="viewcode-back" href="../../../aphin.utils.html#aphin.utils.experiments.dict_product">[docs]</a>
+<span class="k">def</span> <span class="nf">dict_product</span><span class="p">(</span><span class="n">d</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Generate all possible combinations of parameter values from a dictionary.</span>
+
+<span class="sd">    This function yields all combinations of the values in the dictionary `d`, where each key</span>
+<span class="sd">    in the dictionary corresponds to a parameter with multiple possible values. The combinations</span>
+<span class="sd">    are generated by creating a Cartesian product of the values for all keys.</span>
+
+<span class="sd">    Parameters:</span>
+<span class="sd">    -----------</span>
+<span class="sd">    d : dict</span>
+<span class="sd">        A dictionary where each key is a parameter and the corresponding value is a list of possible</span>
+<span class="sd">        values for that parameter. The function will generate all combinations of these values.</span>
+
+<span class="sd">    Yields:</span>
+<span class="sd">    -------</span>
+<span class="sd">    dict</span>
+<span class="sd">        A dictionary representing a single combination of parameter values. Each dictionary has the same</span>
+<span class="sd">        keys as the input dictionary `d`, with values corresponding to one combination of the possible</span>
+<span class="sd">        values.</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">    ---------</span>
+<span class="sd">    &gt;&gt;&gt; param_dict = {&#39;param1&#39;: [1, 2], &#39;param2&#39;: [&#39;a&#39;, &#39;b&#39;]}</span>
+<span class="sd">    &gt;&gt;&gt; list(dict_product(param_dict))</span>
+<span class="sd">    [{&#39;param1&#39;: 1, &#39;param2&#39;: &#39;a&#39;}, {&#39;param1&#39;: 1, &#39;param2&#39;: &#39;b&#39;}, {&#39;param1&#39;: 2, &#39;param2&#39;: &#39;a&#39;}, {&#39;param1&#39;: 2, &#39;param2&#39;: &#39;b&#39;}]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">keys</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">element</span> <span class="ow">in</span> <span class="n">itertools</span><span class="o">.</span><span class="n">product</span><span class="p">(</span><span class="o">*</span><span class="n">d</span><span class="o">.</span><span class="n">values</span><span class="p">()):</span>
+        <span class="k">yield</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">keys</span><span class="p">,</span> <span class="n">element</span><span class="p">))</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Jonas Kneifl, Johannes Rettberg, Julius Herb.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
