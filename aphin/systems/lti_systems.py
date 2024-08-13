@@ -5,7 +5,7 @@ e.g. LTI systems (LTISystem), port-Hamiltonian systems (PHSystem), ...
 
 import numpy as np
 from scipy import signal
-from phdl.utils.integrators import implicit_midpoint
+from aphin.utils.integrators import implicit_midpoint
 
 
 class LTISystem:

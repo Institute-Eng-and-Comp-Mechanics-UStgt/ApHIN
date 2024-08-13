@@ -9,8 +9,8 @@ which is assumed to depend only on the time derivative of the states.
 
 import tensorflow as tf
 
-from phdl.operators import LinearOperatorSym
-from phdl.layers import PHLayer, PHQLayer
+from aphin.operators import LinearOperatorSym
+from aphin.layers import PHLayer, PHQLayer
 
 
 class DescriptorPHLayer(PHLayer):

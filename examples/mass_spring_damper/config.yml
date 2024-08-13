@@ -6,7 +6,7 @@ load_network: True  # train the network or load the last pre-trained one
 
 seed: 123  # For reproducibility
 
-setup_matplotlib: True
+setup_matplotlib: False
 
 # train-test split
 test_size: 0.25
@@ -19,7 +19,7 @@ desired_bounds: [0, 1]  # desired bounds after scaling for u and mu
 # %% identification settings
 l1: 0.0000001  # L1 regularization
 l2: 0  # L2 regularization
-n_epochs: 2000  # number of epochs
+n_epochs: 100  # number of epochs
 batch_size: 64  # batch size
 layer_sizes_ph: # layer sizes
   - 16  # first layer

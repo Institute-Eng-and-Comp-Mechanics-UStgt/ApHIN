@@ -3,14 +3,14 @@ requires = ["setuptools >= 61.0"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "phdl"
+name = "aphin"
 version = "0.1.3"
 authors = [
   { name="Jonas Kneifl", email="jonas.kneifl@itm.uni-stuttgart.com" },
   { name="Johannes Rettberg", email="johannes.rettberg@itm.uni-stuttgart.com" },
   { name="Julius Herb", email="julius.herb@mib.uni-stuttgart.com" },
 ]
-description = "Port-Hamiltonian Deep Learning (PHDL) is a Python package for structure-preserving model order reduction and system identification of port-Hamiltonian systems."
+description = "Autoencoder-based port-Hamiltonian Identification Networks (ApHIN) is a Python package for structure-preserving model order reduction and system identification of port-Hamiltonian systems."
 readme = "README.md"
 requires-python = ">=3.8"
 dependencies = [
@@ -28,6 +28,7 @@ dependencies = [
     "natsort>=8.4.0",
     "tqdm>=4.66.2",
     "pymor>=2023.2.0",
+    "visualizer-3d>=0.3",
 ]
 keywords = [
     "structure-preserving model order reduction",
@@ -50,11 +51,11 @@ interfaces = [
 ]
 
 [tool.setuptools]
-packages = ["phdl"]
+#packages = ["aphin"]
 # If there are data files included in your packages that need to be
 # installed, specify them here.
 #package-data = {"sample" = ["*.dat"]}
 
 [project.urls]
-Homepage = "https://github.com/jkneifl/PHDL"
-Issues = "https://github.com/jkneifl/PHDL/issues"
+Homepage = "https://github.com/Institute-Eng-and-Comp-Mechanics-UStgt/ApHIN"
+Issues = "https://github.com/Institute-Eng-and-Comp-Mechanics-UStgt/ApHIN/issues"

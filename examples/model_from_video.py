@@ -15,11 +15,11 @@ import tensorflow as tf
 import tensorflow.keras.backend as K
 
 # own packages
-from phdl import config
-from phdl.identification import APHIN, ConvAPHIN
-from phdl.layers import PHLayer, PHQLayer
-from phdl.utils.visualizations import setup_matplotlib
-from phdl.systems import PHSystem
+from aphin import config
+from aphin.identification import APHIN, ConvAPHIN
+from aphin.layers import PHLayer, PHQLayer
+from aphin.utils.visualizations import setup_matplotlib
+from aphin.systems import PHSystem
 from matplotlib.animation import FuncAnimation
 
 # set up logging

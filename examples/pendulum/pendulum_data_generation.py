@@ -4,7 +4,7 @@ import os
 from scipy.stats import qmc
 from scipy.integrate import solve_ivp
 
-from phdl.utils.configuration import Configuration
+from aphin.utils.configuration import Configuration
 
 # set up logging
 logging.basicConfig()

@@ -8,7 +8,7 @@ import tensorflow as tf
 import tensorflow_probability as tfp
 from tensorflow.python.framework import ops
 from tensorflow.python.ops.linalg import linear_operator_util
-from phdl.operators.operator_utils import _transpose_last2d
+from aphin.operators.operator_utils import _transpose_last2d
 
 
 class LinearOperatorSym(tf.linalg.LinearOperatorFullMatrix):

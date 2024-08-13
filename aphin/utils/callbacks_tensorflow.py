@@ -41,9 +41,6 @@ def callbacks(
         Number of epochs with no improvement after which training will be stopped if early stopping is enabled.
         Default is `100`.
 
-    lr_scheduler : bool, optional
-        If `True`, enables a learning rate scheduler. This functionality is reserved for future extensions.
-        Default is `False`.
 
     Returns:
     --------

@@ -7,7 +7,7 @@ import logging
 import matplotlib.pyplot as plt
 
 # own packages
-from phdl import config
+from aphin import config
 from examples.examples_utils.pixel_shape import (
     create_pixel_circle,
     create_pixel_rectangle,

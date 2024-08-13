@@ -7,8 +7,8 @@ import matplotlib.pyplot as plt
 
 # own modules
 from . import PHBasemodel
-from phdl.layers import PHLayer
-from phdl.utils import integrators
+from aphin.layers import PHLayer
+from aphin.utils import integrators
 
 logging.basicConfig()
 logging.getLogger().setLevel(logging.INFO)

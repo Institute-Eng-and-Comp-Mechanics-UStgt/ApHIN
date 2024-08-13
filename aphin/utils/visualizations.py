@@ -8,7 +8,7 @@ import numpy as np
 import matplotlib
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
-from phdl.layers import PHQLayer
+from aphin.layers import PHQLayer
 
 import pandas as pd
 
@@ -1981,7 +1981,10 @@ def plot_train_history(train_hist):
     plt.figure()
     plt.semilogy(train_hist.history["loss"], label="loss")
     plt.semilogy(train_hist.history["dz_loss"], label="dz")
-    plt.semilogy(train_hist.history["dx_loss"], label="dx")
-    plt.semilogy(train_hist.history["rec_loss"], label="rec")
+    try:
+        plt.semilogy(train_hist.history["dx_loss"], label="dx")
+        plt.semilogy(train_hist.history["rec_loss"], label="rec")
+    except KeyError:
+        pass
     plt.semilogy(train_hist.history["reg_loss"], label="reg")
     plt.legend()

@@ -8,19 +8,18 @@ import tensorflow as tf
 
 # own packages
 from visualizer import Visualizer
-from phdl.utils.data import PHIdentifiedDataset, DiscBrakeDataset
-from phdl.utils.save_results import (
+from aphin.utils.data import PHIdentifiedDataset, DiscBrakeDataset
+from aphin.utils.save_results import (
     save_weights,
     write_to_experiment_overview,
 )
-from phdl.identification import APHIN
-from phdl.layers.phq_layer import PHQLayer
-from phdl.utils.configuration import Configuration
-import phdl.utils.visualizations as phdl_vis
-from phdl.utils.experiments import run_various_experiments
-from phdl.utils.callbacks_tensorflow import callbacks
-from phdl.utils.print_matrices import print_matrices
-from phdl import config
+from aphin.identification import APHIN
+from aphin.layers.phq_layer import PHQLayer
+from aphin.utils.configuration import Configuration
+import aphin.utils.visualizations as aphin_vis
+from aphin.utils.experiments import run_various_experiments
+from aphin.utils.callbacks_tensorflow import callbacks
+from aphin.utils.print_matrices import print_matrices
 import urllib.request
 
 
@@ -59,7 +58,7 @@ def main(
     db_cfg = configuration.cfg_dict
     data_dir, log_dir, weight_dir, result_dir = configuration.directories
 
-    phdl_vis.setup_matplotlib(db_cfg["setup_matplotlib"])
+    aphin_vis.setup_matplotlib(db_cfg["setup_matplotlib"])
     # %% Data
     logging.info(
         "################################   1. Data ################################"
@@ -213,7 +212,7 @@ def main(
             verbose=2,
             callbacks=callback,
         )
-        phdl_vis.plot_train_history(train_hist)
+        aphin_vis.plot_train_history(train_hist)
 
         # load best weights
         aphin.load_weights(os.path.join(weight_dir, ".weights.h5"))
@@ -252,7 +251,7 @@ def main(
         save_to_txt=True,
         result_dir=result_dir,
     )
-    phdl_vis.plot_errors(
+    aphin_vis.plot_errors(
         disc_brake_data,
         t=disc_brake_data.t_test,
         save_name=os.path.join(result_dir, "rms_error"),
@@ -382,13 +381,12 @@ def main(
                 save_animation=True,
                 animation_name=os.path.join(video_dir, f"{key}_sim_{sim_id}"),
                 close_on_end=True,
-                play_at_start=True,
             )
 
     # %% plot trajectories
     use_train_data = False
     idx_gen = "rand"
-    phdl_vis.plot_time_trajectories_all(
+    aphin_vis.plot_time_trajectories_all(
         disc_brake_data,
         disc_brake_data_id,
         use_train_data=use_train_data,

@@ -6,17 +6,17 @@ import os
 import tensorflow as tf
 
 # own packages
-import phdl.utils.visualizations as phdl_vis
-from phdl.identification import PHIN
-from phdl.layers import PHLayer
-from phdl.utils.data import Dataset, PHIdentifiedDataset
-from phdl.utils.callbacks_tensorflow import callbacks
-from phdl.utils.configuration import Configuration
-from phdl.utils.save_results import (
+import aphin.utils.visualizations as aphin_vis
+from aphin.identification import PHIN
+from aphin.layers import PHLayer
+from aphin.utils.data import Dataset, PHIdentifiedDataset
+from aphin.utils.callbacks_tensorflow import callbacks
+from aphin.utils.configuration import Configuration
+from aphin.utils.save_results import (
     save_weights,
     write_to_experiment_overview,
 )
-from phdl.utils.print_matrices import print_matrices
+from aphin.utils.print_matrices import print_matrices
 
 
 def main(config_path_to_file=None):
@@ -58,7 +58,7 @@ def main(config_path_to_file=None):
     data_dir, log_dir, weight_dir, result_dir = configuration.directories
 
     # set up matplotlib
-    phdl_vis.setup_matplotlib(msd_cfg["setup_matplotlib"])
+    aphin_vis.setup_matplotlib(msd_cfg["setup_matplotlib"])
 
     # Reproducibility
     # tf.config.run_functions_eagerly(True)
@@ -140,7 +140,7 @@ def main(config_path_to_file=None):
             verbose=2,
             callbacks=callback,
         )
-        phdl_vis.plot_train_history(train_hist)
+        aphin_vis.plot_train_history(train_hist)
         phin.load_weights(os.path.join(weight_dir, ".weights.h5"))
 
     # write data to results directory
@@ -158,19 +158,19 @@ def main(config_path_to_file=None):
 
     msd_data.calculate_errors(msd_data_id, domain_split_vals=[1, 1])
     use_train_data = False
-    phdl_vis.plot_errors(msd_data, use_train_data)
+    aphin_vis.plot_errors(msd_data, use_train_data)
 
     msd_data.calculate_errors(msd_data_id, save_to_txt=True, result_dir=result_dir)
 
     # plot state values
     idx_gen = "rand"
-    phdl_vis.plot_time_trajectories_all(
+    aphin_vis.plot_time_trajectories_all(
         msd_data, msd_data_id, use_train_data, idx_gen, result_dir
     )
 
     # plot chessboard visualisation
     test_ids = [0, 1, 3, 6, 7]  # test_ids = range(10) # range(6) test_ids = [0]
-    phdl_vis.chessboard_visualisation(test_ids, system_layer, msd_data, result_dir)
+    aphin_vis.chessboard_visualisation(test_ids, system_layer, msd_data, result_dir)
 
 
 if __name__ == "__main__":

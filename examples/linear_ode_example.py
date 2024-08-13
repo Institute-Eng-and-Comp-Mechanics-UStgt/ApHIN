@@ -8,9 +8,9 @@ import matplotlib.pyplot as plt
 import tensorflow as tf
 
 # own packages
-from phdl.identification import APHIN
-from phdl import config
-from phdl.utils.visualizations import setup_matplotlib
+from aphin.identification import APHIN
+from aphin import config
+from aphin.utils.visualizations import setup_matplotlib
 
 # set up logging
 logging.basicConfig()

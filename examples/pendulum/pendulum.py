@@ -6,17 +6,17 @@ import os
 import tensorflow as tf
 
 # own packages
-import phdl.utils.visualizations as phdl_vis
-from phdl.utils.data import Dataset, PHIdentifiedDataset
-from phdl.identification import APHIN, PHIN
-from phdl.layers import PHQLayer
-from phdl.utils.configuration import Configuration
-from phdl.utils.callbacks_tensorflow import callbacks
-from phdl.utils.save_results import (
+import aphin.utils.visualizations as aphin_vis
+from aphin.utils.data import Dataset, PHIdentifiedDataset
+from aphin.identification import APHIN, PHIN
+from aphin.layers import PHQLayer
+from aphin.utils.configuration import Configuration
+from aphin.utils.callbacks_tensorflow import callbacks
+from aphin.utils.save_results import (
     save_weights,
     write_to_experiment_overview,
 )
-from phdl.utils.print_matrices import print_matrices
+from aphin.utils.print_matrices import print_matrices
 
 
 def main(config_path_to_file=None):
@@ -58,7 +58,7 @@ def main(config_path_to_file=None):
     data_dir, log_dir, weight_dir, result_dir = configuration.directories
 
     # set up matplotlib
-    phdl_vis.setup_matplotlib(pd_cfg["setup_matplotlib"])
+    aphin_vis.setup_matplotlib(pd_cfg["setup_matplotlib"])
 
     # Reproducibility
     tf.keras.utils.set_random_seed(pd_cfg["seed"])
@@ -129,7 +129,6 @@ def main(config_path_to_file=None):
         monitor="loss",
         earlystopping=True,
         patience=500,
-        lr_scheduler=True,
     )
     if pd_cfg["load_network"]:
         logging.info(f"Loading NN weights.")
@@ -145,7 +144,7 @@ def main(config_path_to_file=None):
             verbose=2,
             callbacks=callback,
         )
-        phdl_vis.plot_train_history(train_hist)
+        aphin_vis.plot_train_history(train_hist)
         aphin.load_weights(os.path.join(weight_dir, ".weights.h5"))
 
     # write data to results directory
@@ -178,7 +177,7 @@ def main(config_path_to_file=None):
         result_dir=result_dir,
     )
 
-    phdl_vis.plot_errors(
+    aphin_vis.plot_errors(
         pendulum_data,
         t=pendulum_data.t_test,
         save_name=os.path.join(result_dir, "rms_error"),
@@ -189,7 +188,7 @@ def main(config_path_to_file=None):
 
     use_train_data = False
     idx_gen = "first"
-    phdl_vis.plot_time_trajectories_all(
+    aphin_vis.plot_time_trajectories_all(
         pendulum_data,
         pendulum_data_id,
         use_train_data=use_train_data,

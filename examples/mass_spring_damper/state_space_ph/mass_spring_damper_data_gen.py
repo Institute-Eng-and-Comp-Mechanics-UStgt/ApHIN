@@ -5,7 +5,7 @@ import os
 import yaml
 
 # own packages
-import phdl.utils.visualizations as phdl_vis
+import aphin.utils.visualizations as phdl_vis
 from parameter_input import ParameterInput
 from msd_model import MSD
 

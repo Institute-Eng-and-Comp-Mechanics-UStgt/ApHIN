@@ -12,8 +12,8 @@ import random
 import tensorflow as tf
 import numpy as np
 
-from phdl.operators import LinearOperatorSymPosDef, LinearOperatorSym
-from phdl.layers import PHLayer
+from aphin.operators import LinearOperatorSymPosDef, LinearOperatorSym
+from aphin.layers import PHLayer
 
 
 class PHQLayer(PHLayer):

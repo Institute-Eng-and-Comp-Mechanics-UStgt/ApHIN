@@ -4,7 +4,7 @@ import tensorflow as tf
 from matplotlib import pyplot as plt
 
 from . import PHBasemodel
-from phdl.layers import PHLayer
+from aphin.layers import PHLayer
 
 logging.basicConfig()
 logging.getLogger().setLevel(logging.INFO)

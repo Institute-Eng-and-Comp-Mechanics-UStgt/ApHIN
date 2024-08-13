@@ -6,8 +6,8 @@ e.g. LTI systems (LTISystem), port-Hamiltonian systems (PHSystem), ...
 import warnings
 import numpy as np
 import logging
-from phdl.systems import LTISystem, DescrLTISystem
-from phdl.utils.transformations import transform_pH_to_Q_identity
+from aphin.systems import LTISystem, DescrLTISystem
+from aphin.utils.transformations import transform_pH_to_Q_identity
 
 
 class CheckPHProperties:

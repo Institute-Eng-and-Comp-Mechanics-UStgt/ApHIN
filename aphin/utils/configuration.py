@@ -2,7 +2,7 @@ import yaml
 import os
 import logging
 import datetime
-from phdl.utils.save_results import save_config
+from aphin.utils.save_results import save_config
 
 
 class Configuration:

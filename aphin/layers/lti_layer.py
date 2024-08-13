@@ -11,8 +11,8 @@ import tensorflow as tf
 from tensorflow.python.ops.linalg.linear_operator_full_matrix import (
     LinearOperatorFullMatrix,
 )
-from phdl.layers import SystemLayer
-from phdl.operators import LinearOperatorSkewSym, LinearOperatorSym
+from aphin.layers import SystemLayer
+from aphin.operators import LinearOperatorSkewSym, LinearOperatorSym
 
 import numpy as np
 import random

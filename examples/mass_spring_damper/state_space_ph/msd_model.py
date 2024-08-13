@@ -3,9 +3,9 @@ import logging
 import numpy as np
 from scipy import linalg
 
-from phdl.systems.ph_systems import PHSystem
-from phdl.systems.lti_systems import LTISystem
-from phdl.utils.transformations import (
+from aphin.systems.ph_systems import PHSystem
+from aphin.systems.lti_systems import LTISystem
+from aphin.utils.transformations import (
     reshape_features_to_states,
     reshape_states_to_features,
 )
@@ -292,6 +292,8 @@ class MSD:
         if save_path is None:
             work_dir = os.path.dirname(__file__)
             save_path = os.path.join(work_dir, "..", "data")
+            if not os.path.exists(save_path):
+                os.makedirs(save_path)
 
         if save_name is None:
             # add Qeye

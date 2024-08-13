@@ -8,8 +8,8 @@ which is assumed to depend only on the time derivative of the states.
 """
 
 import tensorflow as tf
-from phdl.layers import LTILayer
-from phdl.operators import LinearOperatorSymPosDef, LinearOperatorSym
+from aphin.layers import LTILayer
+from aphin.operators import LinearOperatorSymPosDef, LinearOperatorSym
 
 
 class PHLayer(LTILayer):
