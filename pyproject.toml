@@ -1,0 +1,60 @@
+[build-system]
+requires = ["setuptools >= 61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "phdl"
+version = "0.1.3"
+authors = [
+  { name="Jonas Kneifl", email="jonas.kneifl@itm.uni-stuttgart.com" },
+  { name="Johannes Rettberg", email="johannes.rettberg@itm.uni-stuttgart.com" },
+  { name="Julius Herb", email="julius.herb@mib.uni-stuttgart.com" },
+]
+description = "Port-Hamiltonian Deep Learning (PHDL) is a Python package for structure-preserving model order reduction and system identification of port-Hamiltonian systems."
+readme = "README.md"
+requires-python = ">=3.8"
+dependencies = [
+    "matplotlib>=3.7",
+    "numpy>=1.21.4",
+    "scikit_learn>=1.2",
+    "scikit_optimize>=0.10",
+    "scipy>=1.10",
+    "tensorflow>=2.15",
+    "tensorflow_probability>=0.24",
+    "tensorflow_model_optimization>=0.7",
+    "tf-keras>=2.16",
+    "PyYAML>=6",
+    "pandas>=1.3.4",
+    "natsort>=8.4.0",
+    "tqdm>=4.66.2",
+    "pymor>=2023.2.0",
+]
+keywords = [
+    "structure-preserving model order reduction",
+    "system identification",
+    "surrogate modeling",
+    "reduced order models",
+    "port-Hamiltonian systems"
+]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+
+[project.optional-dependencies]
+gui = [
+    "visualizer-3d",
+]
+interfaces = [
+]
+
+[tool.setuptools]
+packages = ["phdl"]
+# If there are data files included in your packages that need to be
+# installed, specify them here.
+#package-data = {"sample" = ["*.dat"]}
+
+[project.urls]
+Homepage = "https://github.com/jkneifl/PHDL"
+Issues = "https://github.com/jkneifl/PHDL/issues"

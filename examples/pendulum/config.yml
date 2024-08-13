@@ -1,0 +1,63 @@
+# %% General settings
+setup_matplotlib: True  # Show plots and visualization
+seed: 1  # Show plots and visualization
+
+# experiment type
+experiment: aphin_linear  # phin | aphin_linear | aphin_nonlinear
+
+# %% General identification framework settings
+load_network: False  # train the network or load a pre-trained one
+
+
+# %% Pendulum data settings
+n_t: 1000   # number of time steps
+n_sim: 18   # number of simulations
+n_n: 1      # number of nodes
+n_dn: 4     # number of states (dof per node)
+n_u: 1      # number of inputs
+
+# time extrapolation
+trunc_time_ratio: 0.5
+
+# Physical parameters for the pendulum
+phi_0: # initial angle
+  - -1.0472  # initial angle lower bound
+  - 1.0472  # initial angle upper bound
+phi_dot0:  # initial angular velocity
+  - -0.5  # initial angle lower bound
+  - 0.5  # initial angle upper bound
+r0: 3.0  # rod length
+m: 1.0  # mass
+g: 9.81  # gravitational acceleration
+
+# %% identification settings
+n_pca: 4  # number of PCA components
+pca_scaling: False  # scale the PCA components
+l_rec: 1  # loss weight for the reconstruction
+l_dz: 0.1  # loss weight for the dz
+l_dx: 0.001  # loss weight for the dx
+l1: 0.0000000001  # L1 regularization
+l2: 0  # L2 regularization
+n_epochs: 4000 #  number of epochs
+batch_size: 256  # batch size
+layer_sizes: # layer sizes
+  - 32  # first layer
+  - 32  # second layer
+  - 32  # third layer
+activation: elu  # activation function
+lr: 0.001  # learning rate
+tensorboard: False  # Save model information for analysis in tensorboard
+
+# %% experiment specific settings
+aphin_nonlinear:   # experiment type {phin, aphin_linear, aphin_nonlinear} !ATTENTION set 'use_pca' and 'pca_only' accordingly
+  r: 2 # reduced order
+  use_pca: False  # use PCA for the input
+  pca_only: False  # only use PCA components without nonlinear autoencoder
+phin:   # experiment type {phin, aphin_linear, aphin_nonlinear} !ATTENTION set 'use_pca' and 'pca_only' accordingly
+  r: 4 # reduced order
+  use_pca: False  # use PCA for the input
+  pca_only: False  # only use PCA components without nonlinear autoencoder
+aphin_linear:   # experiment type {phin, aphin_linear, aphin_nonlinear} !ATTENTION set 'use_pca' and 'pca_only' accordingly
+  r: 2 # reduced order
+  use_pca: True  # use PCA for the input
+  pca_only: True  # only use PCA components without nonlinear autoencoder
