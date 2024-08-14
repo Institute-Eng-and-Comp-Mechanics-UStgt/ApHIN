@@ -73,6 +73,7 @@
              
   <h1>Source code for aphin.utils.save_results</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">shutil</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 
@@ -82,15 +83,85 @@
 <span class="k">def</span> <span class="nf">save_results</span><span class="p">(</span><span class="n">weight_dir</span><span class="p">,</span> <span class="n">path_to_config</span><span class="p">,</span> <span class="n">config_dict</span><span class="p">,</span> <span class="n">result_dir</span><span class="p">,</span> <span class="n">load_network</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    calls the functions to save weights, config and writes to overview .csv</span>
-<span class="sd">    param weight_dir:   directory where to NN weights are saved</span>
-<span class="sd">    param path_to_config:  path to config.yml file</span>
-<span class="sd">    param config_dict:  (dict) config dictionary usually obtained from the Configuration class</span>
-<span class="sd">    param result_dir:   destination directory where the results are stored</span>
-<span class="sd">    param load_network: (bool) boolean if network is loaded in this experiment run</span>
+
+<span class="sd">    Parameters:</span>
+<span class="sd">    -----------</span>
+<span class="sd">    weight_dir : str</span>
+<span class="sd">        Directory where the neural network weights are saved.</span>
+<span class="sd">    path_to_config : str</span>
+<span class="sd">        The path to the configuration file (`config.yml`). This file should be a YAML file with</span>
+<span class="sd">        the experiment&#39;s configuration.</span>
+<span class="sd">    config_dict : dict</span>
+<span class="sd">        Configuration dictionary, typically obtained from the Configuration class.</span>
+<span class="sd">    result_dir : str</span>
+<span class="sd">        Destination directory where the results are stored. The overview CSV is written to the parent directory.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">save_weights</span><span class="p">(</span><span class="n">weight_dir</span><span class="p">,</span> <span class="n">result_dir</span><span class="p">,</span> <span class="n">load_network</span><span class="p">)</span>
     <span class="n">save_config</span><span class="p">(</span><span class="n">path_to_config</span><span class="p">,</span> <span class="n">result_dir</span><span class="p">,</span> <span class="n">load_network</span><span class="p">)</span>
     <span class="n">write_to_experiment_overview</span><span class="p">(</span><span class="n">config_dict</span><span class="p">,</span> <span class="n">result_dir</span><span class="p">,</span> <span class="n">load_network</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="save_evaluation_times">
+<a class="viewcode-back" href="../../../aphin.utils.html#aphin.utils.save_results.save_evaluation_times">[docs]</a>
+<span class="k">def</span> <span class="nf">save_evaluation_times</span><span class="p">(</span><span class="n">data_id</span><span class="p">,</span> <span class="n">result_dir</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Save the evaluation times to a CSV file.</span>
+
+<span class="sd">    This function saves the evaluation times of the model to a CSV file in the specified `result_dir`.</span>
+
+<span class="sd">    Parameters:</span>
+<span class="sd">    -----------</span>
+<span class="sd">    data_id : Identified dataset of class aphin.utils.data.Dataset</span>
+<span class="sd">        DataIdentification object that contains the evaluation times.</span>
+<span class="sd">    result_dir : str</span>
+<span class="sd">        Destination directory where the results are stored.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">data_</span> <span class="ow">in</span> <span class="nb">dict</span><span class="p">(</span><span class="n">train</span><span class="o">=</span><span class="n">data_id</span><span class="o">.</span><span class="n">TRAIN</span><span class="p">,</span> <span class="n">test</span><span class="o">=</span><span class="n">data_id</span><span class="o">.</span><span class="n">TEST</span><span class="p">)</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">file_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;evaluation_times_</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">.csv&quot;</span>
+        <span class="n">file_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">result_dir</span><span class="p">,</span> <span class="n">file_name</span><span class="p">)</span>
+        <span class="c1"># print(range(1, data_.n_sim + 1))</span>
+        <span class="n">header</span> <span class="o">=</span> <span class="s2">&quot;,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">data_</span><span class="o">.</span><span class="n">n_sim</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))])</span>
+        <span class="n">header</span> <span class="o">=</span> <span class="s2">&quot;mean,&quot;</span> <span class="o">+</span> <span class="n">header</span>
+        <span class="n">solving_times</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">data_</span><span class="o">.</span><span class="n">solving_times</span><span class="p">[</span><span class="s1">&#39;per_run&#39;</span><span class="p">],</span> <span class="mi">0</span><span class="p">,</span> <span class="n">data_</span><span class="o">.</span><span class="n">solving_times</span><span class="p">[</span><span class="s1">&#39;mean&#39;</span><span class="p">])[</span><span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">]</span>
+
+        <span class="n">np</span><span class="o">.</span><span class="n">savetxt</span><span class="p">(</span>
+            <span class="n">file_dir</span><span class="p">,</span>
+            <span class="n">solving_times</span><span class="p">,</span>
+            <span class="n">delimiter</span><span class="o">=</span><span class="s2">&quot;,&quot;</span><span class="p">,</span>
+            <span class="n">fmt</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="n">comments</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+            <span class="n">header</span><span class="o">=</span><span class="n">header</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="save_training_times">
+<a class="viewcode-back" href="../../../aphin.utils.html#aphin.utils.save_results.save_training_times">[docs]</a>
+<span class="k">def</span> <span class="nf">save_training_times</span><span class="p">(</span><span class="n">tran_hist</span><span class="p">,</span> <span class="n">result_dir</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Save the training times to a CSV file.</span>
+
+<span class="sd">    Parameters:</span>
+<span class="sd">    -----------</span>
+<span class="sd">    tran_hist : History object from a Keras model</span>
+<span class="sd">        History object that contains the training times.</span>
+<span class="sd">    result_dir : str</span>
+<span class="sd">        Destination directory where the results are stored.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">file_name</span> <span class="o">=</span> <span class="s2">&quot;training_time.csv&quot;</span>
+    <span class="n">file_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">result_dir</span><span class="p">,</span> <span class="n">file_name</span><span class="p">)</span>
+    <span class="n">header</span> <span class="o">=</span> <span class="s2">&quot;epochs,time,time_per_epoch&quot;</span>
+    <span class="n">values</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="nb">str</span><span class="p">(</span><span class="n">tran_hist</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;epochs&#39;</span><span class="p">]),</span>
+                       <span class="nb">str</span><span class="p">(</span><span class="n">tran_hist</span><span class="o">.</span><span class="n">history</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">]),</span>
+                       <span class="nb">str</span><span class="p">(</span><span class="n">tran_hist</span><span class="o">.</span><span class="n">history</span><span class="p">[</span><span class="s1">&#39;time_per_epoch&#39;</span><span class="p">])])[</span><span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">]</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">savetxt</span><span class="p">(</span>
+        <span class="n">file_dir</span><span class="p">,</span>
+        <span class="n">values</span><span class="p">,</span>
+        <span class="n">delimiter</span><span class="o">=</span><span class="s2">&quot;,&quot;</span><span class="p">,</span>
+        <span class="n">fmt</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span>
+        <span class="n">comments</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="n">header</span><span class="o">=</span><span class="n">header</span><span class="p">,</span>
+    <span class="p">)</span></div>
 
 
 

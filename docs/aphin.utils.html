@@ -686,14 +686,54 @@ is taken. If <cite>False</cite>, the configuration file is copied.</p>
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="aphin.utils.save_results.save_evaluation_times">
+<span class="sig-prename descclassname"><span class="pre">aphin.utils.save_results.</span></span><span class="sig-name descname"><span class="pre">save_evaluation_times</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">result_dir</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/utils/save_results.html#save_evaluation_times"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.utils.save_results.save_evaluation_times" title="Link to this definition"></a></dt>
+<dd><p>Save the evaluation times to a CSV file.</p>
+<p>This function saves the evaluation times of the model to a CSV file in the specified <cite>result_dir</cite>.</p>
+<section id="id26">
+<h3>Parameters:<a class="headerlink" href="#id26" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>data_id<span class="classifier">Identified dataset of class aphin.utils.data.Dataset</span></dt><dd><p>DataIdentification object that contains the evaluation times.</p>
+</dd>
+<dt>result_dir<span class="classifier">str</span></dt><dd><p>Destination directory where the results are stored.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="aphin.utils.save_results.save_results">
 <span class="sig-prename descclassname"><span class="pre">aphin.utils.save_results.</span></span><span class="sig-name descname"><span class="pre">save_results</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">weight_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path_to_config</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config_dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">result_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">load_network</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/utils/save_results.html#save_results"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.utils.save_results.save_results" title="Link to this definition"></a></dt>
-<dd><p>calls the functions to save weights, config and writes to overview .csv
-param weight_dir:   directory where to NN weights are saved
-param path_to_config:  path to config.yml file
-param config_dict:  (dict) config dictionary usually obtained from the Configuration class
-param result_dir:   destination directory where the results are stored
-param load_network: (bool) boolean if network is loaded in this experiment run</p>
+<dd><p>calls the functions to save weights, config and writes to overview .csv</p>
+<section id="id27">
+<h3>Parameters:<a class="headerlink" href="#id27" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>weight_dir<span class="classifier">str</span></dt><dd><p>Directory where the neural network weights are saved.</p>
+</dd>
+<dt>path_to_config<span class="classifier">str</span></dt><dd><p>The path to the configuration file (<cite>config.yml</cite>). This file should be a YAML file with
+the experiment’s configuration.</p>
+</dd>
+<dt>config_dict<span class="classifier">dict</span></dt><dd><p>Configuration dictionary, typically obtained from the Configuration class.</p>
+</dd>
+<dt>result_dir<span class="classifier">str</span></dt><dd><p>Destination directory where the results are stored. The overview CSV is written to the parent directory.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="aphin.utils.save_results.save_training_times">
+<span class="sig-prename descclassname"><span class="pre">aphin.utils.save_results.</span></span><span class="sig-name descname"><span class="pre">save_training_times</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tran_hist</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">result_dir</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/utils/save_results.html#save_training_times"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.utils.save_results.save_training_times" title="Link to this definition"></a></dt>
+<dd><p>Save the training times to a CSV file.</p>
+<section id="id28">
+<h3>Parameters:<a class="headerlink" href="#id28" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>tran_hist<span class="classifier">History object from a Keras model</span></dt><dd><p>History object that contains the training times.</p>
+</dd>
+<dt>result_dir<span class="classifier">str</span></dt><dd><p>Destination directory where the results are stored.</p>
+</dd>
+</dl>
+</section>
 </dd></dl>
 
 <dl class="py function">
@@ -702,8 +742,8 @@ param load_network: (bool) boolean if network is loaded in this experiment run</
 <dd><p>Copy neural network weights from the weight directory to the result directory.</p>
 <p>This function copies the weights file from <cite>weight_dir</cite> to <cite>result_dir</cite>, ensuring that all relevant data
 is consolidated in one location. If <cite>load_network</cite> is True, no action is taken.</p>
-<section id="id26">
-<h3>Parameters:<a class="headerlink" href="#id26" title="Link to this heading"></a></h3>
+<section id="id29">
+<h3>Parameters:<a class="headerlink" href="#id29" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>weight_dir<span class="classifier">str</span></dt><dd><p>Directory where the neural network weights are saved.</p>
 </dd>
@@ -722,8 +762,8 @@ is consolidated in one location. If <cite>load_network</cite> is True, no action
 <p>This function updates a CSV file named <cite>experiments_overview.csv</cite> with the configuration details of
 the current experiment. If <cite>load_network</cite> is True, no new entry is added. If False, the configuration
 is added to the overview.</p>
-<section id="id27">
-<h3>Parameters:<a class="headerlink" href="#id27" title="Link to this heading"></a></h3>
+<section id="id30">
+<h3>Parameters:<a class="headerlink" href="#id30" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>config_dict<span class="classifier">dict</span></dt><dd><p>Configuration dictionary, typically obtained from the Configuration class.</p>
 </dd>
@@ -745,8 +785,8 @@ is added to the overview.</p>
 <p>This function checks the properties of the solution <cite>X</cite> to the Riccati equation, verifies the
 Kalman-Yakubovich-Popov (KYP) inequality, and performs a transformation to obtain a pH representation
 in transformed coordinates. It returns the transformed system matrices and the transformation matrices.</p>
-<section id="id28">
-<h3>Parameters:<a class="headerlink" href="#id28" title="Link to this heading"></a></h3>
+<section id="id31">
+<h3>Parameters:<a class="headerlink" href="#id31" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>Qeye_system_exists<span class="classifier">bool</span></dt><dd><p>Flag indicating whether the Riccati equation was successfully solved.</p>
 </dd>
@@ -762,8 +802,8 @@ in transformed coordinates. It returns the transformed system matrices and the t
 </dd>
 </dl>
 </section>
-<section id="id29">
-<h3>Returns:<a class="headerlink" href="#id29" title="Link to this heading"></a></h3>
+<section id="id32">
+<h3>Returns:<a class="headerlink" href="#id32" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>J_T<span class="classifier">numpy.ndarray</span></dt><dd><p>Transformed matrix representing the pH system in T-coordinates.</p>
 </dd>
@@ -787,8 +827,8 @@ in transformed coordinates. It returns the transformed system matrices and the t
 <dd><p>Check if a system is positive-real.</p>
 <p>This function evaluates the positive-realness of a linear system defined by the matrices (A_{ph}), (B), (C), and (D).
 It checks if the system’s transfer function matrix is positive semidefinite for several frequencies on the imaginary axis.</p>
-<section id="id30">
-<h3>Parameters:<a class="headerlink" href="#id30" title="Link to this heading"></a></h3>
+<section id="id33">
+<h3>Parameters:<a class="headerlink" href="#id33" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>A_ph<span class="classifier">numpy.ndarray</span></dt><dd><p>System matrix of the system.</p>
 </dd>
@@ -800,8 +840,8 @@ It checks if the system’s transfer function matrix is positive semidefinite fo
 </dd>
 </dl>
 </section>
-<section id="id31">
-<h3>Notes:<a class="headerlink" href="#id31" title="Link to this heading"></a></h3>
+<section id="id34">
+<h3>Notes:<a class="headerlink" href="#id34" title="Link to this heading"></a></h3>
 <ul class="simple">
 <li><p>Positive-realness requires that (Phi(s) = T(-s)^dagger + T(s)) is positive semidefinite for all (omega) in (mathbb{R}).</p></li>
 <li><p>The function checks this for 100 points between 0.1 and 1000 rad/s.</p></li>
@@ -814,8 +854,8 @@ It checks if the system’s transfer function matrix is positive semidefinite fo
 <dt class="sig sig-object py" id="aphin.utils.transformations.reshape_features_to_states">
 <span class="sig-prename descclassname"><span class="pre">aphin.utils.transformations.</span></span><span class="sig-name descname"><span class="pre">reshape_features_to_states</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_sim</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_t</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x_dt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_n</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_dn</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_f</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/utils/transformations.html#reshape_features_to_states"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.utils.transformations.reshape_features_to_states" title="Link to this definition"></a></dt>
 <dd><p>Transforms the feature array ‘x’ back into a state array ‘X’, either 3-dimensional or 4-dimensional.</p>
-<section id="id32">
-<h3>Parameters:<a class="headerlink" href="#id32" title="Link to this heading"></a></h3>
+<section id="id35">
+<h3>Parameters:<a class="headerlink" href="#id35" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>x<span class="classifier">ndarray</span></dt><dd><p>Feature array of size (n_s, n_f), where:
 - n_s: number of samples (n_sim * n_t)
@@ -835,8 +875,8 @@ It checks if the system’s transfer function matrix is positive semidefinite fo
 </dd>
 </dl>
 </section>
-<section id="id33">
-<h3>Returns:<a class="headerlink" href="#id33" title="Link to this heading"></a></h3>
+<section id="id36">
+<h3>Returns:<a class="headerlink" href="#id36" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>X<span class="classifier">ndarray</span></dt><dd><p>State array of size (n_sim, n_t, n_n, n_dn) if n_n and n_dn are provided, otherwise (n_sim, n_t, n_f).</p>
 </dd>
@@ -844,15 +884,15 @@ It checks if the system’s transfer function matrix is positive semidefinite fo
 </dd>
 </dl>
 </section>
-<section id="id34">
-<h3>Raises:<a class="headerlink" href="#id34" title="Link to this heading"></a></h3>
+<section id="id37">
+<h3>Raises:<a class="headerlink" href="#id37" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>ValueError</dt><dd><p>If both (n_n and n_dn) and n_f are provided.</p>
 </dd>
 </dl>
 </section>
-<section id="id35">
-<h3>Notes:<a class="headerlink" href="#id35" title="Link to this heading"></a></h3>
+<section id="id38">
+<h3>Notes:<a class="headerlink" href="#id38" title="Link to this heading"></a></h3>
 <ul class="simple">
 <li><p>Either n_f should be provided or both n_n and n_dn should be provided, but not both.</p></li>
 <li><p>If n_n and n_dn are provided, the function reshapes the feature array to (n_sim, n_t, n_n, n_dn).</p></li>
@@ -867,8 +907,8 @@ It checks if the system’s transfer function matrix is positive semidefinite fo
 <span class="sig-prename descclassname"><span class="pre">aphin.utils.transformations.</span></span><span class="sig-name descname"><span class="pre">reshape_inputs_to_features</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">U</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/utils/transformations.html#reshape_inputs_to_features"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.utils.transformations.reshape_inputs_to_features" title="Link to this definition"></a></dt>
 <dd><p>Transforms the input array ‘U’ into a feature array ‘u’, which is required for identification.
 The function reshapes the input array from (n_sim, n_t, n_u) to (n_s, n_u).</p>
-<section id="id36">
-<h3>Parameters:<a class="headerlink" href="#id36" title="Link to this heading"></a></h3>
+<section id="id39">
+<h3>Parameters:<a class="headerlink" href="#id39" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>U<span class="classifier">ndarray</span></dt><dd><p>Input array of size (n_sim, n_t, n_u), where:
 - n_sim: number of simulations
@@ -877,8 +917,8 @@ The function reshapes the input array from (n_sim, n_t, n_u) to (n_s, n_u).</p>
 </dd>
 </dl>
 </section>
-<section id="id37">
-<h3>Returns:<a class="headerlink" href="#id37" title="Link to this heading"></a></h3>
+<section id="id40">
+<h3>Returns:<a class="headerlink" href="#id40" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>u<span class="classifier">ndarray</span></dt><dd><p>Feature array of size (n_s, n_u), where:
 - n_s: number of samples (n_sim * n_t)
@@ -892,8 +932,8 @@ The function reshapes the input array from (n_sim, n_t, n_u) to (n_s, n_u).</p>
 <dt class="sig sig-object py" id="aphin.utils.transformations.reshape_states_to_features">
 <span class="sig-prename descclassname"><span class="pre">aphin.utils.transformations.</span></span><span class="sig-name descname"><span class="pre">reshape_states_to_features</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">X_dt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aphin/utils/transformations.html#reshape_states_to_features"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aphin.utils.transformations.reshape_states_to_features" title="Link to this definition"></a></dt>
 <dd><p>Transforms the state array ‘X’ into a feature array ‘x’, which is required for identification.</p>
-<section id="id38">
-<h3>Parameters:<a class="headerlink" href="#id38" title="Link to this heading"></a></h3>
+<section id="id41">
+<h3>Parameters:<a class="headerlink" href="#id41" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>X<span class="classifier">ndarray</span></dt><dd><p>State array of size (n_sim, n_t, n_n, n_dn) or (n_sim, n_t, n_f), where:
 - n_sim: number of simulations
@@ -906,8 +946,8 @@ The function reshapes the input array from (n_sim, n_t, n_u) to (n_s, n_u).</p>
 </dd>
 </dl>
 </section>
-<section id="id39">
-<h3>Returns:<a class="headerlink" href="#id39" title="Link to this heading"></a></h3>
+<section id="id42">
+<h3>Returns:<a class="headerlink" href="#id42" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>x<span class="classifier">ndarray</span></dt><dd><p>Feature array of size (n_s, n_f), where:
 - n_s: number of samples (n_sim * n_t)
@@ -917,8 +957,8 @@ The function reshapes the input array from (n_sim, n_t, n_u) to (n_s, n_u).</p>
 </dd>
 </dl>
 </section>
-<section id="id40">
-<h3>Notes:<a class="headerlink" href="#id40" title="Link to this heading"></a></h3>
+<section id="id43">
+<h3>Notes:<a class="headerlink" href="#id43" title="Link to this heading"></a></h3>
 <ul class="simple">
 <li><p>If X has 4 dimensions, it is reshaped from (n_sim, n_t, n_n, n_dn) to (n_s, n_f).</p></li>
 <li><p>If X has 3 dimensions, it is assumed to be already in the shape (n_sim, n_t, n_f).</p></li>
@@ -933,8 +973,8 @@ The function reshapes the input array from (n_sim, n_t, n_u) to (n_s, n_u).</p>
 <dd><p>Solve the continuous-time algebraic Riccati equation (CARE) for a given system.
 The function supports solving using two different solvers:
 <cite>scipy</cite> and <cite>pymor</cite>.</p>
-<section id="id41">
-<h3>Parameters:<a class="headerlink" href="#id41" title="Link to this heading"></a></h3>
+<section id="id44">
+<h3>Parameters:<a class="headerlink" href="#id44" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>A_ph<span class="classifier">numpy.ndarray</span></dt><dd><p>System matrix of the system.</p>
 </dd>
@@ -950,8 +990,8 @@ The function supports solving using two different solvers:
 </dd>
 </dl>
 </section>
-<section id="id42">
-<h3>Returns:<a class="headerlink" href="#id42" title="Link to this heading"></a></h3>
+<section id="id45">
+<h3>Returns:<a class="headerlink" href="#id45" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>X<span class="classifier">numpy.ndarray</span></dt><dd><p>Solution to the Riccati equation, if the solver was successful.</p>
 </dd>
@@ -1009,8 +1049,8 @@ Riccati equation or using <cite>Q</cite> directly as a solution to the KYP (Kalm
 <p>This function generates an animation that visualizes the effect of varying a specific parameter
 on the system matrices ( J ), ( R ), ( B ), and ( Q ). The animation is created by sweeping
 through a range of values for the selected parameter and updating the plot accordingly.</p>
-<section id="id43">
-<h3>Parameters:<a class="headerlink" href="#id43" title="Link to this heading"></a></h3>
+<section id="id46">
+<h3>Parameters:<a class="headerlink" href="#id46" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>ph_layer<span class="classifier">object</span></dt><dd><p>The layer object responsible for computing the system matrices. It should have a method
 <cite>get_system_matrices</cite> that returns the matrices based on the input parameters.</p>
@@ -1037,8 +1077,8 @@ through a range of values for the selected parameter and updating the plot accor
 <p>This function generates a comprehensive visualization of the predicted and test matrices from a system layer.
 It creates a grid of images showing the matrices and their absolute errors, saves these images, and exports
 the colormap used for visualizations. Additionally, it visualizes the matrices as animations and saves them as images.</p>
-<section id="id44">
-<h3>Parameters:<a class="headerlink" href="#id44" title="Link to this heading"></a></h3>
+<section id="id47">
+<h3>Parameters:<a class="headerlink" href="#id47" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>test_ids<span class="classifier">list of int</span></dt><dd><p>List of indices for the test samples to visualize and compare.</p>
 </dd>
@@ -1050,8 +1090,8 @@ the colormap used for visualizations. Additionally, it visualizes the matrices a
 </dd>
 </dl>
 </section>
-<section id="id45">
-<h3>Returns:<a class="headerlink" href="#id45" title="Link to this heading"></a></h3>
+<section id="id48">
+<h3>Returns:<a class="headerlink" href="#id48" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>None</dt><dd><p>The function generates and saves various plots and files related to matrix visualizations and comparisons.</p>
 </dd>
@@ -1066,8 +1106,8 @@ the colormap used for visualizations. Additionally, it visualizes the matrices a
 <p>This function retrieves two specified quantities (e.g., state variables, time derivatives, etc.) from either the training or test
 data of a given dataset object. It also generates indices for simulation, nodes, and features, which can be used for subsequent
 plotting or analysis tasks.</p>
-<section id="id46">
-<h3>Parameters:<a class="headerlink" href="#id46" title="Link to this heading"></a></h3>
+<section id="id49">
+<h3>Parameters:<a class="headerlink" href="#id49" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>data<span class="classifier">object</span></dt><dd><p>The dataset object containing the time series data. The object should have attributes for accessing the training and test data,
 as well as the time variable (<cite>t</cite>).</p>
@@ -1085,8 +1125,8 @@ or “first” (select the first N features). Default is “rand”.</p>
 </dd>
 </dl>
 </section>
-<section id="id47">
-<h3>Returns:<a class="headerlink" href="#id47" title="Link to this heading"></a></h3>
+<section id="id50">
+<h3>Returns:<a class="headerlink" href="#id50" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>tuple</dt><dd><p>A tuple containing the following elements:
 - t (array-like): The time variable from the dataset.
@@ -1109,8 +1149,8 @@ or “first” (select the first N features). Default is “rand”.</p>
 <p>This function extracts specified quantities from both the original and identified datasets,
 based on the type of data (training or test) and the indices generation method. It provides the
 necessary time vector, quantities for comparison, and indices for plotting.</p>
-<section id="id48">
-<h3>Parameters:<a class="headerlink" href="#id48" title="Link to this heading"></a></h3>
+<section id="id51">
+<h3>Parameters:<a class="headerlink" href="#id51" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>original_data<span class="classifier">object</span></dt><dd><p>Dataset containing the original state variables. Should have attributes for training and testing data.</p>
 </dd>
@@ -1128,8 +1168,8 @@ necessary time vector, quantities for comparison, and indices for plotting.</p>
 </dd>
 </dl>
 </section>
-<section id="id49">
-<h3>Returns:<a class="headerlink" href="#id49" title="Link to this heading"></a></h3>
+<section id="id52">
+<h3>Returns:<a class="headerlink" href="#id52" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>t<span class="classifier">array-like</span></dt><dd><p>Time vector from the identified data.</p>
 </dd>
@@ -1159,8 +1199,8 @@ necessary time vector, quantities for comparison, and indices for plotting.</p>
 (<cite>“X”</cite> for state results or <cite>“Z”</cite> for latent results), the maximum number of plots, and the
 method for index generation. It provides indices for states or latent variables, as well as a
 random simulation index.</p>
-<section id="id50">
-<h3>Parameters:<a class="headerlink" href="#id50" title="Link to this heading"></a></h3>
+<section id="id53">
+<h3>Parameters:<a class="headerlink" href="#id53" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>data_instance<span class="classifier">object</span></dt><dd><p>The instance of the data containing the results and necessary attributes for indexing.</p>
 </dd>
@@ -1172,8 +1212,8 @@ random simulation index.</p>
 </dd>
 </dl>
 </section>
-<section id="id51">
-<h3>Returns:<a class="headerlink" href="#id51" title="Link to this heading"></a></h3>
+<section id="id54">
+<h3>Returns:<a class="headerlink" href="#id54" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>idx_n_n<span class="classifier">np.ndarray</span></dt><dd><p>Indices for the state variables (nodes).</p>
 </dd>
@@ -1195,15 +1235,15 @@ random simulation index.</p>
 <dd><p>Creates a new figure with subplots for plotting.</p>
 <p>This function generates a figure and a set of subplots that can be used for plotting multiple variables or features
 in a vertically stacked layout.</p>
-<section id="id52">
-<h3>Parameters:<a class="headerlink" href="#id52" title="Link to this heading"></a></h3>
+<section id="id55">
+<h3>Parameters:<a class="headerlink" href="#id55" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>num_plots<span class="classifier">int</span></dt><dd><p>The number of subplots to create. Each subplot will be arranged vertically in a single column.</p>
 </dd>
 </dl>
 </section>
-<section id="id53">
-<h3>Returns:<a class="headerlink" href="#id53" title="Link to this heading"></a></h3>
+<section id="id56">
+<h3>Returns:<a class="headerlink" href="#id56" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>fig<span class="classifier">matplotlib.figure.Figure</span></dt><dd><p>The created figure object containing the subplots.</p>
 </dd>
@@ -1222,8 +1262,8 @@ Data needs to be in the state format (n_sim, n_t, n_n, n_dn).</p>
 <p>This function creates a series of plots comparing the time evolution of system variables
 across different indices. Each plot shows the simulated variable and its corresponding reference
 or ideal value. The function also supports saving the plot to a specified directory.</p>
-<section id="id54">
-<h3>Parameters:<a class="headerlink" href="#id54" title="Link to this heading"></a></h3>
+<section id="id57">
+<h3>Parameters:<a class="headerlink" href="#id57" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>num_plots<span class="classifier">int</span></dt><dd><p>The number of individual plots to generate.</p>
 </dd>
@@ -1257,8 +1297,8 @@ Identified state means that the results are time integrated in the latent space 
 <p>This function generates plots comparing the state variables of the original and identified
 data instances. The comparison is made using randomly selected or sequentially generated
 indices for the state variables, based on the specified <cite>idx_gen</cite> method.</p>
-<section id="id55">
-<h3>Parameters:<a class="headerlink" href="#id55" title="Link to this heading"></a></h3>
+<section id="id58">
+<h3>Parameters:<a class="headerlink" href="#id58" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>original_data<span class="classifier">object</span></dt><dd><p>The instance of the original data containing the true state results.</p>
 </dd>
@@ -1272,8 +1312,8 @@ indices for the state variables, based on the specified <cite>idx_gen</cite> met
 </dd>
 </dl>
 </section>
-<section id="id56">
-<h3>Returns:<a class="headerlink" href="#id56" title="Link to this heading"></a></h3>
+<section id="id59">
+<h3>Returns:<a class="headerlink" href="#id59" title="Link to this heading"></a></h3>
 <p>None</p>
 </section>
 </dd></dl>
@@ -1286,8 +1326,8 @@ Identified state derivative means that the results are time integrated in the la
 <p>This function generates plots comparing the state derivatives (i.e., time derivatives of the states)
 of the original and identified data instances. The comparison is made using randomly selected
 or sequentially generated indices for the state variables, based on the specified <cite>idx_gen</cite> method.</p>
-<section id="id57">
-<h3>Parameters:<a class="headerlink" href="#id57" title="Link to this heading"></a></h3>
+<section id="id60">
+<h3>Parameters:<a class="headerlink" href="#id60" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>original_data<span class="classifier">object</span></dt><dd><p>The instance of the original data containing the true state derivatives.</p>
 </dd>
@@ -1301,8 +1341,8 @@ or sequentially generated indices for the state variables, based on the specifie
 </dd>
 </dl>
 </section>
-<section id="id58">
-<h3>Returns:<a class="headerlink" href="#id58" title="Link to this heading"></a></h3>
+<section id="id61">
+<h3>Returns:<a class="headerlink" href="#id61" title="Link to this heading"></a></h3>
 <p>None</p>
 </section>
 </dd></dl>
@@ -1315,8 +1355,8 @@ The data is only encoded and decoded, the pHIN layer is not involved.</p>
 <p>This function generates plots comparing the original time derivatives of the states with the state derivatives
 reconstructed by an autoencoder from the identified data. It selects a specified number of indices for plotting
 based on the <cite>idx_gen</cite> method.</p>
-<section id="id59">
-<h3>Parameters:<a class="headerlink" href="#id59" title="Link to this heading"></a></h3>
+<section id="id62">
+<h3>Parameters:<a class="headerlink" href="#id62" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>original_data<span class="classifier">object</span></dt><dd><p>The instance of the original data containing the true state derivatives.</p>
 </dd>
@@ -1330,8 +1370,8 @@ based on the <cite>idx_gen</cite> method.</p>
 </dd>
 </dl>
 </section>
-<section id="id60">
-<h3>Returns:<a class="headerlink" href="#id60" title="Link to this heading"></a></h3>
+<section id="id63">
+<h3>Returns:<a class="headerlink" href="#id63" title="Link to this heading"></a></h3>
 <p>None</p>
 </section>
 </dd></dl>
@@ -1344,8 +1384,8 @@ The data is only encoded and decoded, the pHIN layer is not involved.</p>
 <p>This function generates plots comparing the original states with the states reconstructed
 by an autoencoder from the identified data. It selects a specified number of indices to plot
 based on the <cite>idx_gen</cite> method.</p>
-<section id="id61">
-<h3>Parameters:<a class="headerlink" href="#id61" title="Link to this heading"></a></h3>
+<section id="id64">
+<h3>Parameters:<a class="headerlink" href="#id64" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>original_data<span class="classifier">object</span></dt><dd><p>The instance of the original data containing the true states.</p>
 </dd>
@@ -1359,8 +1399,8 @@ based on the <cite>idx_gen</cite> method.</p>
 </dd>
 </dl>
 </section>
-<section id="id62">
-<h3>Returns:<a class="headerlink" href="#id62" title="Link to this heading"></a></h3>
+<section id="id65">
+<h3>Returns:<a class="headerlink" href="#id65" title="Link to this heading"></a></h3>
 <p>None</p>
 </section>
 </dd></dl>
@@ -1373,8 +1413,8 @@ Data needs to be in the latent state format (n_sim, n_t, n_f).</p>
 <p>This function generates a series of subplots comparing the original latent variables (<cite>Z</cite>) with their identified counterparts
 (<cite>Z_id</cite>) for a specified number of features. The plots are generated for a selected simulation, and each subplot represents a
 different feature.</p>
-<section id="id63">
-<h3>Parameters:<a class="headerlink" href="#id63" title="Link to this heading"></a></h3>
+<section id="id66">
+<h3>Parameters:<a class="headerlink" href="#id66" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>num_plots<span class="classifier">int</span></dt><dd><p>The number of subplots to generate.</p>
 </dd>
@@ -1397,8 +1437,8 @@ and the second element should be the label for <cite>Z_id</cite>.</p>
 </dd>
 </dl>
 </section>
-<section id="id64">
-<h3>Returns:<a class="headerlink" href="#id64" title="Link to this heading"></a></h3>
+<section id="id67">
+<h3>Returns:<a class="headerlink" href="#id67" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>None</dt><dd><p>The function generates and displays the plots, and saves the image to the specified path.</p>
 </dd>
@@ -1419,8 +1459,8 @@ Where</p>
 </ul>
 </div></blockquote>
 <p>The function allows the selection of data from either the training or test set, and indices can be generated either randomly or sequentially.</p>
-<section id="id65">
-<h3>Parameters:<a class="headerlink" href="#id65" title="Link to this heading"></a></h3>
+<section id="id68">
+<h3>Parameters:<a class="headerlink" href="#id68" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>identified_data<span class="classifier">object</span></dt><dd><p>The dataset containing the identified features. This object should have attributes <cite>TRAIN</cite> and <cite>TEST</cite>
 representing the training and testing data, respectively.</p>
@@ -1437,8 +1477,8 @@ Default is “rand”.</p>
 </dd>
 </dl>
 </section>
-<section id="id66">
-<h3>Returns:<a class="headerlink" href="#id66" title="Link to this heading"></a></h3>
+<section id="id69">
+<h3>Returns:<a class="headerlink" href="#id69" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>None</dt><dd><p>The function does not return anything. It generates and displays the plot(s), and optionally saves them.</p>
 </dd>
@@ -1460,8 +1500,8 @@ Where</p>
 <p>This function generates a series of plots that compare the time derivatives of the latent features <cite>Z_dt</cite> with
 their port-Hamiltonian mapped counterparts <cite>Z_dt_ph_map</cite>, as extracted from a dataset. The data can be selected
 from either the training or test set, and specific indices can be chosen either randomly or sequentially.</p>
-<section id="id67">
-<h3>Parameters:<a class="headerlink" href="#id67" title="Link to this heading"></a></h3>
+<section id="id70">
+<h3>Parameters:<a class="headerlink" href="#id70" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>identified_data<span class="classifier">object</span></dt><dd><p>The dataset containing the identified features. This object should have attributes <cite>TRAIN</cite> and <cite>TEST</cite>
 representing the training and testing data, respectively.</p>
@@ -1478,8 +1518,8 @@ Default is “rand”.</p>
 </dd>
 </dl>
 </section>
-<section id="id68">
-<h3>Returns:<a class="headerlink" href="#id68" title="Link to this heading"></a></h3>
+<section id="id71">
+<h3>Returns:<a class="headerlink" href="#id71" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>None</dt><dd><p>The function does not return anything. It generates and displays the plot(s), and optionally saves them.</p>
 </dd>
@@ -1501,8 +1541,8 @@ where</p>
 <p>This function generates a series of plots that compare the latent variables <cite>Z</cite> with their port-Hamiltonian
 counterparts <cite>Z_ph</cite>, as computed by a model. The data can be selected from either the training or test set,
 and specific indices can be chosen randomly or in a sequential manner.</p>
-<section id="id69">
-<h3>Parameters:<a class="headerlink" href="#id69" title="Link to this heading"></a></h3>
+<section id="id72">
+<h3>Parameters:<a class="headerlink" href="#id72" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>identified_data<span class="classifier">object</span></dt><dd><p>The dataset containing the identified variables. This object should have attributes <cite>TRAIN</cite> and <cite>TEST</cite>
 representing the training and testing data, respectively.</p>
@@ -1519,8 +1559,8 @@ Default is “rand”.</p>
 </dd>
 </dl>
 </section>
-<section id="id70">
-<h3>Returns:<a class="headerlink" href="#id70" title="Link to this heading"></a></h3>
+<section id="id73">
+<h3>Returns:<a class="headerlink" href="#id73" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>None</dt><dd><p>The function does not return anything. It generates and displays the plot(s), and optionally saves them.</p>
 </dd>
@@ -1535,8 +1575,8 @@ Default is “rand”.</p>
 <p>This function plots RMS errors for different domains and latent features. The plots can be saved as PNG files and
 optionally as CSV files. The function handles multiple domains by iterating over them and calling <cite>single_error_plot</cite>
 for each domain’s state error. It also plots the latent error if available.</p>
-<section id="id71">
-<h3>Parameters:<a class="headerlink" href="#id71" title="Link to this heading"></a></h3>
+<section id="id74">
+<h3>Parameters:<a class="headerlink" href="#id74" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>data<span class="classifier">object</span></dt><dd><p>The dataset containing error information. This object should have attributes <cite>TRAIN</cite> and <cite>TEST</cite> representing the
 training and testing data, respectively, and <cite>state_error_list</cite> and <cite>latent_error</cite> containing the RMS errors.</p>
@@ -1546,8 +1586,8 @@ training and testing data, respectively, and <cite>state_error_list</cite> and <
 <dt>t<span class="classifier">numpy.ndarray or None, optional</span></dt><dd><p>A 1D array representing time points corresponding to the error data. If None, defaults to the range of indices for
 the time points. Default is None.</p>
 </dd>
-<dt>save_name<span class="classifier">str, optional</span></dt><dd><p>The base name for the files to which the plots will be saved. The name will be prefixed with “<a href="#id99"><span class="problematic" id="id100">state_</span></a>” for state
-errors and “<a href="#id101"><span class="problematic" id="id102">latent_</span></a>” for latent errors. Default is “rms_error”.</p>
+<dt>save_name<span class="classifier">str, optional</span></dt><dd><p>The base name for the files to which the plots will be saved. The name will be prefixed with “<a href="#id102"><span class="problematic" id="id103">state_</span></a>” for state
+errors and “<a href="#id104"><span class="problematic" id="id105">latent_</span></a>” for latent errors. Default is “rms_error”.</p>
 </dd>
 <dt>domain_names<span class="classifier">list of str or None, optional</span></dt><dd><p>A list of domain names corresponding to the state errors. If None, domain names will be generated automatically
 based on the number of state error domains. The length of the list must match the length of <cite>data.state_error_list</cite>.
@@ -1559,8 +1599,8 @@ Default is None.</p>
 </dd>
 </dl>
 </section>
-<section id="id72">
-<h3>Returns:<a class="headerlink" href="#id72" title="Link to this heading"></a></h3>
+<section id="id75">
+<h3>Returns:<a class="headerlink" href="#id75" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>None</dt><dd><p>The function does not return anything. It generates and displays plots, and optionally saves them to files.</p>
 </dd>
@@ -1575,8 +1615,8 @@ Default is None.</p>
 <p>This function iterates through predefined lists of plotting functions for state and latent features, calling each
 function to generate and save the corresponding plots. It allows for plotting time trajectories, comparing
 reconstructed states, and visualizing latent feature errors and reconstructions.</p>
-<section id="id73">
-<h3>Parameters:<a class="headerlink" href="#id73" title="Link to this heading"></a></h3>
+<section id="id76">
+<h3>Parameters:<a class="headerlink" href="#id76" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>data<span class="classifier">object</span></dt><dd><p>The dataset containing state and latent feature information. This object should have attributes suitable for
 plotting functions such as <cite>plot_X_comparison</cite> and <cite>plot_Z_ph</cite>.</p>
@@ -1595,8 +1635,8 @@ Default is “rand”.</p>
 </dd>
 </dl>
 </section>
-<section id="id74">
-<h3>Returns:<a class="headerlink" href="#id74" title="Link to this heading"></a></h3>
+<section id="id77">
+<h3>Returns:<a class="headerlink" href="#id77" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>None</dt><dd><p>The function does not return anything. It generates and displays plots, and optionally saves them to files.</p>
 </dd>
@@ -1612,8 +1652,8 @@ Default is “rand”.</p>
 including the overall loss, derivative losses, reconstruction loss, and regularization loss.
 The losses are plotted on a logarithmic scale to better visualize the convergence and performance
 of the training process.</p>
-<section id="id75">
-<h3>Parameters:<a class="headerlink" href="#id75" title="Link to this heading"></a></h3>
+<section id="id78">
+<h3>Parameters:<a class="headerlink" href="#id78" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>train_hist<span class="classifier">object</span></dt><dd><p>An object containing the training history. This object should have a <cite>history</cite> attribute,
 which is a dictionary with keys corresponding to different loss metrics (e.g., “loss”, “dz_loss”,
@@ -1621,8 +1661,8 @@ which is a dictionary with keys corresponding to different loss metrics (e.g., �
 </dd>
 </dl>
 </section>
-<section id="id76">
-<h3>Returns:<a class="headerlink" href="#id76" title="Link to this heading"></a></h3>
+<section id="id79">
+<h3>Returns:<a class="headerlink" href="#id79" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>None</dt><dd><p>The function does not return any value. It generates and displays a plot of the training history.</p>
 </dd>
@@ -1638,8 +1678,8 @@ Data needs to be in the feature format (n_s, n_f)</p>
 <p>This function creates a series of subplots to compare the provided time series data (<cite>x</cite>) with identified data (<cite>x_id</cite>)
 for multiple features. Each subplot shows the data for one feature, with the original data plotted as a solid line and
 the identified data plotted as a dashed line. The function allows for saving the resulting figure as a PNG file.</p>
-<section id="id77">
-<h3>Parameters:<a class="headerlink" href="#id77" title="Link to this heading"></a></h3>
+<section id="id80">
+<h3>Parameters:<a class="headerlink" href="#id80" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>num_plots<span class="classifier">int</span></dt><dd><p>The number of subplots to create. Determines how many features will be plotted.</p>
 </dd>
@@ -1657,8 +1697,8 @@ the identified data plotted as a dashed line. The function allows for saving the
 </dd>
 </dl>
 </section>
-<section id="id78">
-<h3>Returns:<a class="headerlink" href="#id78" title="Link to this heading"></a></h3>
+<section id="id81">
+<h3>Returns:<a class="headerlink" href="#id81" title="Link to this heading"></a></h3>
 <p>None</p>
 </section>
 </dd></dl>
@@ -1671,8 +1711,8 @@ Identified state means that the results are time integrated in the latent space 
 <p>This function generates plots to compare the original latent features (<cite>x</cite>) with their corresponding
 identified or predicted features (<cite>x_id</cite>). It uses either training or test data based on the <cite>use_train_data</cite>
 parameter, and the indices of features to be plotted can be chosen either randomly or sequentially.</p>
-<section id="id79">
-<h3>Parameters:<a class="headerlink" href="#id79" title="Link to this heading"></a></h3>
+<section id="id82">
+<h3>Parameters:<a class="headerlink" href="#id82" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>original_data<span class="classifier">object</span></dt><dd><p>The dataset containing the original latent features. This object should have attributes <cite>TRAIN</cite> and <cite>TEST</cite>
 representing the training and testing data, respectively.</p>
@@ -1692,8 +1732,8 @@ Default is “rand”.</p>
 </dd>
 </dl>
 </section>
-<section id="id80">
-<h3>Returns:<a class="headerlink" href="#id80" title="Link to this heading"></a></h3>
+<section id="id83">
+<h3>Returns:<a class="headerlink" href="#id83" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>None</dt><dd><p>The function does not return anything. It generates and displays the plot(s), and optionally saves them.</p>
 </dd>
@@ -1709,8 +1749,8 @@ The data is only encoded and decoded, the pHIN layer is not involved.</p>
 <p>This function generates plots comparing the original time derivative data (<cite>dx_dt</cite>) with the reconstructed data (<cite>x_rec_dt</cite>)
 produced by an autoencoder model. It creates subplots for each feature, displaying both the original and reconstructed time derivatives.
 The resulting figure can be saved as a PNG file if specified.</p>
-<section id="id81">
-<h3>Parameters:<a class="headerlink" href="#id81" title="Link to this heading"></a></h3>
+<section id="id84">
+<h3>Parameters:<a class="headerlink" href="#id84" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>original_data<span class="classifier">object</span></dt><dd><p>The dataset object containing the original time derivative data. Must have attributes to access time series data.</p>
 </dd>
@@ -1724,8 +1764,8 @@ The resulting figure can be saved as a PNG file if specified.</p>
 </dd>
 </dl>
 </section>
-<section id="id82">
-<h3>Returns:<a class="headerlink" href="#id82" title="Link to this heading"></a></h3>
+<section id="id85">
+<h3>Returns:<a class="headerlink" href="#id85" title="Link to this heading"></a></h3>
 <p>None</p>
 </section>
 </dd></dl>
@@ -1737,8 +1777,8 @@ The resulting figure can be saved as a PNG file if specified.</p>
 <p>This function generates plots comparing the original time series data (<cite>x</cite>) with the reconstructed data (<cite>x_rec</cite>)
 produced by an autoencoder model. The function creates subplots for each feature, displaying both the original and
 reconstructed data. It saves the resulting figure as a PNG file if specified.</p>
-<section id="id83">
-<h3>Parameters:<a class="headerlink" href="#id83" title="Link to this heading"></a></h3>
+<section id="id86">
+<h3>Parameters:<a class="headerlink" href="#id86" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>original_data<span class="classifier">object</span></dt><dd><p>The dataset object containing the original data. Must have attributes to access time series data.</p>
 </dd>
@@ -1752,8 +1792,8 @@ reconstructed data. It saves the resulting figure as a PNG file if specified.</p
 </dd>
 </dl>
 </section>
-<section id="id84">
-<h3>Returns:<a class="headerlink" href="#id84" title="Link to this heading"></a></h3>
+<section id="id87">
+<h3>Returns:<a class="headerlink" href="#id87" title="Link to this heading"></a></h3>
 <p>None</p>
 </section>
 </dd></dl>
@@ -1765,8 +1805,8 @@ reconstructed data. It saves the resulting figure as a PNG file if specified.</p
 Data needs to be in the feature format (n_s, n_f).</p>
 <p>This function creates a series of subplots to compare the original latent variables (<cite>z</cite>) with the identified or reconstructed
 ones (<cite>z_id</cite>). Each subplot corresponds to a specific feature as indicated by <cite>idx_n_f</cite>.</p>
-<section id="id85">
-<h3>Parameters:<a class="headerlink" href="#id85" title="Link to this heading"></a></h3>
+<section id="id88">
+<h3>Parameters:<a class="headerlink" href="#id88" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>num_plots<span class="classifier">int</span></dt><dd><p>The number of subplots to create, corresponding to the number of features to plot.</p>
 </dd>
@@ -1785,8 +1825,8 @@ second element to <cite>z_id</cite>.</p>
 </dd>
 </dl>
 </section>
-<section id="id86">
-<h3>Returns:<a class="headerlink" href="#id86" title="Link to this heading"></a></h3>
+<section id="id89">
+<h3>Returns:<a class="headerlink" href="#id89" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>None</dt><dd><p>The function generates and displays the plots, and saves the image to the specified path.</p>
 </dd>
@@ -1807,8 +1847,8 @@ Where</p>
 </ul>
 </div></blockquote>
 <p>The function allows the selection of data from either the training or test set, and indices can be generated either randomly or sequentially.</p>
-<section id="id87">
-<h3>Parameters:<a class="headerlink" href="#id87" title="Link to this heading"></a></h3>
+<section id="id90">
+<h3>Parameters:<a class="headerlink" href="#id90" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>identified_data<span class="classifier">object</span></dt><dd><p>The dataset containing the identified features. This object should have attributes <cite>TRAIN</cite> and <cite>TEST</cite>
 representing the training and testing data, respectively.</p>
@@ -1825,8 +1865,8 @@ Default is “rand”.</p>
 </dd>
 </dl>
 </section>
-<section id="id88">
-<h3>Returns:<a class="headerlink" href="#id88" title="Link to this heading"></a></h3>
+<section id="id91">
+<h3>Returns:<a class="headerlink" href="#id91" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>None</dt><dd><p>The function does not return anything. It generates and displays the plot(s), and optionally saves them.</p>
 </dd>
@@ -1850,8 +1890,8 @@ Where</p>
 corresponding phase map (<cite>z_dt_ph_map</cite>). The function uses either training or test data based on the
 <cite>use_train_data</cite> parameter. The indices of features to be plotted are chosen based on the <cite>idx_gen</cite>
 parameter, which can either be random or sequential.</p>
-<section id="id89">
-<h3>Parameters:<a class="headerlink" href="#id89" title="Link to this heading"></a></h3>
+<section id="id92">
+<h3>Parameters:<a class="headerlink" href="#id92" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>identified_data<span class="classifier">object</span></dt><dd><p>The dataset containing the identified or predicted latent features. This object should have attributes
 <cite>TRAIN</cite> and <cite>TEST</cite> representing the training and testing data, respectively.</p>
@@ -1868,8 +1908,8 @@ Default is “rand”.</p>
 </dd>
 </dl>
 </section>
-<section id="id90">
-<h3>Returns:<a class="headerlink" href="#id90" title="Link to this heading"></a></h3>
+<section id="id93">
+<h3>Returns:<a class="headerlink" href="#id93" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>None</dt><dd><p>The function does not return anything. It generates and displays the plot(s), and optionally saves them.</p>
 </dd>
@@ -1891,8 +1931,8 @@ where</p>
 <p>This function generates a series of plots that compare the latent features <cite>z</cite> with their port-Hamiltonian
 counterparts <cite>z_ph</cite>, as extracted from a dataset. The data can be selected from either the training or test set,
 and specific indices can be chosen either randomly or sequentially.</p>
-<section id="id91">
-<h3>Parameters:<a class="headerlink" href="#id91" title="Link to this heading"></a></h3>
+<section id="id94">
+<h3>Parameters:<a class="headerlink" href="#id94" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>identified_data<span class="classifier">object</span></dt><dd><p>The dataset containing the identified features. This object should have attributes <cite>TRAIN</cite> and <cite>TEST</cite>
 representing the training and testing data, respectively.</p>
@@ -1909,8 +1949,8 @@ Default is “rand”.</p>
 </dd>
 </dl>
 </section>
-<section id="id92">
-<h3>Returns:<a class="headerlink" href="#id92" title="Link to this heading"></a></h3>
+<section id="id95">
+<h3>Returns:<a class="headerlink" href="#id95" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>None</dt><dd><p>The function does not return anything. It generates and displays the plot(s), and optionally saves them.</p>
 </dd>
@@ -1927,15 +1967,15 @@ end with “.png”, the function appends “.png” to the path. If a file alre
 saving the new PNG file. The function handles potential runtime errors related to saving figures, including issues with
 LaTeX processing and unsupported backends. If an error occurs, the function attempts to use different matplotlib backends
 to save the figure.</p>
-<section id="id93">
-<h3>Parameters:<a class="headerlink" href="#id93" title="Link to this heading"></a></h3>
+<section id="id96">
+<h3>Parameters:<a class="headerlink" href="#id96" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>save_path<span class="classifier">str</span></dt><dd><p>The file path where the PNG file will be saved. The path should include the desired filename and, optionally, the directory.</p>
 </dd>
 </dl>
 </section>
-<section id="id94">
-<h3>Returns:<a class="headerlink" href="#id94" title="Link to this heading"></a></h3>
+<section id="id97">
+<h3>Returns:<a class="headerlink" href="#id97" title="Link to this heading"></a></h3>
 <p>None</p>
 </section>
 </dd></dl>
@@ -1947,16 +1987,16 @@ to save the figure.</p>
 <p>This function configures matplotlib to produce high-quality plots with LaTeX formatting.
 If <cite>save_plots</cite> is set to <cite>True</cite>, the plots will be saved directly as PGF files, and the
 necessary directories will be created if they do not exist.</p>
-<section id="id95">
-<h3>Parameters:<a class="headerlink" href="#id95" title="Link to this heading"></a></h3>
+<section id="id98">
+<h3>Parameters:<a class="headerlink" href="#id98" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>save_plots<span class="classifier">bool, optional</span></dt><dd><p>If <cite>True</cite>, plots will be saved directly to PGF files in the “results” directory instead of being shown.
 Defaults to <cite>False</cite>.</p>
 </dd>
 </dl>
 </section>
-<section id="id96">
-<h3>Notes:<a class="headerlink" href="#id96" title="Link to this heading"></a></h3>
+<section id="id99">
+<h3>Notes:<a class="headerlink" href="#id99" title="Link to this heading"></a></h3>
 <ul class="simple">
 <li><p>When <cite>save_plots</cite> is <cite>True</cite>, matplotlib is configured to use PGF backend for creating plots, which
 are suitable for LaTeX documents.</p></li>
@@ -1977,8 +2017,8 @@ labels on the axes are large.</p></li>
 the mean RMS error across all simulations and plots both the individual simulation errors and the mean error.
 The plot can be customized with a title, and the y-axis scale can be adjusted. Optionally, the data can be saved
 to a CSV file.</p>
-<section id="id97">
-<h3>Parameters:<a class="headerlink" href="#id97" title="Link to this heading"></a></h3>
+<section id="id100">
+<h3>Parameters:<a class="headerlink" href="#id100" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>norm_rms_error<span class="classifier">numpy.ndarray</span></dt><dd><p>A 2D array where each row represents RMS errors from a different simulation, and each column represents
 errors at a specific time point. Shape should be (n_simulations, n_time_points).</p>
@@ -1996,8 +2036,8 @@ to the range of indices for the time points. Default is None.</p>
 </dd>
 </dl>
 </section>
-<section id="id98">
-<h3>Returns:<a class="headerlink" href="#id98" title="Link to this heading"></a></h3>
+<section id="id101">
+<h3>Returns:<a class="headerlink" href="#id101" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>None</dt><dd><p>The function does not return anything. It generates and displays the plot(s), and optionally saves them
 as a PNG and/or CSV file.</p>

@@ -74,9 +74,7 @@
            <div itemprop="articleBody">
              
   <!-- PROJECT SHIELDS -->
-<p><a class="reference external" href="https://doi.org/"><img alt="arXiv" src="https://img.shields.io/badge/arXiv-" /></a>
-<a class="reference external" href="https://doi.org/"><img alt="DOI" src="https://zenodo.org/badge/DOI/" /></a>
-<a class="reference external" href="https://"><img alt="Documentation Status" src="https://img.shields.io/badge/docs-online-blue.svg" /></a>
+<p><a class="reference external" href="https://Institute-Eng-and-Comp-Mechanics-UStgt.github.io/ApHIN"><img alt="Documentation Status" src="https://img.shields.io/badge/docs-online-blue.svg" /></a>
 <a class="reference external" href="https://github.com/Institute-Eng-and-Comp-Mechanics-UStgt/ApHIN/blob/main/LICENSE"><img alt="MIT License" src="https://img.shields.io/github/license/Institute-Eng-and-Comp-Mechanics-UStgt/ApHIN.svg" /></a></p>
 <section id="aphin-autoencoder-based-port-hamiltonian-identification-networks">
 <h1>ApHIN - Autoencoder-based port-Hamiltonian Identification Networks<a class="headerlink" href="#aphin-autoencoder-based-port-hamiltonian-identification-networks" title="Link to this heading"></a></h1>
@@ -91,6 +89,23 @@ In this process, high-dimensional state data obtained from possibly nonlinear sy
 The learned, low-dimensional pH system can describe even nonlinear systems and is rapidly computable due to its small size.</p>
 <p>The method is exemplified by a parametric mass-spring-damper and a nonlinear pendulum example as well as the high-dimensional model of a disc brake with linear thermoelastic behavior.</p>
 </section>
+<section id="features">
+<h2>Features<a class="headerlink" href="#features" title="Link to this heading"></a></h2>
+<p>This repository implements neural networks that identify linear port-Hamiltonian systems from (potentially high-dimensional) data[1].</p>
+<ul class="simple">
+<li><p>Autoencoders (AEs) for dimensionality reduction</p></li>
+<li><p>pH layer to identify system matrices that fullfill the definition of a linear pH system</p></li>
+<li><p>pHIN: identify a (parametric) low-dimensional port-Hamiltonian system directly</p></li>
+<li><p>ApHIN: identify a (parametric) low-dimensional latent port-Hamiltonian system based on coordinate representations found using an autoencoder</p></li>
+<li><p>Examples for the identification of linear pH systems from data</p>
+<ul>
+<li><p>One-dimensional mass-spring-damper chain</p></li>
+<li><p>Pendulum</p></li>
+<li><p>discbrake model</p></li>
+</ul>
+</li>
+</ul>
+</section>
 <section id="installation">
 <h2>Installation<a class="headerlink" href="#installation" title="Link to this heading"></a></h2>
 <p>You can either clone the repository and install the package locally or install it directly from PyPI.</p>
@@ -103,7 +118,7 @@ The learned, low-dimensional pH system can describe even nonlinear systems and i
 <section id="local">
 <h3>Local<a class="headerlink" href="#local" title="Link to this heading"></a></h3>
 <p>Clone this repository and install it to your local environment as package using pip:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>clone<span class="w"> </span>https://
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/Institute-Eng-and-Comp-Mechanics-UStgt/ApHIN.git
 <span class="nb">cd</span><span class="w"> </span>ApHIN
 </pre></div>
 </div>
@@ -124,23 +139,6 @@ systems and applications, 2022.</p>
 <p>[3] Kathleen Champion, Bethany Lusch, J. Nathan Kutz, and Steven L. Brunton. Data-driven
 discovery of coordinates and governing equations. Proceedings of the National Academy of
 Sciences, 116(45):22445–22451, 2019.</p>
-</section>
-<section id="features">
-<h2>Features<a class="headerlink" href="#features" title="Link to this heading"></a></h2>
-<p>This repository implements neural networks that identify linear port-Hamiltonian systems from (potentially high-dimensional) data[1].</p>
-<ul class="simple">
-<li><p>Autoencoders (AEs) for dimensionality reduction</p></li>
-<li><p>pH layer to identify system matrices that fullfill the definition of a linear pH system</p></li>
-<li><p>pHIN: identify a (parametric) low-dimensional port-Hamiltonian system directly</p></li>
-<li><p>ApHIN: identify a (parametric) low-dimensional latent port-Hamiltonian system based on coordinate representations found using an autoencoder</p></li>
-<li><p>Examples for the identification of linear pH systems from data</p>
-<ul>
-<li><p>One-dimensional mass-spring-damper chain</p></li>
-<li><p>Pendulum</p></li>
-<li><p>discbrake model</p></li>
-</ul>
-</li>
-</ul>
 </section>
 </section>
 <div class="toctree-wrapper compound">
