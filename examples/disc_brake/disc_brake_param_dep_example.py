@@ -82,28 +82,9 @@ def main(
 
     # %% load/create data
     # Initialize Dataset
-
-    create_data_from_txt = db_cfg[
-        "create_data_from_txt"
-    ]  # True if data has not been preprocessed to an .npz file before
-    if create_data_from_txt:
-        # create data from .txt files
-        # idx of parameters in parameter file
-        idx_mu = np.arange(db_cfg["n_mu"])
-        disc_brake_txt_path = config.disc_brake_txt_path
-        disc_brake_txt_path = os.path.join(disc_brake_txt_path, sim_name)
-        disc_brake_data = DiscBrakeDataset.from_txt(
-            disc_brake_txt_path,
-            save_cache=True,
-            cache_path=cache_path,
-            idx_mu=idx_mu,
-            use_velocities=db_cfg["use_velocities"],
-        )
-    else:
-        # load .npz file
-        disc_brake_data = DiscBrakeDataset.from_data(
-            cache_path, use_velocities=db_cfg["use_velocities"]
-        )
+    disc_brake_data = DiscBrakeDataset.from_data(
+        cache_path, use_velocities=db_cfg["use_velocities"]
+    )
 
     # %%
     # split into train and test data
