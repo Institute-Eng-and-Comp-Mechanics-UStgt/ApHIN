@@ -1,6 +1,8 @@
 <!-- PROJECT SHIELDS -->
-[![arXiv][arxiv-shield]][arxiv-url]
-[![DOI][doi-shield]][doi-url]
+
+[//]: # ([![arXiv][arxiv-shield]][arxiv-url])
+
+[//]: # ([![DOI][doi-shield]][doi-url])
 [![Documentation Status][docs-shield]][docs-url]
 [![MIT License][license-shield]][license-url]
 
@@ -19,6 +21,17 @@ The learned, low-dimensional pH system can describe even nonlinear systems and i
 
 The method is exemplified by a parametric mass-spring-damper and a nonlinear pendulum example as well as the high-dimensional model of a disc brake with linear thermoelastic behavior.
 
+## Features
+This repository implements neural networks that identify linear port-Hamiltonian systems from (potentially high-dimensional) data[1].
+* Autoencoders (AEs) for dimensionality reduction
+* pH layer to identify system matrices that fullfill the definition of a linear pH system
+* pHIN: identify a (parametric) low-dimensional port-Hamiltonian system directly
+* ApHIN: identify a (parametric) low-dimensional latent port-Hamiltonian system based on coordinate representations found using an autoencoder
+* Examples for the identification of linear pH systems from data
+  * One-dimensional mass-spring-damper chain
+  * Pendulum
+  * discbrake model
+  
 ## Installation
 
 You can either clone the repository and install the package locally or install it directly from PyPI.
@@ -33,7 +46,7 @@ pip install aphin
 Clone this repository and install it to your local environment as package using pip:
 
 ```bash
-git clone https://
+git clone https://github.com/Institute-Eng-and-Comp-Mechanics-UStgt/ApHIN.git
 cd ApHIN
 ```
 Then you can activate the environment in which you want to install the package, and use pip to perform the installation.
@@ -54,22 +67,11 @@ systems and applications, 2022.
 discovery of coordinates and governing equations. Proceedings of the National Academy of
 Sciences, 116(45):22445–22451, 2019.
 
-## Features
-This repository implements neural networks that identify linear port-Hamiltonian systems from (potentially high-dimensional) data[1].
-* Autoencoders (AEs) for dimensionality reduction
-* pH layer to identify system matrices that fullfill the definition of a linear pH system
-* pHIN: identify a (parametric) low-dimensional port-Hamiltonian system directly
-* ApHIN: identify a (parametric) low-dimensional latent port-Hamiltonian system based on coordinate representations found using an autoencoder
-* Examples for the identification of linear pH systems from data
-  * One-dimensional mass-spring-damper chain
-  * Pendulum
-  * discbrake model
-
 [license-shield]: https://img.shields.io/github/license/Institute-Eng-and-Comp-Mechanics-UStgt/ApHIN.svg
 [license-url]: https://github.com/Institute-Eng-and-Comp-Mechanics-UStgt/ApHIN/blob/main/LICENSE
 [doi-shield]: https://zenodo.org/badge/DOI/
 [doi-url]: https://doi.org/
 [arxiv-shield]: https://img.shields.io/badge/arXiv-
 [arxiv-url]: https://doi.org/
-[docs-url]: https://
+[docs-url]: https://Institute-Eng-and-Comp-Mechanics-UStgt.github.io/ApHIN
 [docs-shield]: https://img.shields.io/badge/docs-online-blue.svg
