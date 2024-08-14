@@ -5,21 +5,26 @@ from aphin.utils.data import DiscBrakeDataset
 from aphin.utils.configuration import Configuration
 
 
-def main():
+def read_abaqus_data_from_txt_files(disc_brake_txt_path):
     """
-    Following the workflow to obtain simulation data from Abaqus, see https://doi.org/10.18419/darus-4418
-    We obtain the data in form of .txt files
-    This function reads and processes the .txt files.
-    The data is saved into a more convenient (faster reading, less storage) .npz file.
-    Hence, this preprocessing function needs to be executed only once or if changes in the Abaqus model were conducted.
+    Reads and processes Abaqus simulation data from .txt files and saves it into a .npz file for efficient storage.
 
-    Please define the path to the folder with the .txt files below.
+    This function handles the preprocessing of simulation data obtained from Abaqus, as outlined in the workflow available at:
+    https://doi.org/10.18419/darus-4418. The data is originally in .txt file format, which is read and processed by this function.
+    The processed data is then saved into a .npz file format for faster access and reduced storage needs. This preprocessing step
+    needs to be executed only once unless there are changes to the Abaqus model.
+
+    Parameters:
+    -----------
+    disc_brake_txt_path : str
+        The directory path containing the Abaqus .txt files. This path should lead to the directory where the simulation
+        results are stored.
+
+    Returns:
+    --------
+    None
+        The function does not return any values. It processes the input .txt files and logs a summary of the processed data.
     """
-    # -----------------------------------------
-    # USER INPUT REQUIRED
-    # -----------------------------------------
-    disc_brake_txt_path = "/path/to/txt/folder/"
-
     # setup experiment based on config file
     working_dir = os.path.dirname(__file__)
     configuration = Configuration(working_dir, config_info=None)
@@ -50,4 +55,5 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    disc_brake_txt_path = "/path/to/txt/folder/"
+    read_abaqus_data_from_txt_files(disc_brake_txt_path)
