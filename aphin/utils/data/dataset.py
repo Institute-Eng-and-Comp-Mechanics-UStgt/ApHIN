@@ -892,7 +892,7 @@ class DiscBrakeDataset(Dataset):
     @classmethod
     def from_txt(
         cls,
-        txt_paths,
+        txt_path,
         idx_mu=None,
         n_t=None,
         t_start=0.0,
@@ -912,7 +912,7 @@ class DiscBrakeDataset(Dataset):
 
         Parameters:
         -----------
-        txt_paths : str
+        txt_path : str
             Path to the folder containing the .txt files.
 
         idx_mu : array-like, optional
@@ -944,19 +944,21 @@ class DiscBrakeDataset(Dataset):
         """
         t, X, Mu = None, None, None
 
-        logging.info(f"Reading disc brake data from .txt files at {txt_paths}.")
+        logging.info(f"Reading disc brake data from .txt files at {txt_path}.")
         # get names of all txt files in folder 'txt_path'
         file_name_list = []
-        for file in os.listdir(txt_paths):
+        for file in os.listdir(txt_path):
             if file.endswith(".txt") and file.startswith("field_output_"):
                 file_name_list.append(file)
+        if not file_name_list:
+            raise ValueError(f"No .txt files could be found in {txt_path}.")
         file_name_list = natsorted(
             file_name_list
         )  # keep samples in the same order (natural sorting - like in explorer)
 
         # parameter information
         with open(
-            os.path.join(txt_paths, "parameter_information.txt")
+            os.path.join(txt_path, "parameter_information.txt")
         ) as txt_param_file:
             df_param = pd.read_csv(txt_param_file, delimiter=" ", engine="python")
         if idx_mu is not None:
@@ -986,7 +988,7 @@ class DiscBrakeDataset(Dataset):
         # number of simulations
         n_sim = len(file_name_list)
         for i_sim, file in enumerate(tqdm(file_name_list)):
-            with open(os.path.join(txt_paths, file_name_list[i_sim])) as txt_file:
+            with open(os.path.join(txt_path, file_name_list[i_sim])) as txt_file:
                 #     # _ = txt_file.readline()  # empty line
                 df = pd.read_csv(txt_file, header=None, delimiter=" ", engine="python")
                 # first row with node numbers
