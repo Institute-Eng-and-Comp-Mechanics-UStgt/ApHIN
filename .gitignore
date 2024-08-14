@@ -13,6 +13,7 @@ results/
 data/
 experiments/
 
+!aphin/utils/data
 *.png
 *.txt
 

@@ -15,6 +15,8 @@ from aphin.utils.callbacks_tensorflow import callbacks
 from aphin.utils.save_results import (
     save_weights,
     write_to_experiment_overview,
+    save_training_times,
+    save_evaluation_times
 )
 from aphin.utils.print_matrices import print_matrices
 
@@ -144,6 +146,7 @@ def main(config_path_to_file=None):
             verbose=2,
             callbacks=callback,
         )
+        save_training_times(train_hist, result_dir)
         aphin_vis.plot_train_history(train_hist)
         aphin.load_weights(os.path.join(weight_dir, ".weights.h5"))
 
@@ -158,12 +161,12 @@ def main(config_path_to_file=None):
     )
 
     # system_layer.print()
-
     pendulum_data_id = PHIdentifiedDataset.from_identification(
         pendulum_data, system_layer, aphin
     )
 
     print_matrices(system_layer)
+    save_evaluation_times(pendulum_data_id, result_dir)
 
     if experiment.startswith("aphin"):
         file_name = "projection_error.txt"
