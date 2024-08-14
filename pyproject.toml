@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "aphin"
-version = "0.1.3"
+version = "1.0"
 authors = [
   { name="Jonas Kneifl", email="jonas.kneifl@itm.uni-stuttgart.com" },
   { name="Johannes Rettberg", email="johannes.rettberg@itm.uni-stuttgart.com" },
@@ -51,7 +51,6 @@ interfaces = [
 ]
 
 [tool.setuptools]
-#packages = ["aphin"]
 # If there are data files included in your packages that need to be
 # installed, specify them here.
 #package-data = {"sample" = ["*.dat"]}
