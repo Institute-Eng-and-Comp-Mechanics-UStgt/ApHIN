@@ -46,7 +46,7 @@ pip install aphin
 Clone this repository and install it to your local environment as package using pip:
 
 ```bash
-git clone https://
+git clone https://github.com/Institute-Eng-and-Comp-Mechanics-UStgt/ApHIN.git
 cd ApHIN
 ```
 Then you can activate the environment in which you want to install the package, and use pip to perform the installation.
