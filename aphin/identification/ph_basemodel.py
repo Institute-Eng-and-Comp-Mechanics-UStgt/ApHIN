@@ -5,6 +5,7 @@ import inspect
 import datetime
 import pickle
 import copy
+import time
 import tensorflow as tf
 
 logging.basicConfig()
@@ -182,9 +183,19 @@ class PHBasemodel(tf.keras.Model, ABC):
                 except tf.errors.InvalidArgumentError:
                     validation_x[i] = x_
             validation_data = (validation_x, validation_y)
-        return super(PHBasemodel, self).fit(
-            x, y, validation_data=validation_data, **kwargs
-        )
+
+        import time
+        start = time.time()
+        history = super(PHBasemodel, self).fit(x, y, validation_data=validation_data, **kwargs)
+        end = time.time()
+        time = end - start
+        time_per_epoch = time / len(history.history["loss"])
+        logging.info(f"Training took {time} s with an average of {time_per_epoch} s per epoch.")
+        # save the time per epoch in the history
+        history.history["time_per_epoch"] = time_per_epoch
+        history.history["time"] = time
+
+        return history
 
     def get_trainable_weights(self):
         """
