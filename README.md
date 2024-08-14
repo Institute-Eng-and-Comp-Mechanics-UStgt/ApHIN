@@ -47,7 +47,7 @@ pip install -e .
 
 [1] Johannes Rettberg, Jonas Kneifl, Julius Herb, Patrick Buchfink, Jörg Fehr, and Bernard Haasdonk. Data-driven identification of latent port-Hamiltonian systems. Arxiv, 2024.
 
-[2] Volker Mehrmann and Benjamin Unger. Control of port-hamiltonian differential-algebraic
+[2] Volker Mehrmann and Benjamin Unger. Control of port-Hamiltonian differential-algebraic
 systems and applications, 2022.
 
 [3] Kathleen Champion, Bethany Lusch, J. Nathan Kutz, and Steven L. Brunton. Data-driven
