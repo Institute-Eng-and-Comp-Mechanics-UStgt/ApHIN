@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ApHIN - Autoencoder-based port-Hamiltonian Identification Networks &mdash; ApHIN 0.1.3 documentation</title>
+  <title>&lt;no title&gt; &mdash; ApHIN 0.1.3 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
 
@@ -21,7 +21,7 @@
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="aphin package" href="aphin.html" /> 
+    <link rel="next" title="aphin" href="modules.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -45,7 +45,7 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="aphin.html">aphin package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">aphin</a></li>
 <li class="toctree-l1"><a class="reference internal" href="contact.html">Contact</a></li>
 </ul>
 
@@ -63,7 +63,7 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="#" class="icon icon-home" aria-label="Home"></a></li>
-      <li class="breadcrumb-item active">ApHIN - Autoencoder-based port-Hamiltonian Identification Networks</li>
+      <li class="breadcrumb-item active">&lt;no title&gt;</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/index.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -73,80 +73,11 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <!-- PROJECT SHIELDS -->
-<p><a class="reference external" href="https://Institute-Eng-and-Comp-Mechanics-UStgt.github.io/ApHIN"><img alt="Documentation Status" src="https://img.shields.io/badge/docs-online-blue.svg" /></a>
-<a class="reference external" href="https://github.com/Institute-Eng-and-Comp-Mechanics-UStgt/ApHIN/blob/main/LICENSE"><img alt="MIT License" src="https://img.shields.io/github/license/Institute-Eng-and-Comp-Mechanics-UStgt/ApHIN.svg" /></a></p>
-<section id="aphin-autoencoder-based-port-hamiltonian-identification-networks">
-<h1>ApHIN - Autoencoder-based port-Hamiltonian Identification Networks<a class="headerlink" href="#aphin-autoencoder-based-port-hamiltonian-identification-networks" title="Link to this heading"></a></h1>
-<p>A data-driven framework for the identification of latent port-Hamiltonian systems [1].</p>
-<p><img alt="ApHIN" src="https://github.com/user-attachments/assets/0764f063-ced4-4b8e-af84-a7772c7d5c30" /></p>
-<section id="abstract">
-<h2>Abstract<a class="headerlink" href="#abstract" title="Link to this heading"></a></h2>
-<p>Conventional physics-based modeling techniques involve high effort, e.g.~time and expert knowledge, while data-driven methods often lack interpretability, structure, and sometimes reliability. To mitigate this, we present a data-driven system identification framework that derives models in the port-Hamiltonian (pH) formulation.
-This formulation is suitable for multi-physical systems while guaranteeing the useful system theoretical properties of passivity and stability.</p>
-<p>Our framework combines linear and nonlinear reduction with structured, physics-motivated system identification.
-In this process, high-dimensional state data obtained from possibly nonlinear systems serves as the input for an autoencoder, which then performs two tasks: (i) nonlinearly transforming and (ii) reducing this data onto a low-dimensional manifold. In the resulting latent space, a pH system is identified by considering the unknown matrix entries as weights of a neural network. The matrices strongly satisfy the pH matrix properties through Cholesky factorizations. In a joint optimization process over the loss term, the pH matrices are adjusted to match the dynamics observed by the data, while defining a linear pH system in the latent space per construction.
-The learned, low-dimensional pH system can describe even nonlinear systems and is rapidly computable due to its small size.</p>
-<p>The method is exemplified by a parametric mass-spring-damper and a nonlinear pendulum example as well as the high-dimensional model of a disc brake with linear thermoelastic behavior.</p>
-</section>
-<section id="features">
-<h2>Features<a class="headerlink" href="#features" title="Link to this heading"></a></h2>
-<p>This repository implements neural networks that identify linear port-Hamiltonian systems from (potentially high-dimensional) data[1].</p>
-<ul class="simple">
-<li><p>Autoencoders (AEs) for dimensionality reduction</p></li>
-<li><p>pH layer to identify system matrices that fullfill the definition of a linear pH system</p></li>
-<li><p>pHIN: identify a (parametric) low-dimensional port-Hamiltonian system directly</p></li>
-<li><p>ApHIN: identify a (parametric) low-dimensional latent port-Hamiltonian system based on coordinate representations found using an autoencoder</p></li>
-<li><p>Examples for the identification of linear pH systems from data</p>
-<ul>
-<li><p>One-dimensional mass-spring-damper chain</p></li>
-<li><p>Pendulum</p></li>
-<li><p>discbrake model</p></li>
-</ul>
-</li>
-</ul>
-</section>
-<section id="installation">
-<h2>Installation<a class="headerlink" href="#installation" title="Link to this heading"></a></h2>
-<p>You can either clone the repository and install the package locally or install it directly from PyPI.</p>
-<section id="pypi">
-<h3>PyPI<a class="headerlink" href="#pypi" title="Link to this heading"></a></h3>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>aphin
-</pre></div>
-</div>
-</section>
-<section id="local">
-<h3>Local<a class="headerlink" href="#local" title="Link to this heading"></a></h3>
-<p>Clone this repository and install it to your local environment as package using pip:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/Institute-Eng-and-Comp-Mechanics-UStgt/ApHIN.git
-<span class="nb">cd</span><span class="w"> </span>ApHIN
-</pre></div>
-</div>
-<p>Then you can activate the environment in which you want to install the package, and use pip to perform the installation.</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span>.
-</pre></div>
-</div>
-<blockquote>
-<div><p>:warning: <strong>Please note that you need pip version 24.0 to install the repository in editable mode. Either upgrade pip to the latest version or install it without the <code class="docutils literal notranslate"><span class="pre">-e</span></code> argument</strong></p>
-</div></blockquote>
-</section>
-</section>
-<section id="references">
-<h2>References<a class="headerlink" href="#references" title="Link to this heading"></a></h2>
-<p>[1] Johannes Rettberg, Jonas Kneifl, Julius Herb, Patrick Buchfink, Jörg Fehr, and Bernard Haasdonk. Data-driven identification of latent port-Hamiltonian systems. Arxiv, 2024.</p>
-<p>[2] Volker Mehrmann and Benjamin Unger. Control of port-hamiltonian differential-algebraic
-systems and applications, 2022.</p>
-<p>[3] Kathleen Champion, Bethany Lusch, J. Nathan Kutz, and Steven L. Brunton. Data-driven
-discovery of coordinates and governing equations. Proceedings of the National Academy of
-Sciences, 116(45):22445–22451, 2019.</p>
-</section>
-</section>
-<div class="toctree-wrapper compound">
+  <div class="toctree-wrapper compound">
 <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="aphin.html">aphin package</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="aphin.html#subpackages">Subpackages</a></li>
-<li class="toctree-l2"><a class="reference internal" href="aphin.html#module-aphin">Module contents</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">aphin</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="aphin.html">aphin package</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="contact.html">Contact</a></li>
@@ -157,7 +88,7 @@ Sciences, 116(45):22445–22451, 2019.</p>
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="aphin.html" class="btn btn-neutral float-right" title="aphin package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="modules.html" class="btn btn-neutral float-right" title="aphin" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
