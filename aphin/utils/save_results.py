@@ -1,4 +1,5 @@
 import os
+import numpy as np
 import shutil
 import pandas as pd
 
@@ -6,15 +7,79 @@ import pandas as pd
 def save_results(weight_dir, path_to_config, config_dict, result_dir, load_network):
     """
     calls the functions to save weights, config and writes to overview .csv
-    param weight_dir:   directory where to NN weights are saved
-    param path_to_config:  path to config.yml file
-    param config_dict:  (dict) config dictionary usually obtained from the Configuration class
-    param result_dir:   destination directory where the results are stored
-    param load_network: (bool) boolean if network is loaded in this experiment run
+
+    Parameters:
+    -----------
+    weight_dir : str
+        Directory where the neural network weights are saved.
+    path_to_config : str
+        The path to the configuration file (`config.yml`). This file should be a YAML file with
+        the experiment's configuration.
+    config_dict : dict
+        Configuration dictionary, typically obtained from the Configuration class.
+    result_dir : str
+        Destination directory where the results are stored. The overview CSV is written to the parent directory.
     """
     save_weights(weight_dir, result_dir, load_network)
     save_config(path_to_config, result_dir, load_network)
     write_to_experiment_overview(config_dict, result_dir, load_network)
+
+def save_evaluation_times(data_id, result_dir):
+    """
+    Save the evaluation times to a CSV file.
+
+    This function saves the evaluation times of the model to a CSV file in the specified `result_dir`.
+
+    Parameters:
+    -----------
+    data_id : Identified dataset of class aphin.utils.data.Dataset
+        DataIdentification object that contains the evaluation times.
+    result_dir : str
+        Destination directory where the results are stored.
+    """
+
+    for key, data_ in dict(train=data_id.TRAIN, test=data_id.TEST).items():
+        file_name = f"evaluation_times_{key}.csv"
+        file_dir = os.path.join(result_dir, file_name)
+        # print(range(1, data_.n_sim + 1))
+        header = ",".join([str(i) for i in list(range(1, data_.n_sim + 1))])
+        header = "mean," + header
+        solving_times = np.insert(data_.solving_times['per_run'], 0, data_.solving_times['mean'])[np.newaxis]
+
+        np.savetxt(
+            file_dir,
+            solving_times,
+            delimiter=",",
+            fmt="%s",
+            comments="",
+            header=header,
+        )
+
+def save_training_times(tran_hist, result_dir):
+    """
+    Save the training times to a CSV file.
+
+    Parameters:
+    -----------
+    tran_hist : History object from a Keras model
+        History object that contains the training times.
+    result_dir : str
+        Destination directory where the results are stored.
+    """
+    file_name = "training_time.csv"
+    file_dir = os.path.join(result_dir, file_name)
+    header = "epochs,time,time_per_epoch"
+    values = np.array([str(tran_hist.params['epochs']),
+                       str(tran_hist.history['time']),
+                       str(tran_hist.history['time_per_epoch'])])[np.newaxis]
+    np.savetxt(
+        file_dir,
+        values,
+        delimiter=",",
+        fmt="%s",
+        comments="",
+        header=header,
+    )
 
 
 def save_weights(weight_dir, result_dir, load_network):
