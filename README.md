@@ -1,6 +1,8 @@
 <!-- PROJECT SHIELDS -->
-[![arXiv][arxiv-shield]][arxiv-url]
-[![DOI][doi-shield]][doi-url]
+
+[//]: # ([![arXiv][arxiv-shield]][arxiv-url])
+
+[//]: # ([![DOI][doi-shield]][doi-url])
 [![Documentation Status][docs-shield]][docs-url]
 [![MIT License][license-shield]][license-url]
 
@@ -71,5 +73,5 @@ Sciences, 116(45):22445–22451, 2019.
 [doi-url]: https://doi.org/
 [arxiv-shield]: https://img.shields.io/badge/arXiv-
 [arxiv-url]: https://doi.org/
-[docs-url]: https://
+[docs-url]: https://Institute-Eng-and-Comp-Mechanics-UStgt.github.io/ApHIN
 [docs-shield]: https://img.shields.io/badge/docs-online-blue.svg
