@@ -4,7 +4,7 @@ setup_matplotlib: False  # Show plots and visualization
 
 # %% General identification framework settings
 experiment: final_new_data_var_exp_l_rec0.1_l_dz1_l_dx0.001 #    name of the experiment
-load_network: True  # train the network or load the last pre-trained one
+load_network: False  # train the network or load the last pre-trained one
 sim_name: sim_onlyHeat_1Point_smallHalton_newQ_d3_samp100  # sim_onlyHeat_1Point_smallHalton_d3_samp100
 file_url: https://darus.uni-stuttgart.de/file.xhtml?persistentId=doi:10.18419/darus-4418/1#
 ref_coords: disc_ref_coords.npy
@@ -12,8 +12,6 @@ faces:  disc_faces.npy
 
 seed: 1 #  For reproducibility
 
-# for first time use, creates data from .txt file from Abaqus
-create_data_from_txt: False
 # scaling_values: (list) scalar scalar values that each domain, defined by domain_split_vals, should be scaled with, if {None} it is scaled by the maximum value of each domain
 scaling_values: [1000,0.00001,0.00001] #[theta_scaling, disp_scaling, optional: velocity_scaling]
 # domain_split_vals: (list) integers that define the number of dofs for each domain, sum of all values needs to conincide with n_dn. If {None} it is considered as a single domain
