@@ -15,6 +15,8 @@ from aphin.utils.configuration import Configuration
 from aphin.utils.save_results import (
     save_weights,
     write_to_experiment_overview,
+    save_evaluation_times,
+    save_training_times
 )
 from aphin.utils.print_matrices import print_matrices
 
@@ -140,6 +142,7 @@ def main(config_path_to_file=None):
             verbose=2,
             callbacks=callback,
         )
+        save_training_times(train_hist, result_dir)
         aphin_vis.plot_train_history(train_hist)
         phin.load_weights(os.path.join(weight_dir, ".weights.h5"))
 
@@ -155,6 +158,7 @@ def main(config_path_to_file=None):
     _, _, _, _, mu_test = msd_data.test_data
     n_t_test = msd_data.n_t_test
     print_matrices(system_layer, mu=mu_test, n_t=n_t_test, data=msd_data)
+    save_evaluation_times(msd_data_id, result_dir)
 
     msd_data.calculate_errors(msd_data_id, domain_split_vals=[1, 1])
     use_train_data = False
