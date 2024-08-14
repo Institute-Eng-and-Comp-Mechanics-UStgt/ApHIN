@@ -12,8 +12,6 @@ faces:  disc_faces.npy
 
 seed: 1 #  For reproducibility
 
-# for first time use, creates data from .txt file from Abaqus
-create_data_from_txt: False
 # scaling_values: (list) scalar scalar values that each domain, defined by domain_split_vals, should be scaled with, if {None} it is scaled by the maximum value of each domain
 scaling_values: [1000,0.00001,0.00001] #[theta_scaling, disp_scaling, optional: velocity_scaling]
 # domain_split_vals: (list) integers that define the number of dofs for each domain, sum of all values needs to conincide with n_dn. If {None} it is considered as a single domain
