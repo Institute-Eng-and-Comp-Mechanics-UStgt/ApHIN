@@ -12,6 +12,8 @@ from aphin.utils.data import PHIdentifiedDataset, DiscBrakeDataset
 from aphin.utils.save_results import (
     save_weights,
     write_to_experiment_overview,
+    save_evaluation_times,
+    save_training_times,
 )
 from aphin.identification import APHIN
 from aphin.layers.phq_layer import PHQLayer
@@ -193,6 +195,7 @@ def main(
             verbose=2,
             callbacks=callback,
         )
+        save_training_times(train_hist, result_dir)
         aphin_vis.plot_train_history(train_hist)
 
         # load best weights
@@ -224,6 +227,7 @@ def main(
     disc_brake_data_id = PHIdentifiedDataset.from_identification(
         disc_brake_data, system_layer, aphin, integrator_type="imr"
     )
+    save_evaluation_times(disc_brake_data_id, result_dir)
 
     # %% calculate errors
     disc_brake_data.calculate_errors(
