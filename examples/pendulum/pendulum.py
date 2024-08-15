@@ -16,7 +16,7 @@ from aphin.utils.save_results import (
     save_weights,
     write_to_experiment_overview,
     save_training_times,
-    save_evaluation_times
+    save_evaluation_times,
 )
 from aphin.utils.print_matrices import print_matrices
 
@@ -78,7 +78,12 @@ def main(config_path_to_file=None):
     r = pd_cfg[experiment]["r"]
     n_f = pd_cfg["n_n"] * pd_cfg["n_dn"]
     cache_path = os.path.join(data_dir, "pendulum.npz")
-    pendulum_data = Dataset.from_data(cache_path)
+    try:
+        pendulum_data = Dataset.from_data(cache_path)
+    except FileNotFoundError:
+        raise FileNotFoundError(
+            f"File could not be found. If this is the first time you run this example, please execute the data generating script `./pendulum_data_generation.py` first."
+        )
     pendulum_data.train_test_split(test_size=0.333, seed=pd_cfg["seed"])
     pendulum_data.truncate_time(trunc_time_ratio=pd_cfg["trunc_time_ratio"])
     pendulum_data.states_to_features()

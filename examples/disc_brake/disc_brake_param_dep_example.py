@@ -245,6 +245,17 @@ def main(
         yscale="log",
     )
 
+    # %% plot trajectories
+    use_train_data = False
+    idx_gen = "rand"
+    aphin_vis.plot_time_trajectories_all(
+        disc_brake_data,
+        disc_brake_data_id,
+        use_train_data=use_train_data,
+        idx_gen=idx_gen,
+        result_dir=result_dir,
+    )
+
     # %% 3D plots
     # save each test parameter set as csv
     for i, mu_ in enumerate(disc_brake_data.TEST.Mu):
@@ -367,17 +378,6 @@ def main(
                 animation_name=os.path.join(video_dir, f"{key}_sim_{sim_id}"),
                 close_on_end=True,
             )
-
-    # %% plot trajectories
-    use_train_data = False
-    idx_gen = "rand"
-    aphin_vis.plot_time_trajectories_all(
-        disc_brake_data,
-        disc_brake_data_id,
-        use_train_data=use_train_data,
-        idx_gen=idx_gen,
-        result_dir=result_dir,
-    )
 
 
 # parameter variation for multiple experiment runs
