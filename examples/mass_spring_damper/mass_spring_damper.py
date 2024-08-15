@@ -16,7 +16,7 @@ from aphin.utils.save_results import (
     save_weights,
     write_to_experiment_overview,
     save_evaluation_times,
-    save_training_times
+    save_training_times,
 )
 from aphin.utils.print_matrices import print_matrices
 
@@ -75,7 +75,13 @@ def main(config_path_to_file=None):
     cache_path = os.path.join(data_dir, msd_cfg["sim_name"])
 
     # %% Load data
-    msd_data = Dataset.from_data(cache_path)
+    try:
+        msd_data = Dataset.from_data(cache_path)
+    except FileNotFoundError:
+        raise FileNotFoundError(
+            f"File could not be found. If this is the first time you run this example, please execute the data generating script `./state_space_ph/mass_spring_damper_data_gen.py` first"
+        )
+
     # split into train and test data
     msd_data.train_test_split(test_size=msd_cfg["test_size"], seed=msd_cfg["seed"])
     # scale data
@@ -162,7 +168,11 @@ def main(config_path_to_file=None):
 
     msd_data.calculate_errors(msd_data_id, domain_split_vals=[1, 1])
     use_train_data = False
-    aphin_vis.plot_errors(msd_data, use_train_data)
+    aphin_vis.plot_errors(
+        msd_data,
+        use_train_data,
+        save_name=os.path.join(result_dir, "rms_error"),
+    )
 
     msd_data.calculate_errors(msd_data_id, save_to_txt=True, result_dir=result_dir)
 
