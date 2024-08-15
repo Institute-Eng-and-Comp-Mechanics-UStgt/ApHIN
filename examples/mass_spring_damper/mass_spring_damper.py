@@ -79,7 +79,7 @@ def main(config_path_to_file=None):
         msd_data = Dataset.from_data(cache_path)
     except FileNotFoundError:
         raise FileNotFoundError(
-            f"File could not be found. If this is the first time you run this example, please execute the data generating script `./state_space_ph/mass_spring_damper_data_gen.py` first"
+            f"File could not be found. If this is the first time you run this example, please execute the data generating script `./state_space_ph/mass_spring_damper_data_gen.py` first."
         )
 
     # split into train and test data
