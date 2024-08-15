@@ -45,7 +45,6 @@ classifiers = [
 
 [project.optional-dependencies]
 gui = [
-    "visualizer-3d",
 ]
 interfaces = [
 ]
