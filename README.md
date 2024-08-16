@@ -1,8 +1,7 @@
 <!-- PROJECT SHIELDS -->
 
-[//]: # ([![arXiv][arxiv-shield]][arxiv-url])
-
-[//]: # ([![DOI][doi-shield]][doi-url])
+[![arXiv][arxiv-shield]][arxiv-url]
+[![DOI][doi-shield]][doi-url]
 [![Documentation Status][docs-shield]][docs-url]
 [![MIT License][license-shield]][license-url]
 
@@ -69,9 +68,9 @@ Sciences, 116(45):22445–22451, 2019.
 
 [license-shield]: https://img.shields.io/github/license/Institute-Eng-and-Comp-Mechanics-UStgt/ApHIN.svg
 [license-url]: https://github.com/Institute-Eng-and-Comp-Mechanics-UStgt/ApHIN/blob/main/LICENSE
-[doi-shield]: https://zenodo.org/badge/DOI/
-[doi-url]: https://doi.org/
-[arxiv-shield]: https://img.shields.io/badge/arXiv-
-[arxiv-url]: https://doi.org/
+[doi-shield]: https://img.shields.io/badge/DOI-10.18419/darus--4446-blue
+[doi-url]: https://doi.org/10.18419/darus-4446
+[arxiv-shield]: https://img.shields.io/badge/arXiv-2408.08185-b31b1b.svg
+[arxiv-url]: [https://doi.org/](https://doi.org/10.48550/arXiv.2408.08185)
 [docs-url]: https://Institute-Eng-and-Comp-Mechanics-UStgt.github.io/ApHIN
 [docs-shield]: https://img.shields.io/badge/docs-online-blue.svg
