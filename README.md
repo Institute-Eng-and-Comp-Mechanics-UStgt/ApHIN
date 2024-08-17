@@ -23,7 +23,7 @@ The method is exemplified by a parametric mass-spring-damper and a nonlinear pen
 ## Features
 This repository implements neural networks that identify linear port-Hamiltonian systems from (potentially high-dimensional) data[1].
 * Autoencoders (AEs) for dimensionality reduction
-* pH layer to identify system matrices that fullfill the definition of a linear pH system
+* pH layer to identify system matrices that fulfill the definition of a linear pH system
 * pHIN: identify a (parametric) low-dimensional port-Hamiltonian system directly
 * ApHIN: identify a (parametric) low-dimensional latent port-Hamiltonian system based on coordinate representations found using an autoencoder
 * Examples for the identification of linear pH systems from data
