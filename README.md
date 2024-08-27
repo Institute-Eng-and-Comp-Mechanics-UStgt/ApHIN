@@ -23,7 +23,7 @@ The method is exemplified by a parametric mass-spring-damper and a nonlinear pen
 ## Features
 This repository implements neural networks that identify linear port-Hamiltonian systems from (potentially high-dimensional) data[1].
 * Autoencoders (AEs) for dimensionality reduction
-* pH layer to identify system matrices that fullfill the definition of a linear pH system
+* pH layer to identify system matrices that fulfill the definition of a linear pH system
 * pHIN: identify a (parametric) low-dimensional port-Hamiltonian system directly
 * ApHIN: identify a (parametric) low-dimensional latent port-Hamiltonian system based on coordinate representations found using an autoencoder
 * Examples for the identification of linear pH systems from data
@@ -68,9 +68,9 @@ Sciences, 116(45):22445–22451, 2019.
 
 [license-shield]: https://img.shields.io/github/license/Institute-Eng-and-Comp-Mechanics-UStgt/ApHIN.svg
 [license-url]: https://github.com/Institute-Eng-and-Comp-Mechanics-UStgt/ApHIN/blob/main/LICENSE
-[doi-shield]: https://img.shields.io/badge/DOI-10.18419/darus--4446-blue
+[doi-shield]: https://img.shields.io/badge/doi-10.18419%2Fdarus--4446-d45815.svg
 [doi-url]: https://doi.org/10.18419/darus-4446
 [arxiv-shield]: https://img.shields.io/badge/arXiv-2408.08185-b31b1b.svg
-[arxiv-url]: [https://doi.org/](https://doi.org/10.48550/arXiv.2408.08185)
+[arxiv-url]: https://doi.org/10.48550/arXiv.2408.08185
 [docs-url]: https://Institute-Eng-and-Comp-Mechanics-UStgt.github.io/ApHIN
 [docs-shield]: https://img.shields.io/badge/docs-online-blue.svg
