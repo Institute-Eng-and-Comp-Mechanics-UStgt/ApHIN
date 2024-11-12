@@ -10,6 +10,14 @@ A data-driven framework for the identification of latent port-Hamiltonian system
 
 ![ApHIN](https://github.com/user-attachments/assets/0764f063-ced4-4b8e-af84-a7772c7d5c30)
 
+## Reference 
+The preprint is available on [arXiv](https://doi.org/10.48550/arXiv.2408.08185).
+If you use this project for academic work, please consider citing it
+
+>
+    Rettberg, J., Kneifl, J., Herb, J., Buchfink, P., Fehr, J., & Haasdonk, B. (2024).
+    Data-driven identification of latent port-Hamiltonian systems. arXiv preprint arXiv:2408.08185.
+
 ## Abstract
 Conventional physics-based modeling techniques involve high effort, e.g.~time and expert knowledge, while data-driven methods often lack interpretability, structure, and sometimes reliability. To mitigate this, we present a data-driven system identification framework that derives models in the port-Hamiltonian (pH) formulation. 
 This formulation is suitable for multi-physical systems while guaranteeing the useful system theoretical properties of passivity and stability. 
