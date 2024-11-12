@@ -15,8 +15,8 @@ The preprint is available on [arXiv](https://doi.org/10.48550/arXiv.2408.08185).
 If you use this project for academic work, please consider citing it
 
 >
-    Rettberg, J., Kneifl, J., Herb, J., Buchfink, P., Fehr, J., & Haasdonk, B. (2024).
-    Data-driven identification of latent port-Hamiltonian systems. arXiv preprint arXiv:2408.08185.
+    Johannes Rettberg, Jonas Kneifl, Julius Herb, Patrick Buchfink, Jörg Fehr, and Bernard Haasdonk. 
+    Data-driven identification of latent port-Hamiltonian systems. Arxiv, 2024.
 
 ## Abstract
 Conventional physics-based modeling techniques involve high effort, e.g.~time and expert knowledge, while data-driven methods often lack interpretability, structure, and sometimes reliability. To mitigate this, we present a data-driven system identification framework that derives models in the port-Hamiltonian (pH) formulation. 
