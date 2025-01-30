@@ -5,6 +5,7 @@ import os
 
 # third party packages
 import tensorflow as tf
+import matplotlib.pyplot as plt
 
 # own packages
 from visualizer import Visualizer
@@ -180,6 +181,7 @@ def main(
         optimizer=tf.keras.optimizers.Adam(learning_rate=db_cfg["lr"]),
         loss=tf.keras.losses.MSE,
     )
+    aphin.build(input_shape=([x.shape, dx_dt.shape, u.shape, mu.shape], None))
 
     # Fit or learn neural network
     if db_cfg["load_network"]:
@@ -255,6 +257,9 @@ def main(
         idx_gen=idx_gen,
         result_dir=result_dir,
     )
+
+    # avoid that the script stops and keep the plots open
+    plt.show()
 
     # %% 3D plots
     # save each test parameter set as csv
@@ -378,6 +383,7 @@ def main(
                 animation_name=os.path.join(video_dir, f"{key}_sim_{sim_id}"),
                 close_on_end=True,
             )
+
 
 
 # parameter variation for multiple experiment runs

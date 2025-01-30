@@ -43,64 +43,32 @@ def setup_matplotlib(save_plots=False):
       labels on the axes are large.
     - The function updates `rcParams` multiple times to apply the desired settings for either saving or displaying plots.
     """
+
     if save_plots:
-        if not os.path.exists("results"):
-            os.makedirs("results")
+        # Ensure the "results" directory exists
+        os.makedirs("results", exist_ok=True)
+        # Use PGF backend for saving plots
         matplotlib.use("pgf")
-        plt.rcParams.update(
-            {
-                "pgf.texsystem": "pdflatex",
-                "pgf.rcfonts": False,
-                "pgf.preamble": "\n".join(
-                    [
-                        r"\usepackage{amsmath}",
-                        r"\usepackage{bm}",
-                    ]
-                ),
-            }
-        )
-    plt.rcParams.update(
-        {
-            "text.usetex": True,
-            "text.latex.preamble": "\n".join(
-                [
-                    r"\usepackage{amsmath}",
-                    r"\usepackage{bm}",
-                ]
-            ),
-            "font.family": "serif",
-            "font.serif": "Computer Modern Roman",
-            "font.size": 11,
-            "axes.labelsize": "large",
-        }
-    )
-    plt.rcParams.update(
-        {
-            "pgf.texsystem": "lualatex",
-            "pgf.rcfonts": False,
-            "pgf.preamble": "\n".join(
-                [
-                    r"\usepackage{amsmath}",
-                    r"\usepackage{bm}",
-                ]
-            ),
-        }
-    )
-    plt.rcParams.update(
-        {
-            "text.usetex": True,
-            "text.latex.preamble": "\n".join(
-                [
-                    r"\usepackage{amsmath}",
-                    r"\usepackage{bm}",
-                ]
-            ),
-            "font.family": "serif",
-            "font.serif": "Computer Modern Roman",
-            "font.size": 11,
-            "axes.labelsize": "large",
-        }
-    )
+    else:
+        matplotlib.use("TkAgg")  # Interactive backend for display
+
+    # Define common LaTeX preamble
+    latex_preamble = "\n".join([
+        r"\usepackage{amsmath}",
+        r"\usepackage{bm}",
+    ])
+
+    # Update matplotlib rcParams (only once)
+    plt.rcParams.update({
+        "pgf.texsystem": "pdflatex",  # Choose either "pdflatex" or "lualatex"
+        "pgf.rcfonts": False,
+        "text.usetex": True,
+        "text.latex.preamble": latex_preamble,
+        "font.family": "serif",
+        "font.serif": "Computer Modern Roman",
+        "font.size": 11,
+        "axes.labelsize": "large",
+    })
 
 
 def animate_parameter_sweep(

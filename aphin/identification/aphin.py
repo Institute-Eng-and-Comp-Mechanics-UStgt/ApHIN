@@ -544,7 +544,7 @@ class APHIN(PHBasemodel, ABC):
 
         # we only calculate the reconstruction loss for the reconstruction of the pca encoded input
         # because this is the only trainable part and the computational cost is reduced
-        rec_loss = self.l_rec * self.compute_loss(_, xr, xr_)
+        rec_loss = self.l_rec * self.compute_loss(None, xr, xr_)
 
         # for conformity with other get_loss functions return 0 for other losses
         dz_loss = 0
@@ -654,14 +654,14 @@ class APHIN(PHBasemodel, ABC):
             dxr_dz = self.reshape_dxr_dz(dxr_dz)
             # calculate first time derivative of the reconstructed state by application of the chain rule
             dxf_dt = dxr_dz @ dz_dt_system
-            dx_loss = self.l_dx * self.compute_loss(z, dxf_dt, dxr_dt_lhs)
+            dx_loss = self.l_dx * self.compute_loss(None, dxf_dt, dxr_dt_lhs)
         else:
             dx_loss = 0.0
         # calculate losses
-        rec_loss = self.l_rec * self.compute_loss(z, xr, xr_)
+        rec_loss = self.l_rec * self.compute_loss(None, xr, xr_)
         dz_loss = (
             self.l_dz
-            * self.compute_loss(z, dz_dt_lhs, dz_dt_system)
+            * self.compute_loss(None, dz_dt_lhs, dz_dt_system)
             / tf.reduce_mean(tf.abs(dz_dt_lhs))
         )
         return rec_loss, dz_loss, dx_loss

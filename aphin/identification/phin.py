@@ -198,7 +198,7 @@ class PHIN(PHBasemodel, ABC):
             mu = tf.zeros([tf.shape(x)[0], 0])
         dx_dt_system = self.system_network([x, u, mu])
 
-        dz_loss = self.compiled_loss(dx_dt_lhs, dx_dt_system)
+        dz_loss = self.compute_loss(None, dx_dt_lhs, dx_dt_system)
 
         # add regularization losses
         if self.system_network.losses:
