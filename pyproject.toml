@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "aphin"
-version = "1.01"
+version = "1.0.1"
 authors = [
   { name="Jonas Kneifl", email="jonas.kneifl@itm.uni-stuttgart.com" },
   { name="Johannes Rettberg", email="johannes.rettberg@itm.uni-stuttgart.com" },
