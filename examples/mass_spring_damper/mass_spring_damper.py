@@ -186,7 +186,7 @@ def main(config_path_to_file=None):
     )
 
     # plot chessboard visualisation
-    test_ids = [0, 1, 3, 6, 7]  # test_ids = range(10) # range(6) test_ids = [0]
+    # test_ids = [0, 1, 3, 6, 7]  # test_ids = range(10) # range(6) test_ids = [0]
     # aphin_vis.chessboard_visualisation(test_ids, system_layer, msd_data, result_dir)
 
     # avoid that the script stops and keep the plots open
