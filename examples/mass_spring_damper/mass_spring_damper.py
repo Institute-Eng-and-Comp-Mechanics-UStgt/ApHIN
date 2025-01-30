@@ -4,6 +4,9 @@ import os
 
 # third party packages
 import tensorflow as tf
+# import matplotlib
+# matplotlib.use("TkAgg")  # Force interactive backend
+import matplotlib.pyplot as plt
 
 # own packages
 import aphin.utils.visualizations as aphin_vis
@@ -19,7 +22,6 @@ from aphin.utils.save_results import (
     save_training_times,
 )
 from aphin.utils.print_matrices import print_matrices
-
 
 def main(config_path_to_file=None):
     # {None} if no config file shall be loaded, else create str with path to config file
@@ -130,6 +132,7 @@ def main(config_path_to_file=None):
         optimizer=tf.keras.optimizers.Adam(learning_rate=msd_cfg["lr"]),
         loss=tf.keras.losses.MSE,
     )
+    phin.build(input_shape=([x.shape, dx_dt.shape, u.shape, mu.shape], None))
 
     # phin.load_weights(data_path_weights_filename)
     if msd_cfg["load_network"]:
@@ -183,9 +186,11 @@ def main(config_path_to_file=None):
     )
 
     # plot chessboard visualisation
-    test_ids = [0, 1, 3, 6, 7]  # test_ids = range(10) # range(6) test_ids = [0]
-    aphin_vis.chessboard_visualisation(test_ids, system_layer, msd_data, result_dir)
+    # test_ids = [0, 1, 3, 6, 7]  # test_ids = range(10) # range(6) test_ids = [0]
+    # aphin_vis.chessboard_visualisation(test_ids, system_layer, msd_data, result_dir)
 
+    # avoid that the script stops and keep the plots open
+    plt.show()
 
 if __name__ == "__main__":
     main()

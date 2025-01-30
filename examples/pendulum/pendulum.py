@@ -4,6 +4,7 @@ import os
 
 # third party packages
 import tensorflow as tf
+import matplotlib.pyplot as plt
 
 # own packages
 import aphin.utils.visualizations as aphin_vis
@@ -128,6 +129,7 @@ def main(config_path_to_file=None):
         optimizer=tf.keras.optimizers.Adam(learning_rate=pd_cfg["lr"]),
         loss=tf.keras.losses.MSE,
     )
+    aphin.build(input_shape=([x.shape, dx_dt.shape], None))
 
     callback = callbacks(
         weight_dir,
@@ -216,6 +218,8 @@ def main(config_path_to_file=None):
     if r != n_f:
         pendulum_data_id.TEST.save_latent_traj_as_csv(result_dir)
 
+    # avoid that the script stops and keep the plots open
+    plt.show()
 
 if __name__ == "__main__":
     main()
