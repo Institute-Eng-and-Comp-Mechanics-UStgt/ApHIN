@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "aphin"
-version = "1.0"
+version = "1.01"
 authors = [
   { name="Jonas Kneifl", email="jonas.kneifl@itm.uni-stuttgart.com" },
   { name="Johannes Rettberg", email="johannes.rettberg@itm.uni-stuttgart.com" },
@@ -12,7 +12,7 @@ authors = [
 ]
 description = "Autoencoder-based port-Hamiltonian Identification Networks (ApHIN) is a Python package for structure-preserving model order reduction and system identification of port-Hamiltonian systems."
 readme = "README.md"
-requires-python = ">=3.8"
+requires-python = ">=3.11"
 dependencies = [
     "matplotlib>=3.7",
     "numpy>=1.21.4",
