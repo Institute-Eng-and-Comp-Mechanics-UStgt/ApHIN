@@ -1067,3 +1067,34 @@ class DiscBrakeDataset(Dataset):
         if save_cache:
             cls.save_data(cache_path, t, X, U, Mu=Mu)
         return cls(t=t, X=X, U=U, Mu=Mu, use_velocities=use_velocities, **kwargs)
+
+class SynRMDataset(Dataset):
+    def __init__(
+        self, t, X, X_dt=None, U=None, Mu=None, J=None, R=None, Q=None, B=None
+    ):
+        super().__init__(t, X, X_dt, U, Mu, J, R, Q, B)
+
+    @classmethod
+    def from_matlab(cls, data_path):
+
+        if not os.path.isfile(data_path):
+            raise ValueError(f"The given path does not lead to a file.")
+        if not data_path.endswith(".mat"):
+            raise ValueError(
+                f"The given file is not a .mat file or the .mat extension is not given."
+            )
+
+        # load mat file
+        mat = scipy.io.loadmat(data_path)
+        U = mat["U"]
+        X = mat["X"]
+        t = mat["time"]
+
+        # add dimension for node DOFs
+        if X.ndim == 3:
+            X = X[..., np.newaxis]
+
+        if t.ndim == 2:
+            t = np.squeeze(t)
+
+        return cls(t=t, X=X, U=U)
