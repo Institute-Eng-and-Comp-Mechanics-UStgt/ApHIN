@@ -141,13 +141,13 @@ class PHSystem(LTISystem, CheckPHProperties):
             raise ValueError("Insert pH square matrix of size (r,r)")
         self.check_pH_properties(self.J_ph, self.R_ph, self.Q_ph)
         if B is not None:
-            self.B_ph = B
+            self.B_ph = np.squeeze(B)
             self.C_ph = self.B_ph.T @ self.Q_ph
         else:
             self.B_ph = B
             self.C_ph = None
         A = (self.J_ph - self.R_ph) @ self.Q_ph
-        super(PHSystem, self).__init__(A, B)
+        super(PHSystem, self).__init__(A, self.B_ph)
 
     def H(self, x):
         """
