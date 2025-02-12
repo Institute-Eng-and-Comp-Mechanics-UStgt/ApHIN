@@ -300,20 +300,30 @@ class Dataset(Data):
         if self.Mu is not None:
             Mu_test = self.Mu[sim_idx_test]
             Mu = self.Mu[sim_idx_train]
+        else:
+            Mu_test, Mu = [None] * 2
 
         # ph matrices
         if self.J is not None:
             J_test = self.J[sim_idx_test, :, :]
             J = self.J[sim_idx_train, :, :]
+        else:
+            J_test, J = [None] * 2
         if self.R is not None:
             R_test = self.R[sim_idx_test, :, :]
             R = self.R[sim_idx_train, :, :]
+        else:
+            R_test, R = [None] * 2
         if self.Q is not None:
             Q_test = self.Q[sim_idx_test, :, :]
             Q = self.Q[sim_idx_train, :, :]
+        else:
+            Q_test, Q = [None] * 2
         if self.B is not None:
             B_test = self.B[sim_idx_test, :, :]
             B = self.B[sim_idx_train, :, :]
+        else:
+            B_test, B = [None] * 2
 
         self.TRAIN = Data(
             self.t,
@@ -1070,6 +1080,7 @@ class DiscBrakeDataset(Dataset):
         if save_cache:
             cls.save_data(cache_path, t, X, U, Mu=Mu)
         return cls(t=t, X=X, U=U, Mu=Mu, use_velocities=use_velocities, **kwargs)
+
 
 class SynRMDataset(Dataset):
     def __init__(
