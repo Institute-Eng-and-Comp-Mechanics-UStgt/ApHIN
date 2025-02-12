@@ -1174,6 +1174,8 @@ def single_error_plot(
             mean_norm_rms_error = mean_norm_rms_error[::data_point_stepping]
             norm_rms_error = norm_rms_error[:, ::data_point_stepping]
         # concatenate data
+        if t.ndim == 1:
+            t = t[:, np.newaxis]
         data_array = np.concatenate(
             (t, np.transpose(norm_rms_error), mean_norm_rms_error[:, np.newaxis]),
             axis=1,
