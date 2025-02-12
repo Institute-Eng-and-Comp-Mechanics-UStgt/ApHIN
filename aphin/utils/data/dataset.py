@@ -55,7 +55,9 @@ class Dataset(Data):
     - This class is designed to facilitate the handling of multiple datasets, including training and testing datasets.
     """
 
-    def __init__(self, t, X, X_dt, U=None, Mu=None, J=None, R=None, Q=None, B=None):
+    def __init__(
+        self, t, X, X_dt=None, U=None, Mu=None, J=None, R=None, Q=None, B=None
+    ):
         super().__init__(t, X, X_dt, U, Mu, J, R, Q, B)
         # initialize train and test data objects
         self.TRAIN = None
