@@ -53,22 +53,26 @@ def setup_matplotlib(save_plots=False):
         matplotlib.use("TkAgg")  # Interactive backend for display
 
     # Define common LaTeX preamble
-    latex_preamble = "\n".join([
-        r"\usepackage{amsmath}",
-        r"\usepackage{bm}",
-    ])
+    latex_preamble = "\n".join(
+        [
+            r"\usepackage{amsmath}",
+            r"\usepackage{bm}",
+        ]
+    )
 
     # Update matplotlib rcParams (only once)
-    plt.rcParams.update({
-        "pgf.texsystem": "pdflatex",  # Choose either "pdflatex" or "lualatex"
-        "pgf.rcfonts": False,
-        "text.usetex": True,
-        "text.latex.preamble": latex_preamble,
-        "font.family": "serif",
-        "font.serif": "Computer Modern Roman",
-        "font.size": 11,
-        "axes.labelsize": "large",
-    })
+    plt.rcParams.update(
+        {
+            "pgf.texsystem": "pdflatex",  # Choose either "pdflatex" or "lualatex"
+            "pgf.rcfonts": False,
+            "text.usetex": True,
+            "text.latex.preamble": latex_preamble,
+            "font.family": "serif",
+            "font.serif": "Computer Modern Roman",
+            "font.size": 11,
+            "axes.labelsize": "large",
+        }
+    )
 
 
 def animate_parameter_sweep(
