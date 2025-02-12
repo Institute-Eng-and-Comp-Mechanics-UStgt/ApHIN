@@ -10,6 +10,7 @@ import re
 from natsort import natsorted
 from sklearn.model_selection import train_test_split
 from tqdm import tqdm
+import scipy
 
 # own package
 from aphin.utils.data import Data, PHIdentifiedData
