@@ -231,7 +231,7 @@ class LTILayer(SystemLayer):
 
         return J, R, B
 
-    #  @tf.function
+     @tf.function
     def call(self, z, u=None, mu=None, training=False):
         """
         Evaluate right-hand side of the ODE system z'(t) = f(z, u, mu) for inputs (z, u, mu).

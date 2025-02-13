@@ -58,12 +58,18 @@ def setup_matplotlib(save_plots=False):
         r"\usepackage{bm}",
     ])
 
+    pgf_preamble = "\n".join([
+        r"\usepackage{amsmath}",
+        r"\usepackage{bm}",
+    ])
+
     # Update matplotlib rcParams (only once)
     plt.rcParams.update({
         "pgf.texsystem": "pdflatex",  # Choose either "pdflatex" or "lualatex"
         "pgf.rcfonts": False,
         "text.usetex": True,
         "text.latex.preamble": latex_preamble,
+        "pgf.preamble": pgf_preamble,
         "font.family": "serif",
         "font.serif": "Computer Modern Roman",
         "font.size": 11,
@@ -1924,7 +1930,7 @@ def chessboard_visualisation(test_ids, system_layer, data, result_dir):
     fig.tight_layout()
 
 
-def plot_train_history(train_hist):
+def plot_train_history(train_hist, validation=False, save_name="train_history"):
     """
     Plots the training history of a machine learning model.
 
@@ -1945,14 +1951,20 @@ def plot_train_history(train_hist):
     None
         The function does not return any value. It generates and displays a plot of the training history.
     """
+    if validation:
+        name_extension = "val_"
+    else:
+        name_extension = ""
     # plot training history
     plt.figure()
-    plt.semilogy(train_hist.history["loss"], label="loss")
-    plt.semilogy(train_hist.history["dz_loss"], label="dz")
+    plt.semilogy(train_hist.history[f"{name_extension}loss"], label="loss")
+    plt.semilogy(train_hist.history[f"{name_extension}dz_loss"], label="dz")
     try:
-        plt.semilogy(train_hist.history["dx_loss"], label="dx")
-        plt.semilogy(train_hist.history["rec_loss"], label="rec")
+        plt.semilogy(train_hist.history[f"{name_extension}dx_loss"], label="dx")
+        plt.semilogy(train_hist.history[f"{name_extension}rec_loss"], label="rec")
     except KeyError:
         pass
     plt.semilogy(train_hist.history["reg_loss"], label="reg")
     plt.legend()
+
+    save_as_png(f"{save_name}{name_extension}")

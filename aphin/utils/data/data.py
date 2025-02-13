@@ -17,11 +17,9 @@ from aphin.utils.transformations import (
     reshape_inputs_to_features,
     reshape_features_to_states,
 )
-from aphin.systems.ph_systems import PHSystem
-from aphin.identification import PHIN
-from aphin.identification import APHIN
-from aphin.layers.ph_layer import PHLayer
-from aphin.layers.phq_layer import PHQLayer
+from aphin.systems import PHSystem
+from aphin.identification import PHIN, APHIN
+from aphin.layers import PHLayer, PHQLayer, LTILayer
 
 
 class Data(ABC):
@@ -1769,7 +1767,7 @@ class PHIdentifiedData(Data):
             J_ph, R_ph, B_ph, Q_ph = system_layer.get_system_matrices(
                 data.mu, n_t=data.n_t
             )
-        elif isinstance(system_layer, PHLayer):
+        elif isinstance(system_layer, PHLayer) or isinstance(system_layer, LTILayer):
             J_ph, R_ph, B_ph = system_layer.get_system_matrices(data.mu, n_t=data.n_t)
             Q_ph = None
         else:

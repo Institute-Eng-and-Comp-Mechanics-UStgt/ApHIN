@@ -2,6 +2,7 @@
 import logging
 import os
 
+import numpy as np
 # third party packages
 import tensorflow as tf
 # import matplotlib
@@ -11,7 +12,7 @@ import matplotlib.pyplot as plt
 # own packages
 import aphin.utils.visualizations as aphin_vis
 from aphin.identification import PHIN
-from aphin.layers import PHLayer
+from aphin.layers import PHLayer, LTILayer
 from aphin.utils.data import Dataset, PHIdentifiedDataset
 from aphin.utils.callbacks_tensorflow import callbacks
 from aphin.utils.configuration import Configuration
@@ -21,6 +22,7 @@ from aphin.utils.save_results import (
     save_evaluation_times,
     save_training_times,
 )
+from aphin.utils.visualizations import save_as_png
 from aphin.utils.print_matrices import print_matrices
 
 def main(config_path_to_file=None):
@@ -62,7 +64,7 @@ def main(config_path_to_file=None):
     data_dir, log_dir, weight_dir, result_dir = configuration.directories
 
     # set up matplotlib
-    aphin_vis.setup_matplotlib(msd_cfg["setup_matplotlib"])
+    aphin_vis.setup_matplotlib(msd_cfg["save_plots"])
 
     # Reproducibility
     # tf.config.run_functions_eagerly(True)
@@ -86,6 +88,8 @@ def main(config_path_to_file=None):
 
     # split into train and test data
     msd_data.train_test_split(test_size=msd_cfg["test_size"], seed=msd_cfg["seed"])
+    msd_data.truncate_time(trunc_time_ratio=msd_cfg["trunc_time_ratio"])
+
     # scale data
     msd_data.scale_Mu(desired_bounds=msd_cfg["desired_bounds"])
     msd_data.states_to_features()
@@ -115,15 +119,27 @@ def main(config_path_to_file=None):
     )
 
     regularizer = tf.keras.regularizers.L1L2(l1=msd_cfg["l1"], l2=msd_cfg["l2"])
-    system_layer = PHLayer(
-        n_f,
-        n_u=n_u,
-        n_mu=n_mu,
-        regularizer=regularizer,
-        name="ph_layer",
-        layer_sizes=msd_cfg["layer_sizes_ph"],
-        activation=msd_cfg["activation_ph"],
-    )
+
+    if "ph" in msd_cfg["experiment"]:
+        system_layer = PHLayer(
+            n_f,
+            n_u=n_u,
+            n_mu=n_mu,
+            regularizer=regularizer,
+            name="ph_layer",
+            layer_sizes=msd_cfg["layer_sizes_ph"],
+            activation=msd_cfg["activation_ph"],
+        )
+    elif "lti" in msd_cfg["experiment"]:
+        system_layer = LTILayer(
+            n_f,
+            n_u=n_u,
+            n_mu=n_mu,
+            regularizer=regularizer,
+            name="lti_layer",
+            layer_sizes=msd_cfg["layer_sizes_ph"],
+            activation=msd_cfg["activation_ph"],
+        )
 
     phin = PHIN(n_f, x=x, u=u, mu=mu, system_layer=system_layer, name="phin")
 
@@ -152,7 +168,8 @@ def main(config_path_to_file=None):
             callbacks=callback,
         )
         save_training_times(train_hist, result_dir)
-        aphin_vis.plot_train_history(train_hist)
+        aphin_vis.plot_train_history(train_hist, save_name=os.path.join(result_dir, "train_history"))
+        aphin_vis.plot_train_history(train_hist, validation=True, save_name=os.path.join(result_dir, "train_history"))
         phin.load_weights(os.path.join(weight_dir, ".weights.h5"))
 
     # write data to results directory
@@ -168,6 +185,7 @@ def main(config_path_to_file=None):
     n_t_test = msd_data.n_t_test
     print_matrices(system_layer, mu=mu_test, n_t=n_t_test, data=msd_data)
     save_evaluation_times(msd_data_id, result_dir)
+
 
     msd_data.calculate_errors(msd_data_id, domain_split_vals=[1, 1])
     use_train_data = False
@@ -185,12 +203,52 @@ def main(config_path_to_file=None):
         msd_data, msd_data_id, use_train_data, idx_gen, result_dir
     )
 
+
+    # predicted matrices
+    J_pred, R_pred, B_pred = system_layer.get_system_matrices(mu_test, n_t=n_t_test)
+    # original test matrices
+    J_test_, R_test_, Q_test_, B_test_ = msd_data.ph_matrices_test
+
+    A_pred = J_pred - R_pred
+    A_test = J_test_ - R_test_
+
+    import numpy as np
+    max_eigs_pred = np.array([np.real(np.linalg.eig(A_).eigenvalues).max() for A_ in A_pred])
+    max_eigs_ref = np.array([np.real(np.linalg.eig(A_).eigenvalues).max() for A_ in A_test])
+
+    # plot eigenvalues on imaginary axis
+    eigs_pred = np.array([np.linalg.eig(A_).eigenvalues for A_ in A_pred])
+    eigs_ref = np.array([np.linalg.eig(A_).eigenvalues for A_ in A_test])
+
+    test_ids = [0, 1, 3, 6, 7]
+    for i in test_ids:
+        plt.figure()
+        plt.plot(eigs_pred[i].real, eigs_pred[i].imag, "x", label="pred")
+        plt.plot(eigs_ref[i].real, eigs_ref[i].imag, "o", label="ref")
+        plt.xlabel("real")
+        plt.ylabel("imag")
+        plt.legend()
+        plt.show(block=False)
+        save_as_png(os.path.join(result_dir, f"eigenvalues_{i}"))
+    # plt.show()
+
+    fig, ax = plt.subplots(1, 1, figsize=(5.701, 3.5), dpi=300, sharex="all")
+    plt.plot(max_eigs_pred, label="pred")
+    plt.plot(max_eigs_ref, label="ref")
+    plt.xlabel("test id")
+    plt.ylabel("maximum eigenvalue")
+    # fig.legend(loc='outside center right', bbox_to_anchor=(1.3, 0.6))
+    plt.tight_layout()
+    plt.show(block=False)
+    save_as_png(os.path.join(result_dir, "maximum_eigenvalues"))
+
     # plot chessboard visualisation
-    # test_ids = [0, 1, 3, 6, 7]  # test_ids = range(10) # range(6) test_ids = [0]
+    test_ids = [0, 1, 3, 6, 7]  # test_ids = range(10) # range(6) test_ids = [0]
     # aphin_vis.chessboard_visualisation(test_ids, system_layer, msd_data, result_dir)
 
     # avoid that the script stops and keep the plots open
     plt.show()
+    print('a')
 
 if __name__ == "__main__":
     main()

@@ -168,7 +168,6 @@ class PHIN(PHBasemodel, ABC):
             "reg_loss": reg_loss,
         }
 
-    @tf.function
     def get_loss(self, x, dx_dt, u, mu=None):
         """
         Calculate loss.
