@@ -1012,6 +1012,38 @@ def get_quantity_of_interest(
     return t, quantity_1, quantity_2, idx_n_n, idx_n_dn, idx_sim, idx_n_f, num_plots
 
 
+def plot_u(
+    data,
+    use_train_data=False,
+):
+    if use_train_data:
+        data = data.TRAIN
+    else:
+        data = data.TEST
+    t = data.t
+    num_plots = data.n_u
+    u = data.u
+
+    fig, ax = new_fig(num_plots)
+    plt.title("Inputs")
+    for i_u in range(num_plots):
+        ax[i_u].plot(u[:, i_u], label=rf"$u_{i_u}$")
+        ax[i_u].set_ylabel(
+            rf"$u_{i_u}$",
+            rotation="horizontal",
+            ha="center",
+            va="center",
+        )
+        ax[i_u].grid(linestyle=":", linewidth=1)
+    # plt.xlabel("time t [s]")
+    fig.align_ylabels(ax[:])
+    plt.legend(bbox_to_anchor=(1.04, 0.0), loc="lower left", borderaxespad=0.0)
+    # fig.legend(loc='outside center right', bbox_to_anchor=(1.3, 0.6))
+    plt.tight_layout()
+    plt.show(block=False)
+    # save_as_png(os.path.join(save_path, save_name))
+
+
 def plot_errors(
     data,
     use_train_data=False,
@@ -1930,7 +1962,7 @@ def chessboard_visualisation(test_ids, system_layer, data, result_dir):
     fig.tight_layout()
 
 
-def plot_train_history(train_hist):
+def plot_train_history(train_hist, save_path: str = ""):
     """
     Plots the training history of a machine learning model.
 
@@ -1962,3 +1994,6 @@ def plot_train_history(train_hist):
         pass
     plt.semilogy(train_hist.history["reg_loss"], label="reg")
     plt.legend()
+    plt.show()
+    save_name = "train_hist"
+    save_as_png(os.path.join(save_path, save_name))
