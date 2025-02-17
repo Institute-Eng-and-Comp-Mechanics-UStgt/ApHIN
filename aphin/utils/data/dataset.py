@@ -1102,13 +1102,16 @@ class SynRMDataset(Dataset):
         mat = scipy.io.loadmat(data_path)
         U = mat["U"]
         X = mat["X"]
+        X_dt = mat["DX_dt"]
         t = mat["time"]
 
         # add dimension for node DOFs
         if X.ndim == 3:
-            X = X[..., np.newaxis]
+            X = X[:, :, np.newaxis, :]  # move DOF all to n_dn for scaling
+        if X_dt.ndim == 3:
+            X_dt = X_dt[:, :, np.newaxis, :]  # move DOF all to n_dn for scaling
 
         if t.ndim == 2:
             t = np.squeeze(t)
 
-        return cls(t=t, X=X, U=U)
+        return cls(t=t, X=X, U=U, X_dt=X_dt)
