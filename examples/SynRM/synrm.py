@@ -61,9 +61,9 @@ def main(
     r = srm_cfg["r"]
 
     # train-test split
-    sim_idx_train = np.arange(10)
-    sim_idx_test = np.arange(5) + len(sim_idx_train)
-    synrm_data.train_test_split_sim_idx(sim_idx_train, sim_idx_test)
+    # sim_idx_train = np.arange(10)
+    # sim_idx_test = np.arange(5) + len(sim_idx_train)
+    synrm_data.train_test_split(test_size=0.2, seed=srm_cfg["seed"])
 
     # filter data with savgol filter
     if srm_cfg["filter_data"]:
@@ -72,13 +72,36 @@ def main(
     else:
         logging.info("Data is not filtered.")
 
+    # TODO: Move to class
+    idx_eta = np.arange(3)
+    idx_phi = np.arange(3, 75)
+    idx_rigid = np.arange(75, 80)
+    idx_elastic_modes = np.arange(80, 100)
+    idx_Drigid = np.arange(100, 105)
+    idx_Delastic = np.arange(105, 125)
+    scaling_eta = np.max(np.abs(synrm_data.TRAIN.X[..., idx_eta]))
+    scaling_phi = np.max(np.abs(synrm_data.TRAIN.X[..., idx_phi]))
+    scaling_rigid = np.max(np.abs(synrm_data.TRAIN.X[..., idx_rigid]))
+    scaling_elastic = np.max(np.abs(synrm_data.TRAIN.X[..., idx_elastic_modes]))
+    scaling_Drigid = np.max(np.abs(synrm_data.TRAIN.X[..., idx_Drigid]))
+    scaling_Delastic = np.max(np.abs(synrm_data.TRAIN.X[..., idx_Delastic]))
+    scaling_rigid = np.max([scaling_rigid, scaling_Drigid])
+    scaling_elastic = np.max([scaling_elastic, scaling_Delastic])
+
     # scale data
-    # synrm_data.scale_all(
-    #     scaling_values=srm_cfg["scaling_values"],
-    #     domain_split_vals=srm_cfg["domain_split_vals"],
-    #     u_desired_bounds=srm_cfg["desired_bounds"],
-    #     mu_desired_bounds=srm_cfg["desired_bounds"],
-    # )
+    synrm_data.scale_all(
+        scaling_values=[
+            scaling_eta,
+            scaling_phi,
+            scaling_rigid,
+            scaling_elastic,
+            scaling_rigid,
+            scaling_elastic,
+        ],
+        domain_split_vals=srm_cfg["domain_split_vals"],
+        u_desired_bounds=srm_cfg["desired_bounds"],
+        mu_desired_bounds=srm_cfg["desired_bounds"],
+    )
 
     # transform to feature form that is used by the deep learning
     synrm_data.states_to_features()
@@ -149,12 +172,18 @@ def main(
             callbacks=callback,
         )
         save_training_times(train_hist, result_dir)
-        aphin_vis.plot_train_history(train_hist)
+        aphin_vis.plot_train_history(train_hist, save_path=result_dir)
 
         # load best weights
         aphin.load_weights(os.path.join(weight_dir, ".weights.h5"))
 
-        # %% Validation
+    # write data to results directory
+    save_weights(weight_dir, result_dir, load_network=srm_cfg["load_network"])
+    write_to_experiment_overview(
+        srm_cfg, result_dir, load_network=srm_cfg["load_network"]
+    )
+
+    # %% Validation
     logging.info(
         "################################   3. Validation ################################"
     )
@@ -177,7 +206,7 @@ def main(
     # %% calculate errors
     synrm_data.calculate_errors(
         synrm_data_id,
-        # domain_split_vals=srm_cfg["domain_split_vals"],
+        domain_split_vals=srm_cfg["domain_split_vals"],
         save_to_txt=True,
         result_dir=result_dir,
     )
@@ -185,7 +214,7 @@ def main(
         synrm_data,
         t=synrm_data.t_test,
         save_name=os.path.join(result_dir, "rms_error"),
-        # domain_names=srm_cfg["domain_names"],
+        domain_names=srm_cfg["domain_names"],
         save_to_csv=True,
         yscale="log",
     )
@@ -200,6 +229,8 @@ def main(
         idx_gen=idx_gen,
         result_dir=result_dir,
     )
+
+    aphin_vis.plot_u(data=synrm_data)
 
     # avoid that the script stops and keep the plots open
     plt.show()
