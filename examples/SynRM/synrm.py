@@ -55,6 +55,8 @@ def main(
 
     synrm_data = SynRMDataset.from_matlab(data_path=srm_cfg["matfile_path"])
 
+    V = SynRMDataset.from_matlab(data_path=srm_cfg["matfile_path"], return_V=True)
+
     aphin_vis.setup_matplotlib(srm_cfg["setup_matplotlib"])
 
     # reduced size
@@ -63,7 +65,18 @@ def main(
     # train-test split
     # sim_idx_train = np.arange(10)
     # sim_idx_test = np.arange(5) + len(sim_idx_train)
-    synrm_data.train_test_split(test_size=0.2, seed=srm_cfg["seed"])
+    sim_idx_train = [0]
+    sim_idx_test = [1]
+    synrm_data.train_test_split_sim_idx(
+        sim_idx_train=sim_idx_train, sim_idx_test=sim_idx_test
+    )
+    # synrm_data.train_test_split(test_size=0.2, seed=srm_cfg["seed"])
+
+    # decrease number of simulations
+    if srm_cfg["num_sim"] is not None:
+        synrm_data.decrease_num_simulations(
+            num_sim=srm_cfg["num_sim"], seed=srm_cfg["seed"]
+        )
 
     # filter data with savgol filter
     if srm_cfg["filter_data"]:
@@ -79,14 +92,14 @@ def main(
     idx_elastic_modes = np.arange(80, 100)
     idx_Drigid = np.arange(100, 105)
     idx_Delastic = np.arange(105, 125)
-    scaling_eta = np.max(np.abs(synrm_data.TRAIN.X[..., idx_eta]))
-    scaling_phi = np.max(np.abs(synrm_data.TRAIN.X[..., idx_phi]))
+    scaling_eta = np.max(np.abs(synrm_data.TRAIN.X[..., idx_eta])) * 3
+    scaling_phi = np.max(np.abs(synrm_data.TRAIN.X[..., idx_phi])) * 36
     scaling_rigid = np.max(np.abs(synrm_data.TRAIN.X[..., idx_rigid]))
     scaling_elastic = np.max(np.abs(synrm_data.TRAIN.X[..., idx_elastic_modes]))
     scaling_Drigid = np.max(np.abs(synrm_data.TRAIN.X[..., idx_Drigid]))
     scaling_Delastic = np.max(np.abs(synrm_data.TRAIN.X[..., idx_Delastic]))
-    scaling_rigid = np.max([scaling_rigid, scaling_Drigid])
-    scaling_elastic = np.max([scaling_elastic, scaling_Delastic])
+    # scaling_rigid = np.max([scaling_rigid, scaling_Drigid])
+    # scaling_elastic = np.max([scaling_elastic, scaling_Delastic])
 
     # scale data
     synrm_data.scale_all(
@@ -95,8 +108,8 @@ def main(
             scaling_phi,
             scaling_rigid,
             scaling_elastic,
-            scaling_rigid,
-            scaling_elastic,
+            scaling_Drigid,
+            scaling_Delastic,
         ],
         domain_split_vals=srm_cfg["domain_split_vals"],
         u_desired_bounds=srm_cfg["desired_bounds"],
@@ -116,7 +129,7 @@ def main(
         weight_dir,
         tensorboard=srm_cfg["tensorboard"],
         log_dir=log_dir,
-        monitor="loss",
+        monitor="val_loss",
         earlystopping=True,
         patience=500,
     )
@@ -163,9 +176,12 @@ def main(
         aphin.load_weights(os.path.join(weight_dir, ".weights.h5"))
     else:
         logging.info(f"Fitting NN weights.")
+        n_train = int(0.8 * x.shape[0])
+        x_train = [x[:n_train], dx_dt[:n_train], u[:n_train]]
+        x_val = [x[n_train:], dx_dt[n_train:], u[n_train:]]
         train_hist = aphin.fit(
-            x=[x, dx_dt, u],
-            # validation_data=([x, u_x, dx_dt], None),
+            x=x_train,
+            validation_data=x_val,
             epochs=srm_cfg["n_epochs"],
             batch_size=srm_cfg["batch_size"],
             verbose=2,
@@ -192,9 +208,9 @@ def main(
     print_matrices(system_layer, mu=mu_test, n_t=n_t_test)
 
     # calculate projection and Jacobian errors
-    file_name = "projection_error.txt"
-    projection_error_file_dir = os.path.join(result_dir, file_name)
-    aphin.get_projection_properties(x, x_test, file_dir=projection_error_file_dir)
+    # file_name = "projection_error.txt"
+    # projection_error_file_dir = os.path.join(result_dir, file_name)
+    # aphin.get_projection_properties(x, x_test, file_dir=projection_error_file_dir)
 
     # %% Validation of the AE reconstruction
     # get original quantities
@@ -203,13 +219,46 @@ def main(
     )
     save_evaluation_times(synrm_data_id, result_dir)
 
-    # %% calculate errors
+    # reproject
+    num_rand_pick_entries = 1000
+    synrm_data.reproject_with_basis(
+        [V, V],
+        idx=[slice(80, 100), slice(105, 125)],
+        pick_method="rand",
+        pick_entry=num_rand_pick_entries,
+        seed=srm_cfg["seed"],
+    )
+    synrm_data_id.reproject_with_basis(
+        [V, V],
+        idx=[slice(80, 100), slice(105, 125)],
+        pick_method="rand",
+        pick_entry=num_rand_pick_entries,
+        seed=srm_cfg["seed"],
+    )
+
+    domain_split_vals_projected = [
+        3,
+        72,
+        5,
+        num_rand_pick_entries,
+        5,
+        num_rand_pick_entries,
+    ]
+
     synrm_data.calculate_errors(
         synrm_data_id,
-        domain_split_vals=srm_cfg["domain_split_vals"],
+        domain_split_vals=domain_split_vals_projected,
         save_to_txt=True,
         result_dir=result_dir,
     )
+
+    # %% calculate errors
+    # synrm_data.calculate_errors(
+    #     synrm_data_id,
+    #     domain_split_vals=srm_cfg["domain_split_vals"],
+    #     save_to_txt=True,
+    #     result_dir=result_dir,
+    # )
     aphin_vis.plot_errors(
         synrm_data,
         t=synrm_data.t_test,
@@ -220,7 +269,7 @@ def main(
     )
 
     # %% plot trajectories
-    use_train_data = False
+    use_train_data = True
     idx_gen = "rand"
     aphin_vis.plot_time_trajectories_all(
         synrm_data,
@@ -230,7 +279,7 @@ def main(
         result_dir=result_dir,
     )
 
-    aphin_vis.plot_u(data=synrm_data)
+    # aphin_vis.plot_u(data=synrm_data)
 
     # avoid that the script stops and keep the plots open
     plt.show()
