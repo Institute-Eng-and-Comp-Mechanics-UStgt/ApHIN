@@ -9,6 +9,7 @@ import time
 import os
 from scipy.signal import savgol_filter
 from scipy.interpolate import interp1d
+from scipy.linalg import block_diag
 from tqdm import tqdm
 
 # own package
@@ -782,7 +783,7 @@ class Data(ABC):
             current_idx = 0
             scaling_values_list = []
             for i, X in enumerate(X_dom_list):
-                scaling_values_list.append(np.max(X))
+                scaling_values_list.append(np.max(np.abs(X)))
         else:
             scaling_values_list = scaling_values
             len(scaling_values_list) == len(domain_split_vals)
@@ -1188,6 +1189,122 @@ class Data(ABC):
             comments="",
             header=header,
         )
+
+    def reproject_with_basis(
+        self,
+        V: np.ndarray | list[np.ndarray],
+        idx: slice | list[slice] | None = None,
+        pick_method: str = "all",
+        pick_entry: None | list[int] | int | np.ndarray = None,
+        seed: None | int = None,
+    ):
+        if self.x is None:
+            self.states_to_features()
+        if idx is None:
+            idx = slice(self.n_f)
+        pick_list = self.choose_picking_entries(V, pick_method, pick_entry, seed=seed)
+        self.x, V_overall = self.reproject_x_with_basis(
+            V=V, x=self.x, idx=idx, pick_list=pick_list
+        )
+        self.dx_dt, _ = self.reproject_x_with_basis(
+            V=V, x=self.dx_dt, idx=idx, pick_list=pick_list
+        )
+        self.n_dn = V_overall.shape[0]
+        if hasattr(self, "x_rec"):
+            self.x_rec, _ = self.reproject_x_with_basis(
+                V=V, x=self.x_rec, idx=idx, pick_list=pick_list
+            )
+            self.X_rec = reshape_features_to_states(
+                self.x_rec, self.n_sim, self.n_t, n_n=self.n_n, n_dn=self.n_dn
+            )
+        if hasattr(self, "x_rec_dt"):
+            self.x_rec_dt, _ = self.reproject_x_with_basis(
+                V=V, x=self.x_rec_dt, idx=idx, pick_list=pick_list
+            )
+            self.X_rec_dt = reshape_features_to_states(
+                self.x_rec_dt, self.n_sim, self.n_t, n_n=self.n_n, n_dn=self.n_dn
+            )
+
+        self.features_to_states()
+
+    @staticmethod
+    def choose_picking_entries(
+        V: np.ndarray | list[np.ndarray],
+        pick_method: str = "all",
+        pick_entry: None | list[int] | int | np.ndarray = None,
+        seed: None | int = None,
+    ):
+        assert pick_method in ["all", "rand", "idx"]
+        if pick_method == "rand" and seed is None and isinstance(V, list):
+            logging.warning(
+                f"In order to get the same indices for each V a seed parameter is required."
+            )
+        if not isinstance(V, list):
+            V = [V]
+        pick_list = []
+        for V_temp in V:
+            if pick_method == "all":
+                pick_list.append(np.arange(V_temp.shape[0]))
+            elif pick_method == "rand":
+                assert isinstance(pick_entry, int)
+                rng = np.random.default_rng(seed=seed)
+                idx_rand = sorted(
+                    rng.choice(
+                        V_temp.shape[0],
+                        size=(pick_entry,),
+                        replace=False,
+                    )
+                )
+                pick_list.append(idx_rand)
+            elif pick_method == "idx":
+                assert (
+                    isinstance(pick_entry, list[int])
+                    or isinstance(pick_entry, np.ndarray)
+                    or isinstance(pick_entry, int)
+                )
+                pick_list.append(pick_entry)
+        return pick_list
+
+    @staticmethod
+    def reproject_x_with_basis(
+        V: np.ndarray | list[np.ndarray],
+        x: np.ndarray,
+        idx: slice | list[slice] | None = None,
+        pick_list: np.ndarray | list[np.ndarray] | None = None,
+    ):
+        "pick_list: list of picking indices for each V (needed if V.shape[0] is too large for full calculation)"
+        n_f = x.shape[1]
+
+        if isinstance(V, list):
+            assert isinstance(idx, list)
+            start = 0
+            for slicer in idx:
+                # assert slicer are in correct order
+                assert slicer.start >= start
+                start = slicer.stop
+        else:
+            V = [V]
+            idx = [idx]
+
+        # %% create overall basis
+        arrays = []
+        slicer_stop = 0  # initialize
+        for i, slicer in enumerate(idx):
+            arrays.append(np.eye(slicer.start - slicer_stop))
+            if pick_list is None:
+                pick_temp = np.arange(V[i].shape[0])
+            else:
+                if isinstance(pick_list, list):
+                    pick_temp = pick_list[i]
+                else:
+                    pick_temp = pick_list
+            V_pick = V[i][pick_temp, :]
+            arrays.append(V_pick)
+            slicer_stop = slicer.stop
+        arrays.append(np.eye(n_f - slicer_stop))
+        V_overall = block_diag(*arrays)
+        xT = V_overall @ x.T
+        return xT.T, V_overall
 
 
 class PHIdentifiedData(Data):
@@ -1676,7 +1793,9 @@ class PHIdentifiedData(Data):
             # calculate Hamiltonian
             H_ph[i_sim, :] = system_ph_list[i_sim].H(Z_ph[i_sim, :, :])
 
-        solving_times = dict(per_run=np.array(solving_times), mean=np.mean(solving_times))
+        solving_times = dict(
+            per_run=np.array(solving_times), mean=np.mean(solving_times)
+        )
         logging.info(
             f"Average time for solving the system for one simulation: {solving_times['mean']:.5f} seconds."
         )
@@ -1685,7 +1804,18 @@ class PHIdentifiedData(Data):
         z_ph, dz_dt_ph = reshape_states_to_features(Z_ph, Z_dt_ph)
         x_ph, dx_dt_ph = reshape_states_to_features(X_ph, X_dt_ph)
 
-        return (z_ph, dz_dt_ph, x_ph, dx_dt_ph, Z_ph, Z_dt_ph, X_ph, X_dt_ph, H_ph, solving_times)
+        return (
+            z_ph,
+            dz_dt_ph,
+            x_ph,
+            dx_dt_ph,
+            Z_ph,
+            Z_dt_ph,
+            X_ph,
+            X_dt_ph,
+            H_ph,
+            solving_times,
+        )
 
     @classmethod
     def from_identification(
@@ -1776,18 +1906,27 @@ class PHIdentifiedData(Data):
             raise NotImplementedError(f"The layer {type(system_layer)} is unknown.")
 
         # simulate training data
-        z_ph_s, dz_dt_ph_s, x_ph_s, dx_dt_ph_s, Z_ph, Z_dt_ph, X_ph, X_dt_ph, H_ph, solving_times = (
-            cls.obtain_ph_data(
-                data,
-                ph_network,
-                system_layer,
-                J_ph,
-                R_ph,
-                B_ph,
-                Q_ph,
-                integrator_type,
-                decomp_option,
-            )
+        (
+            z_ph_s,
+            dz_dt_ph_s,
+            x_ph_s,
+            dx_dt_ph_s,
+            Z_ph,
+            Z_dt_ph,
+            X_ph,
+            X_dt_ph,
+            H_ph,
+            solving_times,
+        ) = cls.obtain_ph_data(
+            data,
+            ph_network,
+            system_layer,
+            J_ph,
+            R_ph,
+            B_ph,
+            Q_ph,
+            integrator_type,
+            decomp_option,
         )
 
         return cls(
