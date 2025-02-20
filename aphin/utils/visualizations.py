@@ -12,9 +12,6 @@ from aphin.layers import PHQLayer
 
 import pandas as pd
 
-import itertools
-import random
-
 # logging setup
 logging.basicConfig()
 
@@ -384,6 +381,10 @@ def plot_x_reconstruction(
             save_name=save_name,
             save_path=save_path,
         )
+
+    np.savetxt(
+        "x_rec.txt", np.linalg.norm(x - x_id, axis=0) / np.linalg.norm(x, axis=0)
+    )
 
 
 def plot_x_dt_reconstruction(
@@ -1268,11 +1269,25 @@ def get_sim_idx(data_instance, data_type="X", num_plots_max=6, idx_gen="rand"):
             num_plots = num_plots_max
             match idx_gen:
                 case "rand":
-                    idx_n_n = np.random.randint(
-                        0, data_instance.n_n, size=(num_plots_max,)
+                    rng = np.random.default_rng()
+
+                    if data_instance.n_n < num_plots_max:
+                        replace_n_n = True
+                    else:
+                        replace_n_n = False
+                    idx_n_n = rng.choice(
+                        data_instance.n_n,
+                        size=(num_plots_max,),
+                        replace=replace_n_n,
                     )
-                    idx_n_dn = np.random.randint(
-                        0, data_instance.n_dn, size=(num_plots_max,)
+                    if data_instance.n_dn < num_plots_max:
+                        replace_n_dn = True
+                    else:
+                        replace_n_dn = False
+                    idx_n_dn = rng.choice(
+                        data_instance.n_dn,
+                        size=(num_plots_max,),
+                        replace=replace_n_dn,
                     )
                 case "first":
                     if data_instance.n_n < num_plots_max:
@@ -1442,10 +1457,9 @@ def plot_X(
         save_name = variable_names[0]
 
     fig, ax = new_fig(num_plots)
-    # get random n_n, n_dn combinations
-    indices = random.sample(
-        sorted(itertools.product(idx_n_n.tolist(), idx_n_dn.tolist())), num_plots
-    )
+    # get n_n, n_dn combinations
+    assert len(idx_n_dn) == len(idx_n_n)
+    indices = [(idx_n_n[i], idx_n_dn[i]) for i in range(num_plots)]
     for i, index in enumerate(indices):
         i_n = index[0]
         i_dn = index[1]
@@ -1962,7 +1976,7 @@ def chessboard_visualisation(test_ids, system_layer, data, result_dir):
     fig.tight_layout()
 
 
-def plot_train_history(train_hist, save_path: str = ""):
+def plot_train_history(train_hist, save_path: str = "", validation=False):
     """
     Plots the training history of a machine learning model.
 
@@ -1983,17 +1997,23 @@ def plot_train_history(train_hist, save_path: str = ""):
     None
         The function does not return any value. It generates and displays a plot of the training history.
     """
-    # plot training history
-    plt.figure()
-    plt.semilogy(train_hist.history["loss"], label="loss")
-    plt.semilogy(train_hist.history["dz_loss"], label="dz")
-    try:
-        plt.semilogy(train_hist.history["dx_loss"], label="dx")
-        plt.semilogy(train_hist.history["rec_loss"], label="rec")
-    except KeyError:
-        pass
-    plt.semilogy(train_hist.history["reg_loss"], label="reg")
-    plt.legend()
-    plt.show()
-    save_name = "train_hist"
-    save_as_png(os.path.join(save_path, save_name))
+
+    if validation:
+        val_strings = ["", "val_"]
+    else:
+        val_strings = [""]
+    for val_str in val_strings:
+        # plot training history
+        plt.figure()
+        plt.semilogy(train_hist.history[f"{val_str}loss"], label="loss")
+        plt.semilogy(train_hist.history[f"{val_str}dz_loss"], label="dz")
+        try:
+            plt.semilogy(train_hist.history[f"{val_str}dx_loss"], label="dx")
+            plt.semilogy(train_hist.history[f"{val_str}rec_loss"], label="rec")
+        except KeyError:
+            pass
+        plt.semilogy(train_hist.history[f"{val_str}reg_loss"], label="reg")
+        plt.legend()
+        plt.show(block=False)
+        save_name = f"{val_str}train_hist"
+        save_as_png(os.path.join(save_path, save_name))
