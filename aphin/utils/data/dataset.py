@@ -695,6 +695,29 @@ class Dataset(Data):
         X_dom_test_list = self.TEST.split_state_into_domains(domain_split_vals)
         return X_dom_list, X_dom_test_list
 
+    def reproject_with_basis(
+        self,
+        V: np.ndarray | list[np.ndarray],
+        idx: slice | list[slice] | None = None,
+        pick_method: str = "all",
+        pick_entry: None | list[int] | int | np.ndarray = None,
+        seed: None | int = None,
+    ):
+        self.TRAIN.reproject_with_basis(
+            V,
+            idx=idx,
+            pick_method=pick_method,
+            pick_entry=pick_entry,
+            seed=seed,
+        )
+        self.TEST.reproject_with_basis(
+            V,
+            idx=idx,
+            pick_method=pick_method,
+            pick_entry=pick_entry,
+            seed=seed,
+        )
+
     def calculate_errors(
         self,
         ph_identified_data_instance,
@@ -1089,7 +1112,7 @@ class SynRMDataset(Dataset):
         super().__init__(t, X, X_dt, U, Mu, J, R, Q, B)
 
     @classmethod
-    def from_matlab(cls, data_path):
+    def from_matlab(cls, data_path, return_V=False):
 
         if not os.path.isfile(data_path):
             raise ValueError(f"The given path does not lead to a file.")
@@ -1113,5 +1136,8 @@ class SynRMDataset(Dataset):
 
         if t.ndim == 2:
             t = np.squeeze(t)
-
-        return cls(t=t, X=X, U=U, X_dt=X_dt)
+        if return_V:
+            V = mat["V"]
+            return V
+        else:
+            return cls(t=t, X=X, U=U, X_dt=X_dt)
