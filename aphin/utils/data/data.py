@@ -87,6 +87,8 @@ class Data(ABC):
 
         if self.n_t != len(t):
             raise ValueError("number of time steps in t and in states X does not match")
+        if t.ndim == 1:
+            t = t[:, np.newaxis]
         self.t = t
         # initialize test time interval as training time interval
         self.n_t_test = self.n_t
@@ -445,11 +447,11 @@ class Data(ABC):
         t = data["t"]
         U, X_dt, Mu, J, R, Q, B = [None] * 7
         if "X_dt" in data.keys():
-            X_dt = data["X_dt"]
+            X_dt = data["X_dt"] if np.any(data["X_dt"])else None
         if "U" in data.keys():
-            U = data["U"]
+            U = data["U"] if np.any(data["U"]) else None
         if "Mu" in data.keys():
-            Mu = data["Mu"]
+            Mu = data["Mu"] if np.any(data["Mu"]) else None
         # matrices in format (r,r,n_sim)
         if "J" in data.keys():
             J = data["J"]

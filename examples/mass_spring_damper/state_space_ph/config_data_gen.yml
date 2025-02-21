@@ -21,8 +21,9 @@
 # lower_bounds: lower values of the parameters for the Halton algorithm (should be of size (random_samples,))
 # upper_bounds: upper values of the parameters for the Halton algorithm (should be of size (random_samples,))
 
-seed: 3823
+seed: 1
 n_mass: 3 # number of masses
+n_sim: 200 # number of masses
 parameter_method: 'marginal-stability' # 'default', 'Halton', 'manual', 'mass_loop', 'pertubation'
 
 # 'default': parameter values according to [MorandinNicodemusUnger22]
@@ -48,9 +49,9 @@ manual:
 marginal-stability:
     mass_vals: [0.1, 100]
     stiff_vals: [0.1, 100]
-    damp_vals: 0.1
-    delta: [ 0.5, 5 ]
-    omega: [ 0.125, 2 ]
+    damp_vals: 0
+    delta: [0.5, 5]
+    omega: [0.125, 2]
 
 # 'Halton': parameter values specified according to:
 random_samples: 120         # None if non-parametric
@@ -60,7 +61,7 @@ input_vals: 0 # null/None (autonomous) | 0 (first mass excitation - SISO)
 
 # time values for trajectories
 T_training: 20
-time_steps_training: 1000
+time_steps_training: 2000
 
 # debugging
 debug: True

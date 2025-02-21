@@ -76,6 +76,7 @@ class ParameterInput:
         """
         parameter_method = config["parameter_method"]
         n_mass = config["n_mass"]
+        n_sim = config["n_sim"]
         parameter_information = "parameter_space = [mass stiffness damping omega delta]"
 
         # parameter with intervalls are sampled using Halton sequence
@@ -106,6 +107,7 @@ class ParameterInput:
             delta,
             omega,
             input_vals,
+            n_sim=n_sim,
             parameter_method=parameter_method,
         )
         mass_vals = cls.process_config_system_parameters(mass_vals, n_mass, n_sim)

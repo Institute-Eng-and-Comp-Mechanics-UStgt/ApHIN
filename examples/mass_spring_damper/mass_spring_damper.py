@@ -25,6 +25,8 @@ from aphin.utils.save_results import (
 from aphin.utils.visualizations import save_as_png
 from aphin.utils.print_matrices import print_matrices
 
+# tf.config.run_functions_eagerly(True)
+#
 def main(config_path_to_file=None):
     # {None} if no config file shall be loaded, else create str with path to config file
     # %% Configuration
@@ -98,6 +100,11 @@ def main(config_path_to_file=None):
     n_sim, n_t, n_n, n_dn, n_u, n_mu = msd_data.shape
     n_f = n_n * n_dn
 
+    # plt.figure()
+    # plt.plot(t, msd_data.Data[0][0, :, 0, 0])
+    # plt.plot(msd_data.t_test, msd_data.Data_test[0][0, :, 0, 0])
+    # plt.show()
+
     # %% Create PHAutoencoder
     logging.info(
         "################################   2. Model      ################################"
@@ -148,16 +155,21 @@ def main(config_path_to_file=None):
         optimizer=tf.keras.optimizers.Adam(learning_rate=msd_cfg["lr"]),
         loss=tf.keras.losses.MSE,
     )
-    phin.build(input_shape=([x.shape, dx_dt.shape, u.shape, mu.shape], None))
+    n_train = int(0.8 * x.shape[0])
+    import numpy as np
+    if np.any(u):
+        x_train = [x[:n_train], dx_dt[:n_train], u[:n_train], mu[:n_train]]
+        x_val = [x[n_train:], dx_dt[n_train:], u[n_train:], mu[n_train:]]
+    else:
+        x_train = [x[:n_train], dx_dt[:n_train], np.empty((x[:n_train].shape[0], 0)), mu[:n_train]]
+        x_val = [x[n_train:], dx_dt[n_train:], np.empty((x[n_train:].shape[0], 0)), mu[n_train:]]
+    phin.build(input_shape=([data_.shape for data_ in x_train], None))
 
     # phin.load_weights(data_path_weights_filename)
     if msd_cfg["load_network"]:
         logging.info(f"Loading NN weights.")
         phin.load_weights(os.path.join(weight_dir, ".weights.h5"))
     else:
-        n_train = int(0.8 * x.shape[0])
-        x_train = [x[:n_train], dx_dt[:n_train], u[:n_train], mu[:n_train]]
-        x_val = [x[n_train:], dx_dt[n_train:], u[n_train:], mu[n_train:]]
         logging.info(f"Fitting NN weights.")
         train_hist = phin.fit(
             x=x_train,
@@ -192,10 +204,22 @@ def main(config_path_to_file=None):
     aphin_vis.plot_errors(
         msd_data,
         use_train_data,
+        t=msd_data.t_test,
+        save_to_csv=True,
         save_name=os.path.join(result_dir, "rms_error"),
     )
 
     msd_data.calculate_errors(msd_data_id, save_to_txt=True, result_dir=result_dir)
+
+    # reference data
+    for dof in range(3):
+        msd_data.TEST.save_state_traj_as_csv(
+            result_dir, second_oder=True, dof=dof, filename=f"state_{dof}_trajectories_reference"
+        )
+        # identified data
+        msd_data_id.TEST.save_state_traj_as_csv(
+            result_dir, second_oder=True, dof=dof, filename=f"state_{dof}_trajectories_{msd_cfg["experiment"]}"
+        )
 
     # plot state values
     idx_gen = "rand"
@@ -210,7 +234,9 @@ def main(config_path_to_file=None):
     J_test_, R_test_, Q_test_, B_test_ = msd_data.ph_matrices_test
 
     A_pred = J_pred - R_pred
-    A_test = J_test_ - R_test_
+    A_test = (J_test_ - R_test_) @ Q_test_
+
+    error_A = np.linalg.norm(A_pred - A_test, axis=(1,2)) / np.linalg.norm(A_test, axis=(1,2))
 
     import numpy as np
     max_eigs_pred = np.array([np.real(np.linalg.eig(A_).eigenvalues).max() for A_ in A_pred])
@@ -219,6 +245,36 @@ def main(config_path_to_file=None):
     # plot eigenvalues on imaginary axis
     eigs_pred = np.array([np.linalg.eig(A_).eigenvalues for A_ in A_pred])
     eigs_ref = np.array([np.linalg.eig(A_).eigenvalues for A_ in A_test])
+
+    # save real and imaginary parts of eigenvalues to csv
+    header = "".join([f"sim{i}_eigs_real," for i in range(eigs_pred.shape[0])]) + "".join([f"sim{i}_eigs_imag," for i in range(eigs_pred.shape[0])])
+    np.savetxt(os.path.join(result_dir, "eigenvalues_ref.csv"),
+               np.concatenate([eigs_ref.real, eigs_ref.imag], axis=0).T, delimiter=",", header=header, comments="")
+
+    np.savetxt(os.path.join(result_dir, "eigenvalues_pred.csv"),
+               np.concatenate([eigs_pred.real, eigs_pred.imag], axis=0).T, delimiter=",", header=header, comments="")
+
+    # close all figures
+    # plt.close("all")
+    es = []
+    i_test = 1
+    for i_test in range(msd_data_id.TEST.Z_ph.shape[0]):
+        plt.figure()
+        plt.plot(msd_data_id.TEST.Z_ph[i_test, :, 0], label="pred")
+        plt.plot(msd_data_id.TEST.Z[i_test, :, 0], label="ref")
+        plt.legend()
+        e = np.linalg.norm(msd_data_id.TEST.Z_ph[i_test, :, 0] - msd_data_id.TEST.Z[i_test, :, 0]) / np.linalg.norm(msd_data_id.TEST.Z[i_test, :, 0])
+        es.append(e)
+        print(e)
+    es = np.array(es)
+    plt.show()
+    print(np.array(es).mean())
+
+    plt.figure()
+    plt.plot(error_A)
+    plt.plot(es)
+    plt.show()
+
 
     test_ids = [0, 1, 3, 6, 7]
     for i in test_ids:
@@ -244,7 +300,7 @@ def main(config_path_to_file=None):
 
     # plot chessboard visualisation
     test_ids = [0, 1, 3, 6, 7]  # test_ids = range(10) # range(6) test_ids = [0]
-    # aphin_vis.chessboard_visualisation(test_ids, system_layer, msd_data, result_dir)
+    aphin_vis.chessboard_visualisation(test_ids, system_layer, msd_data, result_dir)
 
     # avoid that the script stops and keep the plots open
     plt.show()
