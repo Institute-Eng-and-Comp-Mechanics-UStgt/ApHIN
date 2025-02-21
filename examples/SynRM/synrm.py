@@ -53,7 +53,9 @@ def main(
     srm_cfg = configuration.cfg_dict
     data_dir, log_dir, weight_dir, result_dir = configuration.directories
 
-    synrm_data = SynRMDataset.from_matlab(data_path=srm_cfg["matfile_path"])
+    synrm_data = SynRMDataset.from_matlab(
+        data_path=srm_cfg["matfile_path"], no_phi=srm_cfg["no_phi"]
+    )
 
     V = SynRMDataset.from_matlab(data_path=srm_cfg["matfile_path"], return_V=True)
 
@@ -86,33 +88,55 @@ def main(
         logging.info("Data is not filtered.")
 
     # TODO: Move to class
-    idx_eta = np.arange(3)
-    idx_phi = np.arange(3, 75)
-    idx_rigid = np.arange(75, 80)
-    idx_elastic_modes = np.arange(80, 100)
-    idx_Drigid = np.arange(100, 105)
-    idx_Delastic = np.arange(105, 125)
+    if srm_cfg["no_phi"]:
+        idx_eta = np.arange(3)
+        # idx_phi = np.arange(3, 75)
+        idx_rigid = np.arange(3, 8)
+        idx_elastic_modes = np.arange(8, 28)
+        idx_Drigid = np.arange(28, 33)
+        idx_Delastic = np.arange(33, 53)
+    else:
+        idx_eta = np.arange(3)
+        idx_phi = np.arange(3, 75)
+        idx_rigid = np.arange(75, 80)
+        idx_elastic_modes = np.arange(80, 100)
+        idx_Drigid = np.arange(100, 105)
+        idx_Delastic = np.arange(105, 125)
+        scaling_phi = np.max(np.abs(synrm_data.TRAIN.X[..., idx_phi])) * 36
     scaling_eta = np.max(np.abs(synrm_data.TRAIN.X[..., idx_eta])) * 3
-    scaling_phi = np.max(np.abs(synrm_data.TRAIN.X[..., idx_phi])) * 36
     scaling_rigid = np.max(np.abs(synrm_data.TRAIN.X[..., idx_rigid]))
     scaling_elastic = np.max(np.abs(synrm_data.TRAIN.X[..., idx_elastic_modes]))
     scaling_Drigid = np.max(np.abs(synrm_data.TRAIN.X[..., idx_Drigid]))
     scaling_Delastic = np.max(np.abs(synrm_data.TRAIN.X[..., idx_Delastic]))
     # scaling_rigid = np.max([scaling_rigid, scaling_Drigid])
     # scaling_elastic = np.max([scaling_elastic, scaling_Delastic])
+    bounds_u = np.array(
+        [np.min(synrm_data.TRAIN.U), np.max(synrm_data.TRAIN.U)]
+    ) / np.max(np.abs(synrm_data.TRAIN.U))
+    bounds_u = [bounds_u[0], bounds_u[1]]
 
     # scale data
-    synrm_data.scale_all(
-        scaling_values=[
+    if srm_cfg["no_phi"]:
+        scaling_values = [
+            scaling_eta,
+            scaling_rigid,
+            scaling_elastic,
+            scaling_Drigid,
+            scaling_Delastic,
+        ]
+    else:
+        scaling_values = [
             scaling_eta,
             scaling_phi,
             scaling_rigid,
             scaling_elastic,
             scaling_Drigid,
             scaling_Delastic,
-        ],
+        ]
+    synrm_data.scale_all(
+        scaling_values=scaling_values,
         domain_split_vals=srm_cfg["domain_split_vals"],
-        u_desired_bounds=srm_cfg["desired_bounds"],
+        u_desired_bounds=bounds_u,
         mu_desired_bounds=srm_cfg["desired_bounds"],
     )
 
@@ -124,12 +148,17 @@ def main(
     logging.info(
         "################################   2. Model      ################################"
     )
+    validation = True
+    if validation:
+        monitor = "val_loss"
+    else:
+        monitor = "loss"
 
     callback = callbacks(
         weight_dir,
         tensorboard=srm_cfg["tensorboard"],
         log_dir=log_dir,
-        monitor="val_loss",
+        monitor=monitor,
         earlystopping=True,
         patience=500,
     )
@@ -188,7 +217,7 @@ def main(
             callbacks=callback,
         )
         save_training_times(train_hist, result_dir)
-        aphin_vis.plot_train_history(train_hist, save_path=result_dir)
+        aphin_vis.plot_train_history(train_hist, save_path=result_dir, validation=True)
 
         # load best weights
         aphin.load_weights(os.path.join(weight_dir, ".weights.h5"))
@@ -220,45 +249,45 @@ def main(
     save_evaluation_times(synrm_data_id, result_dir)
 
     # reproject
-    num_rand_pick_entries = 1000
-    synrm_data.reproject_with_basis(
-        [V, V],
-        idx=[slice(80, 100), slice(105, 125)],
-        pick_method="rand",
-        pick_entry=num_rand_pick_entries,
-        seed=srm_cfg["seed"],
-    )
-    synrm_data_id.reproject_with_basis(
-        [V, V],
-        idx=[slice(80, 100), slice(105, 125)],
-        pick_method="rand",
-        pick_entry=num_rand_pick_entries,
-        seed=srm_cfg["seed"],
-    )
+    # num_rand_pick_entries = 1000
+    # synrm_data.reproject_with_basis(
+    #     [V, V],
+    #     idx=[slice(80, 100), slice(105, 125)],
+    #     pick_method="rand",
+    #     pick_entry=num_rand_pick_entries,
+    #     seed=srm_cfg["seed"],
+    # )
+    # synrm_data_id.reproject_with_basis(
+    #     [V, V],
+    #     idx=[slice(80, 100), slice(105, 125)],
+    #     pick_method="rand",
+    #     pick_entry=num_rand_pick_entries,
+    #     seed=srm_cfg["seed"],
+    # )
 
-    domain_split_vals_projected = [
-        3,
-        72,
-        5,
-        num_rand_pick_entries,
-        5,
-        num_rand_pick_entries,
-    ]
+    # domain_split_vals_projected = [
+    #     3,
+    #     72,
+    #     5,
+    #     num_rand_pick_entries,
+    #     5,
+    #     num_rand_pick_entries,
+    # ]
 
-    synrm_data.calculate_errors(
-        synrm_data_id,
-        domain_split_vals=domain_split_vals_projected,
-        save_to_txt=True,
-        result_dir=result_dir,
-    )
-
-    # %% calculate errors
     # synrm_data.calculate_errors(
     #     synrm_data_id,
-    #     domain_split_vals=srm_cfg["domain_split_vals"],
+    #     domain_split_vals=domain_split_vals_projected,
     #     save_to_txt=True,
     #     result_dir=result_dir,
     # )
+
+    # %% calculate errors
+    synrm_data.calculate_errors(
+        synrm_data_id,
+        domain_split_vals=srm_cfg["domain_split_vals"],
+        save_to_txt=True,
+        result_dir=result_dir,
+    )
     aphin_vis.plot_errors(
         synrm_data,
         t=synrm_data.t_test,

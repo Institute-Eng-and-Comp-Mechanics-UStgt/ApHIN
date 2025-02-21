@@ -1112,7 +1112,7 @@ class SynRMDataset(Dataset):
         super().__init__(t, X, X_dt, U, Mu, J, R, Q, B)
 
     @classmethod
-    def from_matlab(cls, data_path, return_V=False):
+    def from_matlab(cls, data_path, return_V=False, no_phi=False):
 
         if not os.path.isfile(data_path):
             raise ValueError(f"The given path does not lead to a file.")
@@ -1127,6 +1127,11 @@ class SynRMDataset(Dataset):
         X = mat["X"]
         X_dt = mat["DX_dt"]
         t = mat["time"]
+
+        if no_phi:
+            # remove phi from X and X_dt
+            X = np.delete(X, slice(3, 75), axis=2)
+            X_dt = np.delete(X_dt, slice(3, 75), axis=2)
 
         # add dimension for node DOFs
         if X.ndim == 3:
