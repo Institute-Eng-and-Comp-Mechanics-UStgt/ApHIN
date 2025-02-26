@@ -11,6 +11,7 @@ import matplotlib.animation as animation
 from aphin.layers import PHQLayer
 
 import pandas as pd
+import itertools
 
 # logging setup
 logging.basicConfig()
@@ -177,7 +178,12 @@ def animate_parameter_sweep(
 
 
 def plot_X_comparison(
-    original_data, identified_data, use_train_data=False, idx_gen="rand", save_path=""
+    original_data,
+    identified_data,
+    use_train_data=False,
+    idx_gen="rand",
+    save_path="",
+    idx_custom_tuple: list[tuple] | None = None,
 ):
     """
     Plots a comparison of state results between original and identified data.
@@ -206,7 +212,14 @@ def plot_X_comparison(
     """
 
     t, X, X_id, idx_n_n, idx_n_dn, idx_sim, _, num_plots = get_quantity_of_interest(
-        original_data, identified_data, "X", "X", use_train_data, "X", idx_gen
+        original_data,
+        identified_data,
+        "X",
+        "X",
+        use_train_data,
+        "X",
+        idx_gen,
+        idx_custom_tuple=idx_custom_tuple,
     )
 
     variable_names = [r"\bm{X}", r"\bm{X}_\mathrm{ph}"]
@@ -226,7 +239,12 @@ def plot_X_comparison(
 
 
 def plot_x_comparison(
-    original_data, identified_data, use_train_data=False, idx_gen="rand", save_path=""
+    original_data,
+    identified_data,
+    use_train_data=False,
+    idx_gen="rand",
+    save_path="",
+    idx_custom_tuple: list[tuple] | None = None,
 ):
     """
     Plots a comparison of the original latent features with their identified counterparts.
@@ -266,7 +284,14 @@ def plot_x_comparison(
     """
 
     _, x, x_id, _, _, _, idx_n_f, num_plots = get_quantity_of_interest(
-        original_data, identified_data, "x", "x", use_train_data, "x", idx_gen
+        original_data,
+        identified_data,
+        "x",
+        "x",
+        use_train_data,
+        "x",
+        idx_gen,
+        idx_custom_tuple=idx_custom_tuple,
     )
 
     variable_names = [r"\bm{x}", r"\bm{x}_\mathrm{ph}"]
@@ -283,7 +308,12 @@ def plot_x_comparison(
 
 
 def plot_X_dt_comparison(
-    original_data, identified_data, use_train_data=False, idx_gen="rand", save_path=""
+    original_data,
+    identified_data,
+    use_train_data=False,
+    idx_gen="rand",
+    save_path="",
+    idx_custom_tuple: list[tuple] | None = None,
 ):
     """
     Plots a comparison of state derivatives between original and identified data.
@@ -313,7 +343,14 @@ def plot_X_dt_comparison(
 
     t, X_dt, X_dt_id, idx_n_n, idx_n_dn, idx_sim, _, num_plots = (
         get_quantity_of_interest(
-            original_data, identified_data, "X_dt", "X_dt", use_train_data, "X", idx_gen
+            original_data,
+            identified_data,
+            "X_dt",
+            "X_dt",
+            use_train_data,
+            "X",
+            idx_gen,
+            idx_custom_tuple=idx_custom_tuple,
         )
     )
 
@@ -334,7 +371,12 @@ def plot_X_dt_comparison(
 
 
 def plot_x_reconstruction(
-    original_data, identified_data, use_train_data=False, idx_gen="rand", save_path=""
+    original_data,
+    identified_data,
+    use_train_data=False,
+    idx_gen="rand",
+    save_path="",
+    idx_custom_tuple: list[tuple] | None = None,
 ):
     """
     Plots and compares the original and autoencoder-reconstructed time series data for multiple features. The data is only encoded and decoded, the pHIN layer is not involved.
@@ -367,7 +409,14 @@ def plot_x_reconstruction(
     """
 
     _, x, x_id, _, _, _, idx_n_f, num_plots = get_quantity_of_interest(
-        original_data, identified_data, "x", "x_rec", use_train_data, "x", idx_gen
+        original_data,
+        identified_data,
+        "x",
+        "x_rec",
+        use_train_data,
+        "x",
+        idx_gen,
+        idx_custom_tuple=idx_custom_tuple,
     )
     if x_id is not None:
         variable_names = [r"\bm{x}", r"\bm{x}_\mathrm{rec}"]
@@ -388,7 +437,12 @@ def plot_x_reconstruction(
 
 
 def plot_x_dt_reconstruction(
-    original_data, identified_data, use_train_data=False, idx_gen="rand", save_path=""
+    original_data,
+    identified_data,
+    use_train_data=False,
+    idx_gen="rand",
+    save_path="",
+    idx_custom_tuple: list[tuple] | None = None,
 ):
     """
     Plots and compares the original and autoencoder-reconstructed time derivative of the data.
@@ -427,6 +481,7 @@ def plot_x_dt_reconstruction(
         use_train_data,
         "x",
         idx_gen,
+        idx_custom_tuple=idx_custom_tuple,
     )
     if x_dt_id is not None:
         variable_names = [r"\dot{\bm{x}}", r"\dot{\bm{x}}_{\mathrm{rec}}"]
@@ -443,7 +498,12 @@ def plot_x_dt_reconstruction(
 
 
 def plot_X_reconstruction(
-    original_data, identified_data, use_train_data=False, idx_gen="rand", save_path=""
+    original_data,
+    identified_data,
+    use_train_data=False,
+    idx_gen="rand",
+    save_path="",
+    idx_custom_tuple: list[tuple] | None = None,
 ):
     """
     Plots a comparison of original states and reconstructed states from an autoencoder.
@@ -472,7 +532,14 @@ def plot_X_reconstruction(
     """
 
     t, X, X_id, idx_n_n, idx_n_dn, idx_sim, _, num_plots = get_quantity_of_interest(
-        original_data, identified_data, "X", "X_rec", use_train_data, "X", idx_gen
+        original_data,
+        identified_data,
+        "X",
+        "X_rec",
+        use_train_data,
+        "X",
+        idx_gen,
+        idx_custom_tuple=idx_custom_tuple,
     )
     if X_id is not None:
         variable_names = [r"\bm{X}", r"\bm{X}_\mathrm{rec}"]
@@ -492,7 +559,12 @@ def plot_X_reconstruction(
 
 
 def plot_X_dt_reconstruction(
-    original_data, identified_data, use_train_data=False, idx_gen="rand", save_path=""
+    original_data,
+    identified_data,
+    use_train_data=False,
+    idx_gen="rand",
+    save_path="",
+    idx_custom_tuple: list[tuple] | None = None,
 ):
     """
     Plots a comparison of original state derivatives and reconstructed state derivatives from an autoencoder.
@@ -528,6 +600,7 @@ def plot_X_dt_reconstruction(
         use_train_data,
         "X",
         idx_gen,
+        idx_custom_tuple=idx_custom_tuple,
     )
     if X_id is not None:
         variable_names = [r"\dot{\bm{X}}", r"\dot{\bm{X}}_{\mathrm{rec}}"]
@@ -546,7 +619,13 @@ def plot_X_dt_reconstruction(
         )
 
 
-def plot_Z_ph(identified_data, use_train_data=False, idx_gen="rand", save_path=""):
+def plot_Z_ph(
+    identified_data,
+    use_train_data=False,
+    idx_gen="rand",
+    save_path="",
+    idx_custom_tuple: list[tuple] | None = None,
+):
     """
     Plots the comparison between identified latent variables (Z) and their corresponding port-Hamiltonian versions (Z_ph).
     where
@@ -583,7 +662,13 @@ def plot_Z_ph(identified_data, use_train_data=False, idx_gen="rand", save_path="
     """
 
     t, Z, Z_ph, _, _, idx_sim, idx_n_f, num_plots = get_quantities_of_interest(
-        identified_data, "Z", "Z_ph", use_train_data, "Z", idx_gen
+        identified_data,
+        "Z",
+        "Z_ph",
+        use_train_data,
+        "Z",
+        idx_gen,
+        idx_custom_tuple=idx_custom_tuple,
     )
 
     variable_names = [r"\bm{Z}", r"\bm{Z}_\mathrm{ph}"]
@@ -601,7 +686,13 @@ def plot_Z_ph(identified_data, use_train_data=False, idx_gen="rand", save_path="
     )
 
 
-def plot_z_ph(identified_data, use_train_data=False, idx_gen="rand", save_path=""):
+def plot_z_ph(
+    identified_data,
+    use_train_data=False,
+    idx_gen="rand",
+    save_path="",
+    idx_custom_tuple: list[tuple] | None = None,
+):
     """
     Plots the comparison between identified latent variables (Z) and their corresponding port-Hamiltonian versions (Z_ph).
     where
@@ -637,7 +728,13 @@ def plot_z_ph(identified_data, use_train_data=False, idx_gen="rand", save_path="
         The function does not return anything. It generates and displays the plot(s), and optionally saves them.
     """
     _, z, z_ph, _, _, _, idx_n_f, num_plots = get_quantities_of_interest(
-        identified_data, "z", "z_ph", use_train_data, "z", idx_gen
+        identified_data,
+        "z",
+        "z_ph",
+        use_train_data,
+        "z",
+        idx_gen,
+        idx_custom_tuple=idx_custom_tuple,
     )
 
     variable_names = [r"\bm{z}", r"\bm{z}_\mathrm{ph}"]
@@ -654,7 +751,11 @@ def plot_z_ph(identified_data, use_train_data=False, idx_gen="rand", save_path="
 
 
 def plot_Z_dt_ph_map(
-    identified_data, use_train_data=False, idx_gen="rand", save_path=""
+    identified_data,
+    use_train_data=False,
+    idx_gen="rand",
+    save_path="",
+    idx_custom_tuple: list[tuple] | None = None,
 ):
     """
     Plots the comparison between the time derivatives of the latent features (Z_dt) and their corresponding port-Hamiltonian mapped versions (Z_dt_ph_map).
@@ -693,7 +794,13 @@ def plot_Z_dt_ph_map(
 
     t, Z_dt, Z_dt_ph, idx_n_n, idx_n_dn, idx_sim, idx_n_f, num_plots = (
         get_quantities_of_interest(
-            identified_data, "Z_dt", "Z_dt_ph_map", use_train_data, "Z", idx_gen
+            identified_data,
+            "Z_dt",
+            "Z_dt_ph_map",
+            use_train_data,
+            "Z",
+            idx_gen,
+            idx_custom_tuple=idx_custom_tuple,
         )
     )
 
@@ -713,7 +820,11 @@ def plot_Z_dt_ph_map(
 
 
 def plot_z_dt_ph_map(
-    identified_data, use_train_data=False, idx_gen="rand", save_path=""
+    identified_data,
+    use_train_data=False,
+    idx_gen="rand",
+    save_path="",
+    idx_custom_tuple: list[tuple] | None = None,
 ):
     """
     Plots a comparison of the derivative of latent features (`z_dt`) with their corresponding port-Hamiltonian variables
@@ -753,7 +864,13 @@ def plot_z_dt_ph_map(
     """
 
     t, z, z_ph, _, _, _, idx_n_f, num_plots = get_quantities_of_interest(
-        identified_data, "z_dt", "z_dt_ph_map", use_train_data, "z", idx_gen
+        identified_data,
+        "z_dt",
+        "z_dt_ph_map",
+        use_train_data,
+        "z",
+        idx_gen,
+        idx_custom_tuple=idx_custom_tuple,
     )
 
     variable_name = [r"\dot{\bm{z}}", r"\dot{\bm{z}}_{\mathrm{phmap}}"]
@@ -769,7 +886,13 @@ def plot_z_dt_ph_map(
     )
 
 
-def plot_Z_dt_ph(identified_data, use_train_data=False, idx_gen="rand", save_path=""):
+def plot_Z_dt_ph(
+    identified_data,
+    use_train_data=False,
+    idx_gen="rand",
+    save_path="",
+    idx_custom_tuple: list[tuple] | None = None,
+):
     """
     Plots the comparison between the time derivatives of the reduced latent features (`Z_dt`) and their corresponding
     port-Hamiltonian versions (`Z_dt_ph`).
@@ -804,7 +927,13 @@ def plot_Z_dt_ph(identified_data, use_train_data=False, idx_gen="rand", save_pat
         The function does not return anything. It generates and displays the plot(s), and optionally saves them.
     """
     t, Z_dt, Z_dt_ph, _, _, idx_sim, idx_n_f, num_plots = get_quantities_of_interest(
-        identified_data, "Z_dt", "Z_dt_ph", use_train_data, "Z", idx_gen
+        identified_data,
+        "Z_dt",
+        "Z_dt_ph",
+        use_train_data,
+        "Z",
+        idx_gen,
+        idx_custom_tuple=idx_custom_tuple,
     )
 
     variable_names = [r"\dot{\bm{Z}}", r"\dot{\bm{Z}}_\mathrm{ph}"]
@@ -822,7 +951,13 @@ def plot_Z_dt_ph(identified_data, use_train_data=False, idx_gen="rand", save_pat
     )
 
 
-def plot_z_dt_ph(identified_data, use_train_data=False, idx_gen="rand", save_path=""):
+def plot_z_dt_ph(
+    identified_data,
+    use_train_data=False,
+    idx_gen="rand",
+    save_path="",
+    idx_custom_tuple: list[tuple] | None = None,
+):
     """
     Plots the comparison between the time derivatives of the reduced latent features (`z_dt`) and their corresponding
     port-Hamiltonian versions (`z_dt_ph`).
@@ -857,7 +992,13 @@ def plot_z_dt_ph(identified_data, use_train_data=False, idx_gen="rand", save_pat
         The function does not return anything. It generates and displays the plot(s), and optionally saves them.
     """
     _, z_dt, z_dt_ph, _, _, _, idx_n_f, num_plots = get_quantities_of_interest(
-        identified_data, "z_dt", "z_dt_ph", use_train_data, "z", idx_gen
+        identified_data,
+        "z_dt",
+        "z_dt_ph",
+        use_train_data,
+        "z",
+        idx_gen,
+        idx_custom_tuple=idx_custom_tuple,
     )
 
     plot_z(
@@ -878,6 +1019,7 @@ def get_quantities_of_interest(
     use_train_data=False,
     data_type="X",
     idx_gen="rand",
+    idx_custom_tuple: list[tuple] | None = None,
 ):
     """
     Extracts and returns selected quantities of interest from a dataset for further analysis.
@@ -927,7 +1069,10 @@ def get_quantities_of_interest(
         data = data.TEST
 
     idx_n_n, idx_n_dn, idx_sim, idx_n_f, num_plots = get_sim_idx(
-        data, data_type=data_type, idx_gen=idx_gen
+        data,
+        data_type=data_type,
+        idx_gen=idx_gen,
+        idx_custom_tuple=idx_custom_tuple,
     )
 
     t = data.t
@@ -945,6 +1090,7 @@ def get_quantity_of_interest(
     use_train_data=False,
     data_type="X",
     idx_gen="rand",
+    idx_custom_tuple: list[tuple] | None = None,
 ):
     """
     Retrieves and prepares quantities of interest for comparison between original and identified data.
@@ -997,7 +1143,10 @@ def get_quantity_of_interest(
         identified_data = identified_data.TEST
 
     idx_n_n, idx_n_dn, idx_sim, idx_n_f, num_plots = get_sim_idx(
-        original_data, data_type=data_type, idx_gen=idx_gen
+        original_data,
+        data_type=data_type,
+        idx_gen=idx_gen,
+        idx_custom_tuple=idx_custom_tuple,
     )
 
     t = identified_data.t
@@ -1016,6 +1165,7 @@ def get_quantity_of_interest(
 def plot_u(
     data,
     use_train_data=False,
+    num_plots_max=6,
 ):
     if use_train_data:
         data = data.TRAIN
@@ -1025,7 +1175,10 @@ def plot_u(
     num_plots = data.n_u
     u = data.u
 
-    fig, ax = new_fig(num_plots)
+    if num_plots > num_plots_max:
+        num_plots = num_plots_max
+
+    fig, ax = new_fig(num_plots, window_title="Input u")
     plt.title("Inputs")
     for i_u in range(num_plots):
         ax[i_u].plot(u[:, i_u], label=rf"$u_{i_u}$")
@@ -1226,7 +1379,13 @@ def single_error_plot(
         data_pd.to_csv(f"{save_name}.csv", header=header_list, index=False)
 
 
-def get_sim_idx(data_instance, data_type="X", num_plots_max=6, idx_gen="rand"):
+def get_sim_idx(
+    data_instance,
+    data_type="X",
+    num_plots_max=6,
+    idx_gen="rand",
+    idx_custom_tuple: list[tuple] | None = None,
+):
     """
     Generates indices for plotting based on the type of data and the number of plots desired.
 
@@ -1308,6 +1467,17 @@ def get_sim_idx(data_instance, data_type="X", num_plots_max=6, idx_gen="rand"):
                         )
                     else:
                         idx_n_dn = np.arange(num_plots_max)
+                case "custom":
+                    idx_n_n = []
+                    idx_n_dn = []
+                    for idx_tuple in idx_custom_tuple:
+                        assert idx_tuple[0] <= data_instance.n_n - 1
+                        assert idx_tuple[1] <= data_instance.n_dn - 1
+                        idx_n_n.append(idx_tuple[0])
+                        idx_n_dn.append(idx_tuple[1])
+                    idx_n_n = np.array(idx_n_n)
+                    idx_n_dn = np.array(idx_n_dn)
+                    num_plots = len(idx_n_n)
                 case _:
                     raise ValueError(f"Wrong idx_gen type {idx_gen}")
         else:
@@ -1316,14 +1486,19 @@ def get_sim_idx(data_instance, data_type="X", num_plots_max=6, idx_gen="rand"):
             idx_n_n = np.arange(data_instance.n_n)
             idx_n_dn = np.arange(data_instance.n_dn)
 
-        # feature idx
-        idx_n_f = []
-        for i in range(num_plots):
-            idx_n_f.append(
-                np.random.choice(idx_n_n) * data_instance.n_dn
-                + np.random.choice(idx_n_dn)
+        # feature idx from node and node DOF idx
+        idx_nf_combinations = list(
+            itertools.product(np.unique(idx_n_n), np.unique(idx_n_dn))
+        )
+        if len(idx_nf_combinations) < num_plots_max:
+            num_plots = len(idx_nf_combinations)
+            list_n_f_comb = np.array(idx_nf_combinations)
+        else:
+            rng = np.random.default_rng()
+            list_n_f_comb = np.squeeze(
+                rng.choice(idx_nf_combinations, size=(num_plots_max,), replace=False)
             )
-        idx_n_f = np.array(idx_n_f)
+        idx_n_f = list(list_n_f_comb[:, 0] * data_instance.n_dn + list_n_f_comb[:, 1])
 
     elif data_type == "Z" or data_type == "z":
         # latent results
@@ -1336,6 +1511,12 @@ def get_sim_idx(data_instance, data_type="X", num_plots_max=6, idx_gen="rand"):
                     idx_n_f = rng.choice(n_f, size=(num_plots_max,), replace=False)
                 case "first":
                     idx_n_f = np.arange(num_plots_max)
+                case "custom":
+                    idx_n_f = []
+                    for idx_tuple in idx_custom_tuple:
+                        assert idx_tuple[2] <= n_f - 1
+                        idx_n_f.append(idx_tuple[2])
+                    num_plots = len(idx_n_f)
                 case _:
                     raise ValueError(f"Wrong idx_gen type {idx_gen}")
         else:
@@ -1389,7 +1570,7 @@ def plot_x(num_plots, x, x_id, idx_n_f, variable_names, save_name=None, save_pat
     if save_name == None:
         save_name = variable_names[0]
 
-    fig, ax = new_fig(num_plots)
+    fig, ax = new_fig(num_plots, window_title=save_name)
     for i, i_n_f in enumerate(idx_n_f):
         ax[i].plot(x[:, i_n_f], label=rf"${variable_names[0]}$")
         ax[i].plot(x_id[:, i_n_f], linestyle="dashed", label=rf"${variable_names[1]}$")
@@ -1407,6 +1588,24 @@ def plot_x(num_plots, x, x_id, idx_n_f, variable_names, save_name=None, save_pat
     plt.tight_layout()
     plt.show(block=False)
     save_as_png(os.path.join(save_path, save_name))
+
+    bar_plot_all_features = True
+    if bar_plot_all_features:
+        fig, ax = new_fig(1, window_title=save_name)
+        # use norm
+        rel_error_for_each_state = (np.linalg.norm(x - x_id, axis=0)) / np.linalg.norm(
+            x, axis=0
+        )
+        # use max
+        # rel_error_for_each_state = np.max(np.abs(x - x_id), axis=0) / np.max(
+        #     np.abs(x), axis=0
+        # )
+        np.savetxt(f"error_for_each_state_{save_name}", rel_error_for_each_state)
+        plt.bar(np.arange(x.shape[1]) + 1, rel_error_for_each_state)
+        plt.xlabel("features")
+        plt.title(f"{save_name}")
+        plt.show(block=False)
+        save_as_png(os.path.join(save_path, f"bar_error_{save_name}"))
 
 
 def plot_X(
@@ -1456,7 +1655,7 @@ def plot_X(
     if save_name == None:
         save_name = variable_names[0]
 
-    fig, ax = new_fig(num_plots)
+    fig, ax = new_fig(num_plots, window_title=save_name)
     # get n_n, n_dn combinations
     assert len(idx_n_dn) == len(idx_n_n)
     indices = [(idx_n_n[i], idx_n_dn[i]) for i in range(num_plots)]
@@ -1543,7 +1742,7 @@ def plot_Z(
     if save_name == None:
         save_name = variable_names[0]
 
-    fig, ax = new_fig(num_plots)
+    fig, ax = new_fig(num_plots, window_title=save_name)
     i = 0
     for i, i_n_f in enumerate(idx_n_f):
         ax[i].plot(t, Z[idx_sim, :, i_n_f], label=rf"${variable_names[0]}$")
@@ -1610,7 +1809,7 @@ def plot_z(num_plots, z, z_id, idx_n_f, variable_names, save_name=None, save_pat
     if save_name == None:
         save_name = variable_names[0]
 
-    fig, ax = new_fig(num_plots)
+    fig, ax = new_fig(num_plots, window_title=save_name)
     i = 0
     for i, i_nf in enumerate(idx_n_f):
         ax[i].plot(z[:, i_nf], label=rf"${variable_names[0]}$")
@@ -1632,7 +1831,7 @@ def plot_z(num_plots, z, z_id, idx_n_f, variable_names, save_name=None, save_pat
     plt.show(block=False)
 
 
-def new_fig(num_plots):
+def new_fig(num_plots, window_title: str | None = None):
     """
     Creates a new figure with subplots for plotting.
 
@@ -1654,6 +1853,14 @@ def new_fig(num_plots):
         otherwise, it will be an array of Axes objects.
     """
     fig, ax = plt.subplots(num_plots, 1, figsize=(5.701, 3.5), dpi=300, sharex="all")
+    if window_title is not None:
+        # set window title instead of "Figure 0", "Figure 1",...
+        if matplotlib.get_backend() == "TkAgg" or "pdf":
+            fig.canvas.manager.set_window_title(f"{window_title}")
+        else:
+            # TODO: Needs testing for other backends
+            fig.canvas.set_window_title(f"{window_title}")
+
     return fig, ax
 
 
@@ -1723,7 +1930,12 @@ def save_as_png(save_path):
 
 
 def plot_time_trajectories_all(
-    data, data_id, use_train_data=False, idx_gen="rand", result_dir=""
+    data,
+    data_id,
+    use_train_data=False,
+    idx_gen="rand",
+    result_dir="",
+    idx_custom_tuple: list[tuple] | None = None,
 ):
     """
     Generates and saves a series of plots comparing and reconstructing time trajectories of state and latent features.
@@ -1784,6 +1996,7 @@ def plot_time_trajectories_all(
             use_train_data=use_train_data,
             idx_gen=idx_gen,
             save_path=result_dir,
+            idx_custom_tuple=idx_custom_tuple,
         )
 
     for latent_state_function in latent_state_functions:
@@ -1792,6 +2005,7 @@ def plot_time_trajectories_all(
             use_train_data=use_train_data,
             idx_gen=idx_gen,
             save_path=result_dir,
+            idx_custom_tuple=idx_custom_tuple,
         )
 
 
@@ -2005,14 +2219,20 @@ def plot_train_history(train_hist, save_path: str = "", validation=False):
     for val_str in val_strings:
         # plot training history
         plt.figure()
-        plt.semilogy(train_hist.history[f"{val_str}loss"], label="loss")
-        plt.semilogy(train_hist.history[f"{val_str}dz_loss"], label="dz")
+        plt.semilogy(train_hist.history[f"{val_str}loss"], label=f"{val_str}loss")
+        plt.semilogy(train_hist.history[f"{val_str}dz_loss"], label=f"{val_str}dz_loss")
         try:
-            plt.semilogy(train_hist.history[f"{val_str}dx_loss"], label="dx")
-            plt.semilogy(train_hist.history[f"{val_str}rec_loss"], label="rec")
+            plt.semilogy(
+                train_hist.history[f"{val_str}dx_loss"], label=f"{val_str}dx_loss"
+            )
+            plt.semilogy(
+                train_hist.history[f"{val_str}rec_loss"], label=f"{val_str}rec_loss"
+            )
         except KeyError:
             pass
-        plt.semilogy(train_hist.history[f"{val_str}reg_loss"], label="reg")
+        plt.semilogy(
+            train_hist.history[f"{val_str}reg_loss"], label=f"{val_str}reg_loss"
+        )
         plt.legend()
         plt.show(block=False)
         save_name = f"{val_str}train_hist"
