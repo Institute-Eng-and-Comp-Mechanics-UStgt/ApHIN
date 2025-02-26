@@ -1749,7 +1749,7 @@ def plot_time_trajectories_all(
         )
 
 
-def chessboard_visualisation(test_ids, system_layer, data, result_dir):
+def chessboard_visualisation(test_ids, system_layer, data, result_dir, limits=None, error_limits=None):
     """
     Visualizes and compares predicted and test matrices by generating various plots.
 
@@ -1783,28 +1783,48 @@ def chessboard_visualisation(test_ids, system_layer, data, result_dir):
     # original test matrices
     J_test_, R_test_, Q_test_, B_test_ = data.ph_matrices_test
 
-    J_pred, R_pred, B_pred = (
+    A_pred = J_pred - R_pred
+    A_test_ = (J_test_ - R_test_) @ Q_test_
+
+    J_pred, R_pred, B_pred, A_pred = (
         J_pred[test_ids],
         R_pred[test_ids],
         B_pred[test_ids],
+        A_pred[test_ids],
     )
-    J_test_, R_test_, B_test_ = (
+    J_test_, R_test_, B_test_, A_test_ = (
         J_test_[test_ids],
         R_test_[test_ids],
         B_test_[test_ids],
+        A_test_[test_ids],
     )
 
-    J_min, J_max = min(J_pred.min(), J_test_.min()), max(J_pred.max(), J_test_.max())
-    R_min, R_max = min(R_pred.min(), R_test_.min()), max(R_pred.max(), R_test_.max())
-    B_min, B_max = min(B_pred.min(), B_test_.min()), max(B_pred.max(), B_test_.max())
+    if limits is None:
+        J_min, J_max = min(J_pred.min(), J_test_.min()), max(J_pred.max(), J_test_.max())
+        R_min, R_max = min(R_pred.min(), R_test_.min()), max(R_pred.max(), R_test_.max())
+        B_min, B_max = min(B_pred.min(), B_test_.min()), max(B_pred.max(), B_test_.max())
+        A_min, A_max = min(A_pred.min(), A_test_.min()), max(A_pred.max(), A_test_.max())
+    else:
+        J_min, J_max, R_min, R_max, B_min, B_max, A_min, A_max = limits
 
     e_J = np.abs(J_pred - J_test_)  # / J_test[test_ids].max()
     e_R = np.abs(R_pred - R_test_)  # / R_test_.max()
     e_B = np.abs(B_pred - B_test_)  # / B_test[test_ids].max()
+    e_A = np.abs(A_pred - A_test_)  # / A_test[test_ids].max()
+
+    if error_limits is None:
+        e_J_max = e_J.max()
+        e_R_max = e_R.max()
+        e_B_max = e_B.max()
+        e_A_max = e_A.max()
+    else:
+        e_J_max, e_R_max, e_B_max, e_A_max = error_limits
+
+
 
     np.linalg.matrix_rank(B_test_[0])
 
-    fig, axs = plt.subplots(9, max(len(test_ids), 2))
+    fig, axs = plt.subplots(12, max(len(test_ids), 2))
     color_factor = 1
     for i, test_id in enumerate(test_ids):
         axs[0, i].imshow(
@@ -1813,21 +1833,24 @@ def chessboard_visualisation(test_ids, system_layer, data, result_dir):
         axs[1, i].imshow(
             J_test_[i], vmin=color_factor * J_min, vmax=color_factor * J_max
         )
-        axs[2, i].imshow(e_J[i], vmin=color_factor * J_min, vmax=color_factor * J_max)
+        axs[2, i].imshow(e_J[i], vmin=0, vmax=e_J_max)
         axs[3, i].imshow(
             R_pred[i], vmin=color_factor * R_min, vmax=color_factor * R_max
         )
         axs[4, i].imshow(
             R_test_[i], vmin=color_factor * R_min, vmax=color_factor * R_max
         )
-        axs[5, i].imshow(e_R[i], vmin=color_factor * R_min, vmax=color_factor * R_max)
+        axs[5, i].imshow(e_R[i], vmin=0, vmax=e_R_max)
         axs[6, i].imshow(
             B_pred[i], vmin=color_factor * B_min, vmax=color_factor * B_max
         )
         axs[7, i].imshow(
             B_test_[i], vmin=color_factor * B_min, vmax=color_factor * B_max
         )
-        axs[8, i].imshow(e_B[i], vmin=color_factor * B_min, vmax=color_factor * B_max)
+        axs[8, i].imshow(e_B[i], vmin=0, vmax=e_B_max)
+        axs[9, i].imshow(A_pred[i], vmin=color_factor * A_min, vmax=color_factor * A_max)
+        axs[10, i].imshow(A_pred[i], vmin=color_factor * A_min, vmax=color_factor * A_max)
+        axs[11, i].imshow(e_A[i], vmin=0, vmax=e_A_max)
         if i == 0:
             axs[0, i].set_ylabel("J_pred")
             axs[1, i].set_ylabel("J_test")
@@ -1838,6 +1861,9 @@ def chessboard_visualisation(test_ids, system_layer, data, result_dir):
             axs[6, i].set_ylabel("B_pred")
             axs[7, i].set_ylabel("B_test")
             axs[8, i].set_ylabel("e_B")
+            axs[9, i].set_ylabel("A_pred")
+            axs[10, i].set_ylabel("A_test")
+            axs[11, i].set_ylabel("e_A")
 
     plt.savefig(
         os.path.join(result_dir, f"compare_matrices.png"),
@@ -1851,29 +1877,40 @@ def chessboard_visualisation(test_ids, system_layer, data, result_dir):
     for u_ in u_test:
         plt.plot(u_)
     cmap = "plasma"
-    i = 0
     for i in range(5):
         for key, matrix in dict(
             J=dict(
                 limits=[J_min, J_max],
+                error_limits=[0, e_J_max],
                 matrices=dict(pred=J_pred, ref=J_test_, error=e_J),
             ),
             R=dict(
                 limits=[R_min, R_max],
+                error_limits=[0, e_R_max],
                 matrices=dict(pred=R_pred, ref=R_test_, error=e_R),
             ),
             B=dict(
                 limits=[B_min, B_max],
+                error_limits=[0, e_B_max],
                 matrices=dict(pred=B_pred, ref=B_test_, error=e_B),
+            ),
+            A=dict(
+                limits=[A_min, A_max],
+                error_limits=[0, e_A_max],
+                matrices=dict(pred=A_pred, ref=A_test_, error=e_A),
             ),
         ).items():
             for sub_key, sub_matrix in matrix["matrices"].items():
                 # plot without gui and save figure
                 plt.figure()
+                if sub_key == "error":
+                    limits = matrix["error_limits"]
+                else:
+                    limits = matrix["limits"]
                 plt.imshow(
                     sub_matrix[i],
-                    vmin=matrix["limits"][0],
-                    vmax=matrix["limits"][1],
+                    vmin=limits[0],
+                    vmax=limits[1],
                     cmap=cmap,
                 )
                 # remove ticks
@@ -1891,6 +1928,12 @@ def chessboard_visualisation(test_ids, system_layer, data, result_dir):
         file.write(f"J: min: {J_min} max: {J_max}\n")
         file.write(f"R: min: {R_min} max: {R_max}\n")
         file.write(f"B: min: {B_min} max: {B_max}\n")
+        file.write(f"A: min: {A_min} max: {A_max}\n")
+        file.write(f"error J: min: {0} max: {e_J.max()}\n")
+        file.write(f"error R: min: {0} max: {e_R.max()}\n")
+        file.write(f"error B: min: {0} max: {e_B.max()}\n")
+        file.write(f"error A: min: {0} max: {e_A.max()}\n")
+
 
     # export colormap to tikz
     def convert_rgb(l):
