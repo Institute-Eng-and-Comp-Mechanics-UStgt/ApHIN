@@ -1,53 +1,61 @@
-experiment: synrm_no_phi
+experiment: synrm_with_pca_and_dynamic_high_l_dx000001
 setup_matplotlib: False  # Show plots and visualization
 
-matfile_path: /exchange/jrettberg/aphin/SynRM/SynRM4ApHIN_smallTimeStep_cutStart_withV.mat
+matfile_path: /exchange/jrettberg/aphin/SynRM/SynRM4ApHIN_smallTimeStep_cutStart_withVandThetaPM.mat
 
 # %% General identification framework settings
 load_network: False  # train the network or load a pre-trained one
+
+prelearn_rec: False
 
 # for reproducability
 seed: 100
 # decrease number of simulations
 num_sim: 1
 
-no_phi: True
+exclude_states: Null
+
+# high-dimensional data
+high_dimensional: False
+pick_method: all
+num_rand_pick_entries: 10000
 
 # filter data (using a savgol filter)
 filter_data: False 
 # %% Disc brake data settings (get information from loaded data)
-n_u: 3      # number of inputs
+n_u: 39      # number of inputs
 # n_mu: 2     # number of parameters (not varying inputs)
 
 # scaling
 # scaling_values: [1,1,1,1] 
 # domain_split_vals: (list) integers that define the number of dofs for each domain, sum of all values needs to conincide with n_dn. If {None} it is considered as a single domain
-domain_split_vals: [3,5,20,5,20] 
-domain_names: ["eta","rigid_body","elastic_modes","Drigid_body","Delastic_modes"]
+domain_split_vals: [3,72,5,20,5,20] 
+domain_names: ["eta","phi","rigid","elastic_modes","Drigid","Delastic_modes"]
+# domain_names: ["eta","phi","rigid","elastic_modes","Drigid","Delastic_modes"]
 desired_bounds: [-1, 1]   # desired bounds after scaling for u and mu
 
 
 # %% identification settings
-r: 30 #  reduced order
-use_pca: False  # use PCA for the input
-n_pca: 20  # number of PCA components
+r: 50 #  reduced order
+use_pca: True  # use PCA for the input
+n_pca: 50  # number of PCA components
 pca_scaling: True  # scale the PCA components
 pca_comparison: True
 pca_only: False  # only use PCA components without nonlinear autoencoder
-l_rec: 10 #  loss weight for the reconstruction
-l_dz: 0.01 #  loss weight for the dz
-l_dx: 0.0000001 #  loss weight for the dx
+l_rec: 1 #  loss weight for the reconstruction
+l_dz:  0.01 #  loss weight for the dz
+l_dx:  0.000001 #  loss weight for the dx
 l1: 0.0000000001  # L1 regularization
 l2: 0  # L2 regularization
-n_epochs: 2200 #  number of epochs
+n_epochs: 300 #  number of epochs
 batch_size: 256  # batch size
 layer_sizes_ph: # layer sizes
   - 32  # first layer
   - 32  # second layer
   - 32  # third layer
 layer_sizes_ae: # layer sizes
-  - 100  # first layer
-  - 75 # second layer
+  - 50  # first layer
+  - 70 # second layer
   - 50  # third layer
 activation_ae: elu  # activation function
 activation_ph: elu  # activation function

@@ -9,7 +9,7 @@ from aphin.utils.configuration import Configuration
 import aphin.utils.visualizations as aphin_vis
 from aphin.utils.callbacks_tensorflow import callbacks
 from aphin.identification import APHIN
-from aphin.layers.phq_layer import PHQLayer
+from aphin.layers.phq_layer import PHQLayer, PHLayer
 from aphin.utils.save_results import (
     save_weights,
     write_to_experiment_overview,
@@ -54,12 +54,19 @@ def main(
     data_dir, log_dir, weight_dir, result_dir = configuration.directories
 
     synrm_data = SynRMDataset.from_matlab(
-        data_path=srm_cfg["matfile_path"], no_phi=srm_cfg["no_phi"]
+        data_path=srm_cfg["matfile_path"], exclude_states=srm_cfg["exclude_states"]
     )
 
     V = SynRMDataset.from_matlab(data_path=srm_cfg["matfile_path"], return_V=True)
 
     aphin_vis.setup_matplotlib(srm_cfg["setup_matplotlib"])
+
+    # filter data with savgol filter
+    if srm_cfg["filter_data"]:
+        logging.info("Data is filtered")
+        synrm_data.filter_data(interp_equidis_t=False)
+    else:
+        logging.info("Data is not filtered.")
 
     # reduced size
     r = srm_cfg["r"]
@@ -80,21 +87,52 @@ def main(
             num_sim=srm_cfg["num_sim"], seed=srm_cfg["seed"]
         )
 
-    # filter data with savgol filter
-    if srm_cfg["filter_data"]:
-        logging.info("Data is filtered")
-        synrm_data.filter_data(interp_equidis_t=False)
-    else:
-        logging.info("Data is not filtered.")
+    num_rand_pick_entries = srm_cfg["num_rand_pick_entries"]
+    if srm_cfg["high_dimensional"]:
+        if srm_cfg["exclude_states"] == "no_rigid":
+            synrm_data.reproject_with_basis(
+                [V, V],
+                idx=[slice(75, 95), slice(95, 115)],
+                pick_method=srm_cfg["pick_method"],
+                pick_entry=num_rand_pick_entries,
+                seed=srm_cfg["seed"],
+            )
+        else:
+            raise NotImplementedError
 
     # TODO: Move to class
-    if srm_cfg["no_phi"]:
+    if srm_cfg["exclude_states"] == "no_phi":
         idx_eta = np.arange(3)
         # idx_phi = np.arange(3, 75)
         idx_rigid = np.arange(3, 8)
         idx_elastic_modes = np.arange(8, 28)
         idx_Drigid = np.arange(28, 33)
         idx_Delastic = np.arange(33, 53)
+        scaling_rigid = np.max(np.abs(synrm_data.TRAIN.X[..., idx_rigid]))
+        scaling_Drigid = np.max(np.abs(synrm_data.TRAIN.X[..., idx_Drigid]))
+        scaling_Delastic = np.max(np.abs(synrm_data.TRAIN.X[..., idx_Delastic]))
+    elif srm_cfg["exclude_states"] == "no_rigid":
+        idx_eta = np.arange(3)
+        idx_phi = np.arange(3, 75)
+        # idx_rigid = np.arange(75, 80)
+        idx_elastic_modes = np.arange(75, 95)
+        # idx_Drigid = np.arange(100, 105)
+        idx_Delastic = np.arange(95, 115)
+        scaling_phi = np.max(np.abs(synrm_data.TRAIN.X[..., idx_phi])) * 36
+        scaling_Delastic = np.max(np.abs(synrm_data.TRAIN.X[..., idx_Delastic]))
+        scaling_eta = np.max(np.abs(synrm_data.TRAIN.X[..., idx_eta])) * 3
+    elif srm_cfg["exclude_states"] == "no_velocities":
+        idx_eta = np.arange(3)
+        idx_phi = np.arange(3, 75)
+        idx_rigid = np.arange(75, 80)
+        idx_elastic_modes = np.arange(80, 100)
+        scaling_phi = np.max(np.abs(synrm_data.TRAIN.X[..., idx_phi])) * 36
+        scaling_rigid = np.max(np.abs(synrm_data.TRAIN.X[..., idx_rigid]))
+    elif srm_cfg["exclude_states"] == "only_elastic":
+        idx_elastic_modes = np.arange(0, 20)
+        idx_Delastic = np.arange(20, 40)
+        scaling_elastic = np.max(np.abs(synrm_data.TRAIN.X[..., idx_elastic_modes]))
+        scaling_Delastic = np.max(np.abs(synrm_data.TRAIN.X[..., idx_Delastic]))
     else:
         idx_eta = np.arange(3)
         idx_phi = np.arange(3, 75)
@@ -102,12 +140,12 @@ def main(
         idx_elastic_modes = np.arange(80, 100)
         idx_Drigid = np.arange(100, 105)
         idx_Delastic = np.arange(105, 125)
+        scaling_eta = np.max(np.abs(synrm_data.TRAIN.X[..., idx_eta])) * 3
         scaling_phi = np.max(np.abs(synrm_data.TRAIN.X[..., idx_phi])) * 36
-    scaling_eta = np.max(np.abs(synrm_data.TRAIN.X[..., idx_eta])) * 3
-    scaling_rigid = np.max(np.abs(synrm_data.TRAIN.X[..., idx_rigid]))
+        scaling_rigid = np.max(np.abs(synrm_data.TRAIN.X[..., idx_rigid]))
+        scaling_Drigid = np.max(np.abs(synrm_data.TRAIN.X[..., idx_Drigid]))
+        scaling_Delastic = np.max(np.abs(synrm_data.TRAIN.X[..., idx_Delastic]))
     scaling_elastic = np.max(np.abs(synrm_data.TRAIN.X[..., idx_elastic_modes]))
-    scaling_Drigid = np.max(np.abs(synrm_data.TRAIN.X[..., idx_Drigid]))
-    scaling_Delastic = np.max(np.abs(synrm_data.TRAIN.X[..., idx_Delastic]))
     # scaling_rigid = np.max([scaling_rigid, scaling_Drigid])
     # scaling_elastic = np.max([scaling_elastic, scaling_Delastic])
     bounds_u = np.array(
@@ -116,12 +154,31 @@ def main(
     bounds_u = [bounds_u[0], bounds_u[1]]
 
     # scale data
-    if srm_cfg["no_phi"]:
+    if srm_cfg["exclude_states"] == "no_phi":
         scaling_values = [
             scaling_eta,
             scaling_rigid,
             scaling_elastic,
             scaling_Drigid,
+            scaling_Delastic,
+        ]
+    elif srm_cfg["exclude_states"] == "no_rigid":
+        scaling_values = [
+            scaling_eta,
+            scaling_phi,
+            scaling_elastic,
+            scaling_Delastic,
+        ]
+    elif srm_cfg["exclude_states"] == "no_velocities":
+        scaling_values = [
+            scaling_eta,
+            scaling_phi,
+            scaling_rigid,
+            scaling_elastic,
+        ]
+    elif srm_cfg["exclude_states"] == "only_elastic":
+        scaling_values = [
+            scaling_elastic,
             scaling_Delastic,
         ]
     else:
@@ -133,12 +190,32 @@ def main(
             scaling_Drigid,
             scaling_Delastic,
         ]
-    synrm_data.scale_all(
-        scaling_values=scaling_values,
-        domain_split_vals=srm_cfg["domain_split_vals"],
-        u_desired_bounds=bounds_u,
-        mu_desired_bounds=srm_cfg["desired_bounds"],
+    # synrm_data.scale_all(
+    #     scaling_values=scaling_values,
+    #     domain_split_vals=srm_cfg["domain_split_vals"],
+    #     u_desired_bounds=bounds_u,
+    #     mu_desired_bounds=srm_cfg["desired_bounds"],
+    # )
+    synrm_data.scale_X(
+        scaling_values=scaling_values, domain_split_vals=srm_cfg["domain_split_vals"]
     )
+    # scale u manually
+    u_domains = [3, 36]
+    start_idx = 0
+    input_scaling_values = []
+    for u_domain in u_domains:
+        scaling_value = np.max(
+            np.abs(synrm_data.TRAIN.U[:, :, start_idx : start_idx + u_domain])
+        )
+        synrm_data.TRAIN.U[:, :, start_idx : start_idx + u_domain] = (
+            synrm_data.TRAIN.U[:, :, start_idx : start_idx + u_domain] / scaling_value
+        )
+        synrm_data.TEST.U[:, :, start_idx : start_idx + u_domain] = (
+            synrm_data.TEST.U[:, :, start_idx : start_idx + u_domain] / scaling_value
+        )
+        input_scaling_values.append(scaling_value)
+        start_idx += u_domain
+    synrm_data.reshape_inputs_to_features()
 
     # transform to feature form that is used by the deep learning
     synrm_data.states_to_features()
@@ -204,6 +281,9 @@ def main(
         logging.info(f"Loading NN weights.")
         aphin.load_weights(os.path.join(weight_dir, ".weights.h5"))
     else:
+        if srm_cfg["prelearn_rec"]:
+            logging.info(f"Loading NN weights from only rec learning.")
+            aphin.load_weights(os.path.join(result_dir, ".weights.h5"))
         logging.info(f"Fitting NN weights.")
         n_train = int(0.8 * x.shape[0])
         x_train = [x[:n_train], dx_dt[:n_train], u[:n_train]]
@@ -217,7 +297,9 @@ def main(
             callbacks=callback,
         )
         save_training_times(train_hist, result_dir)
-        aphin_vis.plot_train_history(train_hist, save_path=result_dir, validation=True)
+        aphin_vis.plot_train_history(
+            train_hist, save_path=result_dir, validation=validation
+        )
 
         # load best weights
         aphin.load_weights(os.path.join(weight_dir, ".weights.h5"))
@@ -299,16 +381,39 @@ def main(
 
     # %% plot trajectories
     use_train_data = True
-    idx_gen = "rand"
+    use_rand = True
+    if use_rand:
+        idx_gen = "rand"
+        idx_custom_tuple = None
+    else:
+        # use predefined indices
+        idx_gen = "custom"
+        # idx_eta = np.arange(3)
+        # idx_phi = np.arange(3, 75)
+        # idx_rigid = np.arange(75, 80)
+        # idx_elastic_modes = np.arange(80, 100)
+        # idx_Drigid = np.arange(100, 105)
+        # idx_Delastic = np.arange(105, 125)
+        # all domains
+        # idx_n_n = np.array([0] * 7)
+        # idx_n_dn = np.array([0, 3, 4, 75, 80, 101, 106])
+        # no velocities
+        idx_n_n = np.array([0] * 5)
+        idx_n_dn = np.array([0, 3, 4, 75, 80])
+        idx_n_f = np.array([0, 4, 13, 20, 25])  # for latent space
+        idx_custom_tuple = [
+            (idx_n_n[i], idx_n_dn[i], idx_n_f[i]) for i in range(idx_n_n.shape[0])
+        ]
     aphin_vis.plot_time_trajectories_all(
         synrm_data,
         synrm_data_id,
         use_train_data=use_train_data,
         idx_gen=idx_gen,
         result_dir=result_dir,
+        idx_custom_tuple=idx_custom_tuple,
     )
 
-    # aphin_vis.plot_u(data=synrm_data)
+    aphin_vis.plot_u(data=synrm_data, use_train_data=use_train_data)
 
     # avoid that the script stops and keep the plots open
     plt.show()
