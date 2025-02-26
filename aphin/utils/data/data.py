@@ -847,7 +847,13 @@ class Data(ABC):
         # transform also state values if they have been calculated already
         self.states_to_features()
 
-    def scale_U(self, u_train_bounds=None, desired_bounds=[-1, 1]):
+    def scale_U(
+        self,
+        u_train_bounds=None,
+        desired_bounds=[-1, 1],
+        input_scaling_values: float | list[float] | None = None,
+        input_split_vals: list[int] | None = None,
+    ):
         """
         Scale input values to a specified range.
 
@@ -877,7 +883,6 @@ class Data(ABC):
             logging.warning(
                 "Inputs u have already been scaled. The scaled u values are scaled again."
             )
-
         self.U, self.u_train_bounds, self.desired_bounds_u = self.scale_quantity(
             self.U, u_train_bounds, desired_bounds
         )

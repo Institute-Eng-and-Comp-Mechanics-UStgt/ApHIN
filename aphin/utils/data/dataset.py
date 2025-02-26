@@ -14,6 +14,7 @@ import scipy
 
 # own package
 from aphin.utils.data import Data, PHIdentifiedData
+from aphin.utils.transformations import reshape_inputs_to_features
 
 
 class Dataset(Data):
@@ -473,6 +474,8 @@ class Dataset(Data):
         self,
         scaling_values=None,
         domain_split_vals=None,
+        input_scaling_values: float | list[float] | None = None,
+        input_split_vals: list[int] | None = None,
         u_train_bounds=None,
         u_desired_bounds=[-1, 1],
         mu_train_bounds=None,
@@ -629,7 +632,13 @@ class Dataset(Data):
                 desired_bounds = self.TRAIN.desired_bounds_mu
             self.TEST.scale_Mu(mu_train_bounds, desired_bounds)
 
-    def scale_U(self, u_train_bounds=None, desired_bounds=[-1, 1]):
+    def scale_U(
+        self,
+        u_train_bounds=None,
+        desired_bounds=[-1, 1],
+        input_scaling_values: float | list[float] | None = None,
+        input_split_vals: list[int] | None = None,
+    ):
         """
         Scale input values to a specified range.
         The scaling is applied to both the training and testing datasets.
@@ -665,6 +674,11 @@ class Dataset(Data):
             if desired_bounds == "max":
                 desired_bounds = self.TRAIN.desired_bounds_u
             self.TEST.scale_U(u_train_bounds, desired_bounds)
+
+    def reshape_inputs_to_features(self):
+        if self.TRAIN.U is not None:
+            self.TRAIN.u = reshape_inputs_to_features(self.TRAIN.U)
+            self.TEST.u = reshape_inputs_to_features(self.TEST.U)
 
     def split_state_into_domains(self, domain_split_vals):
         """
@@ -1112,7 +1126,7 @@ class SynRMDataset(Dataset):
         super().__init__(t, X, X_dt, U, Mu, J, R, Q, B)
 
     @classmethod
-    def from_matlab(cls, data_path, return_V=False, no_phi=False):
+    def from_matlab(cls, data_path, return_V=False, exclude_states: str | None = None):
 
         if not os.path.isfile(data_path):
             raise ValueError(f"The given path does not lead to a file.")
@@ -1123,15 +1137,36 @@ class SynRMDataset(Dataset):
 
         # load mat file
         mat = scipy.io.loadmat(data_path)
+        if return_V:
+            V = mat["V"]
+            return V
+
         U = mat["U"]
         X = mat["X"]
         X_dt = mat["DX_dt"]
         t = mat["time"]
 
-        if no_phi:
+        if exclude_states == "no_phi":
             # remove phi from X and X_dt
             X = np.delete(X, slice(3, 75), axis=2)
             X_dt = np.delete(X_dt, slice(3, 75), axis=2)
+        elif exclude_states == "no_rigid":
+            # no rigid and Drigid
+            X = np.delete(X, np.r_[slice(75, 80), slice(100, 105)], axis=2)
+            X_dt = np.delete(X_dt, np.r_[slice(75, 80), slice(100, 105)], axis=2)
+        elif exclude_states == "no_velocities":
+            # no Drigid and Delastic
+            X = np.delete(X, slice(100, 125), axis=2)
+            X_dt = np.delete(X_dt, slice(100, 125), axis=2)
+        elif exclude_states == "only_elastic":
+            # elastic and Delastic
+            X = np.delete(X, np.r_[slice(0, 80), slice(100, 105)], axis=2)
+            X_dt = np.delete(X_dt, np.r_[slice(0, 80), slice(100, 105)], axis=2)
+            # scale each mode individually
+            scale_modes = False
+            if scale_modes:
+                X = X / np.max(X, axis=(0, 1))
+                X_dt = X_dt / np.max(X_dt, axis=(0, 1))
 
         # add dimension for node DOFs
         if X.ndim == 3:
@@ -1141,8 +1176,5 @@ class SynRMDataset(Dataset):
 
         if t.ndim == 2:
             t = np.squeeze(t)
-        if return_V:
-            V = mat["V"]
-            return V
-        else:
-            return cls(t=t, X=X, U=U, X_dt=X_dt)
+
+        return cls(t=t, X=X, U=U, X_dt=X_dt)
