@@ -431,10 +431,6 @@ def plot_x_reconstruction(
             save_path=save_path,
         )
 
-    np.savetxt(
-        "x_rec.txt", np.linalg.norm(x - x_id, axis=0) / np.linalg.norm(x, axis=0)
-    )
-
 
 def plot_x_dt_reconstruction(
     original_data,
@@ -1490,7 +1486,7 @@ def get_sim_idx(
         idx_nf_combinations = list(
             itertools.product(np.unique(idx_n_n), np.unique(idx_n_dn))
         )
-        if len(idx_nf_combinations) < num_plots_max:
+        if len(idx_nf_combinations) <= num_plots_max:
             num_plots = len(idx_nf_combinations)
             list_n_f_comb = np.array(idx_nf_combinations)
         else:
@@ -1498,6 +1494,8 @@ def get_sim_idx(
             list_n_f_comb = np.squeeze(
                 rng.choice(idx_nf_combinations, size=(num_plots_max,), replace=False)
             )
+        idx_n_n = list_n_f_comb[:, 0]
+        idx_n_dn = list_n_f_comb[:, 1]
         idx_n_f = list(list_n_f_comb[:, 0] * data_instance.n_dn + list_n_f_comb[:, 1])
 
     elif data_type == "Z" or data_type == "z":
