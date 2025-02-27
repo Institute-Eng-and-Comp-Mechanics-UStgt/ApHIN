@@ -19,10 +19,12 @@ from aphin.utils.transformations import (
     reshape_features_to_states,
 )
 from aphin.systems.ph_systems import PHSystem
+from aphin.systems.ph_systems import DescrPHSystem
 from aphin.identification import PHIN
 from aphin.identification import APHIN
 from aphin.layers.ph_layer import PHLayer
 from aphin.layers.phq_layer import PHQLayer
+from aphin.layers.descriptor_ph_layer import DescriptorPHLayer, DescriptorPHQLayer
 
 
 class Data(ABC):
@@ -283,7 +285,12 @@ class Data(ABC):
             self.Mu = self.Mu[:, :idx_truncate]
         self.n_t = self.X.shape[1]
 
-    def decrease_num_simulations(self, num_sim: int, seed=None):
+    def decrease_num_simulations(
+        self,
+        num_sim: int | None = None,
+        seed: int | None = None,
+        sim_idx: list[int] | np.ndarray | None = None,
+    ):
         """
         Reduces the number of simulations to speed up training by selecting a random subset.
 
@@ -298,9 +305,22 @@ class Data(ABC):
         seed : int, optional
             Random seed for reproducibility. If provided, it initializes the random number generator.
         """
-        rng = np.random.default_rng(seed=seed)
-        sim_idx = rng.choice(self.n_sim, size=num_sim, replace=False)
-        self.n_sim = num_sim
+        if sim_idx is not None:
+            if isinstance(sim_idx, np.ndarray):
+                assert sim_idx.ndim == 1
+                self.n_sim = sim_idx.shape[0]
+            elif isinstance(sim_idx, list):
+                self.n_sim = len(sim_idx)
+            elif isinstance(sim_idx, int):
+                self.n_sim = 1
+            else:
+                raise ValueError(f"Unknown type {type(sim_idx)}of sim_idx.")
+        else:
+            # default: random
+            assert num_sim is not None
+            rng = np.random.default_rng(seed=seed)
+            sim_idx = rng.choice(self.n_sim, size=num_sim, replace=False)
+            self.n_sim = num_sim
         self.X = self.X[sim_idx]
         self.X_dt = self.X_dt[sim_idx]
         self.U = self.U[sim_idx]
@@ -314,6 +334,7 @@ class Data(ABC):
             self.Q = self.Q[sim_idx, :, :]
         if self.B is not None:
             self.B = self.B[sim_idx, :, :]
+        self.states_to_features()
 
     def decrease_num_time_steps(self, num_time_steps: int):
         """
@@ -1263,7 +1284,7 @@ class Data(ABC):
                 pick_list.append(idx_rand)
             elif pick_method == "idx":
                 assert (
-                    isinstance(pick_entry, list[int])
+                    isinstance(pick_entry, list)
                     or isinstance(pick_entry, np.ndarray)
                     or isinstance(pick_entry, int)
                 )
@@ -1662,6 +1683,7 @@ class PHIdentifiedData(Data):
         R_ph,
         B_ph,
         Q_ph,
+        E_ph,
         integrator_type,
         decomp_option,
     ):
@@ -1736,14 +1758,33 @@ class PHIdentifiedData(Data):
                 data.x_init[i_sim, :], axis=0
             )  # tf somehow expects (None,n_f)
             if data.mu is None:
-                system_ph = PHSystem(J_ph, R_ph, B=B_ph, Q_ph=Q_ph)
+                if E_ph is None:
+                    system_ph = PHSystem(J_ph, R_ph, B=B_ph, Q_ph=Q_ph)
+                else:
+                    system_ph = DescrPHSystem(
+                        J_ph,
+                        R_ph,
+                        E_ph=E_ph,
+                        B=B_ph,
+                        Q_ph=Q_ph,
+                    )
             else:
-                system_ph = PHSystem(
-                    J_ph[i_sim],
-                    R_ph[i_sim],
-                    B=B_ph[i_sim] if B_ph is not None else None,
-                    Q_ph=Q_ph[i_sim] if Q_ph is not None else None,
-                )
+                if E_ph is None:
+                    system_ph = PHSystem(
+                        J_ph[i_sim],
+                        R_ph[i_sim],
+                        B=B_ph[i_sim] if B_ph is not None else None,
+                        Q_ph=Q_ph[i_sim] if Q_ph is not None else None,
+                    )
+                else:
+                    system_ph = DescrPHSystem(
+                        J_ph[i_sim],
+                        R_ph[i_sim],
+                        E_ph=E_ph[i_sim],
+                        B=B_ph[i_sim] if B_ph is not None else None,
+                        Q_ph=Q_ph[i_sim] if Q_ph is not None else None,
+                    )
+
             system_ph_list.append(system_ph)
 
             start_time = time.time()
@@ -1900,13 +1941,24 @@ class PHIdentifiedData(Data):
             data.get_initial_conditions()
 
         # get system matrices
-        if isinstance(system_layer, PHQLayer):
+        if isinstance(system_layer, DescriptorPHQLayer):
+            J_ph, R_ph, B_ph, Q_ph, E_ph = system_layer.get_system_matrices(
+                data.mu, n_t=data.n_t
+            )
+        elif isinstance(system_layer, DescriptorPHLayer):
+            J_ph, R_ph, B_ph, E_ph = system_layer.get_system_matrices(
+                data.mu, n_t=data.n_t
+            )
+            Q_ph = None
+        elif isinstance(system_layer, PHQLayer):
             J_ph, R_ph, B_ph, Q_ph = system_layer.get_system_matrices(
                 data.mu, n_t=data.n_t
             )
+            E_ph = None
         elif isinstance(system_layer, PHLayer):
             J_ph, R_ph, B_ph = system_layer.get_system_matrices(data.mu, n_t=data.n_t)
             Q_ph = None
+            E_ph = None
         else:
             raise NotImplementedError(f"The layer {type(system_layer)} is unknown.")
 
@@ -1930,6 +1982,7 @@ class PHIdentifiedData(Data):
             R_ph,
             B_ph,
             Q_ph,
+            E_ph,
             integrator_type,
             decomp_option,
         )

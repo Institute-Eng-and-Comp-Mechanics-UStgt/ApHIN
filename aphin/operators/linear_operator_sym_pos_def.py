@@ -90,3 +90,24 @@ class LinearOperatorSymPosDef(tf.linalg.LinearOperatorFullMatrix):
                 is_square=is_square,
                 name=name,
             )
+
+
+class LinearOperatorSymPosSemiDef(LinearOperatorSymPosDef):
+    def __init__(
+        self,
+        dof,
+        is_non_singular=None,
+        is_self_adjoint=None,
+        is_positive_definite=None,
+        is_square=None,
+        name="LinearOperatorSymPosSemiDef",
+    ):
+        super().__init__(
+            dof,
+            is_non_singular,
+            is_self_adjoint,
+            is_positive_definite,
+            is_square,
+            name,
+            epsilon=0,
+        )
