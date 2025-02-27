@@ -10,13 +10,17 @@ import aphin.utils.visualizations as aphin_vis
 from aphin.utils.callbacks_tensorflow import callbacks
 from aphin.identification import APHIN
 from aphin.layers.phq_layer import PHQLayer, PHLayer
+from aphin.layers import DescriptorPHQLayer, DescriptorPHLayer
 from aphin.utils.save_results import (
     save_weights,
     write_to_experiment_overview,
     save_evaluation_times,
     save_training_times,
 )
+from aphin.utils.experiments import run_various_experiments
 from aphin.utils.print_matrices import print_matrices
+
+# tf.config.run_functions_eagerly(True)
 
 
 def main(
@@ -37,7 +41,7 @@ def main(
     #                         -result_folder_name     searches for a subfolder with result_folder_name under working dir that
     #                                                 includes a config.yml and .weights.h5
     #                                                 -> config for loading results
-    manual_results_folder = None  # {None} if no results shall be loaded, else create str with folder name or path to results folder
+    manual_results_folder = "synrm_with_pca_and_dynamic"  # {None} if no results shall be loaded, else create str with folder name or path to results folder
 
     # write to config_info
     if config_path_to_file is not None:
@@ -74,7 +78,7 @@ def main(
     # train-test split
     # sim_idx_train = np.arange(10)
     # sim_idx_test = np.arange(5) + len(sim_idx_train)
-    sim_idx_train = [0]
+    sim_idx_train = [2]
     sim_idx_test = [1]
     synrm_data.train_test_split_sim_idx(
         sim_idx_train=sim_idx_train, sim_idx_test=sim_idx_test
@@ -97,6 +101,29 @@ def main(
                 pick_entry=num_rand_pick_entries,
                 seed=srm_cfg["seed"],
             )
+        if srm_cfg["exclude_states"] is None:
+            # all states
+            if srm_cfg["pick_method"] == "idx":
+                # use coarsen factor
+                coarsen_factor = srm_cfg["coarsen_factor"]
+                num_nodes = 121822
+                coarse_node_indices = np.arange(0, num_nodes, coarsen_factor)
+                dof_indices = np.zeros(coarse_node_indices.shape[0] * 3, dtype=np.int64)
+                for i_node_index, coarse_node_index in enumerate(coarse_node_indices):
+                    dof_indices[i_node_index * 3 : (i_node_index + 1) * 3] = np.arange(
+                        coarse_node_index * 3, (coarse_node_index + 1) * 3
+                    )
+                dof_indices_list = list(dof_indices)
+
+                synrm_data.reproject_with_basis(
+                    [V, V],
+                    idx=[slice(80, 100), slice(105, 125)],
+                    pick_method=srm_cfg["pick_method"],
+                    pick_entry=dof_indices_list,
+                    seed=srm_cfg["seed"],
+                )
+            else:
+                raise NotImplementedError
         else:
             raise NotImplementedError
 
@@ -137,9 +164,13 @@ def main(
         idx_eta = np.arange(3)
         idx_phi = np.arange(3, 75)
         idx_rigid = np.arange(75, 80)
-        idx_elastic_modes = np.arange(80, 100)
+        if srm_cfg["high_dimensional"]:
+            idx_elastic_modes = np.arange(80, 80 + len(dof_indices_list))
+            idx_Delastic = np.arange(105, 105 + len(dof_indices_list))
+        else:
+            idx_elastic_modes = np.arange(80, 100)
+            idx_Delastic = np.arange(105, 125)
         idx_Drigid = np.arange(100, 105)
-        idx_Delastic = np.arange(105, 125)
         scaling_eta = np.max(np.abs(synrm_data.TRAIN.X[..., idx_eta])) * 3
         scaling_phi = np.max(np.abs(synrm_data.TRAIN.X[..., idx_phi])) * 36
         scaling_rigid = np.max(np.abs(synrm_data.TRAIN.X[..., idx_rigid]))
@@ -330,6 +361,22 @@ def main(
     )
     save_evaluation_times(synrm_data_id, result_dir)
 
+    e_rec = np.linalg.norm(
+        synrm_data.TEST.X - synrm_data_id.TEST.X_rec
+    ) / np.linalg.norm(synrm_data.TEST.X)
+    e_z = np.linalg.norm(
+        synrm_data_id.TEST.Z - synrm_data_id.TEST.Z_ph
+    ) / np.linalg.norm(synrm_data_id.TEST.Z)
+    e_z_dt = np.linalg.norm(
+        synrm_data_id.TEST.Z_dt - synrm_data_id.TEST.Z_dt_ph
+    ) / np.linalg.norm(synrm_data_id.TEST.Z_dt)
+    e_z_dt_map = np.linalg.norm(
+        synrm_data_id.TEST.Z_dt - synrm_data_id.TEST.Z_dt_ph_map
+    ) / np.linalg.norm(synrm_data_id.TEST.Z_dt)
+    e_x = np.linalg.norm(synrm_data.TEST.X - synrm_data_id.TEST.X) / np.linalg.norm(
+        synrm_data.TEST.X
+    )
+
     # reproject
     # num_rand_pick_entries = 1000
     # synrm_data.reproject_with_basis(
@@ -416,10 +463,39 @@ def main(
     aphin_vis.plot_u(data=synrm_data, use_train_data=use_train_data)
 
     # avoid that the script stops and keep the plots open
-    plt.show()
+    # plt.show()
 
-    print("debug")
+    # print("debug")
+
+
+# parameter variation for multiple experiment runs
+# requires calc_various_experiments = True
+def create_variation_of_parameters():
+    parameter_variation_dict = {
+        "l_rec": [1],
+        "l_dz": [0.001],
+        "l_dx": [0, 0.000001],
+        "r": [20, 40, 60],
+    }
+    return parameter_variation_dict
 
 
 if __name__ == "__main__":
-    main()
+    calc_various_experiments = False
+    if calc_various_experiments:
+        logging.info(f"Multiple simulation runs...")
+        # Run multiple simulation runs defined by parameter_variavation_dict
+        working_dir = os.path.dirname(__file__)
+        configuration = Configuration(working_dir)
+        _, log_dir, _, result_dir = configuration.directories
+        run_various_experiments(
+            experiment_main_script=main,  # main without parentheses
+            parameter_variation_dict=create_variation_of_parameters(),
+            basis_config_yml_path=os.path.join(os.path.dirname(__file__), "config.yml"),
+            result_dir=result_dir,
+            log_dir=log_dir,
+            force_calculation=False,
+        )
+    else:
+        # use standard config file - single run
+        main()
