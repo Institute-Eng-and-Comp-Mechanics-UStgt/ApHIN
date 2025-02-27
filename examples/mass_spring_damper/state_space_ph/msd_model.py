@@ -269,7 +269,9 @@ class MSD:
 
         return u
 
-    def save(self, save_path=None, save_name=None):
+    def save(
+        self, save_path=None, save_name: str | None = None, save_name_suffix: str = ""
+    ):
         """
         Saves the current state of the MSD instance to a file.
 
@@ -311,7 +313,11 @@ class MSD:
             else:
                 # unknown
                 add_input = ""
-            save_name = f"MSD_{add_Q_identity}_{self.system_type}_input_{add_input}"
+            if not save_name_suffix == "":
+                save_name_suffix = f"_{save_name_suffix}"
+
+            save_name = f"MSD_{add_Q_identity}_{self.system_type}_input_{add_input}{save_name_suffix}"
+            save_name = save_name.replace("__", "_")
 
         if self.system_type == "ph":
             J, R, B, Q = self.get_system_matrices()
