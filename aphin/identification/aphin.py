@@ -577,9 +577,10 @@ class APHIN(PHBasemodel, ABC):
             Tuple containing individual losses and total loss.
         """
         # time derivative of intermediate latent space
-        dxr_dt = tf.expand_dims(
-            self.pca_encoder(tf.cast(dx_dt, dtype=self.dtype_)), axis=-1
-        )
+        # dxr_dt = tf.expand_dims(
+        #     self.pca_encoder(tf.cast(dx_dt, dtype=self.dtype_)), axis=-1
+        # )
+        dxr_dt = self.pca_encoder(tf.cast(dx_dt, dtype=self.dtype_))
 
         # forward pass of encoder and time derivative of latent variable
         with tf.GradientTape() as t12:
@@ -633,11 +634,12 @@ class APHIN(PHBasemodel, ABC):
         # calculate first time derivative of the latent variable by application of the chain rule
         #   dz_ddt  = dz_dx @ dx_dt
         #           = dz_dxr @ (V^T @ dx_dt)
-        dz_dt = dz_dxr @ dxr_dt
+        dz_dt = dz_dxr @ tf.expand_dims(dxr_dt, axis=-1)
 
         # calculate left hand side of ODE system (relevant for descriptor systems)
-        dxr_dt_lhs = self.system_layer.lhs(dxr_dt)
-        dz_dt_lhs = self.system_layer.lhs(dz_dt)
+        # dxr_dt_lhs = self.system_layer.lhs(dxr_dt)
+        dxr_dt_lhs = tf.identity(dxr_dt)
+        dz_dt_lhs = self.system_layer.lhs(dz_dt[..., 0])
 
         # system_network approximation of the time derivative of the latent variable
         system_pred = self.system_network([z, u, mu])
