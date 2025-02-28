@@ -41,7 +41,7 @@ def main(
     #                         -result_folder_name     searches for a subfolder with result_folder_name under working dir that
     #                                                 includes a config.yml and .weights.h5
     #                                                 -> config for loading results
-    manual_results_folder = "synrm_with_pca_and_dynamic"  # {None} if no results shall be loaded, else create str with folder name or path to results folder
+    manual_results_folder = "synrm_with_pca_and_dynamic_high_l_dx000001"  # {None} if no results shall be loaded, else create str with folder name or path to results folder
 
     # write to config_info
     if config_path_to_file is not None:
@@ -78,7 +78,7 @@ def main(
     # train-test split
     # sim_idx_train = np.arange(10)
     # sim_idx_test = np.arange(5) + len(sim_idx_train)
-    sim_idx_train = [2]
+    sim_idx_train = [0]
     sim_idx_test = [1]
     synrm_data.train_test_split_sim_idx(
         sim_idx_train=sim_idx_train, sim_idx_test=sim_idx_test
@@ -428,7 +428,7 @@ def main(
 
     # %% plot trajectories
     use_train_data = True
-    use_rand = True
+    use_rand = False
     if use_rand:
         idx_gen = "rand"
         idx_custom_tuple = None
@@ -445,9 +445,9 @@ def main(
         # idx_n_n = np.array([0] * 7)
         # idx_n_dn = np.array([0, 3, 4, 75, 80, 101, 106])
         # no velocities
-        idx_n_n = np.array([0] * 5)
-        idx_n_dn = np.array([0, 3, 4, 75, 80])
-        idx_n_f = np.array([0, 4, 13, 20, 25])  # for latent space
+        idx_n_n = np.array([0] * 6)
+        idx_n_dn = np.array([0, 3, 8, 75, 82, 109])
+        idx_n_f = np.array([0, 4, 13, 20, 25, 28])  # for latent space
         idx_custom_tuple = [
             (idx_n_n[i], idx_n_dn[i], idx_n_f[i]) for i in range(idx_n_n.shape[0])
         ]
@@ -465,7 +465,26 @@ def main(
     # avoid that the script stops and keep the plots open
     # plt.show()
 
-    # print("debug")
+    attributes = ["X", "X"]
+    index_list = [(0, 0, 0), (0, 0, 3), (0, 0, 80)]
+    subplot_idx = [0, 0, 1]
+    subplot_title = ["magnetic", "mechanic"]
+    cut_time_idx = 2500
+    legend = ["$\eta$", "$\phi$", "$q$"]
+    aphin_vis.custom_state_plot(
+        synrm_data,
+        synrm_data_id,
+        attributes=attributes,
+        index_list=index_list,
+        train_or_test="train",
+        subplot_idx=subplot_idx,
+        subplot_title=subplot_title,
+        cut_time_idx=cut_time_idx,
+        legend=legend,
+        result_dir=result_dir,
+    )
+
+    print("debug")
 
 
 # parameter variation for multiple experiment runs
