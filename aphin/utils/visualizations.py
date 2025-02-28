@@ -2235,3 +2235,77 @@ def plot_train_history(train_hist, save_path: str = "", validation=False):
         plt.show(block=False)
         save_name = f"{val_str}train_hist"
         save_as_png(os.path.join(save_path, save_name))
+
+
+def custom_state_plot(
+    data,
+    data_id,
+    attributes: list[str],
+    index_list: list[tuple],
+    train_or_test: str = "test",
+    cut_time_idx: int | None = None,
+    subplot_idx: list[int] = None,
+    subplot_title: list[str] = None,
+    legend: list[str] = None,
+    result_dir: str = "",
+):
+    """
+    indices list of tuples with size (n_sim,n_n,n_dn)
+    attributes list of str with [attribute of data, attribute of data_id], e.g. ["X","X_ph"]
+    legend list of entries for orig system
+    """
+    # get data
+    if train_or_test.lower() == "train":
+        data_train_or_test = data.TRAIN
+        data_id_train_or_test = data_id.TRAIN
+
+    elif train_or_test.lower() == "test":
+        data_train_or_test = data.TEST
+        data_id_train_or_test = data_id.TEST
+    # get attribute
+    state = getattr(data_train_or_test, attributes[0])
+    state_id = getattr(data_id_train_or_test, attributes[1])
+
+    t = data_train_or_test.t
+    if cut_time_idx is None:
+        n_t = t.shape[0]
+    else:
+        t = t[:cut_time_idx]
+        n_t = t.shape[0]
+
+    plot_state = np.zeros((len(index_list), n_t))
+    plot_state_id = np.zeros((len(index_list), n_t))
+    for i_index, index in enumerate(index_list):
+        n_sim = index[0]
+        n_n = index[1]
+        n_dn = index[2]
+        plot_state[i_index] = state[n_sim, :n_t, n_n, n_dn]
+        plot_state_id[i_index] = state_id[n_sim, :n_t, n_n, n_dn]
+
+    num_subplots = max(subplot_idx) + 1
+    if legend is None:
+        legend = [[None]] * len(index_list)
+
+    # plot data
+    width = 6
+    height = 6 / 1.61  # golden ratio
+    fig, ax = plt.subplots(
+        num_subplots, 1, figsize=(width, height), dpi=600, sharex="all"
+    )
+    for i_index in range(len(index_list)):
+        if num_subplots == 1:
+            ax.plot(t, plot_state[i_index], label=rf"{legend[i_index]}")
+            ax.plot(t, plot_state_id[i_index], "--")
+            ax.legend()
+            ax.title.set_text(subplot_title)
+        else:
+            ax[subplot_idx[i_index]].plot(
+                t, plot_state[i_index], label=rf"{legend[i_index]}"
+            )
+            ax[subplot_idx[i_index]].plot(t, plot_state_id[i_index], "--")
+            ax[subplot_idx[i_index]].legend()
+            ax[subplot_idx[i_index]].title.set_text(subplot_title[subplot_idx[i_index]])
+    plt.xlabel("Time in s")
+    plt.savefig(os.path.join(result_dir, "custom_state_plot.png"))
+
+    print("debug in custom_state_plot")
