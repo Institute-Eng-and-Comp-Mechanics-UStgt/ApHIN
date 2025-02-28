@@ -380,6 +380,13 @@ class Dataset(Data):
         )
         self.TRAIN.truncate_time(trunc_time_ratio)
 
+    def remove_mu(self):
+        """
+        Removes mu
+        """
+        self.TRAIN.remove_mu()
+        self.TEST.remove_mu()
+
     def decrease_num_simulations(
         self,
         num_sim: int | None = None,

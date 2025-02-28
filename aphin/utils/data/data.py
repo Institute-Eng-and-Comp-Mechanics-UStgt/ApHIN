@@ -732,6 +732,14 @@ class Data(ABC):
         )
         return norm_rms_error
 
+    def remove_mu(self):
+        """
+        removes mu
+        """
+        self.mu = None
+        self.Mu = None
+        self.n_mu = 0
+
     def scale_all(
         self,
         scaling_values=None,
