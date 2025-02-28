@@ -142,7 +142,7 @@ class PHSystem(LTISystem, CheckPHProperties):
         self.check_pH_properties(self.J_ph, self.R_ph, self.Q_ph)
         if B is not None:
             if B.ndim == 3:
-                B = np.squeeze(B)
+                B = np.squeeze(B, axis=0)
             self.B_ph = B
             self.C_ph = self.B_ph.T @ self.Q_ph
         else:
