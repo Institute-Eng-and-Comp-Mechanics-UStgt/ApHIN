@@ -87,7 +87,7 @@ class PHQLayer(PHLayer):
         tuple
             Tuple containing the split of degrees of freedom.
         """
-        return self.n_skew, self.n_sym, self.r * self.n_u, self.n_sym
+        return self.n_skew, self.n_sym, self.r * self.n_u, self.n_sym, 0
 
     def get_system_matrices(self, mu=None, n_t=None):
         """
@@ -109,7 +109,7 @@ class PHQLayer(PHLayer):
         if mu is not None:
             if n_t is None:
                 raise ValueError("n_t is required in the parameter-dependent case.")
-            _, _, _, self.dof_Q = self.get_parameter_dependent_weights(mu)
+            _, _, _, self.dof_Q, _ = self.get_parameter_dependent_weights(mu)
             Q = np.reshape(self.Q.to_dense().numpy(), (-1, n_t, self.r, self.r))
             Q = Q[:, 0, :, :]
         else:
@@ -142,7 +142,7 @@ class PHQLayer(PHLayer):
 
         # update matrices for given parameters
         if self.n_mu > 0:
-            self.dof_J, self.dof_R, self.dof_B, self.dof_Q = (
+            self.dof_J, self.dof_R, self.dof_B, self.dof_Q, self.dof_E = (
                 self.get_parameter_dependent_weights(mu)
             )
         # z, u, mu = self.split_inputs(inputs, input_shapes)
