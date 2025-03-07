@@ -4,8 +4,8 @@ setup_matplotlib: False  # Show plots and visualization
 
 # %% General identification framework settings
 experiment: final_new_data_var_exp_l_rec0.1_l_dz1_l_dx0.001 #    name of the experiment
-load_network: False  # train the network or load the last pre-trained one
-sim_name: sim_onlyHeat_1Point_smallHalton_newQ_d3_samp100  # sim_onlyHeat_1Point_smallHalton_d3_samp100
+load_network: True  # train the network or load the last pre-trained one
+sim_name: /Users/jonaskneifl/Develop/26_ApHIN/examples/disc_brake/data/sim_onlyHeat_1Point_smallHalton_newQ_d3_samp100.npz  # sim_onlyHeat_1Point_smallHalton_d3_samp100
 file_url: https://darus.uni-stuttgart.de/api/access/datafile/:persistentId?persistentId=doi:10.18419/darus-4418/1
 ref_coords: disc_ref_coords.npy
 faces:  disc_faces.npy

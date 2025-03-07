@@ -5,6 +5,13 @@ import tensorflow as tf
 import scipy
 import matplotlib.pyplot as plt
 import h5py
+# plotly plot of random state and it's derivative
+import plotly
+import plotly.graph_objs as go
+import plotly.express as px
+import pandas as pd
+import numpy as np
+import plotly.io as pio
 
 from aphin.utils.data.dataset import SynRMDataset, PHIdentifiedDataset, Dataset
 from aphin.utils.configuration import Configuration
@@ -19,6 +26,8 @@ from aphin.utils.save_results import (
     save_training_times,
 )
 from aphin.utils.print_matrices import print_matrices
+
+import matplotlib.pyplot as plt
 
 
 def main(
@@ -55,7 +64,15 @@ def main(
     cfg = configuration.cfg_dict
     data_dir, log_dir, weight_dir, result_dir = configuration.directories
 
+    aphin_vis.setup_matplotlib(cfg["setup_matplotlib"])
+
     data = np.load("guitar.npz")
+
+    plt.figure()
+    t = np.linspace(0, 10, 100)
+    y = np.sin(t)
+    plt.plot(t, y)
+    plt.show()
 
     # # load mat file using h5py
     # data = h5py.File(cfg["matfile_path"], "r")["snapshotData"]["trajectory"]
@@ -65,18 +82,52 @@ def main(
     #
     # # save data as compressed numpy file
     # np.savez_compressed("guitar.npz", x=x, t=t, freq=freq)
-    t = data["t"]
+    t = np.round(data["t"], decimals=4)
     u = np.array([-np.sin(2*np.pi*freq_*t) for freq_ in data["freq"]])
     x = data["x"]
     dt = (t[1] - t[0])[0]
     # numerical differentiation
+    # x = x[:, :, :, np.newaxis]
+    from sklearn.decomposition import PCA
+    # scale data per domain
+    # domain_ids = [0] + [np.sum(cfg["domain_split_vals_"][:i]) for i in range(1, len(cfg["domain_split_vals_"])+1)]
+    # # perform domain specific pca
+    # for i in range(len(domain_ids)-1):
+    #     print(f"Scale domain {i}: {domain_ids[i]} - {domain_ids[i+1]}")
+    #     x[:, :, domain_ids[i]:domain_ids[i+1]] = x[:, :, domain_ids[i]:domain_ids[i+1]]/cfg["scaling_values"][i]
+    # x_dt = np.gradient(x, dt, axis=1)
+    # x_dt = x_dt[:, :, :, np.newaxis]
+    # data = Dataset(t=t, X=x, X_dt=x_dt, U=u)
+    n_sims, n_t = x.shape[0], x.shape[1]
+    from sklearn.decomposition import PCA
+    # scale data per domain
+    domain_ids = [0] + [np.sum(cfg["domain_split_vals_"][:i]) for i in range(1, len(cfg["domain_split_vals_"])+1)]
+    # perform domain specific pca
+    x_pca = []
+    pcas = []
+    for i in range(len(domain_ids)-1):
+        print(f"Scale domain {i}: {domain_ids[i]} - {domain_ids[i+1]}")
+        x_ = x[:, :, domain_ids[i]:domain_ids[i+1]]
+        n_domain = x_.shape[2]
+        # todo: train test split
+        x_reshaped = x_.reshape(n_sims*n_t, -1)
+        pca_ = PCA(n_components=0.99)
+        x_pca_ = pca_.fit_transform(x_reshaped)
+        logging.info(f"relative reconstruction error: {np.linalg.norm(x_reshaped - pca_.inverse_transform(x_pca_)) / 
+                                                       np.linalg.norm(x_reshaped)}")
+        x_pca_ = x_pca_.reshape(n_sims, n_t, -1)
+        x_pca.append(x_pca_)
+        pcas.append(pca_)
+    # scale values
+    n_domains = [x_.shape[2] for x_ in x_pca]
+    domain_ids = [0] + [np.sum(n_domains[:i]) for i in range(1, len(n_domains)+1)]
+    # x_scaled = [x_ / np.abs(x_).max()/n_domains[i] for i, x_ in enumerate(x_pca)]
+    x_scaled = [x_ / np.abs(x_).max() for i, x_ in enumerate(x_pca)]
+    x = np.concatenate(x_scaled, axis=2)[..., np.newaxis]
     x_dt = np.gradient(x, dt, axis=1)
-    x = x[:, : , np.newaxis]
-    x_dt = x_dt[:, : , np.newaxis]
 
     data = Dataset(t=t, X=x, X_dt=x_dt, U=u)
 
-    aphin_vis.setup_matplotlib(cfg["setup_matplotlib"])
 
     # filter data with savgol filter
     if cfg["filter_data"]:
@@ -88,12 +139,21 @@ def main(
     # reduced size
     r = cfg["r"]
 
+
+    # pio.renderers.default = "browser"
+    # idx = np.random.randint(0, x.shape[0])
+    # x_plot = x[0, :, 0, idx]
+    # x_plot_dt = x_dt[0, :, 0, idx]
+    # x_plot_dt2 = x[0, :, 0, idx+2454+3170]
+    # fig = go.Figure()
+    # fig.add_trace(go.Scatter(x=t.squeeze(), y=x_plot, mode="lines", name="x"))
+    # fig.add_trace(go.Scatter(x=t.squeeze(), y=x_plot_dt, mode="lines", name="x_dt numerical"))
+    # fig.add_trace(go.Scatter(x=t.squeeze(), y=x_plot_dt2, mode="lines", name="x_dt_data"))
+    # fig.show()
+
+
     # train-test split
     data.train_test_split(0.6, seed=cfg["seed"])
-
-    data.scale_X(
-        scaling_values=cfg["scaling_values"], domain_split_vals=cfg["domain_split_vals"]
-    )
 
     # scale u manually
     data.reshape_inputs_to_features()
@@ -157,14 +217,16 @@ def main(
     )
     aphin.build(input_shape=([x.shape, dx_dt.shape, u.shape], None))
 
+    # aphin.load_weights(os.path.join(weight_dir, "rec.weights.h5"))
+    # aphin.load_weights(os.path.join(weight_dir, ".weights.h5"))
+
+    # x_rec = aphin.reconstruct(x)
+    # e_rel = np.linalg.norm(x - x_rec) / np.linalg.norm(x)
     # Fit or learn neural network
     if cfg["load_network"]:
         logging.info(f"Loading NN weights.")
         aphin.load_weights(os.path.join(weight_dir, ".weights.h5"))
     else:
-        if cfg["prelearn_rec"]:
-            logging.info(f"Loading NN weights from only rec learning.")
-            aphin.load_weights(os.path.join(result_dir, ".weights.h5"))
         logging.info(f"Fitting NN weights.")
         n_train = int(0.8 * x.shape[0])
         x_train = [x[:n_train], dx_dt[:n_train], u[:n_train]]
@@ -244,6 +306,63 @@ def main(
     #     result_dir=result_dir,
     # )
 
+    e_rec = np.linalg.norm(data.TEST.X - data_id.TEST.X_rec) / np.linalg.norm(data.TEST.X)
+    e_z = np.linalg.norm(data_id.TEST.Z - data_id.TEST.Z_ph) / np.linalg.norm(data_id.TEST.Z)
+    e_z_dt = np.linalg.norm(data_id.TEST.Z_dt - data_id.TEST.Z_dt_ph) / np.linalg.norm(data_id.TEST.Z_dt)
+    e_z_dt_map = np.linalg.norm(data_id.TEST.Z_dt - data_id.TEST.Z_dt_ph_map) / np.linalg.norm(data_id.TEST.Z_dt)
+    e_x = np.linalg.norm(data.TEST.X - data_id.TEST.X) / np.linalg.norm(data.TEST.X)
+
+    e_x_mech = (np.linalg.norm(data.TEST.X[:,:,:domain_ids[1]] - data_id.TEST.X[:,:,:domain_ids[1]]) / 
+           np.linalg.norm(data.TEST.X[:,:,:domain_ids[1]]))
+    
+    e_x_acc = (np.linalg.norm(data.TEST.X[:,:,domain_ids[1]:domain_ids[2]] - data_id.TEST.X[:,:,domain_ids[1]:domain_ids[2]]) / 
+           np.linalg.norm(data.TEST.X[:,:,domain_ids[1]:domain_ids[2]]))
+
+    e_x_Dmech = (np.linalg.norm(data.TEST.X[:,:,domain_ids[2]:domain_ids[3]] - data_id.TEST.X[:,:,domain_ids[2]:domain_ids[3]]) /
+              np.linalg.norm(data.TEST.X[:,:,domain_ids[2]:domain_ids[3]]))
+    
+    e_x_Dacc = (np.linalg.norm(data.TEST.X[:,:,domain_ids[3]:domain_ids[4]] - data_id.TEST.X[:,:,domain_ids[3]:domain_ids[4]]) /
+                np.linalg.norm(data.TEST.X[:,:,domain_ids[3]:domain_ids[4]]))
+
+    i = 0
+    plt.plot(data_id.TEST.Z_dt[0, :, i])
+    # plt.plot(data_id.TEST.Z_dt_ph[0, :, i])
+    plt.plot(data_id.TEST.Z_dt_ph_map[0, :, i])
+    # plt.legend(["Z_dt", "Z_dt_ph", "Z_dt_ph_map"])
+    plt.show()
+
+    from aphin.utils.visualizations import plot_Z_dt_ph, plot_Z_dt_ph_map, plot_Z_ph
+
+
+    plot_Z_dt_ph(
+            data_id,
+            use_train_data=False,
+            idx_gen="first",
+            save_path=result_dir,
+            idx_custom_tuple= [range(3), range(4)],
+        )
+    plot_Z_dt_ph_map(
+            data_id,
+            use_train_data=False,
+            idx_gen="first",
+            save_path=result_dir,
+            idx_custom_tuple= [range(3), range(4)],
+        )
+
+    plot_Z_ph(
+            data_id,
+            use_train_data=False,
+            idx_gen="first",
+            save_path=result_dir,
+            idx_custom_tuple= [range(3), range(4)],
+    )
+
+    print(f"Relative error on the reconstruction: {e_rec * 100:.2f}%")
+    print(f"Relative error on the latent variable: {e_z * 100:.2f}%")
+    print(f"Relative error on the latent variable time derivative: {e_z_dt * 100:.2f}%")
+    print(f"Relative error on the latent variable time derivative map: {e_z_dt_map * 100:.2f}%")
+    print(f"Relative error on the state variable: {e_x * 100:.2f}%")
+
     # %% calculate errors
     data.calculate_errors(
         data_id,
@@ -260,8 +379,9 @@ def main(
         yscale="log",
     )
 
+
     # %% plot trajectories
-    use_train_data = True
+    use_train_data = False
     use_rand = True
     if use_rand:
         idx_gen = "rand"

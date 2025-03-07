@@ -260,12 +260,16 @@ class APHIN(PHBasemodel, ABC):
         if self.use_pca:
             # calculate the PCA
             pca = TruncatedSVD(n_components=self.pca_order)
-            x = pca.fit_transform(x)
+            pca.fit(x)
             # use the projection matrix as linear encoder
             self.down = tf.cast(pca.components_, dtype=self.dtype_)
             self.up = tf.cast(pca.components_.T, dtype=self.dtype_)
             self.singular_values = pca.singular_values_
             z_pca = x_input @ tf.transpose(self.down)
+            # compute relative reconstruction error
+            x_rec = pca.inverse_transform(pca.transform(x))
+            x_rel = np.linalg.norm(x - x_rec) / np.linalg.norm(x)
+            logging.info(f"Relative reconstruction error of PCA: {x_rel:.4g}")
         # in case no PCA is used, the encoder is just the identity
         else:
             z_pca = x_input * 1

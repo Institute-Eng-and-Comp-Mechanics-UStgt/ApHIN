@@ -6,7 +6,7 @@ seed: 1  # Show plots and visualization
 experiment: aphin_nonlinear  # phin | aphin_linear | aphin_nonlinear
 
 # %% General identification framework settings
-load_network: False  # train the network or load a pre-trained one
+load_network: True  # train the network or load a pre-trained one
 
 
 # %% Pendulum data settings

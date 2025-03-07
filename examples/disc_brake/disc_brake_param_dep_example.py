@@ -68,7 +68,7 @@ def main(
     )
     # save/load data path
     sim_name = db_cfg["sim_name"]
-    cache_path = os.path.join(data_dir, f"{sim_name}.npz")  # path to .npz file
+    cache_path = os.path.join(sim_name)  # path to .npz file
 
     # check if data already exists on local machine
     if not os.path.isfile(cache_path):

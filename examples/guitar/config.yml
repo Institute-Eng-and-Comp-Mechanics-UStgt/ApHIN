@@ -1,4 +1,4 @@
-experiment: guitar
+experiment: pca_per_domain
 setup_matplotlib: False  # Show plots and visualization
 
 matfile_path: /Users/jonaskneifl/Develop/27_ApHIN_fork/examples/guitar/SnapshotDataFOM_Mom.mat
@@ -15,42 +15,44 @@ exclude_states: Null
 
 # filter data (using a savgol filter)
 filter_data: False 
-# %% Disc brake data settings (get information from loaded data)
-n_u: 39      # number of inputs
-# n_mu: 2     # number of parameters (not varying inputs)
+
 
 # scaling
 # scaling_values: [1,1,1,1] 
 # domain_split_vals: (list) integers that define the number of dofs for each domain, sum of all values needs to conincide with n_dn. If {None} it is considered as a single domain
-domain_split_vals: [2454,3170,2454,3170]
-domain_names: ["mech","acoustic","Dmech","Dacoustic"]
-scaling_values: [0.24518286954037954, 0.017109124553781923, 0.24518286954037954, 0.017109124553781923] #
+domain_split_vals: [1]
+domain_split_vals_: [2454,3170,2454,3170]
+domain_names: ["all"]
+domain_names_: ["mech","acoustic","Dmech","Dacoustic"]
+#scaling_values: [0.24518286954037954, 0.017109124553781923, 0.24518286954037954, 0.017109124553781923] #
+scaling_values: [0.24518286954037954, 0.017109124553781923, 0.0010648286597949724, 1.757633990132496e-08] #
+#scaling_values: [0.01068097493552507, 0.004821828310409735, 4.638745050671555e-05, 4.953502621550509e-09] #
 desired_bounds: [-1, 1]   # desired bounds after scaling for u and mu
 
 
 # %% identification settings
-r: 10 #  reduced order
-use_pca: True  # use PCA for the input
-n_pca: 16  # number of PCA components
+r: 12 #  reduced order
+use_pca: False  # use PCA for the input
+n_pca: 32  # number of PCA components
 pca_scaling: False  # scale the PCA components
-pca_comparison: True
+pca_comparison: False
 pca_only: False  # only use PCA components without nonlinear autoencoder
-l_rec: 1 #  loss weight for the reconstruction
+l_rec: 100 #  loss weight for the reconstruction
 l_dz:  1 #  loss weight for the dz
-l_dx:  0 #  loss weight for the dx
-l1: 0  # L1 regularization
+l_dx:  0.0000001 #  loss weight for the dx
+l1: 0.0000001  # L1 regularization
 l2: 0  # L2 regularization
-n_epochs: 3000 #  number of epochs
+n_epochs: 1500 #  number of epochs
 batch_size: 256  # batch size
 layer_sizes_ph: # layer sizes
   - 32  # first layer
   - 32  # second layer
   - 32  # third layer
 layer_sizes_ae: # layer sizes
-  - 100  # first layer
-  - 90 # second layer
-  - 80  # third layer
+  - 64  # first layer
+  - 64 # second layer
+  - 64  # third layer
 activation_ae: elu  # activation function
 activation_ph: elu  # activation function
-lr: 0.001  # learning rate
+lr: 0.0001  # learning rate
 tensorboard: False  # Save model information for analysis in tensorboard

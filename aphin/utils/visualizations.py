@@ -46,9 +46,10 @@ def setup_matplotlib(save_plots=False):
         # Ensure the "results" directory exists
         os.makedirs("results", exist_ok=True)
         # Use PGF backend for saving plots
-        matplotlib.use("pgf")
+        # matplotlib.use("pgf")
     else:
-        matplotlib.use("TkAgg")  # Interactive backend for display
+        pass
+        # matplotlib.use("TkAgg")  # Interactive backend for display
 
     # Define common LaTeX preamble
     latex_preamble = "\n".join(
@@ -1179,6 +1180,9 @@ def plot_u(
         num_plots = num_plots_max
 
     fig, ax = new_fig(num_plots, window_title="Input u")
+    # make axis plot at least 2d
+    if num_plots == 1:
+        ax = [ax]
     plt.title("Inputs")
     for i_u in range(num_plots):
         ax[i_u].plot(u[:, i_u], label=rf"$u_{i_u}$")
@@ -1895,38 +1899,39 @@ def save_as_png(save_path):
     try:
         plt.savefig(save_path)
     except RuntimeError:
+        raise RuntimeError(f"Plot {save_path} could not be created due to RunTimeError")
         # sometimes "Failed to process string with tex because dvipng could not be found" error occurs
-        try:
-            import matplotlib as mpl
-
-            mpl.rcParams.update(mpl.rcParamsDefault)  # default mpl helps sometimes
-            plt.savefig(save_path)
-            # if it still occurs change the backend
-        except RuntimeError:
-            # change backend
-            # see https://matplotlib.org/stable/users/explain/figure/backends.html for list of backends
-
-            setup_matplotlib()  # reset to tex
-            backends = [
-                "qtagg",
-                "ipympl",
-                "tkagg",
-                "macosx",
-                "pdf",
-            ]
-            for backend in backends:
-                try:
-                    mpl.use(backend)
-                    if backend == "pdf":
-                        save_path_tmp = f"{os.path.splitext(save_path)[0]}.pdf"
-                    else:
-                        save_path_tmp = save_path
-                    plt.savefig(save_path_tmp)
-                    return
-                except:
-                    # go to next backend
-                    pass
-            logging.error(f"Plot {save_path} could not be created due to RunTimeError")
+        # try:
+        #     import matplotlib as mpl
+        #
+        #     mpl.rcParams.update(mpl.rcParamsDefault)  # default mpl helps sometimes
+        #     plt.savefig(save_path)
+        #     # if it still occurs change the backend
+        # except RuntimeError:
+        #     # change backend
+        #     # see https://matplotlib.org/stable/users/explain/figure/backends.html for list of backends
+        #
+        #     setup_matplotlib()  # reset to tex
+        #     backends = [
+        #         "qtagg",
+        #         "ipympl",
+        #         "tkagg",
+        #         "macosx",
+        #         "pdf",
+        #     ]
+        #     for backend in backends:
+        #         try:
+        #             mpl.use(backend)
+        #             if backend == "pdf":
+        #                 save_path_tmp = f"{os.path.splitext(save_path)[0]}.pdf"
+        #             else:
+        #                 save_path_tmp = save_path
+        #             plt.savefig(save_path_tmp)
+        #             return
+        #         except:
+        #             # go to next backend
+        #             pass
+        #     logging.error(f"Plot {save_path} could not be created due to RunTimeError")
 
 
 def plot_time_trajectories_all(

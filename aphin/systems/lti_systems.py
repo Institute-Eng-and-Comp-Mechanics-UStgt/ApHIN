@@ -160,6 +160,8 @@ class LTISystem:
             u_ = U.copy()
         else:
             raise ValueError("Shape of u does not fit")
+        u_midpoint = (u_[:, 1:] + u_[:, :-1]) / 2
+        u_[:, :-1] = u_midpoint
         z = self.solve(
             t, z_init, u_, integrator_type=integrator_type, decomp_option=decomp_option
         )

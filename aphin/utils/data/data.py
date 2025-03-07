@@ -1772,6 +1772,16 @@ class PHIdentifiedData(Data):
                 np.expand_dims(Z_dt_ph[i_sim], axis=0),
             )
 
+
+            # z_ref = ph_network.encode(data.x[i_sim*1001:(i_sim+1)*1001]).numpy()
+            # import matplotlib.pyplot as plt
+            # i_state = 6
+            # plt.figure()
+            # plt.plot(Z_ph[i_sim, :, i_state])
+            # plt.plot(z_ref[:, i_state])
+            # plt.show()
+
+
             # DECODING
             if isinstance(ph_network, APHIN):
                 # decode time integrated latent state

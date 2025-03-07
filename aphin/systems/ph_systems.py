@@ -126,13 +126,19 @@ class PHSystem(LTISystem, CheckPHProperties):
         Q_ph : array-like, shape (n, n), optional
             The Q matrix associated with the port-Hamiltonian system. If not provided, the identity matrix is used.
         """
-        self.J_ph = np.squeeze(J_ph)
-        self.R_ph = np.squeeze(R_ph)
+        if J_ph.shape[0]==1:
+            J_ph = np.squeeze(J_ph, axis=0)
+        self.J_ph = J_ph
+        if R_ph.shape[0]==1:
+            R_ph = np.squeeze(R_ph, axis=0)
+        self.R_ph = R_ph
         if Q_ph is None:
             self.Q_ph = np.eye(*self.J_ph.shape)
             self.Q_is_identity = True
         else:
-            self.Q_ph = np.squeeze(Q_ph)
+            if Q_ph.shape[0]==1:
+                Q_ph = np.squeeze(Q_ph, axis=0)
+            self.Q_ph = Q_ph
             self.Q_is_identity = False
         assert self.J_ph.shape[0] == self.J_ph.shape[1]
         assert self.R_ph.shape[0] == self.R_ph.shape[1]
@@ -141,7 +147,9 @@ class PHSystem(LTISystem, CheckPHProperties):
             raise ValueError("Insert pH square matrix of size (r,r)")
         self.check_pH_properties(self.J_ph, self.R_ph, self.Q_ph)
         if B is not None:
-            self.B_ph = np.squeeze(B)
+            if B.shape[0]==1:
+                B = np.squeeze(B, axis=0)
+            self.B_ph = B
             self.C_ph = self.B_ph.T @ self.Q_ph
         else:
             self.B_ph = B
