@@ -208,7 +208,6 @@ class PHBasemodel(tf.keras.Model, ABC):
         """
         return self.system_network.trainable_weights
 
-    @tf.function
     def build_loss(self, inputs):
         """
         Split input into state, its derivative, and the parameters, perform the forward pass, calculate the loss,

@@ -521,7 +521,6 @@ class APHIN(PHBasemodel, ABC):
 
         return x.numpy(), dx_dt.numpy()
 
-    @tf.function
     def _get_loss_rec(self, x, dx_dt, u, mu):
         """
         Calculate reconstruction loss of autoencoder.
@@ -559,7 +558,6 @@ class APHIN(PHBasemodel, ABC):
 
         return rec_loss, dz_loss, dx_loss, reg_loss, total_loss
 
-    @tf.function
     def _get_loss(self, x, dx_dt, u, mu):
         """
         Calculate loss.
@@ -758,7 +756,6 @@ class APHIN(PHBasemodel, ABC):
         fig.tight_layout()
         plt.show(block=block)
 
-    # @tf.function
     def encode(self, x):
         """
         Encode full state.
@@ -776,7 +773,6 @@ class APHIN(PHBasemodel, ABC):
         z = self.encoder(x)
         return z
 
-    # @tf.function
     def decode(self, z):
         """
         Decode latent variable.
@@ -794,7 +790,6 @@ class APHIN(PHBasemodel, ABC):
         x_rec = self.decoder(z)
         return x_rec
 
-    # @tf.function
     def reconstruct(self, x, _=None):
         """
         Reconstruct full state.

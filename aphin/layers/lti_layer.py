@@ -215,13 +215,10 @@ class LTILayer(SystemLayer):
             # convert to matrices
             if n_t is None:
                 raise ValueError("n_t is required in the parameter-dependent case.")
-            J = np.reshape(self.J.to_dense().numpy(), (-1, n_t, self.r, self.r))
-            R = np.reshape(self.R.to_dense().numpy(), (-1, n_t, self.r, self.r))
-            B = np.reshape(self.B.to_dense().numpy(), (-1, n_t, self.r, self.n_u))
             # since all matrices are the same over n_t, remove n_t and transform to shape (n_sim,r,r)
-            J = J[:, 0, :, :]
-            R = R[:, 0, :, :]
-            B = B[:, 0, :, :]
+            J = np.reshape(self.J.to_dense().numpy(), (-1, n_t, self.r, self.r))[:, 0, :, :]
+            R = np.reshape(self.R.to_dense().numpy(), (-1, n_t, self.r, self.r))[:, 0, :, :]
+            B = np.reshape(self.B.to_dense().numpy(), (-1, n_t, self.r, self.n_u))[:, 0, :, :] if self.n_u > 0 else None
         else:
             # convert to matrices
             J = np.expand_dims(self.J.to_dense().numpy(), axis=0)
@@ -233,7 +230,7 @@ class LTILayer(SystemLayer):
 
         return J, R, B
 
-    #  @tf.function
+    @tf.function
     def call(self, z, u=None, mu=None, training=False):
         """
         Evaluate right-hand side of the ODE system z'(t) = f(z, u, mu) for inputs (z, u, mu).

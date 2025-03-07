@@ -46,7 +46,7 @@ class CheckPHProperties:
         """
 
         J_check = np.allclose(J, -J.T, rtol=rtol, atol=atol)
-        R_check = self.check_spd(R)
+        R_check = self.check_spd(R.copy())
 
         if E is None:
             E = np.eye(J.shape[0])

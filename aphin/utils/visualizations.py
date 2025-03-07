@@ -59,19 +59,23 @@ def setup_matplotlib(save_plots=False):
         ]
     )
 
+    pgf_preamble = "\n".join([
+        r"\usepackage{amsmath}",
+        r"\usepackage{bm}",
+    ])
+
     # Update matplotlib rcParams (only once)
-    plt.rcParams.update(
-        {
-            "pgf.texsystem": "pdflatex",  # Choose either "pdflatex" or "lualatex"
-            "pgf.rcfonts": False,
-            "text.usetex": True,
-            "text.latex.preamble": latex_preamble,
-            "font.family": "serif",
-            "font.serif": "Computer Modern Roman",
-            "font.size": 11,
-            "axes.labelsize": "large",
-        }
-    )
+    plt.rcParams.update({
+        "pgf.texsystem": "pdflatex",  # Choose either "pdflatex" or "lualatex"
+        "pgf.rcfonts": False,
+        "text.usetex": True,
+        "text.latex.preamble": latex_preamble,
+        "pgf.preamble": pgf_preamble,
+        "font.family": "serif",
+        "font.serif": "Computer Modern Roman",
+        "font.size": 11,
+        "axes.labelsize": "large",
+    })
 
 
 def animate_parameter_sweep(
@@ -2012,7 +2016,7 @@ def plot_time_trajectories_all(
         )
 
 
-def chessboard_visualisation(test_ids, system_layer, data, result_dir):
+def chessboard_visualisation(test_ids, system_layer, data, result_dir, limits=None, error_limits=None):
     """
     Visualizes and compares predicted and test matrices by generating various plots.
 
@@ -2046,28 +2050,48 @@ def chessboard_visualisation(test_ids, system_layer, data, result_dir):
     # original test matrices
     J_test_, R_test_, Q_test_, B_test_ = data.ph_matrices_test
 
-    J_pred, R_pred, B_pred = (
+    A_pred = J_pred - R_pred
+    A_test_ = (J_test_ - R_test_) @ Q_test_
+
+    J_pred, R_pred, B_pred, A_pred = (
         J_pred[test_ids],
         R_pred[test_ids],
         B_pred[test_ids],
+        A_pred[test_ids],
     )
-    J_test_, R_test_, B_test_ = (
+    J_test_, R_test_, B_test_, A_test_ = (
         J_test_[test_ids],
         R_test_[test_ids],
         B_test_[test_ids],
+        A_test_[test_ids],
     )
 
-    J_min, J_max = min(J_pred.min(), J_test_.min()), max(J_pred.max(), J_test_.max())
-    R_min, R_max = min(R_pred.min(), R_test_.min()), max(R_pred.max(), R_test_.max())
-    B_min, B_max = min(B_pred.min(), B_test_.min()), max(B_pred.max(), B_test_.max())
+    if limits is None:
+        J_min, J_max = min(J_pred.min(), J_test_.min()), max(J_pred.max(), J_test_.max())
+        R_min, R_max = min(R_pred.min(), R_test_.min()), max(R_pred.max(), R_test_.max())
+        B_min, B_max = min(B_pred.min(), B_test_.min()), max(B_pred.max(), B_test_.max())
+        A_min, A_max = min(A_pred.min(), A_test_.min()), max(A_pred.max(), A_test_.max())
+    else:
+        J_min, J_max, R_min, R_max, B_min, B_max, A_min, A_max = limits
 
     e_J = np.abs(J_pred - J_test_)  # / J_test[test_ids].max()
     e_R = np.abs(R_pred - R_test_)  # / R_test_.max()
     e_B = np.abs(B_pred - B_test_)  # / B_test[test_ids].max()
+    e_A = np.abs(A_pred - A_test_)  # / A_test[test_ids].max()
+
+    if error_limits is None:
+        e_J_max = e_J.max()
+        e_R_max = e_R.max()
+        e_B_max = e_B.max()
+        e_A_max = e_A.max()
+    else:
+        e_J_max, e_R_max, e_B_max, e_A_max = error_limits
+
+
 
     np.linalg.matrix_rank(B_test_[0])
 
-    fig, axs = plt.subplots(9, max(len(test_ids), 2))
+    fig, axs = plt.subplots(12, max(len(test_ids), 2))
     color_factor = 1
     for i, test_id in enumerate(test_ids):
         axs[0, i].imshow(
@@ -2076,21 +2100,24 @@ def chessboard_visualisation(test_ids, system_layer, data, result_dir):
         axs[1, i].imshow(
             J_test_[i], vmin=color_factor * J_min, vmax=color_factor * J_max
         )
-        axs[2, i].imshow(e_J[i], vmin=color_factor * J_min, vmax=color_factor * J_max)
+        axs[2, i].imshow(e_J[i], vmin=0, vmax=e_J_max)
         axs[3, i].imshow(
             R_pred[i], vmin=color_factor * R_min, vmax=color_factor * R_max
         )
         axs[4, i].imshow(
             R_test_[i], vmin=color_factor * R_min, vmax=color_factor * R_max
         )
-        axs[5, i].imshow(e_R[i], vmin=color_factor * R_min, vmax=color_factor * R_max)
+        axs[5, i].imshow(e_R[i], vmin=0, vmax=e_R_max)
         axs[6, i].imshow(
             B_pred[i], vmin=color_factor * B_min, vmax=color_factor * B_max
         )
         axs[7, i].imshow(
             B_test_[i], vmin=color_factor * B_min, vmax=color_factor * B_max
         )
-        axs[8, i].imshow(e_B[i], vmin=color_factor * B_min, vmax=color_factor * B_max)
+        axs[8, i].imshow(e_B[i], vmin=0, vmax=e_B_max)
+        axs[9, i].imshow(A_pred[i], vmin=color_factor * A_min, vmax=color_factor * A_max)
+        axs[10, i].imshow(A_pred[i], vmin=color_factor * A_min, vmax=color_factor * A_max)
+        axs[11, i].imshow(e_A[i], vmin=0, vmax=e_A_max)
         if i == 0:
             axs[0, i].set_ylabel("J_pred")
             axs[1, i].set_ylabel("J_test")
@@ -2101,6 +2128,9 @@ def chessboard_visualisation(test_ids, system_layer, data, result_dir):
             axs[6, i].set_ylabel("B_pred")
             axs[7, i].set_ylabel("B_test")
             axs[8, i].set_ylabel("e_B")
+            axs[9, i].set_ylabel("A_pred")
+            axs[10, i].set_ylabel("A_test")
+            axs[11, i].set_ylabel("e_A")
 
     plt.savefig(
         os.path.join(result_dir, f"compare_matrices.png"),
@@ -2114,29 +2144,40 @@ def chessboard_visualisation(test_ids, system_layer, data, result_dir):
     for u_ in u_test:
         plt.plot(u_)
     cmap = "plasma"
-    i = 0
     for i in range(5):
         for key, matrix in dict(
             J=dict(
                 limits=[J_min, J_max],
+                error_limits=[0, e_J_max],
                 matrices=dict(pred=J_pred, ref=J_test_, error=e_J),
             ),
             R=dict(
                 limits=[R_min, R_max],
+                error_limits=[0, e_R_max],
                 matrices=dict(pred=R_pred, ref=R_test_, error=e_R),
             ),
             B=dict(
                 limits=[B_min, B_max],
+                error_limits=[0, e_B_max],
                 matrices=dict(pred=B_pred, ref=B_test_, error=e_B),
+            ),
+            A=dict(
+                limits=[A_min, A_max],
+                error_limits=[0, e_A_max],
+                matrices=dict(pred=A_pred, ref=A_test_, error=e_A),
             ),
         ).items():
             for sub_key, sub_matrix in matrix["matrices"].items():
                 # plot without gui and save figure
                 plt.figure()
+                if sub_key == "error":
+                    limits = matrix["error_limits"]
+                else:
+                    limits = matrix["limits"]
                 plt.imshow(
                     sub_matrix[i],
-                    vmin=matrix["limits"][0],
-                    vmax=matrix["limits"][1],
+                    vmin=limits[0],
+                    vmax=limits[1],
                     cmap=cmap,
                 )
                 # remove ticks
@@ -2154,6 +2195,12 @@ def chessboard_visualisation(test_ids, system_layer, data, result_dir):
         file.write(f"J: min: {J_min} max: {J_max}\n")
         file.write(f"R: min: {R_min} max: {R_max}\n")
         file.write(f"B: min: {B_min} max: {B_max}\n")
+        file.write(f"A: min: {A_min} max: {A_max}\n")
+        file.write(f"error J: min: {0} max: {e_J.max()}\n")
+        file.write(f"error R: min: {0} max: {e_R.max()}\n")
+        file.write(f"error B: min: {0} max: {e_B.max()}\n")
+        file.write(f"error A: min: {0} max: {e_A.max()}\n")
+
 
     # export colormap to tikz
     def convert_rgb(l):
@@ -2193,7 +2240,7 @@ def chessboard_visualisation(test_ids, system_layer, data, result_dir):
     fig.tight_layout()
 
 
-def plot_train_history(train_hist, save_path: str = "", validation=False):
+def plot_train_history(train_hist, validation=False, save_name="train_history"):
     """
     Plots the training history of a machine learning model.
 
@@ -2214,103 +2261,20 @@ def plot_train_history(train_hist, save_path: str = "", validation=False):
     None
         The function does not return any value. It generates and displays a plot of the training history.
     """
-
     if validation:
-        val_strings = ["", "val_"]
+        name_extension = "val_"
     else:
-        val_strings = [""]
-    for val_str in val_strings:
-        # plot training history
-        plt.figure()
-        plt.semilogy(train_hist.history[f"{val_str}loss"], label=f"{val_str}loss")
-        plt.semilogy(train_hist.history[f"{val_str}dz_loss"], label=f"{val_str}dz_loss")
-        try:
-            plt.semilogy(
-                train_hist.history[f"{val_str}dx_loss"], label=f"{val_str}dx_loss"
-            )
-            plt.semilogy(
-                train_hist.history[f"{val_str}rec_loss"], label=f"{val_str}rec_loss"
-            )
-        except KeyError:
-            pass
-        plt.semilogy(
-            train_hist.history[f"{val_str}reg_loss"], label=f"{val_str}reg_loss"
-        )
-        plt.legend()
-        plt.show(block=False)
-        save_name = f"{val_str}train_hist"
-        save_as_png(os.path.join(save_path, save_name))
+        name_extension = ""
+    # plot training history
+    plt.figure()
+    plt.semilogy(train_hist.history[f"{name_extension}loss"], label="loss")
+    plt.semilogy(train_hist.history[f"{name_extension}dz_loss"], label="dz")
+    try:
+        plt.semilogy(train_hist.history[f"{name_extension}dx_loss"], label="dx")
+        plt.semilogy(train_hist.history[f"{name_extension}rec_loss"], label="rec")
+    except KeyError:
+        pass
+    plt.semilogy(train_hist.history["reg_loss"], label="reg")
+    plt.legend()
 
-
-def custom_state_plot(
-    data,
-    data_id,
-    attributes: list[str],
-    index_list: list[tuple],
-    train_or_test: str = "test",
-    cut_time_idx: int | None = None,
-    subplot_idx: list[int] = None,
-    subplot_title: list[str] = None,
-    legend: list[str] = None,
-    result_dir: str = "",
-):
-    """
-    indices list of tuples with size (n_sim,n_n,n_dn)
-    attributes list of str with [attribute of data, attribute of data_id], e.g. ["X","X_ph"]
-    legend list of entries for orig system
-    """
-    # get data
-    if train_or_test.lower() == "train":
-        data_train_or_test = data.TRAIN
-        data_id_train_or_test = data_id.TRAIN
-
-    elif train_or_test.lower() == "test":
-        data_train_or_test = data.TEST
-        data_id_train_or_test = data_id.TEST
-    # get attribute
-    state = getattr(data_train_or_test, attributes[0])
-    state_id = getattr(data_id_train_or_test, attributes[1])
-
-    t = data_train_or_test.t
-    if cut_time_idx is None:
-        n_t = t.shape[0]
-    else:
-        t = t[:cut_time_idx]
-        n_t = t.shape[0]
-
-    plot_state = np.zeros((len(index_list), n_t))
-    plot_state_id = np.zeros((len(index_list), n_t))
-    for i_index, index in enumerate(index_list):
-        n_sim = index[0]
-        n_n = index[1]
-        n_dn = index[2]
-        plot_state[i_index] = state[n_sim, :n_t, n_n, n_dn]
-        plot_state_id[i_index] = state_id[n_sim, :n_t, n_n, n_dn]
-
-    num_subplots = max(subplot_idx) + 1
-    if legend is None:
-        legend = [[None]] * len(index_list)
-
-    # plot data
-    width = 6
-    height = 6 / 1.61  # golden ratio
-    fig, ax = plt.subplots(
-        num_subplots, 1, figsize=(width, height), dpi=600, sharex="all"
-    )
-    for i_index in range(len(index_list)):
-        if num_subplots == 1:
-            ax.plot(t, plot_state[i_index], label=rf"{legend[i_index]}")
-            ax.plot(t, plot_state_id[i_index], "--")
-            ax.legend()
-            ax.title.set_text(subplot_title)
-        else:
-            ax[subplot_idx[i_index]].plot(
-                t, plot_state[i_index], label=rf"{legend[i_index]}"
-            )
-            ax[subplot_idx[i_index]].plot(t, plot_state_id[i_index], "--")
-            ax[subplot_idx[i_index]].legend()
-            ax[subplot_idx[i_index]].title.set_text(subplot_title[subplot_idx[i_index]])
-    plt.xlabel("Time in s")
-    plt.savefig(os.path.join(result_dir, "custom_state_plot.png"))
-
-    print("debug in custom_state_plot")
+    save_as_png(f"{save_name}{name_extension}")
