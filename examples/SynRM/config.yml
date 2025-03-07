@@ -1,4 +1,4 @@
-experiment: synrm_with_pca_and_dynamic_high_dim_coarsen10_only_rec
+experiment: synrm_please_just_work
 setup_matplotlib: False  # Show plots and visualization
 
 matfile_path: /exchange/jrettberg/aphin/SynRM/SynRM4ApHIN_smallTimeStep_cutStart_withVandThetaPM.mat
@@ -16,10 +16,10 @@ num_sim: 1
 exclude_states: Null
 
 # high-dimensional data
-high_dimensional: True
+high_dimensional: False
 pick_method: idx
-num_rand_pick_entries: 10000
-coarsen_factor: 10
+num_rand_pick_entries: 10000  # for pick_method: rand
+coarsen_factor: 10            # for pick_method: idx
 
 # filter data (using a savgol filter)
 filter_data: False 
