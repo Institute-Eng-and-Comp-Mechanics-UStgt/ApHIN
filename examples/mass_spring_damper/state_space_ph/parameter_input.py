@@ -146,9 +146,9 @@ class ParameterInput:
             # num_parameter_runs = random_samples
             # setup:
             # 10 mu combined with 3 input = 30 training combinations
-            # 3 mu combined with 2 input = 6 test combinations
+            # 3 mu combined with 3 input = 9 test combinations
 
-            mass_vals, stiff_vals, damp_vals, omega, delta = ([] for i in range(5))
+            mass_vals, stiff_vals, damp_vals, omega, delta = ([] for _ in range(5))
             # training
             for i_mu in np.arange(10):
                 for i_u in np.arange(3):
@@ -159,7 +159,7 @@ class ParameterInput:
                     delta.append(sampled_parameters_u[i_u, 1])
             # test after training
             for i_mu in np.arange(10, 13):
-                for i_u in np.arange(3, 5):
+                for i_u in np.arange(3, 6):
                     mass_vals.append(sampled_parameters_mu[i_mu, 0])
                     stiff_vals.append(sampled_parameters_mu[i_mu, 1])
                     damp_vals.append(sampled_parameters_mu[i_mu, 2])
@@ -331,7 +331,7 @@ class ParameterInput:
                     u_list = []
                     for i in range(len(omega)):
                         u_list.append(
-                            lambda t: np.ones(
+                            lambda t, i=i: np.ones(
                                 n_u,
                             )
                             * standard_u(t, delta[i], omega[i])
@@ -345,7 +345,7 @@ class ParameterInput:
                         u_list = []
                         for i in range(omega.shape[0]):
                             u_list.append(
-                                lambda t: np.ones(
+                                lambda t, i=i: np.ones(
                                     n_u,
                                 )
                                 * standard_u(t, delta[i], omega[i])
