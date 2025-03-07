@@ -1480,7 +1480,16 @@ class PHIdentifiedData(Data):
         reconstructed data.
         """
         super().__init__(t, X, X_dt, U=U, Mu=Mu, J=J, R=R, B=B, Q=Q)
-        self.n_red = n_red
+        if n_red is None:
+            if z is not None:
+                self.n_red = z.shape[1]
+            elif Z is not None:
+                self.n_red = Z.shape[2]
+            else:
+                self.n_red = n_red
+
+        else:
+            self.n_red = n_red
         self.x = x_ph
         self.dx_dt = dx_dt_ph
         self.z = z
@@ -1870,6 +1879,17 @@ class PHIdentifiedData(Data):
             H_ph,
             solving_times,
         )
+
+    def states_to_features(self):
+        super().states_to_features()
+        if self.Z_ph is not None:
+            self.z_ph, self.z_dt_ph = reshape_states_to_features(
+                self.Z_ph, self.Z_dt_ph
+            )
+        if self.Z is not None:
+            self.z, self.z_dt = reshape_states_to_features(self.Z, self.Z_dt)
+        if self.Z_dt_ph_map is not None:
+            self.z_dt_ph_map = reshape_states_to_features(self.Z_dt_ph_map)
 
     @classmethod
     def from_identification(
