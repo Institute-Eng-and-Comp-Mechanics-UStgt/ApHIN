@@ -788,7 +788,7 @@ def plot_Z_dt_ph_map(
         The function does not return anything. It generates and displays the plot(s), and optionally saves them.
     """
 
-    t, Z_dt, Z_dt_ph, idx_n_n, idx_n_dn, idx_sim, idx_n_f, num_plots = (
+    t, Z_dt, Z_dt_ph_map, idx_n_n, idx_n_dn, idx_sim, idx_n_f, num_plots = (
         get_quantities_of_interest(
             identified_data,
             "Z_dt",
@@ -800,19 +800,20 @@ def plot_Z_dt_ph_map(
         )
     )
 
-    variable_names = [r"\dot{\bm{Z}}", r"\dot{\bm{Z}}_{\mathrm{phmap}}"]
-    save_name = "Z_dt_ph_map"
-    plot_Z(
-        num_plots,
-        t,
-        Z_dt,
-        Z_dt_ph,
-        idx_n_f,
-        idx_sim,
-        variable_names,
-        save_name=save_name,
-        save_path=save_path,
-    )
+    if Z_dt_ph_map is not None:
+        variable_names = [r"\dot{\bm{Z}}", r"\dot{\bm{Z}}_{\mathrm{phmap}}"]
+        save_name = "Z_dt_ph_map"
+        plot_Z(
+            num_plots,
+            t,
+            Z_dt,
+            Z_dt_ph_map,
+            idx_n_f,
+            idx_sim,
+            variable_names,
+            save_name=save_name,
+            save_path=save_path,
+        )
 
 
 def plot_z_dt_ph_map(
@@ -859,7 +860,7 @@ def plot_z_dt_ph_map(
         The function does not return anything. It generates and displays the plot(s), and optionally saves them.
     """
 
-    t, z, z_ph, _, _, _, idx_n_f, num_plots = get_quantities_of_interest(
+    t, z_dt, z_dt_ph_map, _, _, _, idx_n_f, num_plots = get_quantities_of_interest(
         identified_data,
         "z_dt",
         "z_dt_ph_map",
@@ -869,17 +870,18 @@ def plot_z_dt_ph_map(
         idx_custom_tuple=idx_custom_tuple,
     )
 
-    variable_name = [r"\dot{\bm{z}}", r"\dot{\bm{z}}_{\mathrm{phmap}}"]
-    save_name = "z_dt_ph_map"
-    plot_z(
-        num_plots,
-        z,
-        z_ph,
-        idx_n_f,
-        variable_name,
-        save_name=save_name,
-        save_path=save_path,
-    )
+    if z_dt_ph_map is not None:
+        variable_name = [r"\dot{\bm{z}}", r"\dot{\bm{z}}_{\mathrm{phmap}}"]
+        save_name = "z_dt_ph_map"
+        plot_z(
+            num_plots,
+            z_dt,
+            z_dt_ph_map,
+            idx_n_f,
+            variable_name,
+            save_name=save_name,
+            save_path=save_path,
+        )
 
 
 def plot_Z_dt_ph(
@@ -1010,8 +1012,8 @@ def plot_z_dt_ph(
 
 def get_quantities_of_interest(
     data,
-    quantity_1: str,
-    quantity_2: str,
+    id_quantity_1: str,
+    id_quantity_2: str,
     use_train_data=False,
     data_type="X",
     idx_gen="rand",
@@ -1072,8 +1074,17 @@ def get_quantities_of_interest(
     )
 
     t = data.t
-    quantity_1 = getattr(data, quantity_1)
-    quantity_2 = getattr(data, quantity_2)
+    quantity_1 = getattr(data, id_quantity_1)
+    quantity_2 = getattr(data, id_quantity_2)
+
+    for quantity, quantity_name in [
+        (quantity_1, id_quantity_1),
+        (quantity_2, id_quantity_2),
+    ]:
+        if quantity is None:
+            logging.info(
+                f"Quantity {quantity_name} is not given in the dataset. Plot will not be created."
+            )
 
     return t, quantity_1, quantity_2, idx_n_n, idx_n_dn, idx_sim, idx_n_f, num_plots
 
@@ -1149,10 +1160,13 @@ def get_quantity_of_interest(
     quantity_1 = getattr(original_data, og_quantity)
     quantity_2 = getattr(identified_data, id_quantity)
 
-    for quantity in [quantity_1, quantity_2]:
+    for quantity, quantity_name in [
+        (quantity_1, og_quantity),
+        (quantity_2, id_quantity),
+    ]:
         if quantity is None:
             logging.info(
-                f"Quantity {quantity} is not given in the dataset. Plot will not be created."
+                f"Quantity {quantity_name} is not given in the dataset. Plot will not be created."
             )
 
     return t, quantity_1, quantity_2, idx_n_n, idx_n_dn, idx_sim, idx_n_f, num_plots
