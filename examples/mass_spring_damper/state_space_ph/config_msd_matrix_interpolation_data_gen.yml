@@ -33,7 +33,7 @@ delta: 0.5
 omega: 1
 # 'Halton': parameter values specified according to:
 random_samples_mu: 13         # None if non-parametric
-random_samples_u: 5         # None if non-parametric
+random_samples_u: 6         # None if non-parametric
 lower_bounds: [0.1, 0.1, 0.1, .5, 0.125]      # None if non-parametric
 upper_bounds: [100, 100, 10, 5, 2]            # None if non-parametric
 # input
