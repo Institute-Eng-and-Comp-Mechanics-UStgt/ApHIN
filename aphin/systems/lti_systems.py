@@ -346,6 +346,9 @@ class DescrLTISystem(LTISystem):
             self.E = np.eye(self.A.shape[0])
         else:
             self.E = E
+        self.E_inv_A = np.linalg.solve(self.E, self.A)
+        self.E_inv_B = np.linalg.solve(self.E, self.B)
+        self.sys = signal.StateSpace(self.E_inv_A, self.E_inv_B, self.C)
 
     def solve(self, t, z_init, u=None, integrator_type="IMR", decomp_option="lu"):
         """
@@ -377,6 +380,10 @@ class DescrLTISystem(LTISystem):
             raise ValueError(
                 f"Integrator type {integrator_type} is not supported for descriptor systems."
             )
-        super(DescrLTISystem, self).solve(
-            self, t, z_init, u=None, integrator_type="IMR", decomp_option="lu"
+        return super(DescrLTISystem, self).solve(
+            t,
+            z_init,
+            u=u,
+            integrator_type="IMR",
+            decomp_option=decomp_option,
         )

@@ -380,7 +380,19 @@ class Dataset(Data):
         )
         self.TRAIN.truncate_time(trunc_time_ratio)
 
-    def decrease_num_simulations(self, num_sim: int, seed=None):
+    def remove_mu(self):
+        """
+        Removes mu
+        """
+        self.TRAIN.remove_mu()
+        self.TEST.remove_mu()
+
+    def decrease_num_simulations(
+        self,
+        num_sim: int | None = None,
+        seed: int | None = None,
+        sim_idx: list[int] | np.ndarray | None = None,
+    ):
         """
         Reduce the number of training simulations to a specified target number by randomly selecting a subset.
 
@@ -399,7 +411,7 @@ class Dataset(Data):
         logging.info(
             f"Only the number of the training data set is reduced to {num_sim}."
         )
-        self.TRAIN.decrease_num_simulations(num_sim, seed=seed)
+        self.TRAIN.decrease_num_simulations(num_sim=num_sim, seed=seed, sim_idx=sim_idx)
 
     def decrease_num_time_steps(self, num_time_steps: int):
         """

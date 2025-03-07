@@ -41,9 +41,9 @@ def run_various_experiments(
     run_all_yaml_files(
         experiment_main_script,
         yaml_paths_list,
-        result_dir,
+        # result_dir,
         log_dir,
-        force_calculation=force_calculation,
+        # force_calculation=force_calculation,
     )
 
 
@@ -90,6 +90,7 @@ def create_modified_config_files(
                 save_name += f"{key}{value_str}_"
             else:
                 save_name += f"{key}{value}_"
+        save_name = save_name.replace(".", "_")
         save_name = save_name.strip("_")
         # rename experiment to make it unique
         experiment["experiment"] = save_name
@@ -114,7 +115,7 @@ def create_modified_config_files(
                                 # omit scientific notation
                                 # strip '.' at the end if value has no decimals
                                 value = np.format_float_positional(value).strip(".")
-                            line = f"{key}: {value} "
+                            line = f"{key}: {value} \n"
                             if len(split_comment) > 1:
                                 line += f"# {split_comment[-1]}"  # add comment
                     adapted_config_file.write(line)

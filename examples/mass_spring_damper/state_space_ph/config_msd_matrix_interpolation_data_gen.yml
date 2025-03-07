@@ -1,0 +1,48 @@
+# define the configuration of the mass-spring-damper simulation
+# GENERAL REMARK: yaml null will be python None!
+# the following properties need to be defined
+# n_mass: number of masses, i.e. second order system size (integer value)
+# mass_vals: mass values either (n_mass,) array or scalar value (same value applied to all masses), choose null if Halton sampling is applied
+# damp_vals: damping values either (n_mass,) array or scalar value (same value applied to all dampers), choose null if Halton sampling is applied
+# stiff_vals: stiffness values either (n_mass,) array or scalar value (same value applied to all springs), choose null if Halton sampling is applied
+# input_vals: array of size (number of inputs,) creates input matrix of size (n_mass,len(input_vals)) with ones at indices from input_vals (index of excited mass), choose null if Halton sampling is applied
+# parameter_method: either {'default'}, 'Halton', 'manual', 'mass_loop'
+# T_training: training end time
+# T_test: test end time 
+# time_steps_training: number of time steps in the training data
+# time_steps_test: number of time steps in the test data
+# debug: further information and calculations mainly for debugging purposes
+# create_plots: plot some data mainly for debugging purposes
+# information for parameter dependent data creation (using parameter_method: Halton)
+# num_parameter_runs: number of parameter runs, usually same as random_samples
+# random_samples: number of samples that will be created by the Halton algorithm
+# parameter_dimension: choose the dimension of the parameter space
+# parameter_information: strings that describe the parameters
+# lower_bounds: lower values of the parameters for the Halton algorithm (should be of size (random_samples,))
+# upper_bounds: upper values of the parameters for the Halton algorithm (should be of size (random_samples,))
+
+seed: 3823
+n_mass: 3 # number of masses
+parameter_method: 'Halton_matrix_interpolation' # 'default', 'Halton', 'manual', 'mass_loop' 
+# 'default': parameter values according to [MorandinNicodemusUnger22]
+# 'manual':  parameter values specified below:
+mass_vals: 4    
+stiff_vals: 4  
+damp_vals: 1 
+delta: 0.5
+omega: 1
+# 'Halton': parameter values specified according to:
+random_samples_mu: 13         # None if non-parametric
+random_samples_u: 5         # None if non-parametric
+lower_bounds: [0.1, 0.1, 0.1, .5, 0.125]      # None if non-parametric
+upper_bounds: [100, 100, 10, 5, 2]            # None if non-parametric
+# input
+input_vals: 0 # null/None (autonomous) | 0 (first mass excitation - SISO)
+n_sim: 4 # only required for autonomous/manual case system
+
+# time values for trajectories
+T_training: 4
+time_steps_training: 400
+
+# debugging
+debug: True

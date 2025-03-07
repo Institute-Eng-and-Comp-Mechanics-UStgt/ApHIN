@@ -147,7 +147,7 @@ class PHSystem(LTISystem, CheckPHProperties):
             raise ValueError("Insert pH square matrix of size (r,r)")
         self.check_pH_properties(self.J_ph, self.R_ph, self.Q_ph)
         if B is not None:
-            if B.shape[0]==1:
+            if B.ndim == 3:
                 B = np.squeeze(B, axis=0)
             self.B_ph = B
             self.C_ph = self.B_ph.T @ self.Q_ph
@@ -242,7 +242,7 @@ class DescrPHSystem(DescrLTISystem, CheckPHProperties):
     - E is a descriptor matrix
     """
 
-    def __init__(self, J_ph, R_ph, E, B=None, Q_ph=None):
+    def __init__(self, J_ph, R_ph, E_ph, B=None, Q_ph=None):
         """
          Parameters
         ----------
@@ -257,19 +257,33 @@ class DescrPHSystem(DescrLTISystem, CheckPHProperties):
         Q_ph : ndarray, shape (n, n), optional
             Port-Hamiltonian Q matrix. Defaults to the identity matrix if not provided.
         """
-        self.J_ph = J_ph
-        self.R_ph = R_ph
-        self.E = E
+        self.J_ph = np.squeeze(J_ph)
+        self.R_ph = np.squeeze(R_ph)
+        self.E_ph = np.squeeze(E_ph)
         if Q_ph is None:
             self.Q_ph = np.eye(*self.J_ph.shape)
         else:
-            self.Q_ph = Q_ph
+            self.Q_ph = np.squeeze(Q_ph)
+        if B is not None:
+            self.B_ph = np.squeeze(B)
+            self.C_ph = self.B_ph.T @ self.Q_ph
+        else:
+            self.B_ph = B
+            self.C_ph = None
         assert self.J_ph.shape[0] == self.J_ph.shape[1]
         assert self.R_ph.shape[0] == self.R_ph.shape[1]
         assert self.J_ph.shape[0] == self.R_ph.shape[0]
-        assert self.check_pH_properties(self.J_ph, self.R_ph, self.Q_ph, self.E)
+        if (
+            self.J_ph.ndim == 3
+            or self.R_ph.ndim == 3
+            or self.Q_ph.ndim == 3
+            or self.E_ph.ndim == 3
+        ):
+            raise ValueError("Insert pH square matrix of size (r,r)")
+
+        # assert self.check_pH_properties(self.J_ph, self.R_ph, self.Q_ph, self.E)
         A = (self.J_ph - self.R_ph) @ self.Q_ph
-        super(DescrPHSystem, self).__init__(A=A, B=B, E=E)
+        super(DescrPHSystem, self).__init__(A=A, B=self.B_ph, E=self.E_ph)
 
     def solve(self, t, z_init, u=None, integrator_type="IMR", decomp_option="lu"):
         """
@@ -297,7 +311,11 @@ class DescrPHSystem(DescrLTISystem, CheckPHProperties):
             Solution of the ODE system at each time step.
         """
         return super(DescrPHSystem, self).solve(
-            t, z_init, u=u, integrator_type="IMR", decomp_option="lu"
+            t,
+            z_init,
+            u=u,
+            integrator_type=integrator_type,
+            decomp_option=decomp_option,
         )
 
     def H(self, x):

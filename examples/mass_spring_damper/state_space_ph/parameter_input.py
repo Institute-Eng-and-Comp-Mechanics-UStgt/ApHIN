@@ -115,6 +115,62 @@ class ParameterInput:
             omega = sampled_parameters[:, 3]
             delta = sampled_parameters[:, 4]
 
+        elif parameter_method == "Halton_matrix_interpolation":
+            # create random variables with Halton sequence
+            random_samples_mu = config["random_samples_mu"]
+            random_samples_u = config["random_samples_u"]
+            lower_bounds = config["lower_bounds"]
+            upper_bounds = config["upper_bounds"]
+            # we use parameter dimension of 5 [mass stiffness damping omega delta]
+            lower_bounds_mu = lower_bounds[:3]
+            uppper_bounds_mu = upper_bounds[:3]
+            lower_bounds_u = lower_bounds[3:]
+            upper_bounds_u = upper_bounds[3:]
+
+            # mu
+            parameter_dimension_mu = 3
+            sampler_Halton = qmc.Halton(d=parameter_dimension_mu, seed=seed)
+            samples_Halton = sampler_Halton.random(n=random_samples_mu)
+            sampled_parameters_mu = qmc.scale(
+                samples_Halton, lower_bounds_mu, uppper_bounds_mu
+            )
+
+            # u
+            parameter_dimension_u = 2
+            sampler_Halton = qmc.Halton(d=parameter_dimension_u, seed=seed)
+            samples_Halton = sampler_Halton.random(n=random_samples_u)
+            sampled_parameters_u = qmc.scale(
+                samples_Halton, lower_bounds_u, upper_bounds_u
+            )
+
+            # num_parameter_runs = random_samples
+            # setup:
+            # 10 mu combined with 3 input = 30 training combinations
+            # 3 mu combined with 3 input = 9 test combinations
+
+            mass_vals, stiff_vals, damp_vals, omega, delta = ([] for _ in range(5))
+            # training
+            for i_mu in np.arange(10):
+                for i_u in np.arange(3):
+                    mass_vals.append(sampled_parameters_mu[i_mu, 0].copy())
+                    stiff_vals.append(sampled_parameters_mu[i_mu, 1])
+                    damp_vals.append(sampled_parameters_mu[i_mu, 2])
+                    omega.append(sampled_parameters_u[i_u, 0])
+                    delta.append(sampled_parameters_u[i_u, 1])
+            # test after training
+            for i_mu in np.arange(10, 13):
+                for i_u in np.arange(3, 6):
+                    mass_vals.append(sampled_parameters_mu[i_mu, 0])
+                    stiff_vals.append(sampled_parameters_mu[i_mu, 1])
+                    damp_vals.append(sampled_parameters_mu[i_mu, 2])
+                    omega.append(sampled_parameters_u[i_u, 0])
+                    delta.append(sampled_parameters_u[i_u, 1])
+            mass_vals = np.array(mass_vals)
+            stiff_vals = np.array(stiff_vals)
+            damp_vals = np.array(damp_vals)
+            omega = np.array(omega)
+            delta = np.array(delta)
+
             # n_sim =
 
         # # create input
@@ -275,7 +331,7 @@ class ParameterInput:
                     u_list = []
                     for i in range(len(omega)):
                         u_list.append(
-                            lambda t: np.ones(
+                            lambda t, i=i: np.ones(
                                 n_u,
                             )
                             * standard_u(t, delta[i], omega[i])
@@ -289,7 +345,7 @@ class ParameterInput:
                         u_list = []
                         for i in range(omega.shape[0]):
                             u_list.append(
-                                lambda t: np.ones(
+                                lambda t, i=i: np.ones(
                                     n_u,
                                 )
                                 * standard_u(t, delta[i], omega[i])
