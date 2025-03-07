@@ -1,4 +1,4 @@
-experiment: synrm_please_just_work
+experiment: synrm_please_just_work2
 setup_matplotlib: False  # Show plots and visualization
 
 matfile_path: /exchange/jrettberg/aphin/SynRM/SynRM4ApHIN_smallTimeStep_cutStart_withVandThetaPM.mat
@@ -11,7 +11,7 @@ prelearn_rec: False
 # for reproducability
 seed: 100
 # decrease number of simulations
-num_sim: 1
+num_sim: 3
 
 exclude_states: Null
 
@@ -30,22 +30,24 @@ n_u: 39      # number of inputs
 # scaling
 # scaling_values: [1,1,1,1] 
 # domain_split_vals: (list) integers that define the number of dofs for each domain, sum of all values needs to conincide with n_dn. If {None} it is considered as a single domain
-domain_split_vals: [3,72,5,36549,5,36549] 
+# domain_split_vals: [3,72,5,36549,5,36549] 
+domain_split_vals: [3,72,5,20,5,20] 
 domain_names: ["eta","phi","rigid","elastic_modes","Drigid","Delastic_modes"]
 # domain_names: ["eta","phi","rigid","elastic_modes","Drigid","Delastic_modes"]
 desired_bounds: [-1, 1]   # desired bounds after scaling for u and mu
 
+system_layer: ph
 
 # %% identification settings
-r: 40 #  reduced order
+r: 50 #  reduced order
 use_pca: True  # use PCA for the input
-n_pca: 120  # number of PCA components
+n_pca: 80  # number of PCA components
 pca_scaling: True  # scale the PCA components
-pca_comparison: True
+pca_comparison: False
 pca_only: False  # only use PCA components without nonlinear autoencoder
 l_rec: 1 #  loss weight for the reconstruction
-l_dz: 0 #  loss weight for the dz
-l_dx: 0 #  loss weight for the dx
+l_dz: 0.01 #  loss weight for the dz
+l_dx: 0.00000001 #  loss weight for the dx
 l1: 0.0000000001  # L1 regularization
 l2: 0  # L2 regularization
 n_epochs: 2000 #  number of epochs
@@ -55,8 +57,10 @@ layer_sizes_ph: # layer sizes
   - 32  # second layer
   - 32  # third layer
 layer_sizes_ae: # layer sizes
-  - 100  # first layer
-  - 70 # second layer
+  - 70  # first layer
+  - 65  # first layer
+  - 60 # second layer
+  - 55  # third layer
   - 50  # third layer
 activation_ae: elu  # activation function
 activation_ph: elu  # activation function

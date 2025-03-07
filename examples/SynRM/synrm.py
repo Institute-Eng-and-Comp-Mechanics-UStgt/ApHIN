@@ -41,7 +41,7 @@ def main(
     #                         -result_folder_name     searches for a subfolder with result_folder_name under working dir that
     #                                                 includes a config.yml and .weights.h5
     #                                                 -> config for loading results
-    manual_results_folder = "synrm_with_pca_and_dynamic_high_l_dx000001"  # {None} if no results shall be loaded, else create str with folder name or path to results folder
+    manual_results_folder = None  # {None} if no results shall be loaded, else create str with folder name or path to results folder
 
     # write to config_info
     if config_path_to_file is not None:
@@ -78,7 +78,7 @@ def main(
     # train-test split
     # sim_idx_train = np.arange(10)
     # sim_idx_test = np.arange(5) + len(sim_idx_train)
-    sim_idx_train = [0]
+    sim_idx_train = [0, 2, 3]
     sim_idx_test = [1]
     synrm_data.train_test_split_sim_idx(
         sim_idx_train=sim_idx_train, sim_idx_test=sim_idx_test
@@ -273,16 +273,28 @@ def main(
 
     n_sim, n_t, n_n, n_dn, n_u, n_mu = synrm_data.shape
     regularizer = tf.keras.regularizers.L1L2(l1=srm_cfg["l1"], l2=srm_cfg["l2"])
-    system_layer = PHQLayer(
-        r,
-        n_u=n_u,
-        n_mu=n_mu,
-        name="phq_layer",
-        layer_sizes=srm_cfg["layer_sizes_ph"],
-        activation=srm_cfg["activation_ph"],
-        regularizer=regularizer,
-        # dtype=tf.float64,
-    )
+    if srm_cfg["system_layer"] == "phq":
+        system_layer = PHQLayer(
+            r,
+            n_u=n_u,
+            n_mu=n_mu,
+            name="phq_layer",
+            layer_sizes=srm_cfg["layer_sizes_ph"],
+            activation=srm_cfg["activation_ph"],
+            regularizer=regularizer,
+            # dtype=tf.float64,
+        )
+    elif srm_cfg["system_layer"] == "ph":
+        system_layer = PHLayer(
+            r,
+            n_u=n_u,
+            n_mu=n_mu,
+            name="ph_layer",
+            layer_sizes=srm_cfg["layer_sizes_ph"],
+            activation=srm_cfg["activation_ph"],
+            regularizer=regularizer,
+            # dtype=tf.float64,
+        )
 
     aphin = APHIN(
         r,
@@ -465,24 +477,24 @@ def main(
     # avoid that the script stops and keep the plots open
     # plt.show()
 
-    attributes = ["X", "X"]
-    index_list = [(0, 0, 0), (0, 0, 3), (0, 0, 80)]
-    subplot_idx = [0, 0, 1]
-    subplot_title = ["magnetic", "mechanic"]
-    cut_time_idx = 2500
-    legend = ["$\eta$", "$\phi$", "$q$"]
-    aphin_vis.custom_state_plot(
-        synrm_data,
-        synrm_data_id,
-        attributes=attributes,
-        index_list=index_list,
-        train_or_test="train",
-        subplot_idx=subplot_idx,
-        subplot_title=subplot_title,
-        cut_time_idx=cut_time_idx,
-        legend=legend,
-        result_dir=result_dir,
-    )
+    # attributes = ["X", "X"]
+    # index_list = [(0, 0, 0), (0, 0, 3), (0, 0, 80)]
+    # subplot_idx = [0, 0, 1]
+    # subplot_title = ["magnetic", "mechanic"]
+    # cut_time_idx = 2500
+    # legend = ["$\eta$", "$\phi$", "$q$"]
+    # aphin_vis.custom_state_plot(
+    #     synrm_data,
+    #     synrm_data_id,
+    #     attributes=attributes,
+    #     index_list=index_list,
+    #     train_or_test="train",
+    #     subplot_idx=subplot_idx,
+    #     subplot_title=subplot_title,
+    #     cut_time_idx=cut_time_idx,
+    #     legend=legend,
+    #     result_dir=result_dir,
+    # )
 
     print("debug")
 

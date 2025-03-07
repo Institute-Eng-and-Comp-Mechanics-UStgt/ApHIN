@@ -1612,7 +1612,7 @@ def plot_x(num_plots, x, x_id, idx_n_f, variable_names, save_name=None, save_pat
         # rel_error_for_each_state = np.max(np.abs(x - x_id), axis=0) / np.max(
         #     np.abs(x), axis=0
         # )
-        np.savetxt(f"error_for_each_state_{save_name}", rel_error_for_each_state)
+        # np.savetxt(f"error_for_each_state_{save_name}", rel_error_for_each_state)
         plt.bar(np.arange(x.shape[1]) + 1, rel_error_for_each_state)
         plt.xlabel("features")
         plt.title(f"{save_name}")
