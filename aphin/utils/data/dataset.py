@@ -1138,7 +1138,13 @@ class SynRMDataset(Dataset):
         super().__init__(t, X, X_dt, U, Mu, J, R, Q, B)
 
     @classmethod
-    def from_matlab(cls, data_path, return_V=False, exclude_states: str | None = None):
+    def from_matlab(
+        cls,
+        data_path,
+        return_V=False,
+        exclude_states: str | None = None,
+        scale_modes_individually: bool = False,
+    ):
 
         if not os.path.isfile(data_path):
             raise ValueError(f"The given path does not lead to a file.")
@@ -1158,6 +1164,15 @@ class SynRMDataset(Dataset):
         X_dt = mat["DX_dt"]
         t = mat["time"]
 
+        if scale_modes_individually:
+            slice_modes = np.r_[slice(80, 100), slice(105, 125)]
+            X[:, :, slice_modes] = X[:, :, slice_modes] / np.max(
+                np.abs(X[:, :, slice_modes]), axis=(0, 1)
+            )
+            X_dt[:, :, slice_modes] = X_dt[:, :, slice_modes] / np.max(
+                np.abs(X_dt[:, :, slice_modes]), axis=(0, 1)
+            )
+
         if exclude_states == "no_phi":
             # remove phi from X and X_dt
             X = np.delete(X, slice(3, 75), axis=2)
@@ -1175,10 +1190,6 @@ class SynRMDataset(Dataset):
             X = np.delete(X, np.r_[slice(0, 80), slice(100, 105)], axis=2)
             X_dt = np.delete(X_dt, np.r_[slice(0, 80), slice(100, 105)], axis=2)
             # scale each mode individually
-            scale_modes = False
-            if scale_modes:
-                X = X / np.max(X, axis=(0, 1))
-                X_dt = X_dt / np.max(X_dt, axis=(0, 1))
 
         # add dimension for node DOFs
         if X.ndim == 3:
