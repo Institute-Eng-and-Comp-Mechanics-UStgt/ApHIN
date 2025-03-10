@@ -1,4 +1,4 @@
-experiment: synrm_please_just_work2
+experiment: synrm_indiv_scaled_modes_new_float64
 setup_matplotlib: False  # Show plots and visualization
 
 matfile_path: /exchange/jrettberg/aphin/SynRM/SynRM4ApHIN_smallTimeStep_cutStart_withVandThetaPM.mat
@@ -14,10 +14,11 @@ seed: 100
 num_sim: 3
 
 exclude_states: Null
+scale_modes_individually: True
 
 # high-dimensional data
 high_dimensional: False
-pick_method: idx
+pick_method: idx              # if high_dimensional: True
 num_rand_pick_entries: 10000  # for pick_method: rand
 coarsen_factor: 10            # for pick_method: idx
 

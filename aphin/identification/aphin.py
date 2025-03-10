@@ -85,7 +85,7 @@ class APHIN(PHBasemodel, ABC):
         """
         # tf.keras.backend.set_floatx(dtype)
         self.dtype_ = dtype
-        super(APHIN, self).__init__(**kwargs)
+        super(APHIN, self).__init__(dtype=dtype, **kwargs)
 
         # general parameters
         self.system_optimizer = None
@@ -184,7 +184,7 @@ class APHIN(PHBasemodel, ABC):
 
         # System inputs
         if u is not None:
-            u_input = tf.keras.Input(shape=(u.shape[1],))
+            u_input = tf.keras.Input(shape=(u.shape[1],), dtype=u.dtype)
         else:
             u_input = tf.keras.Input(shape=(0,))
 
@@ -230,7 +230,7 @@ class APHIN(PHBasemodel, ABC):
         tuple
             Tuple containing inputs and outputs of the autoencoder.
         """
-        x_input = tf.keras.Input(shape=(x.shape[1],))
+        x_input = tf.keras.Input(shape=(x.shape[1],), dtype=self.dtype_)
         # first part of the encoder may consist of a linear projection based on PCA
         z_pca = self.build_pca_encoder(x, x_input)
         # second part of the encoder and first part of the decoder is a nonlinear part
@@ -340,14 +340,21 @@ class APHIN(PHBasemodel, ABC):
                 n_neurons,
                 activation=self.activation,
                 activity_regularizer=self.regularizer,
+                dtype=self.dtype_,
             )(z)
-        z = tf.keras.layers.Dense(self.reduced_order, activation="linear")(z)
+        z = tf.keras.layers.Dense(
+            self.reduced_order, activation="linear", dtype=self.dtype_
+        )(z)
 
         # new decoder
         x_ = z
         for n_neurons in reversed(self.layer_sizes):
-            x_ = tf.keras.layers.Dense(n_neurons, activation=self.activation)(x_)
-        z_dec = tf.keras.layers.Dense(self.pca_order, activation="linear")(x_)
+            x_ = tf.keras.layers.Dense(
+                n_neurons, activation=self.activation, dtype=self.dtype_
+            )(x_)
+        z_dec = tf.keras.layers.Dense(
+            self.pca_order, activation="linear", dtype=self.dtype_
+        )(x_)
         return z, z_dec
 
     @tf.function

@@ -20,7 +20,7 @@ from aphin.utils.save_results import (
 from aphin.utils.experiments import run_various_experiments
 from aphin.utils.print_matrices import print_matrices
 
-# tf.config.run_functions_eagerly(True)
+tf.config.run_functions_eagerly(True)
 
 
 def main(
@@ -58,7 +58,9 @@ def main(
     data_dir, log_dir, weight_dir, result_dir = configuration.directories
 
     synrm_data = SynRMDataset.from_matlab(
-        data_path=srm_cfg["matfile_path"], exclude_states=srm_cfg["exclude_states"]
+        data_path=srm_cfg["matfile_path"],
+        exclude_states=srm_cfg["exclude_states"],
+        scale_modes_individually=srm_cfg["scale_modes_individually"],
     )
 
     V = SynRMDataset.from_matlab(data_path=srm_cfg["matfile_path"], return_V=True)
@@ -282,7 +284,7 @@ def main(
             layer_sizes=srm_cfg["layer_sizes_ph"],
             activation=srm_cfg["activation_ph"],
             regularizer=regularizer,
-            # dtype=tf.float64,
+            dtype=tf.float64,
         )
     elif srm_cfg["system_layer"] == "ph":
         system_layer = PHLayer(
@@ -293,7 +295,7 @@ def main(
             layer_sizes=srm_cfg["layer_sizes_ph"],
             activation=srm_cfg["activation_ph"],
             regularizer=regularizer,
-            # dtype=tf.float64,
+            dtype=tf.float64,
         )
 
     aphin = APHIN(
@@ -310,7 +312,7 @@ def main(
         pca_only=srm_cfg["pca_only"],
         pca_order=srm_cfg["n_pca"],
         pca_scaling=srm_cfg["pca_scaling"],
-        # dtype=tf.float64,
+        dtype=tf.float64,
     )
 
     aphin.compile(
@@ -503,10 +505,10 @@ def main(
 # requires calc_various_experiments = True
 def create_variation_of_parameters():
     parameter_variation_dict = {
-        "l_rec": [1],
-        "l_dz": [0.001],
         "l_dx": [0, 0.000001],
-        "r": [20, 40, 60],
+        "r": [40, 80, 160],
+        "n_epochs": [2000, 6000],
+        "use_pca": [True, False],
     }
     return parameter_variation_dict
 
