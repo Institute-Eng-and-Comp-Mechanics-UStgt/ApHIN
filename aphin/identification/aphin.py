@@ -14,7 +14,7 @@ logging.basicConfig()
 logging.getLogger().setLevel(logging.INFO)
 
 
-class APHIN(PHBasemodel, ABC):
+class APHIN(PHBasemodel):
     """
     Autoencoder-based port-Hamiltonian Identification Network (ApHIN)
     """
