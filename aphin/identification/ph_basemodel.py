@@ -94,6 +94,9 @@ class PHBasemodel(tf.keras.Model, ABC):
         with open(model_path, "wb") as outp:  # Overwrites any existing file.
             pickle.dump(self.config, outp)
 
+    def compute_loss(self, x, y, y_pred):
+        return tf.reduce_mean(self.loss(y, y_pred))
+
     @staticmethod
     def load(
         ph_network,

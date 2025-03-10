@@ -1,7 +1,7 @@
 experiment: synrm_indiv_scaled_modes_new_float64
 setup_matplotlib: False  # Show plots and visualization
 
-matfile_path: /exchange/jrettberg/aphin/SynRM/SynRM4ApHIN_smallTimeStep_cutStart_withVandThetaPM.mat
+matfile_path: /Users/jonaskneifl/Develop/27_ApHIN_fork/examples/SynRM/data/SynRM4ApHIN_smallTimeStep_cutStart_withVandThetaPM.mat
 
 # %% General identification framework settings
 load_network: False # train the network or load a pre-trained one
