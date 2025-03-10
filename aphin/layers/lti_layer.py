@@ -295,7 +295,7 @@ class LTILayer(SystemLayer):
             Symmetric matrix R.
         """
 
-        if not hasattr(self, "dof_J"):
+        if not hasattr(self, "dof_R"):
             return tf.zeros([self.r, self.r])
         if self.n_sym == 0:
             return LinearOperatorSym(tf.zeros([self.r, self.r]))
