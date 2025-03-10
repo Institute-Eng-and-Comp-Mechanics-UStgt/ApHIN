@@ -166,6 +166,7 @@ def main(config_path_to_file=None):
     phin.build(input_shape=([data_.shape for data_ in x_train], None))
 
     # phin.load_weights(data_path_weights_filename)
+    phin.load_weights(os.path.join(weight_dir, ".weights.h5"))
     if msd_cfg["load_network"]:
         logging.info(f"Loading NN weights.")
         phin.load_weights(os.path.join(weight_dir, ".weights.h5"))

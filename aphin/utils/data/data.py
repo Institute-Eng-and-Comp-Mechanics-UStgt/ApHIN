@@ -18,13 +18,9 @@ from aphin.utils.transformations import (
     reshape_inputs_to_features,
     reshape_features_to_states,
 )
-from aphin.systems.ph_systems import PHSystem
-from aphin.systems.ph_systems import DescrPHSystem
-from aphin.identification import PHIN
-from aphin.identification import APHIN
-from aphin.layers.ph_layer import PHLayer
-from aphin.layers.phq_layer import PHQLayer
-from aphin.layers.descriptor_ph_layer import DescriptorPHLayer, DescriptorPHQLayer
+from aphin.systems import PHSystem, DescrPHSystem
+from aphin.identification import PHIN, APHIN
+from aphin.layers import PHLayer, PHQLayer, LTILayer, DescriptorPHLayer, DescriptorPHQLayer
 
 
 class Data(ABC):

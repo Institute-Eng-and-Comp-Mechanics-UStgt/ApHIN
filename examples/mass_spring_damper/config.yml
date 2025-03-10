@@ -29,4 +29,4 @@ layer_sizes_ph: # layer sizes
   - 32  # second layer
   - 64  # third layer
 activation_ph: selu  # activation function
-lr: 0.00005  # learning rate
+lr: 0.00003  # learning rate
