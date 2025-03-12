@@ -154,7 +154,7 @@ class PHQLayer(PHLayer):
         else:
             dz_dt = -self.R.matvec(Qz)
         if self.n_u > 0:
-            u = tf.cast(u, dtype=tf.float32)
+            u = tf.cast(u, dtype=self.dtype_)
             dz_dt += self.B.matvec(u)
         return dz_dt
 

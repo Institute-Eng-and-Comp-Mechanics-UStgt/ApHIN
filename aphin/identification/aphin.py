@@ -37,7 +37,7 @@ class APHIN(PHBasemodel):
         l_dx: float = 1,
         l1=0,
         l2=0,
-        dtype="float32",
+        dtype=tf.float32,
         **kwargs,
     ):
         """
@@ -674,6 +674,12 @@ class APHIN(PHBasemodel):
             / tf.reduce_mean(tf.abs(dz_dt_lhs))
         )
         return rec_loss, dz_loss, dx_loss
+
+    # def compute_loss(self, x, y, y_pred):
+    #     """
+    #     custom loss function
+    #     """
+    #     return tf.reduce_mean(self.loss(y, y_pred))
 
     def reshape_dxr_dz(self, dxr_dz):
         """
