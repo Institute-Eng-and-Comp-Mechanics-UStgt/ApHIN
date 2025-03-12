@@ -150,7 +150,8 @@ class ParameterInput:
 
             mass_vals, stiff_vals, damp_vals, omega, delta = ([] for _ in range(5))
             # training
-            for i_mu in np.arange(10):
+            n_mu_train = int(0.7 * random_samples_mu)
+            for i_mu in np.arange(n_mu_train):
                 for i_u in np.arange(3):
                     mass_vals.append(sampled_parameters_mu[i_mu, 0].copy())
                     stiff_vals.append(sampled_parameters_mu[i_mu, 1])
@@ -158,20 +159,19 @@ class ParameterInput:
                     omega.append(sampled_parameters_u[i_u, 0])
                     delta.append(sampled_parameters_u[i_u, 1])
             # test after training
-            for i_mu in np.arange(10, 13):
+            for i_mu in np.arange(n_mu_train, random_samples_mu):
                 for i_u in np.arange(3, 6):
                     mass_vals.append(sampled_parameters_mu[i_mu, 0])
                     stiff_vals.append(sampled_parameters_mu[i_mu, 1])
                     damp_vals.append(sampled_parameters_mu[i_mu, 2])
                     omega.append(sampled_parameters_u[i_u, 0])
                     delta.append(sampled_parameters_u[i_u, 1])
+
             mass_vals = np.array(mass_vals)
             stiff_vals = np.array(stiff_vals)
             damp_vals = np.array(damp_vals)
             omega = np.array(omega)
             delta = np.array(delta)
-
-            # n_sim =
 
         # # create input
         # if config["input_vals"] is not None:
@@ -382,7 +382,7 @@ class ParameterInput:
     #     plot_input(u, u_test, config)
 
 
-def plot_input(u, config):
+def plot_input(u, config, num_plot_max: int = 6):
     mpl.rcParams.update(mpl.rcParamsDefault)
     # default debug save location
     work_dir = os.path.dirname(__file__)
@@ -399,6 +399,9 @@ def plot_input(u, config):
     # t_test = np.linspace(0, T_test, time_steps_test)
 
     n_u = u.shape[0]
+    if n_u > num_plot_max:
+        logging.info(f"More than {num_plot_max} inputs. Not plotting all of them.")
+        n_u = num_plot_max
     fig, ax = plt.subplots(n_u)
     for i in range(n_u):
         u_i = u[i]
