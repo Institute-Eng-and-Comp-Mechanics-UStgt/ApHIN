@@ -1141,7 +1141,8 @@ class SynRMDataset(Dataset):
     def from_matlab(
         cls,
         data_path,
-        return_V=False,
+        return_V: bool = False,
+        return_B: bool = False,
         exclude_states: str | None = None,
         scale_modes_individually: bool = False,
     ):
@@ -1158,6 +1159,13 @@ class SynRMDataset(Dataset):
         if return_V:
             V = mat["V"]
             return V
+
+        if return_B:
+            only_path = os.path.dirname(data_path)
+            path_to_B = os.path.join(only_path, "B.mat")
+            mat_B = scipy.io.loadmat(path_to_B)
+            B = mat_B["B"]
+            return B
 
         U = mat["U"]
         X = mat["X"]
