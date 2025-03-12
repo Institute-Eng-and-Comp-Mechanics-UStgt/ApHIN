@@ -5,7 +5,7 @@ import tensorflow as tf
 
 
 def callbacks(
-    weight_dir,
+    weight_path,
     monitor="loss",
     tensorboard=True,
     log_dir=None,
@@ -47,9 +47,11 @@ def callbacks(
     list of tf.keras.callbacks.Callback
         A list of TensorFlow Keras callbacks configured according to the provided parameters.
     """
+    if ".weights.h5" not in weight_path:
+        weight_path = os.path.join(weight_path, ".weights.h5")
     callback_list = [
         tf.keras.callbacks.ModelCheckpoint(
-            os.path.join(weight_dir, ".weights.h5"),
+            weight_path,
             monitor=monitor,
             save_best_only=True,
             save_weights_only=True,

@@ -68,12 +68,6 @@ def main(
 
     data = np.load("guitar.npz")
 
-    plt.figure()
-    t = np.linspace(0, 10, 100)
-    y = np.sin(t)
-    plt.plot(t, y)
-    plt.show()
-
     # # load mat file using h5py
     # data = h5py.File(cfg["matfile_path"], "r")["snapshotData"]["trajectory"]
     # t = h5py.File(cfg["matfile_path"], "r")["snapshotData"]["same4all"]["t"][:]
@@ -108,10 +102,9 @@ def main(
     for i in range(len(domain_ids)-1):
         print(f"Scale domain {i}: {domain_ids[i]} - {domain_ids[i+1]}")
         x_ = x[:, :, domain_ids[i]:domain_ids[i+1]]
-        n_domain = x_.shape[2]
         # todo: train test split
         x_reshaped = x_.reshape(n_sims*n_t, -1)
-        pca_ = PCA(n_components=0.99)
+        pca_ = PCA(n_components=0.999)
         x_pca_ = pca_.fit_transform(x_reshaped)
         logging.info(f"relative reconstruction error: {np.linalg.norm(x_reshaped - pca_.inverse_transform(x_pca_)) / 
                                                        np.linalg.norm(x_reshaped)}")
@@ -121,14 +114,18 @@ def main(
     # scale values
     n_domains = [x_.shape[2] for x_ in x_pca]
     domain_ids = [0] + [np.sum(n_domains[:i]) for i in range(1, len(n_domains)+1)]
-    # x_scaled = [x_ / np.abs(x_).max()/n_domains[i] for i, x_ in enumerate(x_pca)]
-    x_scaled = [x_ / np.abs(x_).max() for i, x_ in enumerate(x_pca)]
+    x_scaled = [x_ / np.abs(x_).max(axis=(0,1))/n_domains[i] for i, x_ in enumerate(x_pca)]
+    # x_scaled = [x_ / np.abs(x_).max() for i, x_ in enumerate(x_pca)]
     x = np.concatenate(x_scaled, axis=2)[..., np.newaxis]
     x_dt = np.gradient(x, dt, axis=1)
 
     data = Dataset(t=t, X=x, X_dt=x_dt, U=u)
 
-
+    # for i in range(25):
+    #     plt.plot(x[0,:,i,0])
+    #     plt.show()
+    #
+    # plt.plot(x[:, :, :, 0].max(axis=2))
     # filter data with savgol filter
     if cfg["filter_data"]:
         logging.info("Data is filtered")
@@ -137,7 +134,7 @@ def main(
         logging.info("Data is not filtered.")
 
     # reduced size
-    r = cfg["r"]
+    r_range = cfg["r"]
 
 
     # pio.renderers.default = "browser"
@@ -172,86 +169,98 @@ def main(
     else:
         monitor = "loss"
 
-    callback = callbacks(
-        weight_dir,
-        tensorboard=cfg["tensorboard"],
-        log_dir=log_dir,
-        monitor=monitor,
-        earlystopping=False,
-        patience=500,
-    )
-
     n_sim, n_t, n_n, n_dn, n_u, n_mu = data.shape
     regularizer = tf.keras.regularizers.L1L2(l1=cfg["l1"], l2=cfg["l2"])
-    system_layer = PHQLayer(
-        r,
-        n_u=n_u,
-        n_mu=n_mu,
-        name="phq_layer",
-        layer_sizes=cfg["layer_sizes_ph"],
-        activation=cfg["activation_ph"],
-        regularizer=regularizer,
-        # dtype=tf.float64,
-    )
 
-    aphin = APHIN(
-        r,
-        x=x,
-        u=u,
-        system_layer=system_layer,
-        layer_sizes=cfg["layer_sizes_ae"],
-        activation=cfg["activation_ae"],
-        l_rec=cfg["l_rec"],
-        l_dz=cfg["l_dz"],
-        l_dx=cfg["l_dx"],
-        use_pca=cfg["use_pca"],
-        pca_only=cfg["pca_only"],
-        pca_order=cfg["n_pca"],
-        pca_scaling=cfg["pca_scaling"],
-        # dtype=tf.float64,
-    )
+    errors_train = []
+    errors_test = []
+    for r in r_range:
 
-    aphin.compile(
-        optimizer=tf.keras.optimizers.Adam(learning_rate=cfg["lr"]),
-        loss=tf.keras.losses.MSE,
-    )
-    aphin.build(input_shape=([x.shape, dx_dt.shape, u.shape], None))
-
-    # aphin.load_weights(os.path.join(weight_dir, "rec.weights.h5"))
-    # aphin.load_weights(os.path.join(weight_dir, ".weights.h5"))
-
-    # x_rec = aphin.reconstruct(x)
-    # e_rel = np.linalg.norm(x - x_rec) / np.linalg.norm(x)
-    # Fit or learn neural network
-    if cfg["load_network"]:
-        logging.info(f"Loading NN weights.")
-        aphin.load_weights(os.path.join(weight_dir, ".weights.h5"))
-    else:
-        logging.info(f"Fitting NN weights.")
-        n_train = int(0.8 * x.shape[0])
-        x_train = [x[:n_train], dx_dt[:n_train], u[:n_train]]
-        x_val = [x[n_train:], dx_dt[n_train:], u[n_train:]]
-        train_hist = aphin.fit(
-            x=x_train,
-            validation_data=x_val,
-            epochs=cfg["n_epochs"],
-            batch_size=cfg["batch_size"],
-            verbose=2,
-            callbacks=callback,
-        )
-        save_training_times(train_hist, result_dir)
-        aphin_vis.plot_train_history(
-            train_hist, save_path=result_dir, validation=validation
+        weight_path = os.path.join(weight_dir, f".weights.h5")
+        callback = callbacks(
+            weight_path,
+            tensorboard=cfg["tensorboard"],
+            log_dir=log_dir,
+            monitor=monitor,
+            earlystopping=False,
+            patience=500,
         )
 
-        # load best weights
-        aphin.load_weights(os.path.join(weight_dir, ".weights.h5"))
+        system_layer = PHQLayer(
+            r,
+            n_u=n_u,
+            n_mu=n_mu,
+            name="phq_layer",
+            layer_sizes=cfg["layer_sizes_ph"],
+            activation=cfg["activation_ph"],
+            regularizer=regularizer,
+        )
 
-    # write data to results directory
-    save_weights(weight_dir, result_dir, load_network=cfg["load_network"])
-    write_to_experiment_overview(
-        cfg, result_dir, load_network=cfg["load_network"]
-    )
+        aphin = APHIN(
+            r,
+            x=x,
+            u=u,
+            system_layer=system_layer,
+            layer_sizes=cfg["layer_sizes_ae"],
+            activation=cfg["activation_ae"],
+            l_rec=cfg["l_rec"],
+            l_dz=cfg["l_dz"],
+            l_dx=cfg["l_dx"],
+            use_pca=cfg["use_pca"],
+            pca_only=cfg["pca_only"],
+            pca_order=cfg["n_pca"],
+            pca_scaling=cfg["pca_scaling"],
+            # dtype=tf.float64,
+        )
+
+        aphin.compile(
+            optimizer=tf.keras.optimizers.Adam(learning_rate=cfg["lr"]),
+            loss=tf.keras.losses.MSE,
+        )
+        aphin.build(input_shape=([x.shape, dx_dt.shape, u.shape], None))
+
+        # aphin.load_weights(os.path.join(weight_dir, "rec.weights.h5"))
+        # aphin.load_weights(os.path.join(weight_dir, ".weights.h5"))
+
+        # x_rec = aphin.reconstruct(x)
+        # e_rel = np.linalg.norm(x - x_rec) / np.linalg.norm(x)
+        # Fit or learn neural network
+        if cfg["load_network"]:
+            logging.info(f"Loading NN weights.")
+            aphin.load_weights(weight_path)
+        else:
+            logging.info(f"Fitting NN weights.")
+            n_train = int(0.8 * x.shape[0])
+            x_train = [x[:n_train], dx_dt[:n_train], u[:n_train]]
+            x_val = [x[n_train:], dx_dt[n_train:], u[n_train:]]
+            train_hist = aphin.fit(
+                x=x_train,
+                validation_data=x_val,
+                epochs=cfg["n_epochs"],
+                batch_size=cfg["batch_size"],
+                verbose=2,
+                callbacks=callback,
+            )
+            save_training_times(train_hist, result_dir)
+            aphin_vis.plot_train_history(
+                train_hist, save_name=result_dir, validation=validation
+            )
+
+            # load best weights
+            aphin.load_weights(weight_path)
+
+        # write data to results directory
+        # save_weights(weight_dir, result_dir, load_network=cfg["load_network"])
+        write_to_experiment_overview(
+            cfg, result_dir, load_network=cfg["load_network"]
+        )
+
+        # reconstruct data and report error
+        e_rec_train = np.linalg.norm(data.TRAIN.x - aphin.reconstruct(data.TRAIN.x)) / np.linalg.norm(data.TRAIN.x)
+        e_rec_test = np.linalg.norm(data.TEST.x - aphin.reconstruct(data.TEST.x)) / np.linalg.norm(data.TEST.x)
+        logging.info(f" r={r}:   {e_rec_train * 100:.2f}:%  / {e_rec_test * 100:.2f}:%")
+        errors_train.append(e_rec_train)
+        errors_test.append(e_rec_test)
 
     # %% Validation
     logging.info(

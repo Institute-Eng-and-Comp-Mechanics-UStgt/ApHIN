@@ -1970,6 +1970,7 @@ class PHIdentifiedData(Data):
             J_ph, R_ph, B_ph, Q_ph = system_layer.get_system_matrices(
                 data.mu, n_t=data.n_t
             )
+            E_ph = None
         elif isinstance(system_layer, PHLayer) or isinstance(system_layer, LTILayer):
             J_ph, R_ph, B_ph = system_layer.get_system_matrices(data.mu, n_t=data.n_t)
             Q_ph = None
