@@ -1,12 +1,14 @@
 model_name: msd
 
-experiment: msd_matrix_interpolation_third_try # name of the experiment
-sim_name: MSD_ph_input_siso_matrix_interpolation.npz # name of data  msd_state_ICrand_Qeye_autonomous_n3_m4.npz
-load_network: False  # train the network or load the last pre-trained one
+experiment: msd_matrix_interpolation_more_data2 # name of the experiment
+sim_name: MSD_Qeye_ph_input_siso_matrix_interpolation.npz # name of data  msd_state_ICrand_Qeye_autonomous_n3_m4.npz
+load_network: True  # train the network or load the last pre-trained one
 
 seed: 123  # For reproducibility
 
 setup_matplotlib: False
+
+layer: "ph_layer" # ph_layer | phq_layer
 
 # train-test split
 # test_size: 0.25
@@ -27,3 +29,6 @@ layer_sizes_ph: # layer sizes
   - 64  # third layer
 activation_ph: selu  # activation function
 lr: 0.00005  # learning rate
+
+# matrix interpolation
+ansatz: linear  # linear |

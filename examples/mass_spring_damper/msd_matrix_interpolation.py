@@ -43,7 +43,9 @@ from aphin.systems import LTISystem
 # tf.config.run_functions_eagerly(True)
 
 
-def phin_learning(msd_data, msd_cfg, config_dirs, dir_extension: str = ""):
+def phin_learning(
+    msd_data, msd_cfg, config_dirs, dir_extension: str = "", layer: str = "phq_layer"
+):
 
     data_dir, log_dir, weight_dir, result_dir = config_dirs
     log_dir = os.path.join(log_dir, dir_extension)
@@ -78,15 +80,28 @@ def phin_learning(msd_data, msd_cfg, config_dirs, dir_extension: str = ""):
     )
 
     regularizer = tf.keras.regularizers.L1L2(l1=msd_cfg["l1"], l2=msd_cfg["l2"])
-    system_layer = PHQLayer(
-        n_f,
-        n_u=n_u,
-        n_mu=n_mu,
-        regularizer=regularizer,
-        name="phq_layer",
-        layer_sizes=msd_cfg["layer_sizes_ph"],
-        activation=msd_cfg["activation_ph"],
-    )
+    if layer == "phq_layer":
+        system_layer = PHQLayer(
+            n_f,
+            n_u=n_u,
+            n_mu=n_mu,
+            regularizer=regularizer,
+            name="phq_layer",
+            layer_sizes=msd_cfg["layer_sizes_ph"],
+            activation=msd_cfg["activation_ph"],
+        )
+    elif layer == "ph_layer":
+        system_layer = PHLayer(
+            n_f,
+            n_u=n_u,
+            n_mu=n_mu,
+            regularizer=regularizer,
+            name="ph_layer",
+            layer_sizes=msd_cfg["layer_sizes_ph"],
+            activation=msd_cfg["activation_ph"],
+        )
+    else:
+        raise ValueError(f"Unknown layer {layer}.")
 
     phin = PHIN(n_f, x=x, u=u, mu=mu, system_layer=system_layer, name="phin")
 
@@ -123,7 +138,7 @@ def phin_learning(msd_data, msd_cfg, config_dirs, dir_extension: str = ""):
             callbacks=callback,
         )
         save_training_times(train_hist, result_dir)
-        aphin_vis.plot_train_history(train_hist)
+        aphin_vis.plot_train_history(train_hist, save_path=result_dir)
         phin.load_weights(os.path.join(weight_dir, ".weights.h5"))
 
     # write data to results directory
@@ -201,8 +216,10 @@ def main(config_path_to_file=None):
     _, idx = np.unique(msd_data.Mu, axis=0, return_index=True)
     mu_all = msd_data.Mu[np.sort(idx), :]
     hull_convex = ConvexHull(mu_all)
-    idx_train = hull_convex.vertices
-    idx_test = np.setdiff1d(np.arange(mu_all.shape[0]), idx_train)
+    idx_train = hull_convex.vertices  # parameters that define the convex hull
+    idx_test = np.setdiff1d(
+        np.arange(mu_all.shape[0]), idx_train
+    )  # parameters inside the convex hull
     assert idx_test.shape[0] >= 3  # at least 3 test trajectories
 
     train_idx = np.array(
@@ -217,6 +234,9 @@ def main(config_path_to_file=None):
             for i_same_mu_scenario in idx_test
         ]
     ).flatten()
+    train_idx = np.concatenate([train_idx, test_idx[:9]])
+    test_idx = test_idx[9:]
+
     # train_idx = np.arange(30)
     # test_idx = np.arange(30, 36)
 
@@ -228,7 +248,11 @@ def main(config_path_to_file=None):
 
     # usual PHIN framework with mu DNN
     msd_data_id, system_layer_interp, phin_interp = phin_learning(
-        msd_data, msd_cfg, configuration.directories, dir_extension="usual_phin "
+        msd_data,
+        msd_cfg,
+        configuration.directories,
+        dir_extension="usual_phin ",
+        layer=msd_cfg["layer"],
     )
 
     result_dir_usual_phin = f"{result_dir}_usual_phin"
@@ -239,6 +263,11 @@ def main(config_path_to_file=None):
     msd_data.calculate_errors(msd_data_id)
     aphin_vis.plot_time_trajectories_all(
         msd_data, msd_data_id, use_train_data, idx_gen, result_dir_usual_phin
+    )
+    aphin_vis.plot_errors(
+        msd_data,
+        use_train_data,
+        save_name=os.path.join(result_dir_usual_phin, "rms_error"),
     )
 
     load_matrices = False
@@ -253,7 +282,7 @@ def main(config_path_to_file=None):
 
     else:
         # fit matrices
-        num_train_scenarios_with_same_mu = 10
+        num_train_scenarios_with_same_mu = train_idx.shape[0] // 3
         msd_data_orig = copy.deepcopy(msd_data)
         scenario_list = []
         for i_same_mu_scenario in range(num_train_scenarios_with_same_mu):
@@ -270,6 +299,7 @@ def main(config_path_to_file=None):
                     msd_cfg,
                     configuration.directories,
                     dir_extension=f"interp{i_same_mu_scenario}",
+                    layer=msd_cfg["layer"],
                 )
             )
             scenario_list.append(
@@ -293,20 +323,27 @@ def main(config_path_to_file=None):
             system_layer_interp = scenario_tuple[1]
             msd_data_id_interp_scenario = scenario_tuple[0]
             mu_orig = scenario_tuple[4]
-            J, R, B, Q = system_layer_interp.get_system_matrices(
-                None, msd_data_id_interp_scenario.TRAIN.n_t
-            )
-            Q_all[:, :, i_scenario] = Q
+            if msd_cfg["layer"] == "ph_layer":
+                J, R, B = system_layer_interp.get_system_matrices(
+                    None, msd_data_id_interp_scenario.TRAIN.n_t
+                )
+                Q = np.eye(J.shape[1])
+            elif msd_cfg["layer"] == "phq_layer":
+                J, R, B, Q = system_layer_interp.get_system_matrices(
+                    None, msd_data_id_interp_scenario.TRAIN.n_t
+                )
             J_all[:, :, i_scenario] = J
             R_all[:, :, i_scenario] = R
             B_all[:, :, i_scenario] = B
             A_all[:, :, i_scenario] = (J - R) @ Q
             # list_matrices.append(A)
             parameter_array[i_scenario, :] = mu_orig
-        save_matrices = True
+        save_matrices = False
         if save_matrices:
             np.savez(
-                os.path.join(result_dir, "JRBQ_matrix_interpolation.npz"),
+                os.path.join(
+                    result_dir, f"JRBQ_matrix_interpolation_{msd_cfg['experiment']}.npz"
+                ),
                 J=J_all,
                 R=R_all,
                 Q=Q_all,
@@ -319,7 +356,7 @@ def main(config_path_to_file=None):
     test_with_sample_data = False
     if test_with_sample_data:
         weighting_array = get_weighting_function_values(
-            parameter_array, parameter_array, ansatz="linear"
+            parameter_array, parameter_array, ansatz=msd_cfg["ansatz"]
         )
         matrices_eval = evaluate_matrices(A_all, weighting_array)
         print(np.allclose(A_all, matrices_eval))  # should be True
@@ -348,14 +385,16 @@ def main(config_path_to_file=None):
             )
         plt.show()
 
+    # %% Interpolate matrices
     weighting_array = get_weighting_function_values(
-        parameter_array, parameter_test, ansatz="linear"
+        parameter_array, parameter_test, ansatz=msd_cfg["ansatz"]
     )
     # TODO: compare PH vs LTI
 
     A_interp = evaluate_matrices(A_all, weighting_array)
     B_interp = evaluate_matrices(B_all, weighting_array)
 
+    # %% Create data file
     latent_shape = (
         msd_data_orig.TEST.n_sim,
         msd_data_orig.TEST.n_t,
@@ -412,6 +451,7 @@ def main(config_path_to_file=None):
     use_train_data = False
     idx_gen = "rand"
 
+    # %% get results
     result_dir_interp = f"{result_dir}_interp"
     if not os.path.isdir(result_dir_interp):
         os.mkdir(result_dir_interp)
@@ -419,35 +459,11 @@ def main(config_path_to_file=None):
     aphin_vis.plot_time_trajectories_all(
         msd_data_orig, msd_data_id_interp, use_train_data, idx_gen, result_dir_interp
     )
-
-    # diff_system_matrix = system_matrix[:, :, 0] - np.squeeze(list_matrices[0], axis=0)
-    # print(diff_system_matrix)
-
-    _, _, _, _, mu_test = msd_data.test_data
-    n_t_test = msd_data.n_t_test
-    print_matrices(system_layer_interp, mu=mu_test, n_t=n_t_test, data=msd_data)
-    save_evaluation_times(msd_data_id_interp_scenario, result_dir)
-
-    msd_data.calculate_errors(msd_data_id_interp_scenario, domain_split_vals=[1, 1])
-
     aphin_vis.plot_errors(
-        msd_data,
+        msd_data_orig,
         use_train_data,
-        save_name=os.path.join(result_dir, "rms_error"),
+        save_name=os.path.join(result_dir_interp, "rms_error"),
     )
-
-    msd_data.calculate_errors(
-        msd_data_id_interp_scenario, save_to_txt=True, result_dir=result_dir
-    )
-
-    # plot state values
-    aphin_vis.plot_time_trajectories_all(
-        msd_data, msd_data_id_interp_scenario, use_train_data, idx_gen, result_dir
-    )
-
-    # plot chessboard visualisation
-    # test_ids = [0, 1, 3, 6, 7]  # test_ids = range(10) # range(6) test_ids = [0]
-    # aphin_vis.chessboard_visualisation(test_ids, system_layer, msd_data, result_dir)
 
     # avoid that the script stops and keep the plots open
     plt.show()
@@ -459,5 +475,3 @@ if __name__ == "__main__":
     working_dir = os.path.dirname(__file__)
     config_file_path = os.path.join(working_dir, "config_msd_matrix_interpolation.yml")
     main(config_file_path)
-
-# %%

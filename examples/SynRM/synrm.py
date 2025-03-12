@@ -20,7 +20,10 @@ from aphin.utils.save_results import (
 from aphin.utils.experiments import run_various_experiments
 from aphin.utils.print_matrices import print_matrices
 
-tf.config.run_functions_eagerly(True)
+# TODO: add the following line into dtype context
+tf.keras.backend.set_floatx("float64")
+
+# tf.config.run_functions_eagerly(True)
 
 
 def main(
@@ -41,7 +44,7 @@ def main(
     #                         -result_folder_name     searches for a subfolder with result_folder_name under working dir that
     #                                                 includes a config.yml and .weights.h5
     #                                                 -> config for loading results
-    manual_results_folder = None  # {None} if no results shall be loaded, else create str with folder name or path to results folder
+    manual_results_folder = "synrm_indiv_scaled_modes_new_float64"  # {None} if no results shall be loaded, else create str with folder name or path to results folder
 
     # write to config_info
     if config_path_to_file is not None:
@@ -392,45 +395,57 @@ def main(
     )
 
     # reproject
-    # num_rand_pick_entries = 1000
-    # synrm_data.reproject_with_basis(
-    #     [V, V],
-    #     idx=[slice(80, 100), slice(105, 125)],
-    #     pick_method="rand",
-    #     pick_entry=num_rand_pick_entries,
-    #     seed=srm_cfg["seed"],
-    # )
-    # synrm_data_id.reproject_with_basis(
-    #     [V, V],
-    #     idx=[slice(80, 100), slice(105, 125)],
-    #     pick_method="rand",
-    #     pick_entry=num_rand_pick_entries,
-    #     seed=srm_cfg["seed"],
-    # )
+    reproject_method = "input"  # "input" | "rand"
+    if reproject_method == "rand":
+        pick_method = "rand"
+        pick_entry = 1000
+        V = V
+        split_values_reprojected = pick_entry
+    elif reproject_method == "input":
+        pick_method = "all"
+        pick_entry = None
+        B = SynRMDataset.from_matlab(data_path=srm_cfg["matfile_path"], return_B=True)
+        V = B.T @ V
+        split_values_reprojected = B.shape[1]
 
-    # domain_split_vals_projected = [
-    #     3,
-    #     72,
-    #     5,
-    #     num_rand_pick_entries,
-    #     5,
-    #     num_rand_pick_entries,
-    # ]
+    synrm_data.reproject_with_basis(
+        [V, V],
+        idx=[slice(80, 100), slice(105, 125)],
+        pick_method=pick_method,
+        pick_entry=pick_entry,
+        seed=srm_cfg["seed"],
+    )
+    synrm_data_id.reproject_with_basis(
+        [V, V],
+        idx=[slice(80, 100), slice(105, 125)],
+        pick_method=pick_method,
+        pick_entry=pick_entry,
+        seed=srm_cfg["seed"],
+    )
 
-    # synrm_data.calculate_errors(
-    #     synrm_data_id,
-    #     domain_split_vals=domain_split_vals_projected,
-    #     save_to_txt=True,
-    #     result_dir=result_dir,
-    # )
+    domain_split_vals_projected = [
+        3,
+        72,
+        5,
+        split_values_reprojected,
+        5,
+        split_values_reprojected,
+    ]
 
-    # %% calculate errors
     synrm_data.calculate_errors(
         synrm_data_id,
-        domain_split_vals=srm_cfg["domain_split_vals"],
+        domain_split_vals=domain_split_vals_projected,
         save_to_txt=True,
         result_dir=result_dir,
     )
+
+    # %% calculate errors
+    # synrm_data.calculate_errors(
+    #     synrm_data_id,
+    #     domain_split_vals=srm_cfg["domain_split_vals"],
+    #     save_to_txt=True,
+    #     result_dir=result_dir,
+    # )
     aphin_vis.plot_errors(
         synrm_data,
         t=synrm_data.t_test,
@@ -499,6 +514,28 @@ def main(
     # )
 
     print("debug")
+
+    import plotly.graph_objects as go
+
+    state_num = 252
+    fig = go.Figure()
+    fig.add_trace(
+        go.Scatter(
+            x=np.arange(synrm_data.TRAIN.x.shape[0]),
+            y=np.squeeze(synrm_data.TRAIN.x[:, state_num]),
+            mode="lines",
+            line=dict(color="red"),
+        )
+    )
+    fig.add_trace(
+        go.Scatter(
+            x=np.arange(synrm_data_id.TRAIN.x.shape[0]),
+            y=np.squeeze(synrm_data_id.TRAIN.x[:, state_num]),
+            mode="lines",
+            line=dict(color="blue"),
+        )
+    )
+    fig.show()
 
 
 # parameter variation for multiple experiment runs
