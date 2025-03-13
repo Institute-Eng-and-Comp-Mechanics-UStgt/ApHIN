@@ -150,10 +150,14 @@ def get_weighting_function_values(
     """
     parameter_samples_train: n_system x n_param array
     parameter_samples_eval: n_eval_points x n_param array
+    ansatz: method to interpolate between sampling points, see also scipy.interpolate.griddata
     Returns:
     array of (n_system,n_eval_points) weighting values
     """
     assert parameter_samples_train.shape[1] == parameter_samples_eval.shape[1]
+    assert ansatz in ["linear", "cubic", "nearest"]
+    if ansatz == "cubic":
+        assert parameter_samples_train.shape[1] <= 2  # method only exists for 1D and 2D
 
     n_system = parameter_samples_train.shape[0]
     n_eval_points = parameter_samples_eval.shape[0]
@@ -172,7 +176,7 @@ def get_weighting_function_values(
     print(
         f"Max sum difference: {np.max(np.abs(np.sum(weighting_array, axis=0)- np.ones(n_eval_points)))}"
     )
-    # assert np.allclose(np.sum(weighting_array, axis=0), np.ones(n_eval_points))
+    assert np.allclose(np.sum(weighting_array, axis=0), np.ones(n_eval_points))
 
     return weighting_array
 
