@@ -55,7 +55,11 @@ class CheckPHProperties:
         else:
             Q_check = True
 
-        return J_check and R_check and Q_check
+        is_ph = J_check and R_check and Q_check
+        if not is_ph:
+            logging.warning(f"The system does NOT satisfy the pH properties.")
+
+        return is_ph
 
     def check_spd(self, A, rtol=1e-06, atol=1e-08):
         """
