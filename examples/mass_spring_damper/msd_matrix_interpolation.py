@@ -38,7 +38,7 @@ from state_space_ph.matrix_interpolation import (
     evaluate_matrices,
     in_hull,
 )
-from aphin.systems import LTISystem
+from aphin.systems import LTISystem, PHSystem
 
 # tf.config.run_functions_eagerly(True)
 
@@ -234,8 +234,9 @@ def main(config_path_to_file=None):
             for i_same_mu_scenario in idx_test
         ]
     ).flatten()
-    train_idx = np.concatenate([train_idx, test_idx[:9]])
-    test_idx = test_idx[9:]
+    shift_to_train = 30
+    train_idx = np.concatenate([train_idx, test_idx[:shift_to_train]])
+    test_idx = test_idx[shift_to_train:]
 
     # train_idx = np.arange(30)
     # test_idx = np.arange(30, 36)
@@ -261,13 +262,20 @@ def main(config_path_to_file=None):
     use_train_data = False
     idx_gen = "rand"
     msd_data.calculate_errors(msd_data_id)
-    aphin_vis.plot_time_trajectories_all(
-        msd_data, msd_data_id, use_train_data, idx_gen, result_dir_usual_phin
-    )
-    aphin_vis.plot_errors(
-        msd_data,
-        use_train_data,
-        save_name=os.path.join(result_dir_usual_phin, "rms_error"),
+    # aphin_vis.plot_time_trajectories_all(
+    #     msd_data, msd_data_id, use_train_data, idx_gen, result_dir_usual_phin
+    # )
+    # aphin_vis.plot_errors(
+    #     msd_data,
+    #     use_train_data,
+    #     save_name=os.path.join(result_dir_usual_phin, "rms_error"),
+    # )
+    aphin_vis.single_parameter_space_error_plot(
+        msd_data.TEST.state_error_list[0],
+        msd_data.TEST.Mu,
+        msd_data.TEST.Mu_input,
+        parameter_names=["mass", "stiff", "omega", "delta"],
+        save_name="",
     )
 
     load_matrices = False
@@ -390,9 +398,14 @@ def main(config_path_to_file=None):
         parameter_array, parameter_test, ansatz=msd_cfg["ansatz"]
     )
     # TODO: compare PH vs LTI
-
-    A_interp = evaluate_matrices(A_all, weighting_array)
-    B_interp = evaluate_matrices(B_all, weighting_array)
+    if msd_cfg["matrix_type"] == "lti":
+        A_interp = evaluate_matrices(A_all, weighting_array)
+        B_interp = evaluate_matrices(B_all, weighting_array)
+    elif msd_cfg["matrix_type"] == "ph":
+        J_interp = evaluate_matrices(J_all, weighting_array)
+        R_interp = evaluate_matrices(R_all, weighting_array)
+        Q_interp = evaluate_matrices(Q_all, weighting_array)
+        B_interp = evaluate_matrices(B_all, weighting_array)
 
     # %% Create data file
     latent_shape = (
@@ -402,14 +415,31 @@ def main(config_path_to_file=None):
     )
     Z_ph = np.zeros(latent_shape)
     Z_dt_ph = np.zeros(latent_shape)
-    for i_test in range(A_interp.shape[2]):
+    for i_test in range(weighting_array.shape[1]):
         sim_indices = (i_test) * 3 + np.array([0, 1, 2])
-        lti_system = LTISystem(A=A_interp[:, :, i_test], B=B_interp[:, :, i_test])
+        if msd_cfg["matrix_type"] == "lti":
+            system_lti_or_ph = LTISystem(
+                A=A_interp[:, :, i_test], B=B_interp[:, :, i_test]
+            )
+        elif msd_cfg["matrix_type"] == "ph":
+            if msd_cfg["layer"] == "phq_layer":
+                system_lti_or_ph = PHSystem(
+                    J_ph=J_interp[:, :, i_test],
+                    R_ph=R_interp[:, :, i_test],
+                    Q_ph=Q_interp[:, :, i_test],
+                    B=B_interp[:, :, i_test],
+                )
+            if msd_cfg["layer"] == "ph_layer":
+                system_lti_or_ph = PHSystem(
+                    J_ph=J_interp[:, :, i_test],
+                    R_ph=R_interp[:, :, i_test],
+                    B=B_interp[:, :, i_test],
+                )
         for i_sim in sim_indices:
             u = msd_data_orig.TEST.U[i_sim]
             msd_data_orig.TEST.get_initial_conditions()
             x_init = np.expand_dims(msd_data_orig.TEST.x_init[i_sim, :], axis=0).T
-            Z_ph[i_sim], Z_dt_ph[i_sim] = lti_system.solve_dt(
+            Z_ph[i_sim], Z_dt_ph[i_sim] = system_lti_or_ph.solve_dt(
                 msd_data_orig.TEST.t,
                 x_init,
                 u,
@@ -469,6 +499,34 @@ def main(config_path_to_file=None):
     plt.show()
 
     print("debug breakpoint")
+
+    msd_data_jonas = Dataset.from_data(
+        "/scratch/tmp/jrettberg/Projects/ApHIN_Review/ApHIN/examples/mass_spring_damper/data/MSD_Qeye_ph_input_siso.npz"
+    )
+    msd_data_jonas.train_test_split(test_size=0.06, seed=1)
+    msd_data_jonas.states_to_features()
+
+    import plotly.graph_objects as go
+
+    trajectory = 1
+    fig = go.Figure()
+    fig.add_trace(
+        go.Scatter(
+            x=np.arange(msd_data.TRAIN.x.shape[0]),
+            y=msd_data.TRAIN.x[:, trajectory],
+            mode="lines",
+            name="msd_interp",
+        )
+    )
+    fig.add_trace(
+        go.Scatter(
+            x=np.arange(msd_data_jonas.TRAIN.x.shape[0]),
+            y=msd_data_jonas.TRAIN.x[:, trajectory],
+            mode="lines",
+            name="msd_jonas",
+        )
+    )
+    fig.show()
 
 
 if __name__ == "__main__":
