@@ -21,7 +21,7 @@
 # lower_bounds: lower values of the parameters for the Halton algorithm (should be of size (random_samples,))
 # upper_bounds: upper values of the parameters for the Halton algorithm (should be of size (random_samples,))
 
-seed: 3823
+seed: 1
 n_mass: 3 # number of masses
 parameter_method: 'Halton_matrix_interpolation' # 'default', 'Halton', 'manual', 'mass_loop', 'Halton_matrix_interpolation'
 # 'default': parameter values according to [MorandinNicodemusUnger22]
@@ -32,10 +32,13 @@ damp_vals: 1
 delta: 0.5
 omega: 1
 # 'Halton': parameter values specified according to:
-random_samples_mu: 30         # None if non-parametric
+random_samples_mu: 42         # None if non-parametric
 random_samples_u: 6         # None if non-parametric
-lower_bounds: [0.1, 0.1, 0.1, .5, 0.125]      # None if non-parametric
-upper_bounds: [100, 100, 10, 5, 2]            # None if non-parametric
+lower_bounds: [0.1, 0.1, .5, 0.125]      # None if non-parametric
+upper_bounds: [100, 100, 5, 2]            # None if non-parametric
+
+parameter_dimension_mu: 2
+parameter_dimension_u: 2
 # input
 input_vals: 0 # null/None (autonomous) | 0 (first mass excitation - SISO)
 n_sim: 4 # only required for autonomous/manual case system
