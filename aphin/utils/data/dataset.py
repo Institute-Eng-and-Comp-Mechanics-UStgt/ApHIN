@@ -57,9 +57,19 @@ class Dataset(Data):
     """
 
     def __init__(
-        self, t, X, X_dt=None, U=None, Mu=None, J=None, R=None, Q=None, B=None
+        self,
+        t,
+        X,
+        X_dt=None,
+        U=None,
+        Mu=None,
+        J=None,
+        R=None,
+        Q=None,
+        B=None,
+        Mu_input=None,
     ):
-        super().__init__(t, X, X_dt, U, Mu, J, R, Q, B)
+        super().__init__(t, X, X_dt, U, Mu, J, R, Q, B, Mu_input)
         # initialize train and test data objects
         self.TRAIN = None
         self.TEST = None
@@ -221,6 +231,13 @@ class Dataset(Data):
             )
         else:
             Mu, Mu_test = None, None
+        # input parameters
+        if self.Mu_input is not None:
+            Mu_input, Mu_input_test = train_test_split(
+                self.Mu_input, test_size=test_size, random_state=seed
+            )
+        else:
+            Mu_input, Mu_input_test = None, None
         # ph matrices (reshape due to (r,r,n_sim) structure)
         if self.J is not None:
             J, J_test = train_test_split(self.J, test_size=test_size, random_state=seed)
@@ -249,6 +266,7 @@ class Dataset(Data):
             R=R,
             Q=Q,
             B=B,
+            Mu_input=Mu_input,
         )
 
         self.TEST = Data(
@@ -261,6 +279,7 @@ class Dataset(Data):
             R=R_test,
             Q=Q_test,
             B=B_test,
+            Mu_input=Mu_input_test,
         )
 
         # reset data from Dataset level to omit confusion
@@ -304,6 +323,13 @@ class Dataset(Data):
         else:
             Mu_test, Mu = [None] * 2
 
+        # input parameters
+        if self.Mu_input is not None:
+            Mu_input_test = self.Mu_input[sim_idx_test]
+            Mu_input = self.Mu_input[sim_idx_train]
+        else:
+            Mu_input_test, Mu_input = [None] * 2
+
         # ph matrices
         if self.J is not None:
             J_test = self.J[sim_idx_test, :, :]
@@ -336,6 +362,7 @@ class Dataset(Data):
             R=R,
             Q=Q,
             B=B,
+            Mu_input=Mu_input,
         )
 
         self.TEST = Data(
@@ -348,6 +375,7 @@ class Dataset(Data):
             R=R_test,
             Q=Q_test,
             B=B_test,
+            Mu_input=Mu_input_test,
         )
 
         # reset data from Dataset level to omit confusion

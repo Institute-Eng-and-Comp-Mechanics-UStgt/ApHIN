@@ -45,6 +45,7 @@ class Data(ABC):
         R=None,
         Q=None,
         B=None,
+        Mu_input=None,
     ):
         """
         Initializes the Data container with multiple datasets (train and test) including states, inputs, and parameters.
@@ -145,6 +146,9 @@ class Data(ABC):
                 and ph_matrices[i].ndim == 3
             )
         self.J, self.R, self.Q, self.B = ph_matrices
+
+        self.Mu_input = Mu_input
+
         # Initialize x, dx_dt and x_init. Subclasses should override these values
         self.x = None
         self.dx_dt = None
@@ -467,7 +471,7 @@ class Data(ABC):
         data = np.load(data_path, allow_pickle=True)
         X = data["X"]
         t = data["t"]
-        U, X_dt, Mu, J, R, Q, B = [None] * 7
+        U, X_dt, Mu, J, R, Q, B, Mu_input = [None] * 8
         if "X_dt" in data.keys():
             X_dt = data["X_dt"]
         if "U" in data.keys():
@@ -484,6 +488,8 @@ class Data(ABC):
         if "B" in data.keys():
             # B matrix in  format (r,n_u,n_sim)
             B = data["B"]
+        if "Mu_input" in data.keys():
+            Mu_input = data["Mu_input"]
 
         data_dict = {
             "t": t,
@@ -495,6 +501,7 @@ class Data(ABC):
             "R": R,
             "Q": Q,
             "B": B,
+            "Mu_input": Mu_input,
         }
 
         return data_dict

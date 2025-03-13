@@ -21,6 +21,7 @@ class ParameterInput:
         u,
         x0,
         parameter_information,
+        Mu_input: np.ndarray = None,
     ) -> None:
         """
         Initialize a ParameterInput object with the given parameters.
@@ -62,6 +63,7 @@ class ParameterInput:
         # input parameters
         self.input_vals = input_vals
         self.u = u
+        self.Mu_input = Mu_input
         # initial condition
         self.x0 = x0
 
@@ -122,13 +124,14 @@ class ParameterInput:
             lower_bounds = config["lower_bounds"]
             upper_bounds = config["upper_bounds"]
             # we use parameter dimension of 5 [mass stiffness damping omega delta]
-            lower_bounds_mu = lower_bounds[:3]
-            uppper_bounds_mu = upper_bounds[:3]
-            lower_bounds_u = lower_bounds[3:]
-            upper_bounds_u = upper_bounds[3:]
+            parameter_dimension_mu = config["parameter_dimension_mu"]
+            lower_bounds_mu = lower_bounds[:parameter_dimension_mu]
+            uppper_bounds_mu = upper_bounds[:parameter_dimension_mu]
+            lower_bounds_u = lower_bounds[parameter_dimension_mu:]
+            upper_bounds_u = upper_bounds[parameter_dimension_mu:]
 
             # mu
-            parameter_dimension_mu = 3
+
             sampler_Halton = qmc.Halton(d=parameter_dimension_mu, seed=seed)
             samples_Halton = sampler_Halton.random(n=random_samples_mu)
             sampled_parameters_mu = qmc.scale(
@@ -136,7 +139,7 @@ class ParameterInput:
             )
 
             # u
-            parameter_dimension_u = 2
+            parameter_dimension_u = config["parameter_dimension_u"]
             sampler_Halton = qmc.Halton(d=parameter_dimension_u, seed=seed)
             samples_Halton = sampler_Halton.random(n=random_samples_u)
             sampled_parameters_u = qmc.scale(
@@ -155,7 +158,8 @@ class ParameterInput:
                 for i_u in np.arange(3):
                     mass_vals.append(sampled_parameters_mu[i_mu, 0].copy())
                     stiff_vals.append(sampled_parameters_mu[i_mu, 1])
-                    damp_vals.append(sampled_parameters_mu[i_mu, 2])
+                    if config["parameter_dimension_mu"] == 3:
+                        damp_vals.append(sampled_parameters_mu[i_mu, 2])
                     omega.append(sampled_parameters_u[i_u, 0])
                     delta.append(sampled_parameters_u[i_u, 1])
             # test after training
@@ -163,16 +167,19 @@ class ParameterInput:
                 for i_u in np.arange(3, 6):
                     mass_vals.append(sampled_parameters_mu[i_mu, 0])
                     stiff_vals.append(sampled_parameters_mu[i_mu, 1])
-                    damp_vals.append(sampled_parameters_mu[i_mu, 2])
+                    if config["parameter_dimension_mu"] == 3:
+                        damp_vals.append(sampled_parameters_mu[i_mu, 2])
                     omega.append(sampled_parameters_u[i_u, 0])
                     delta.append(sampled_parameters_u[i_u, 1])
 
             mass_vals = np.array(mass_vals)
             stiff_vals = np.array(stiff_vals)
-            damp_vals = np.array(damp_vals)
             omega = np.array(omega)
             delta = np.array(delta)
 
+        Mu_input = np.concatenate(
+            (np.expand_dims(omega, axis=1), np.expand_dims(delta, axis=1)), axis=1
+        )
         # # create input
         # if config["input_vals"] is not None:
         #     create_input(omega, delta, siso, config, debug)
@@ -186,6 +193,10 @@ class ParameterInput:
         )
         mass_vals = cls.process_config_system_parameters(mass_vals, n_mass, n_sim)
         stiff_vals = cls.process_config_system_parameters(stiff_vals, n_mass, n_sim)
+        if config["parameter_dimension_mu"] == 3:
+            damp_vals = np.array(damp_vals)
+        else:
+            damp_vals = 0
         damp_vals = cls.process_config_system_parameters(damp_vals, n_mass, n_sim)
 
         if config["debug"]:
@@ -204,6 +215,7 @@ class ParameterInput:
             u,
             x0,
             parameter_information,
+            Mu_input,
         )
 
     def generate_initial_condition(input_vals, n, n_sim, seed=1):

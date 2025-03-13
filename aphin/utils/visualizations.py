@@ -1300,6 +1300,68 @@ def plot_errors(
         )
 
 
+def single_parameter_space_error_plot(
+    norm_rms_error,
+    Mu,
+    Mu_input: np.ndarray = None,
+    parameter_names: list[str] = None,
+    save_name: str = None,
+):
+    if Mu_input is not None:
+        Mu_with_input = np.concatenate((Mu, Mu_input), axis=1)
+    else:
+        Mu_with_input = Mu
+    n_parameter_space = Mu_with_input.shape[1]
+    if n_parameter_space > 4:
+        raise NotImplementedError(
+            f"Parameter space of size {n_parameter_space} is too large. Please reduce to a size of at most 4."
+        )
+    if parameter_names is not None:
+        assert len(parameter_names) == n_parameter_space
+
+    # prepare scatter data
+    x_data = Mu_with_input[:, 0]
+    y_data = Mu_with_input[:, 1]
+    if n_parameter_space > 2:
+        z_data = Mu_with_input[:, 2]
+    if n_parameter_space > 3:
+        colors = Mu_with_input[:, 3]
+
+    # size of scatter dots is the error
+    norm_rms_error_max_time = np.max(norm_rms_error, axis=1)
+    error_sizes = norm_rms_error_max_time
+    size_min = 10
+    size_max = 50
+    error_sizes_scaled = (
+        (error_sizes - error_sizes.min(axis=0))
+        / (error_sizes.max(axis=0) - error_sizes.min(axis=0))
+    ) * (size_max - size_min) + size_min
+
+    fig = plt.figure()
+    ax = fig.add_subplot(projection="3d")
+    if n_parameter_space == 2:
+        ax.scatter(x_data, y_data, sizes=error_sizes_scaled)
+    elif n_parameter_space == 3:
+        ax.scatter(x_data, y_data, z_data, sizes=error_sizes_scaled)
+    elif n_parameter_space == 4:
+        im = ax.scatter(x_data, y_data, z_data, c=colors, sizes=error_sizes_scaled)
+        cbar = fig.colorbar(im, ax=ax)
+
+    if parameter_names is not None:
+        for i_dim in range(n_parameter_space):
+            if i_dim == 0:
+                ax.set_xlabel(parameter_names[0])
+            elif i_dim == 1:
+                ax.set_ylabel(parameter_names[1])
+            elif i_dim == 2:
+                ax.set_zlabel(parameter_names[2])
+            elif i_dim == 3:
+                cbar.set_label(parameter_names[3])
+
+    plt.title(f"Error = Circle size")
+    plt.show(block=False)
+
+
 def single_error_plot(
     norm_rms_error,
     t=None,
