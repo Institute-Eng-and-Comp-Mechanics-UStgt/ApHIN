@@ -19,6 +19,7 @@ import aphin.utils.visualizations as aphin_vis
 from aphin.utils.callbacks_tensorflow import callbacks
 from aphin.identification import APHIN
 from aphin.layers.phq_layer import PHQLayer, PHLayer
+from aphin.utils.experiments import run_various_experiments
 from aphin.utils.save_results import (
     save_weights,
     write_to_experiment_overview,
@@ -85,11 +86,13 @@ def main(
     from sklearn.decomposition import PCA
     # scale data per domain
     domain_ids = [0] + [np.sum(cfg["domain_split_vals_"][:i]) for i in range(1, len(cfg["domain_split_vals_"])+1)]
+    relative_domain_length = [split_val / np.sum(cfg["domain_split_vals_"]) * 2 for split_val in cfg["domain_split_vals_"]]
     for i in range(len(domain_ids)-1):
         print(f"Scale domain {i}: {domain_ids[i]} - {domain_ids[i+1]}")
-        x[:, :, domain_ids[i]:domain_ids[i+1]] = x[:, :, domain_ids[i]:domain_ids[i+1]]/cfg["scaling_values"][i]
+        print(np.abs(x[:, :, domain_ids[i]:domain_ids[i+1]]).max())
+        x[:, :, domain_ids[i]:domain_ids[i+1]] = x[:, :, domain_ids[i]:domain_ids[i+1]]/cfg["scaling_values"][i]*relative_domain_length[i]
+    x = x[:, :, :, np.newaxis]
     x_dt = np.gradient(x, dt, axis=1)
-    x_dt = x_dt[:, :, :, np.newaxis]
     data = Dataset(t=t, X=x, X_dt=x_dt, U=u)
 
     # %% Individual PCA for each domain
@@ -119,8 +122,7 @@ def main(
     # x_scaled = [x_ / np.abs(x_).max()/n_domains[i] for i, x_ in enumerate(x_pca)]
     # x = np.concatenate(x_scaled, axis=2)[..., np.newaxis]
     # x_dt = np.gradient(x, dt, axis=1)
-
-    data = Dataset(t=t, X=x, X_dt=x_dt, U=u)
+    # data = Dataset(t=t, X=x, X_dt=x_dt, U=u)
 
     # for i in range(25):
     #     plt.plot(x[0,:,i,0])
@@ -135,7 +137,7 @@ def main(
         logging.info("Data is not filtered.")
 
     # reduced size
-    r_range = cfg["r"]
+    r = cfg["r"]
 
 
     # pio.renderers.default = "browser"
@@ -175,93 +177,92 @@ def main(
 
     errors_train = []
     errors_test = []
-    for r in r_range:
 
-        weight_path = os.path.join(weight_dir, f".weights.h5")
-        callback = callbacks(
-            weight_path,
-            tensorboard=cfg["tensorboard"],
-            log_dir=log_dir,
-            monitor=monitor,
-            earlystopping=False,
-            patience=500,
+    weight_path = os.path.join(weight_dir, f".weights.h5")
+    callback = callbacks(
+        weight_path,
+        tensorboard=cfg["tensorboard"],
+        log_dir=log_dir,
+        monitor=monitor,
+        earlystopping=False,
+        patience=500,
+    )
+
+    system_layer = PHQLayer(
+        r,
+        n_u=n_u,
+        n_mu=n_mu,
+        name="phq_layer",
+        layer_sizes=cfg["layer_sizes_ph"],
+        activation=cfg["activation_ph"],
+        regularizer=regularizer,
+    )
+
+    aphin = APHIN(
+        r,
+        x=x,
+        u=u,
+        system_layer=system_layer,
+        layer_sizes=cfg["layer_sizes_ae"],
+        activation=cfg["activation_ae"],
+        l_rec=cfg["l_rec"],
+        l_dz=cfg["l_dz"],
+        l_dx=cfg["l_dx"],
+        use_pca=cfg["use_pca"],
+        pca_only=cfg["pca_only"],
+        pca_order=cfg["n_pca"],
+        pca_scaling=cfg["pca_scaling"],
+        # dtype=tf.float64,
+    )
+
+    aphin.compile(
+        optimizer=tf.keras.optimizers.Adam(learning_rate=cfg["lr"]),
+        loss=tf.keras.losses.MSE,
+    )
+    aphin.build(input_shape=([x.shape, dx_dt.shape, u.shape], None))
+
+    # aphin.load_weights(os.path.join(weight_dir, "rec.weights.h5"))
+    # aphin.load_weights(os.path.join(weight_dir, ".weights.h5"))
+
+    # x_rec = aphin.reconstruct(x)
+    # e_rel = np.linalg.norm(x - x_rec) / np.linalg.norm(x)
+    # Fit or learn neural network
+    if cfg["load_network"]:
+        logging.info(f"Loading NN weights.")
+        aphin.load_weights(weight_path)
+    else:
+        logging.info(f"Fitting NN weights.")
+        n_train = int(0.8 * x.shape[0])
+        x_train = [x[:n_train], dx_dt[:n_train], u[:n_train]]
+        x_val = [x[n_train:], dx_dt[n_train:], u[n_train:]]
+        train_hist = aphin.fit(
+            x=x_train,
+            validation_data=x_val,
+            epochs=cfg["n_epochs"],
+            batch_size=cfg["batch_size"],
+            verbose=2,
+            callbacks=callback,
+        )
+        save_training_times(train_hist, result_dir)
+        aphin_vis.plot_train_history(
+            train_hist, save_name=result_dir, validation=validation
         )
 
-        system_layer = PHQLayer(
-            r,
-            n_u=n_u,
-            n_mu=n_mu,
-            name="phq_layer",
-            layer_sizes=cfg["layer_sizes_ph"],
-            activation=cfg["activation_ph"],
-            regularizer=regularizer,
-        )
+        # load best weights
+        aphin.load_weights(weight_path)
 
-        aphin = APHIN(
-            r,
-            x=x,
-            u=u,
-            system_layer=system_layer,
-            layer_sizes=cfg["layer_sizes_ae"],
-            activation=cfg["activation_ae"],
-            l_rec=cfg["l_rec"],
-            l_dz=cfg["l_dz"],
-            l_dx=cfg["l_dx"],
-            use_pca=cfg["use_pca"],
-            pca_only=cfg["pca_only"],
-            pca_order=cfg["n_pca"],
-            pca_scaling=cfg["pca_scaling"],
-            # dtype=tf.float64,
-        )
+    # write data to results directory
+    # save_weights(weight_dir, result_dir, load_network=cfg["load_network"])
+    write_to_experiment_overview(
+        cfg, result_dir, load_network=cfg["load_network"]
+    )
 
-        aphin.compile(
-            optimizer=tf.keras.optimizers.Adam(learning_rate=cfg["lr"]),
-            loss=tf.keras.losses.MSE,
-        )
-        aphin.build(input_shape=([x.shape, dx_dt.shape, u.shape], None))
-
-        # aphin.load_weights(os.path.join(weight_dir, "rec.weights.h5"))
-        # aphin.load_weights(os.path.join(weight_dir, ".weights.h5"))
-
-        # x_rec = aphin.reconstruct(x)
-        # e_rel = np.linalg.norm(x - x_rec) / np.linalg.norm(x)
-        # Fit or learn neural network
-        if cfg["load_network"]:
-            logging.info(f"Loading NN weights.")
-            aphin.load_weights(weight_path)
-        else:
-            logging.info(f"Fitting NN weights.")
-            n_train = int(0.8 * x.shape[0])
-            x_train = [x[:n_train], dx_dt[:n_train], u[:n_train]]
-            x_val = [x[n_train:], dx_dt[n_train:], u[n_train:]]
-            train_hist = aphin.fit(
-                x=x_train,
-                validation_data=x_val,
-                epochs=cfg["n_epochs"],
-                batch_size=cfg["batch_size"],
-                verbose=2,
-                callbacks=callback,
-            )
-            save_training_times(train_hist, result_dir)
-            aphin_vis.plot_train_history(
-                train_hist, save_name=result_dir, validation=validation
-            )
-
-            # load best weights
-            aphin.load_weights(weight_path)
-
-        # write data to results directory
-        # save_weights(weight_dir, result_dir, load_network=cfg["load_network"])
-        write_to_experiment_overview(
-            cfg, result_dir, load_network=cfg["load_network"]
-        )
-
-        # reconstruct data and report error
-        e_rec_train = np.linalg.norm(data.TRAIN.x - aphin.reconstruct(data.TRAIN.x)) / np.linalg.norm(data.TRAIN.x)
-        e_rec_test = np.linalg.norm(data.TEST.x - aphin.reconstruct(data.TEST.x)) / np.linalg.norm(data.TEST.x)
-        logging.info(f" r={r}:   {e_rec_train * 100:.2f}:%  / {e_rec_test * 100:.2f}:%")
-        errors_train.append(e_rec_train)
-        errors_test.append(e_rec_test)
+    # reconstruct data and report error
+    e_rec_train = np.linalg.norm(data.TRAIN.x - aphin.reconstruct(data.TRAIN.x)) / np.linalg.norm(data.TRAIN.x)
+    e_rec_test = np.linalg.norm(data.TEST.x - aphin.reconstruct(data.TEST.x)) / np.linalg.norm(data.TEST.x)
+    logging.info(f" r={r}:   {e_rec_train * 100:.2f}:%  / {e_rec_test * 100:.2f}:%")
+    errors_train.append(e_rec_train)
+    errors_test.append(e_rec_test)
 
     # %% Validation
     logging.info(
@@ -321,62 +322,62 @@ def main(
     e_z_dt = np.linalg.norm(data_id.TEST.Z_dt - data_id.TEST.Z_dt_ph) / np.linalg.norm(data_id.TEST.Z_dt)
     e_z_dt_map = np.linalg.norm(data_id.TEST.Z_dt - data_id.TEST.Z_dt_ph_map) / np.linalg.norm(data_id.TEST.Z_dt)
     e_x = np.linalg.norm(data.TEST.X - data_id.TEST.X) / np.linalg.norm(data.TEST.X)
+    #
+    # for i in range(16):
+    #     plt.plot(data_id.TEST.Z_ph[0, :, i])
+    #     plt.plot(data_id.TEST.Z[0, :, i])
+    #     plt.show()
+    #
+    # x_rec_ = aphin.decode(data_id.TEST.Z_ph[0])
+    # for i in range(16):
+    #     plt.plot(x_rec_[:, i])
+    #     plt.plot(data.TEST.X[0, :, i, 0])
+    #     plt.show()
+    #
+    # e_x_mech = (np.linalg.norm(data.TEST.X[:,:,:domain_ids[1]] - data_id.TEST.X[:,:,:domain_ids[1]]) /
+    #        np.linalg.norm(data.TEST.X[:,:,:domain_ids[1]]))
+    #
+    # e_x_acc = (np.linalg.norm(data.TEST.X[:,:,domain_ids[1]:domain_ids[2]] - data_id.TEST.X[:,:,domain_ids[1]:domain_ids[2]]) /
+    #        np.linalg.norm(data.TEST.X[:,:,domain_ids[1]:domain_ids[2]]))
+    #
+    # e_x_Dmech = (np.linalg.norm(data.TEST.X[:,:,domain_ids[2]:domain_ids[3]] - data_id.TEST.X[:,:,domain_ids[2]:domain_ids[3]]) /
+    #           np.linalg.norm(data.TEST.X[:,:,domain_ids[2]:domain_ids[3]]))
+    #
+    # e_x_Dacc = (np.linalg.norm(data.TEST.X[:,:,domain_ids[3]:domain_ids[4]] - data_id.TEST.X[:,:,domain_ids[3]:domain_ids[4]]) /
+    #             np.linalg.norm(data.TEST.X[:,:,domain_ids[3]:domain_ids[4]]))
 
-    for i in range(16):
-        plt.plot(data_id.TEST.Z_ph[0, :, i])
-        plt.plot(data_id.TEST.Z[0, :, i])
-        plt.show()
+    # i = 0
+    # plt.plot(data_id.TEST.Z_dt[0, :, i])
+    # # plt.plot(data_id.TEST.Z_dt_ph[0, :, i])
+    # plt.plot(data_id.TEST.Z_dt_ph_map[0, :, i])
+    # # plt.legend(["Z_dt", "Z_dt_ph", "Z_dt_ph_map"])
+    # plt.show()
 
-    x_rec_ = aphin.decode(data_id.TEST.Z_ph[0])
-    for i in range(16):
-        plt.plot(x_rec_[:, i])
-        plt.plot(data.TEST.X[0, :, i, 0])
-        plt.show()
-
-    e_x_mech = (np.linalg.norm(data.TEST.X[:,:,:domain_ids[1]] - data_id.TEST.X[:,:,:domain_ids[1]]) / 
-           np.linalg.norm(data.TEST.X[:,:,:domain_ids[1]]))
-    
-    e_x_acc = (np.linalg.norm(data.TEST.X[:,:,domain_ids[1]:domain_ids[2]] - data_id.TEST.X[:,:,domain_ids[1]:domain_ids[2]]) / 
-           np.linalg.norm(data.TEST.X[:,:,domain_ids[1]:domain_ids[2]]))
-
-    e_x_Dmech = (np.linalg.norm(data.TEST.X[:,:,domain_ids[2]:domain_ids[3]] - data_id.TEST.X[:,:,domain_ids[2]:domain_ids[3]]) /
-              np.linalg.norm(data.TEST.X[:,:,domain_ids[2]:domain_ids[3]]))
-    
-    e_x_Dacc = (np.linalg.norm(data.TEST.X[:,:,domain_ids[3]:domain_ids[4]] - data_id.TEST.X[:,:,domain_ids[3]:domain_ids[4]]) /
-                np.linalg.norm(data.TEST.X[:,:,domain_ids[3]:domain_ids[4]]))
-
-    i = 0
-    plt.plot(data_id.TEST.Z_dt[0, :, i])
-    # plt.plot(data_id.TEST.Z_dt_ph[0, :, i])
-    plt.plot(data_id.TEST.Z_dt_ph_map[0, :, i])
-    # plt.legend(["Z_dt", "Z_dt_ph", "Z_dt_ph_map"])
-    plt.show()
-
-    from aphin.utils.visualizations import plot_Z_dt_ph, plot_Z_dt_ph_map, plot_Z_ph
-
-
-    plot_Z_dt_ph(
-            data_id,
-            use_train_data=False,
-            idx_gen="first",
-            save_path=result_dir,
-            idx_custom_tuple= [range(3), range(4)],
-        )
-    plot_Z_dt_ph_map(
-            data_id,
-            use_train_data=False,
-            idx_gen="first",
-            save_path=result_dir,
-            idx_custom_tuple= [range(3), range(4)],
-        )
-
-    plot_Z_ph(
-            data_id,
-            use_train_data=False,
-            idx_gen="first",
-            save_path=result_dir,
-            idx_custom_tuple= [range(3), range(4)],
-    )
+    # from aphin.utils.visualizations import plot_Z_dt_ph, plot_Z_dt_ph_map, plot_Z_ph
+    #
+    #
+    # plot_Z_dt_ph(
+    #         data_id,
+    #         use_train_data=False,
+    #         idx_gen="first",
+    #         save_path=result_dir,
+    #         idx_custom_tuple= [range(3), range(4)],
+    #     )
+    # plot_Z_dt_ph_map(
+    #         data_id,
+    #         use_train_data=False,
+    #         idx_gen="first",
+    #         save_path=result_dir,
+    #         idx_custom_tuple= [range(3), range(4)],
+    #     )
+    #
+    # plot_Z_ph(
+    #         data_id,
+    #         use_train_data=False,
+    #         idx_gen="first",
+    #         save_path=result_dir,
+    #         idx_custom_tuple= [range(3), range(4)],
+    # )
 
     print(f"Relative error on the reconstruction: {e_rec * 100:.2f}%")
     print(f"Relative error on the latent variable: {e_z * 100:.2f}%")
@@ -442,6 +443,27 @@ def main(
 
     print("debug")
 
+def create_variation_of_parameters():
+    parameter_variation_dict = {
+        "r": [8, 16, 24],
+    }
+    return parameter_variation_dict
 
 if __name__ == "__main__":
-    main()
+    calc_various_experiments = True
+    if calc_various_experiments:
+        logging.info(f"Multiple simulation runs...")
+        # Run multiple simulation runs defined by parameter_variavation_dict
+        working_dir = os.path.dirname(__file__)
+        configuration = Configuration(working_dir)
+        _, log_dir, _, result_dir = configuration.directories
+        run_various_experiments(
+            experiment_main_script=main,  # main without parentheses
+            parameter_variation_dict=create_variation_of_parameters(),
+            basis_config_yml_path=os.path.join(os.path.dirname(__file__), "config.yml"),
+            result_dir=result_dir,
+            log_dir=log_dir,
+            force_calculation=False,
+        )
+    else:
+        main()
