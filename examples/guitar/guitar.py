@@ -84,40 +84,41 @@ def main(
     # x = x[:, :, :, np.newaxis]
     from sklearn.decomposition import PCA
     # scale data per domain
-    # domain_ids = [0] + [np.sum(cfg["domain_split_vals_"][:i]) for i in range(1, len(cfg["domain_split_vals_"])+1)]
-    # # perform domain specific pca
-    # for i in range(len(domain_ids)-1):
-    #     print(f"Scale domain {i}: {domain_ids[i]} - {domain_ids[i+1]}")
-    #     x[:, :, domain_ids[i]:domain_ids[i+1]] = x[:, :, domain_ids[i]:domain_ids[i+1]]/cfg["scaling_values"][i]
-    # x_dt = np.gradient(x, dt, axis=1)
-    # x_dt = x_dt[:, :, :, np.newaxis]
-    # data = Dataset(t=t, X=x, X_dt=x_dt, U=u)
-    n_sims, n_t = x.shape[0], x.shape[1]
-    from sklearn.decomposition import PCA
-    # scale data per domain
     domain_ids = [0] + [np.sum(cfg["domain_split_vals_"][:i]) for i in range(1, len(cfg["domain_split_vals_"])+1)]
-    # perform domain specific pca
-    x_pca = []
-    pcas = []
     for i in range(len(domain_ids)-1):
         print(f"Scale domain {i}: {domain_ids[i]} - {domain_ids[i+1]}")
-        x_ = x[:, :, domain_ids[i]:domain_ids[i+1]]
-        # todo: train test split
-        x_reshaped = x_.reshape(n_sims*n_t, -1)
-        pca_ = PCA(n_components=0.999)
-        x_pca_ = pca_.fit_transform(x_reshaped)
-        logging.info(f"relative reconstruction error: {np.linalg.norm(x_reshaped - pca_.inverse_transform(x_pca_)) / 
-                                                       np.linalg.norm(x_reshaped)}")
-        x_pca_ = x_pca_.reshape(n_sims, n_t, -1)
-        x_pca.append(x_pca_)
-        pcas.append(pca_)
-    # scale values
-    n_domains = [x_.shape[2] for x_ in x_pca]
-    domain_ids = [0] + [np.sum(n_domains[:i]) for i in range(1, len(n_domains)+1)]
-    x_scaled = [x_ / np.abs(x_).max(axis=(0,1))/n_domains[i] for i, x_ in enumerate(x_pca)]
-    # x_scaled = [x_ / np.abs(x_).max() for i, x_ in enumerate(x_pca)]
-    x = np.concatenate(x_scaled, axis=2)[..., np.newaxis]
+        x[:, :, domain_ids[i]:domain_ids[i+1]] = x[:, :, domain_ids[i]:domain_ids[i+1]]/cfg["scaling_values"][i]
     x_dt = np.gradient(x, dt, axis=1)
+    x_dt = x_dt[:, :, :, np.newaxis]
+    data = Dataset(t=t, X=x, X_dt=x_dt, U=u)
+
+    # %% Individual PCA for each domain
+    # n_sims, n_t = x.shape[0], x.shape[1]
+    # from sklearn.decomposition import PCA
+    # # scale data per domain
+    # domain_ids = [0] + [np.sum(cfg["domain_split_vals_"][:i]) for i in range(1, len(cfg["domain_split_vals_"])+1)]
+    # # perform domain specific pca
+    # x_pca = []
+    # pcas = []
+    # for i in range(len(domain_ids)-1):
+    #     print(f"Scale domain {i}: {domain_ids[i]} - {domain_ids[i+1]}")
+    #     x_ = x[:, :, domain_ids[i]:domain_ids[i+1]]
+    #     # todo: train test split
+    #     x_reshaped = x_.reshape(n_sims*n_t, -1)
+    #     pca_ = PCA(n_components=0.999)
+    #     x_pca_ = pca_.fit_transform(x_reshaped)
+    #     logging.info(f"relative reconstruction error: {np.linalg.norm(x_reshaped - pca_.inverse_transform(x_pca_)) /
+    #                                                    np.linalg.norm(x_reshaped)}")
+    #     x_pca_ = x_pca_.reshape(n_sims, n_t, -1)
+    #     x_pca.append(x_pca_)
+    #     pcas.append(pca_)
+    # # scale values
+    # n_domains = [x_.shape[2] for x_ in x_pca]
+    # domain_ids = [0] + [np.sum(n_domains[:i]) for i in range(1, len(n_domains)+1)]
+    # # x_scaled = [x_ / np.abs(x_).max(axis=(0,1))/n_domains[i] for i, x_ in enumerate(x_pca)]
+    # x_scaled = [x_ / np.abs(x_).max()/n_domains[i] for i, x_ in enumerate(x_pca)]
+    # x = np.concatenate(x_scaled, axis=2)[..., np.newaxis]
+    # x_dt = np.gradient(x, dt, axis=1)
 
     data = Dataset(t=t, X=x, X_dt=x_dt, U=u)
 
@@ -320,6 +321,17 @@ def main(
     e_z_dt = np.linalg.norm(data_id.TEST.Z_dt - data_id.TEST.Z_dt_ph) / np.linalg.norm(data_id.TEST.Z_dt)
     e_z_dt_map = np.linalg.norm(data_id.TEST.Z_dt - data_id.TEST.Z_dt_ph_map) / np.linalg.norm(data_id.TEST.Z_dt)
     e_x = np.linalg.norm(data.TEST.X - data_id.TEST.X) / np.linalg.norm(data.TEST.X)
+
+    for i in range(16):
+        plt.plot(data_id.TEST.Z_ph[0, :, i])
+        plt.plot(data_id.TEST.Z[0, :, i])
+        plt.show()
+
+    x_rec_ = aphin.decode(data_id.TEST.Z_ph[0])
+    for i in range(16):
+        plt.plot(x_rec_[:, i])
+        plt.plot(data.TEST.X[0, :, i, 0])
+        plt.show()
 
     e_x_mech = (np.linalg.norm(data.TEST.X[:,:,:domain_ids[1]] - data_id.TEST.X[:,:,:domain_ids[1]]) / 
            np.linalg.norm(data.TEST.X[:,:,:domain_ids[1]]))

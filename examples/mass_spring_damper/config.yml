@@ -1,6 +1,6 @@
 model_name: msd
 
-experiment: ph # name of the experiment {lti, ph}
+experiment: lti # name of the experiment {lti, ph}
 sim_name: MSD_Qeye_ph_input_siso.npz # name of data  msd_state_ICrand_Qeye_autonomous_n3_m4.npz
 load_network: True  # train the network or load the last pre-trained one
 
