@@ -33,12 +33,14 @@ delta: 0.5
 omega: 1
 # 'Halton': parameter values specified according to:
 random_samples_mu: 42         # None if non-parametric
-random_samples_u: 6         # None if non-parametric
-lower_bounds: [0.1, 0.1, .5, 0.125]      # None if non-parametric
+# random_samples_u: 6         # None if non-parametric
+inputs_per_mu: 3
+lower_bounds: [1, 1, .5, 0.125]      # None if non-parametric
 upper_bounds: [100, 100, 5, 2]            # None if non-parametric
 
 parameter_dimension_mu: 2
 parameter_dimension_u: 2
+
 # input
 input_vals: 0 # null/None (autonomous) | 0 (first mass excitation - SISO)
 n_sim: 4 # only required for autonomous/manual case system

@@ -262,14 +262,14 @@ def main(config_path_to_file=None):
     use_train_data = False
     idx_gen = "rand"
     msd_data.calculate_errors(msd_data_id)
-    # aphin_vis.plot_time_trajectories_all(
-    #     msd_data, msd_data_id, use_train_data, idx_gen, result_dir_usual_phin
-    # )
-    # aphin_vis.plot_errors(
-    #     msd_data,
-    #     use_train_data,
-    #     save_name=os.path.join(result_dir_usual_phin, "rms_error"),
-    # )
+    aphin_vis.plot_time_trajectories_all(
+        msd_data, msd_data_id, use_train_data, idx_gen, result_dir_usual_phin
+    )
+    aphin_vis.plot_errors(
+        msd_data,
+        use_train_data,
+        save_name=os.path.join(result_dir_usual_phin, "rms_error"),
+    )
     aphin_vis.single_parameter_space_error_plot(
         msd_data.TEST.state_error_list[0],
         msd_data.TEST.Mu,
