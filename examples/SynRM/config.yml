@@ -1,7 +1,7 @@
-experiment: synrm_indiv_scaled_modes_new_float64
+experiment: synrm_indiv_scaled_modes_more_phi_scale50_with_dynamics
 setup_matplotlib: False  # Show plots and visualization
 
-matfile_path: /Users/jonaskneifl/Develop/27_ApHIN_fork/examples/SynRM/data/SynRM4ApHIN_smallTimeStep_cutStart_withVandThetaPM.mat
+matfile_path: /exchange/jrettberg/aphin/SynRM/SynRM4ApHIN_smallTimeStep_cutStart_withVandThetaPM.mat # /Users/jonaskneifl/Develop/27_ApHIN_fork/examples/SynRM/data/SynRM4ApHIN_smallTimeStep_cutStart_withVandThetaPM.mat
 
 # %% General identification framework settings
 load_network: False # train the network or load a pre-trained one
@@ -11,7 +11,7 @@ prelearn_rec: False
 # for reproducability
 seed: 100
 # decrease number of simulations
-num_sim: 3
+num_sim: 1
 
 exclude_states: Null
 scale_modes_individually: True
@@ -37,7 +37,11 @@ domain_names: ["eta","phi","rigid","elastic_modes","Drigid","Delastic_modes"]
 # domain_names: ["eta","phi","rigid","elastic_modes","Drigid","Delastic_modes"]
 desired_bounds: [-1, 1]   # desired bounds after scaling for u and mu
 
-system_layer: ph
+# extra scaling for phi and eta
+extra_scaling_phi: 50
+extra_scaling_eta: 50
+
+system_layer: phq
 
 # %% identification settings
 r: 50 #  reduced order
@@ -47,12 +51,12 @@ pca_scaling: True  # scale the PCA components
 pca_comparison: False
 pca_only: False  # only use PCA components without nonlinear autoencoder
 l_rec: 1 #  loss weight for the reconstruction
-l_dz: 0.01 #  loss weight for the dz
-l_dx: 0.00000001 #  loss weight for the dx
+l_dz: 0.001 #  loss weight for the dz
+l_dx: 0 #  loss weight for the dx
 l1: 0.0000000001  # L1 regularization
 l2: 0  # L2 regularization
 n_epochs: 500 #  number of epochs
-batch_size: 256  # batch size
+batch_size: 128  # batch size
 layer_sizes_ph: # layer sizes
   - 32  # first layer
   - 32  # second layer
@@ -61,8 +65,6 @@ layer_sizes_ae: # layer sizes
   - 70  # first layer
   - 65  # first layer
   - 60 # second layer
-  - 55  # third layer
-  - 50  # third layer
 activation_ae: elu  # activation function
 activation_ph: elu  # activation function
 lr: 0.00025 # learning rate
