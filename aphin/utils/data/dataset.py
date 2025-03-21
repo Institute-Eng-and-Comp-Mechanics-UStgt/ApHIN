@@ -408,6 +408,10 @@ class Dataset(Data):
         )
         self.TRAIN.truncate_time(trunc_time_ratio)
 
+    def cut_time_start_and_end(self, num_cut_idx=5):
+        self.TRAIN.cut_time_start_and_end(num_cut_idx=num_cut_idx)
+        self.TEST.cut_time_start_and_end(num_cut_idx=num_cut_idx)
+
     def remove_mu(self):
         """
         Removes mu
@@ -809,6 +813,21 @@ class Dataset(Data):
                     file=text_file,
                 )
 
+    def save_data_conc(self, data_dir, save_name):
+        """
+        Save train and test data
+        """
+        X = np.concatenate((self.TRAIN.X, self.TEST.X), axis=0)
+        X_dt = np.concatenate((self.TRAIN.X_dt, self.TEST.X_dt), axis=0)
+        U = np.concatenate((self.TRAIN.U, self.TEST.U), axis=0)
+        Mu = np.concatenate((self.TRAIN.Mu, self.TEST.Mu), axis=0)
+        Mu_input = np.concatenate((self.TRAIN.Mu_input, self.TEST.Mu_input), axis=0)
+
+        t = self.TRAIN.t
+
+        data_path = os.path.join(data_dir, f"{save_name}.npz")
+        np.savez_compressed(data_path, t=t, X=X, U=U, Mu=Mu, Mu_input=Mu_input)
+
 
 class PHIdentifiedDataset(Dataset):
     """
@@ -832,6 +851,7 @@ class PHIdentifiedDataset(Dataset):
         ph_network,
         integrator_type="IMR",
         decomp_option="lu",
+        calc_u_midpoints=False,
         **kwargs,
     ):
         """
@@ -881,6 +901,7 @@ class PHIdentifiedDataset(Dataset):
             ph_network,
             integrator_type,
             decomp_option,
+            calc_u_midpoints,
             **kwargs,
         )
         logging.info("Obtain results from test data")
@@ -890,6 +911,7 @@ class PHIdentifiedDataset(Dataset):
             ph_network,
             integrator_type,
             decomp_option,
+            calc_u_midpoints,
             **kwargs,
         )
         return cls
@@ -986,6 +1008,7 @@ class DiscBrakeDataset(Dataset):
         idx_mu=None,
         n_t=None,
         t_start=0.0,
+        t_end=None,
         save_cache=False,
         cache_path=None,
         use_velocities=False,
@@ -1038,13 +1061,30 @@ class DiscBrakeDataset(Dataset):
         # get names of all txt files in folder 'txt_path'
         file_name_list = []
         for file in os.listdir(txt_path):
-            if file.endswith(".txt") and file.startswith("field_output_"):
+            if (
+                file.endswith(".txt")
+                and file.startswith("field_output_")
+                and not file.startswith("field_output_force")
+            ):
                 file_name_list.append(file)
         if not file_name_list:
             raise ValueError(f"No .txt files could be found in {txt_path}.")
         file_name_list = natsorted(
             file_name_list
         )  # keep samples in the same order (natural sorting - like in explorer)
+
+        # get force input list
+        force_file_name_list = []
+        for file in os.listdir(txt_path):
+            if file.endswith(".txt") and file.startswith("field_output_force"):
+                force_file_name_list.append(file)
+        if not force_file_name_list:
+            force_input_exists = False
+            logging.warning(
+                f"Could not find any txt files starting with 'field_output_force' in {txt_path}."
+            )
+        else:
+            force_input_exists = True
 
         # parameter information
         with open(
@@ -1077,6 +1117,8 @@ class DiscBrakeDataset(Dataset):
 
         # number of simulations
         n_sim = len(file_name_list)
+        heat_flux_list = []
+        force_freq_list = []
         for i_sim, file in enumerate(tqdm(file_name_list)):
             with open(os.path.join(txt_path, file_name_list[i_sim])) as txt_file:
                 #     # _ = txt_file.readline()  # empty line
@@ -1089,7 +1131,10 @@ class DiscBrakeDataset(Dataset):
                 if i_sim == 0:
                     header_num = 2  # number of node and number of dof
                     t_idx_start = np.argmax(df.to_numpy()[:, 0] >= t_start) + header_num
-                    t_idx_end = df.shape[0] - 1
+                    if t_end is None:
+                        t_idx_end = df.shape[0] - 1
+                    else:
+                        t_idx_end = np.argmax(df.to_numpy()[:, 0] >= t_end) + header_num
                     if n_t is None:
                         t_idx = np.arange(t_idx_start, t_idx_end + 1, dtype=int)
                         n_t = len(t_idx)
@@ -1097,10 +1142,6 @@ class DiscBrakeDataset(Dataset):
                         t_idx = np.linspace(t_idx_start, t_idx_end, n_t, dtype=int)
                     t = df.to_numpy()[t_idx, 0][:, np.newaxis]
                     t = t - t[0]
-
-                    # input
-                    n_u = 1
-                    U = np.zeros((n_sim, n_t, n_u))
 
                     # states
                     n_n = int(np.max(df.to_numpy()[row_node_num, :]))
@@ -1115,10 +1156,48 @@ class DiscBrakeDataset(Dataset):
                     idx_node_num = int(df.to_numpy()[row_node_num, i_col_df]) - 1
                     idx_node_dof = int(df.to_numpy()[row_node_dof, i_col_df]) - 1
                     X[i_sim, :, idx_node_num, idx_node_dof] = df.to_numpy()[
-                        header_num:, i_col_df
+                        t_idx_start : t_idx_end + 1, i_col_df
                     ]
+
+                # %% Input
                 # get sample number from txt string
                 sample_number = re.findall("sample\s*(\d+)", file_name_list[i_sim])
+
+                # input
+                if force_input_exists:
+                    force_file_txt = [
+                        i
+                        for i in force_file_name_list
+                        if i.endswith(f"sample{sample_number[0]}.txt")
+                    ]
+                    with open(
+                        os.path.join(txt_path, force_file_txt[0])
+                    ) as force_txt_file:
+                        df_force = pd.read_csv(
+                            force_txt_file, header=None, delimiter=" ", engine="python"
+                        )
+                        force_array = df_force.to_numpy()
+                        # remove time column
+                        force_array = np.delete(force_array, 0, axis=1)
+
+                        # delete node and DOF rows which come from state conversion to .txt
+                        if np.allclose(
+                            force_array[:2, :], np.zeros((2, force_array.shape[1]))
+                        ):
+                            force_array = np.delete(force_array, [0, 1], axis=0)
+                        # remove inputs to come from Abaqus field outputs that are zero, e.g. forces in non-excited coordinate directions
+                        idx_no_force = np.argwhere(
+                            np.all(force_array[..., :] == 0, axis=0)
+                        )
+                        force_array = np.delete(force_array, idx_no_force, axis=1)
+                        n_u = force_array.shape[1] + 1  # + 1 for heat flux
+                else:
+                    n_u = 1
+
+                if i_sim == 0:
+                    # initialize U
+                    U = np.zeros((n_sim, n_t, n_u))
+
                 heat_flux = df_param["heat_flux"]
 
                 convert_to_format_input = False  # for new data generation, the right format is saved to parameter_information
@@ -1142,6 +1221,11 @@ class DiscBrakeDataset(Dataset):
                         np.ones((n_t, 1)) * heat_flux[int(sample_number[0]) - 1]
                     )
 
+                if force_input_exists:
+                    U[i_sim, :, 1:] = force_array[
+                        t_idx_start - header_num : t_idx_end - header_num + 1
+                    ]
+
                 # get parameters
                 if idx_mu is not None:
                     # mu = np.append(mu,df_param.iloc[int(sample_number[0])-1,idx_mu].to_numpy()[:,np.newaxis].T,axis=0)
@@ -1150,12 +1234,24 @@ class DiscBrakeDataset(Dataset):
                             :, np.newaxis
                         ].T
                     )
+                heat_flux_list.append(heat_flux[int(sample_number[0]) - 1])
+                if force_input_exists:
+                    force_freq = df_param["force_freq"]
+                    force_freq_list.append(force_freq[int(sample_number[0]) - 1])
 
         if idx_mu is not None:
             Mu = np.squeeze(np.array(Mu))
 
+        Mu_input = np.concatenate(
+            (
+                np.array(heat_flux_list)[:, np.newaxis],
+                np.array(force_freq_list)[:, np.newaxis],
+            ),
+            axis=1,
+        )
+
         if save_cache:
-            cls.save_data(cache_path, t, X, U, Mu=Mu)
+            cls.save_data(cache_path, t, X, U, Mu=Mu, Mu_input=Mu_input)
         return cls(t=t, X=X, U=U, Mu=Mu, use_velocities=use_velocities, **kwargs)
 
 
