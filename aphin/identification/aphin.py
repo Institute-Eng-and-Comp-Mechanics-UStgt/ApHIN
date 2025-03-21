@@ -105,6 +105,10 @@ class APHIN(PHBasemodel):
         self.pca_only = pca_only
         if self.pca_only:
             self.use_pca = True
+            if pca_order is not None:
+                logging.info(
+                    f"pca_only is chosen. Setting pca_order to reduced_order of size {self.reduced_order}."
+                )
             self.pca_order = self.reduced_order
             self.layer_sizes = []
         if system_layer is None:
@@ -279,7 +283,7 @@ class APHIN(PHBasemodel):
                 )
             else:
                 # scale every feature by its maximum value to avoid numerical issues
-                self.scale_factor = 1 / tf.sqrt(tf.reduce_max(tf.abs(x), axis=0))
+                self.scale_factor = 1 / tf.reduce_max(tf.abs(x), axis=0)
         # if no individual scaling is used, scale the whole data set by its maximum value
         else:
             self.scale_factor = 1 / tf.reduce_max(tf.abs(x))
@@ -418,7 +422,7 @@ class APHIN(PHBasemodel):
             "reg_loss": reg_loss,
         }
 
-    def calc_latent_time_derivatives(self, x, dx_dt):
+    def calc_latent_time_derivatives(self, x, dx_dt, return_dz_dxr=False):
         """
         Calculate time derivatives of latent variables given the time derivatives of the input variables.
 
@@ -457,6 +461,8 @@ class APHIN(PHBasemodel):
             dz_dt = dz_dxr @ dx_dt
         dz_dt = tf.squeeze(dz_dt, axis=2)
 
+        if return_dz_dxr:
+            return dz_dxr
         return z.numpy(), dz_dt.numpy()
 
     def calc_pca_time_derivatives(self, x, dx_dt):
