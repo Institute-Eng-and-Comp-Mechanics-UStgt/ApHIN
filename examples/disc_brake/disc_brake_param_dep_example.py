@@ -8,7 +8,7 @@ import tensorflow as tf
 import matplotlib.pyplot as plt
 
 # own packages
-from visualizer import Visualizer
+# from visualizer import Visualizer
 from aphin.utils.data import PHIdentifiedDataset, DiscBrakeDataset
 from aphin.utils.save_results import (
     save_weights,
@@ -45,7 +45,7 @@ def main(
     #                         -result_folder_name     searches for a subfolder with result_folder_name under working dir that
     #                                                 includes a config.yml and .weights.h5
     #                                                 -> config for loading results
-    manual_results_folder = None  # {None} if no results shall be loaded, else create str with folder name or path to results folder
+    manual_results_folder = "final_new_data_var_exp_l_rec0.1_l_dz1_l_dx0.001"  # {None} if no results shall be loaded, else create str with folder name or path to results folder
 
     # write to config_info
     if config_path_to_file is not None:
@@ -131,6 +131,8 @@ def main(
     # transform to feature form that is used by the deep learning
     disc_brake_data.states_to_features()
     t, x, dx_dt, u, mu = disc_brake_data.data
+
+    aphin_vis.compare_x_and_x_dt(disc_brake_data, use_train_data=True, idx_gen="rand")
 
     # %% Create APHIN
     logging.info(
@@ -383,7 +385,6 @@ def main(
                 animation_name=os.path.join(video_dir, f"{key}_sim_{sim_id}"),
                 close_on_end=True,
             )
-
 
 
 # parameter variation for multiple experiment runs
