@@ -3,9 +3,9 @@ setup_matplotlib: False  # Show plots and visualization
 
 
 # %% General identification framework settings
-experiment: db_with_hole_small_data_multExp_prayers #    name of the experiment
+experiment: db_with_hole_convex_multExp #    name of the experiment
 load_network: False  # train the network or load the last pre-trained one
-sim_name: disc_brake_with_hole_small_with_vel  # sim_onlyHeat_1Point_smallHalton_d3_samp100
+sim_name: disc_brake_with_hole_low_freq_convex  # sim_onlyHeat_1Point_smallHalton_d3_samp100
 file_url: https://darus.uni-stuttgart.de/api/access/datafile/:persistentId?persistentId=doi:10.18419/darus-4418/1
 ref_coords: disc_ref_coords.npy
 faces:  disc_faces.npy
@@ -46,7 +46,7 @@ cut_time_start_and_end: True
 n_u: 3      # number of inputs
 n_mu: 2     # number of parameters (not varying inputs)
 
-ph_layer: ph   # ph | phq
+ph_layer: phq  # ph | phq
 
 # %% identification settings
 r: 16 
@@ -57,12 +57,12 @@ n_pca: 60  # number of PCA components
 pca_scaling: False  # scale the PCA components
 pca_comparison: True
 pca_only: False  # only use PCA components without nonlinear autoencoder
-l_rec: 1 #  loss weight for the reconstruction
+l_rec: 10 #  loss weight for the reconstruction
 l_dz: 0.01 #  loss weight for the dz
-l_dx: 0.000001 #  loss weight for the dx
-l1: 0  # L1 regularization
+l_dx: 0.0000001 #  loss weight for the dx
+l1: 0.0000000001  # L1 regularization
 l2: 0  # L2 regularization
-n_epochs: 2000 
+n_epochs: 1400 
 #   number of epochs
 batch_size: 128  # batch size
 layer_sizes_ph: # layer sizes
@@ -75,8 +75,8 @@ layer_sizes_ae: # layer sizes
   - 40 # second layer
   - 30  # third layer
   # - 16  # third layer
-activation_ae: selu  # activation function
-activation_ph: selu  # activation function
+activation_ae: elu  # activation function
+activation_ph: elu  # activation function
 lr: 0.000025  # learning rate
 tensorboard: False  # Save model information for analysis in tensorboard
 save_many_weights: False
