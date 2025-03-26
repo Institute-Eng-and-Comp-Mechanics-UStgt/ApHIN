@@ -350,6 +350,8 @@ class Data(ABC):
             self.Q = self.Q[sim_idx, :, :]
         if self.B is not None:
             self.B = self.B[sim_idx, :, :]
+        if self.Mu_input is not None:
+            self.Mu_input = self.Mu_input[sim_idx]
         self.states_to_features()
 
     def decrease_num_time_steps(self, num_time_steps: int):
@@ -364,14 +366,45 @@ class Data(ABC):
         num_time_steps : int
             The target number of time steps to retain. Must be less than or equal to the current number of time steps.
         """
-        assert num_time_steps <= self.n_t
-        t_idx = range(0, self.n_t, int(self.n_t / num_time_steps))
+        self.X, self.X_dt, self.U, self.t, self.n_t = (
+            self.decrease_num_time_steps_static(
+                num_time_steps=num_time_steps,
+                t=self.t,
+                X=self.X,
+                X_dt=self.X_dt,
+                U=self.U,
+                n_t=self.n_t,
+            )
+        )
 
-        self.t = self.t[t_idx]
-        self.X = self.X[:, t_idx]
-        self.X_dt = self.X_dt[:, t_idx]
-        self.U = self.U[:, t_idx]
-        self.n_t = self.X.shape[1]
+    @staticmethod
+    def decrease_num_time_steps_static(
+        num_time_steps: int,
+        t: np.ndarray,
+        X: np.ndarray | None = None,
+        X_dt: np.ndarray | None = None,
+        U: np.ndarray | None = None,
+        n_t: int | None = None,
+    ):
+        """Reduce number of time steps through 1D interpolation."""
+        if n_t is None:
+            n_t = X.shape[1]
+        assert num_time_steps <= n_t  # interpolate
+        # create interpolation functions and interpolate data at new time steps
+        t_new = np.linspace(t[0], t[-1], num_time_steps).ravel()
+        if X is not None:
+            f_interp_X = interp1d(t.ravel(), X, axis=1)
+            X = f_interp_X(t_new)
+        if X_dt is not None:
+            f_interp_X_dt = interp1d(t.ravel(), X_dt, axis=1)
+            X_dt = f_interp_X_dt(t_new)
+        if U is not None:
+            f_interp_U = interp1d(t.ravel(), U, axis=1)
+            U = f_interp_U(t_new)
+        t = t_new[:, np.newaxis]
+        n_t = t_new.shape[0]
+
+        return X, X_dt, U, t, n_t
 
     @staticmethod
     def save_data(data_path, t, X, U, Mu=None, Mu_input: np.ndarray = None):
@@ -444,7 +477,7 @@ class Data(ABC):
         return cls(**data_dict, **kwargs)
 
     @staticmethod
-    def read_data_from_npz(data_path):
+    def read_data_from_npz(data_path, num_time_steps: int | None = None):
         """
         Reads data from a .npz file and returns it as a dictionary.
 
@@ -508,6 +541,11 @@ class Data(ABC):
             B = data["B"]
         if "Mu_input" in data.keys():
             Mu_input = data["Mu_input"]
+
+        if num_time_steps is not None:
+            X, X_dt, U, t, _ = Data.decrease_num_time_steps_static(
+                num_time_steps=num_time_steps, t=t, X=X, X_dt=X_dt, U=U, n_t=X.shape[1]
+            )
 
         data_dict = {
             "t": t,
@@ -1802,9 +1840,7 @@ class PHIdentifiedData(Data):
         X_dt_ph = np.zeros(state_shape)
         H_ph = np.zeros((data.n_sim, data.n_t))
 
-        logging.info(
-            f"Calculating reduced trajectories of the identified system for training data."
-        )
+        logging.info(f"Calculating reduced trajectories of the identified system.")
         solving_times = []
         for i_sim in tqdm(range(data.n_sim)):
             x_init = np.expand_dims(
