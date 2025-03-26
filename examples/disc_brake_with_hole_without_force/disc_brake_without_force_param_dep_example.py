@@ -50,7 +50,7 @@ def main(
     #                         -result_folder_name     searches for a subfolder with result_folder_name under working dir that
     #                                                 includes a config.yml and .weights.h5
     #                                                 -> config for loading results
-    manual_results_folder = "db_with_hole_very_small_data_with_dynamics_multExp_n_epochs4000_l_dz1_l_dx1e-05"  # {None} if no results shall be loaded, else create str with folder name or path to results folder
+    manual_results_folder = None  # {None} if no results shall be loaded, else create str with folder name or path to results folder
 
     # write to config_info
     if config_path_to_file is not None:
@@ -101,7 +101,10 @@ def main(
     # %% load/create data
     # Initialize Dataset
     disc_brake_data = DiscBrakeDataset.from_data(
-        cache_path, use_velocities=db_cfg["use_velocities"]
+        cache_path,
+        use_velocities=db_cfg["use_velocities"],
+        use_savgol=db_cfg["use_savgol"],
+        num_time_steps=db_cfg["num_time_steps_load"],
     )
 
     # filter data with savgol filter
@@ -119,17 +122,27 @@ def main(
     # split into train and test data
     train_test_split_method = db_cfg["train_test_split_method"]
     if train_test_split_method == "sim_idx":
-        if db_cfg["sim_name"] == "disc_brake_with_hole_small_with_vel":
+        if (
+            db_cfg["sim_name"] == "disc_brake_with_hole_small_with_vel"
+            or db_cfg["sim_name"]
+            == "disc_brake_with_hole_small_with_vel_small_time_steps"
+        ):
             # small
             sim_idx_train = np.arange(10)
             sim_idx_test = np.arange(5) + len(sim_idx_train)
         elif (
             db_cfg["sim_name"] == "disc_brake_with_hole_very_small_with_vel"
             or db_cfg["sim_name"] == "disc_brake_with_hole_very_small_no_vel"
+            or db_cfg["sim_name"] == "disc_brake_with_hole_very_small_with_vel_savgol"
+            or db_cfg["sim_name"]
+            == "disc_brake_with_hole_very_small_with_vel_small_time_steps"
         ):
             # very small
             sim_idx_train = np.arange(2)
             sim_idx_test = np.arange(1) + len(sim_idx_train)
+        elif db_cfg["sim_name"] == "test_data":
+            sim_idx_train = [0]
+            sim_idx_test = [1]
         else:
             raise ValueError(f"Unknown sim name.")
         disc_brake_data.train_test_split_sim_idx(sim_idx_train, sim_idx_test)
@@ -153,7 +166,7 @@ def main(
 
     # save smaller version of data for faster loading times
     # disc_brake_data.save_data_conc(
-    #     data_dir=data_dir, save_name=f"disc_brake_with_hole_very_small_no_vel"
+    #     data_dir=data_dir, save_name=f"disc_brake_with_hole_small_with_vel_small_time_steps"
     # )
 
     # scale data
@@ -171,12 +184,13 @@ def main(
         scaling_values=db_cfg["scaling_values"],
         domain_split_vals=db_cfg["domain_split_vals"],
     )
-    disc_brake_data.scale_Mu(
-        mu_train_bounds=None, desired_bounds=db_cfg["desired_bounds"]
-    )
+    if not db_cfg["sim_name"] == "test_data":
+        disc_brake_data.scale_Mu(
+            mu_train_bounds=None, desired_bounds=db_cfg["desired_bounds"]
+        )
 
     # scale u manually
-    u_domains = [1, 2]
+    u_domains = [1]
     start_idx = 0
     input_scaling_values = []
     for u_domain in u_domains:
@@ -199,8 +213,40 @@ def main(
     disc_brake_data.states_to_features()
     t, x, dx_dt, u, mu = disc_brake_data.data
 
-    # aphin_vis.compare_x_and_x_dt(disc_brake_data, use_train_data=True, idx_gen="rand")
-    # aphin_vis.plot_u(disc_brake_data, use_train_data=True)
+    # plot state
+    # num_plots = 2
+    # n_sim_plot = 1
+    # idx_n_n = [1300, 1400, 1500, 1842]  # nodes
+    # fig, ax = aphin_vis.new_fig(num_plots, window_title="")
+    # for i in range(num_plots):
+    #     if i == 0:
+    #         idx_n_dn = 0
+    #     elif i == 1:
+    #         idx_n_dn = 3
+    #     ax[i].plot(t, disc_brake_data.TRAIN.X[n_sim_plot, :, idx_n_n, idx_n_dn].T)
+    #     ax[i].grid(linestyle=":", linewidth=1)
+    #     # ax[i].set_title(title)
+    #     ax[i].legend([f"x{i_n_n}" for i_n_n in idx_n_n])
+    # plt.xlabel(f"Time")
+    # plt.show(block=True)
+
+    # fig, ax = aphin_vis.new_fig(1, window_title="")
+    # ax.plot(t.ravel()[:10], x[:10, 7371])
+    # grad = np.gradient(x[:10, 7371], t.ravel()[:10] - t.ravel()[0])
+    # x_dt_savgol = scipy.signal.savgol_filter(
+    #     x[:, 7371],
+    #     window_length=20,
+    #     polyorder=1,
+    #     deriv=1,
+    #     axis=0,
+    #     delta=t.ravel()[1] - t.ravel()[0],
+    # )
+    # ax.plot(t.ravel()[:10], grad - grad[0])
+    # ax.plot(t.ravel()[:10], x_dt_savgol[:10] - x_dt_savgol[0])
+    # plt.show(block=True)
+
+    aphin_vis.compare_x_and_x_dt(disc_brake_data, use_train_data=True, idx_gen="rand")
+    aphin_vis.plot_u(disc_brake_data, use_train_data=True)
     # %% Create APHIN
     logging.info(
         "################################   2. Model      ################################"
@@ -329,9 +375,9 @@ def main(
     print_matrices(system_layer, mu=mu_test, n_t=n_t_test)
 
     # calculate projection and Jacobian errors
-    file_name = "projection_error.txt"
-    projection_error_file_dir = os.path.join(result_dir, file_name)
-    aphin.get_projection_properties(x, x_test, file_dir=projection_error_file_dir)
+    # file_name = "projection_error.txt"
+    # projection_error_file_dir = os.path.join(result_dir, file_name)
+    # aphin.get_projection_properties(x, x_test, file_dir=projection_error_file_dir)
 
     # %% Validation of the AE reconstruction
     # get original quantities
@@ -463,6 +509,16 @@ def main(
         idx_gen=idx_gen,
         result_dir=result_dir,
     )
+
+    node = 1432
+    node = np.random.randint(0, 2250)
+    plt.figure()
+    plt.plot(disc_brake_data.TRAIN.X[1, :, node, :])
+    plt.plot(disc_brake_data_id.TRAIN.X_rec[1, :, node, :], "-.")
+    legend = [f"dof{i}" for i in range(7)]
+    legend.extend([f"rec{i}" for i in range(7)])
+    plt.legend()
+    plt.show(block=True)
 
     # avoid that the script stops and keep the plots open
     # plt.show()
