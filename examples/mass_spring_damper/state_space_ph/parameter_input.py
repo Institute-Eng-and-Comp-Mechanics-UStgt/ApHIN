@@ -78,11 +78,11 @@ class ParameterInput:
         """
         parameter_method = config["parameter_method"]
         n_mass = config["n_mass"]
-        n_sim = config["n_sim"]
         parameter_information = "parameter_space = [mass stiffness damping omega delta]"
 
         # parameter with intervalls are sampled using Halton sequence
         param_config = config[config["parameter_method"]]
+        n_simulations_per_parameter_set = param_config["n_simulations_per_parameter_set"]
         mass_vals = param_config["mass_vals"]
         stiff_vals = param_config["stiff_vals"]
         damp_vals = param_config["damp_vals"]
@@ -93,113 +93,37 @@ class ParameterInput:
         lower_bounds = [limit[0] if isinstance(limit, list) else 0 for limit in params]
         upper_bounds = [limit[1] if isinstance(limit, list) else 10 for limit in params]
         random_samples = config["random_samples"]
+        n_param_sets = int(random_samples/n_simulations_per_parameter_set)
         parameter_dimension = 5
         sampler_Halton = qmc.Halton(d=parameter_dimension, seed=seed)
         samples_Halton = sampler_Halton.random(n=random_samples)
         sampled_parameters = qmc.scale(samples_Halton, lower_bounds, upper_bounds)
 
-        mass_vals = sampled_parameters[:, 0] if isinstance(mass_vals, list) else mass_vals
-        stiff_vals = sampled_parameters[:, 1] if isinstance(stiff_vals, list) else stiff_vals
-        damp_vals = sampled_parameters[:, 2] if isinstance(damp_vals, list) else damp_vals
+        # repeat parameters n_simulations_per_parameter_set times
+        mass_vals = np.repeat(sampled_parameters[:n_param_sets, 0], n_simulations_per_parameter_set) \
+            if isinstance(mass_vals, list) else mass_vals
+        stiff_vals = np.repeat(sampled_parameters[:n_param_sets, 1], n_simulations_per_parameter_set) \
+            if isinstance(stiff_vals, list) else stiff_vals
+        damp_vals = np.repeat(sampled_parameters[:n_param_sets, 2], n_simulations_per_parameter_set) \
+            if isinstance(damp_vals, list) else damp_vals
         omega = sampled_parameters[:, 3] if isinstance(omega, list) else omega
         delta = sampled_parameters[:, 4] if isinstance(delta, list) else delta
 
-            mass_vals = sampled_parameters[:, 0]
-            stiff_vals = sampled_parameters[:, 1]
-            damp_vals = sampled_parameters[:, 2]
-            omega = sampled_parameters[:, 3]
-            delta = sampled_parameters[:, 4]
-
-        elif parameter_method == "Halton_matrix_interpolation":
-            # create random variables with Halton sequence
-            random_samples_mu = config["random_samples_mu"]
-            # random_samples_u = config["random_samples_u"]
-            random_samples_u = config["inputs_per_mu"] * random_samples_mu
-            lower_bounds = config["lower_bounds"]
-            upper_bounds = config["upper_bounds"]
-            # we use parameter dimension of 5 [mass stiffness damping omega delta]
-            parameter_dimension_mu = config["parameter_dimension_mu"]
-            lower_bounds_mu = lower_bounds[:parameter_dimension_mu]
-            uppper_bounds_mu = upper_bounds[:parameter_dimension_mu]
-            lower_bounds_u = lower_bounds[parameter_dimension_mu:]
-            upper_bounds_u = upper_bounds[parameter_dimension_mu:]
-
-            # mu
-            sampler_Halton = qmc.Halton(d=parameter_dimension_mu, seed=seed)
-            samples_Halton = sampler_Halton.random(n=random_samples_mu)
-            sampled_parameters_mu = qmc.scale(
-                samples_Halton, lower_bounds_mu, uppper_bounds_mu
-            )
-
-            # u
-            parameter_dimension_u = config["parameter_dimension_u"]
-            sampler_Halton = qmc.Halton(d=parameter_dimension_u, seed=seed)
-            samples_Halton = sampler_Halton.random(n=random_samples_u)
-            sampled_parameters_u = qmc.scale(
-                samples_Halton, lower_bounds_u, upper_bounds_u
-            )
-
-            # num_parameter_runs = random_samples
-            # setup:
-            # 10 mu combined with 3 input = 30 training combinations
-            # 3 mu combined with 3 input = 9 test combinations
-
-            mass_vals, stiff_vals, damp_vals, omega, delta = ([] for _ in range(5))
-            # # training
-            # n_mu_train = int(0.7 * random_samples_mu)
-            # for i_mu in np.arange(n_mu_train):
-            #     for i_u in np.arange(3):
-            #         mass_vals.append(sampled_parameters_mu[i_mu, 0].copy())
-            #         stiff_vals.append(sampled_parameters_mu[i_mu, 1])
-            #         if config["parameter_dimension_mu"] == 3:
-            #             damp_vals.append(sampled_parameters_mu[i_mu, 2])
-            #         omega.append(sampled_parameters_u[i_u, 0])
-            #         delta.append(sampled_parameters_u[i_u, 1])
-            # # test after training
-            # for i_mu in np.arange(n_mu_train, random_samples_mu):
-            #     for i_u in np.arange(3, 6):
-            #         mass_vals.append(sampled_parameters_mu[i_mu, 0])
-            #         stiff_vals.append(sampled_parameters_mu[i_mu, 1])
-            #         if config["parameter_dimension_mu"] == 3:
-            #             damp_vals.append(sampled_parameters_mu[i_mu, 2])
-            #         omega.append(sampled_parameters_u[i_u, 0])
-            #         delta.append(sampled_parameters_u[i_u, 1])
-
-            i_u_total = 0
-            for i_mu in np.arange(random_samples_mu):
-                for i_u in np.arange(config["inputs_per_mu"]):
-                    mass_vals.append(sampled_parameters_mu[i_mu, 0].copy())
-                    stiff_vals.append(sampled_parameters_mu[i_mu, 1])
-                    if config["parameter_dimension_mu"] == 3:
-                        damp_vals.append(sampled_parameters_mu[i_mu, 2])
-                    omega.append(sampled_parameters_u[i_u_total, 0])
-                    delta.append(sampled_parameters_u[i_u_total, 1])
-                    i_u_total += 1
-            mass_vals = np.array(mass_vals)
-            stiff_vals = np.array(stiff_vals)
-            omega = np.array(omega)
-            delta = np.array(delta)
 
         Mu_input = np.concatenate(
             (np.expand_dims(omega, axis=1), np.expand_dims(delta, axis=1)), axis=1
         )
-        # # create input
-        # if config["input_vals"] is not None:
-        #     create_input(omega, delta, siso, config, debug)
+
         input_vals = config["input_vals"]
         u, n_sim = cls.process_config_input_parameters(
             delta,
             omega,
             input_vals,
-            n_sim=n_sim,
+            n_sim=config["n_mass"],
             parameter_method=parameter_method,
         )
         mass_vals = cls.process_config_system_parameters(mass_vals, n_mass, n_sim)
         stiff_vals = cls.process_config_system_parameters(stiff_vals, n_mass, n_sim)
-        if config["parameter_dimension_mu"] == 3:
-            damp_vals = np.array(damp_vals)
-        else:
-            damp_vals = 0
         damp_vals = cls.process_config_system_parameters(damp_vals, n_mass, n_sim)
 
         if config["debug"]:

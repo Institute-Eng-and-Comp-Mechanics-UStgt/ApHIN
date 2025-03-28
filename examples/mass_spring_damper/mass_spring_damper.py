@@ -195,7 +195,7 @@ def main(config_path_to_file=None):
     msd_data_id = PHIdentifiedDataset.from_identification(msd_data, system_layer, phin)
 
     _, _, _, _, mu_test = msd_data.test_data
-    n_t_test = msd_data.n_t_test
+    n_t_test = msd_data.n_t
     print_matrices(system_layer, mu=mu_test, n_t=n_t_test, data=msd_data)
     save_evaluation_times(msd_data_id, result_dir)
 
@@ -205,7 +205,6 @@ def main(config_path_to_file=None):
     aphin_vis.plot_errors(
         msd_data,
         use_train_data,
-        t=msd_data.t_test,
         save_to_csv=True,
         save_name=os.path.join(result_dir, "rms_error"),
     )

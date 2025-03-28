@@ -23,8 +23,8 @@
 
 seed: 1
 n_mass: 3 # number of masses
-n_sim: 200 # number of masses
-parameter_method: 'marginal-stability' # 'default', 'Halton', 'manual', 'mass_loop', 'pertubation'
+n_sim: 201 # number of sims if no random_samples
+parameter_method: 'matrix-interpolation' # 'default', 'Halton', 'manual', 'marginal-stability', 'matrix-interpolation'
 
 # 'default': parameter values according to [MorandinNicodemusUnger22]
 # 'manual':  parameter values specified below:
@@ -34,24 +34,35 @@ default:
     damp_vals: 1
     delta: 0.5
     omega: 1
+    n_simulations_per_parameter_set: 1
 Halton:
     mass_vals: [0.1, 100]
     stiff_vals: [0.1, 100]
     damp_vals: [0.1, 10]
     delta: [0.5, 5]
     omega: [0.125, 2]
+    n_simulations_per_parameter_set: 1
 manual:
     mass_vals: 4
     stiff_vals: 4
     damp_vals: 1
     delta: 0.5
     omega: 1
+    n_simulations_per_parameter_set: 1
 marginal-stability:
     mass_vals: [0.1, 100]
     stiff_vals: [0.1, 100]
     damp_vals: 0
     delta: [0.5, 5]
     omega: [0.125, 2]
+    n_simulations_per_parameter_set: 1
+matrix-interpolation:
+    mass_vals: [1, 100]
+    stiff_vals: [1, 100]
+    damp_vals: 0
+    delta: [0.5, 5]
+    omega: [0.125, 2]
+    n_simulations_per_parameter_set: 3
 
 # 'Halton': parameter values specified according to:
 random_samples: 120         # None if non-parametric
