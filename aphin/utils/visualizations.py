@@ -46,7 +46,7 @@ def setup_matplotlib(save_plots=False):
         # Ensure the "results" directory exists
         os.makedirs("results", exist_ok=True)
         # Use PGF backend for saving plots
-        # matplotlib.use("pgf")
+        matplotlib.use("pgf")
     else:
         pass
         # matplotlib.use("TkAgg")  # Interactive backend for display
