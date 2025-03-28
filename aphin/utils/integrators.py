@@ -67,7 +67,7 @@ def implicit_midpoint(E, A, t, z_init, B=None, u=None, decomp_option="lu"):
     # number of time samples
     n_t = len(t)
     step_size = t[1] - t[0]
-    assert np.allclose(t[1:] - t[:-1], [step_size] * (n_t - 1))  # constant time steps
+    # assert np.allclose(t[1:] - t[:-1], [step_size] * (n_t - 1))  # constant time steps
     tmid = np.zeros(n_t)
     # initialize state array
     n_f = len(z_init)

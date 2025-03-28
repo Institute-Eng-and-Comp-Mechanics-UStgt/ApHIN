@@ -9,7 +9,10 @@ which is assumed to depend only on the time derivative of the states.
 
 import tensorflow as tf
 from aphin.layers import LTILayer
-from aphin.operators import LinearOperatorSymPosDef, LinearOperatorSym
+from aphin.operators import (
+    LinearOperatorSym,
+    LinearOperatorSymPosSemiDef,
+)
 
 
 class PHLayer(LTILayer):
@@ -52,4 +55,4 @@ class PHLayer(LTILayer):
         if self.n_sym == 0:
             return LinearOperatorSym(tf.zeros([self.r, self.r]))
         # for a pH system R needs to be symmetric and positive definite
-        return LinearOperatorSymPosDef(self.dof_R)
+        return LinearOperatorSymPosSemiDef(self.dof_R)

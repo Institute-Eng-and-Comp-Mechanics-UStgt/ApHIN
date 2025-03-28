@@ -25,6 +25,7 @@ class MSD:
         M_inv=None,
         M=None,
         input_vals=None,
+        Mu_input: np.ndarray = None,
     ):
         """
         Initializes the MSD (mass-spring-damper) class with system parameters and configurations.
@@ -64,6 +65,7 @@ class MSD:
         self.M_inv = M_inv
         self.M = M
         self.input_vals = input_vals
+        self.Mu_input = Mu_input
 
         self.Q_is_identity = False
 
@@ -332,6 +334,7 @@ class MSD:
                 Q=Q,
                 Mu=self.Mu,  # only save mass, stiffness, damping
                 parameter_information=self.parameter_information,
+                Mu_input=self.Mu_input,
             )
         elif self.system_type == "ss":
             A, B, C = self.get_system_matrices()
@@ -345,6 +348,7 @@ class MSD:
                 C=C,
                 Mu=self.Mu,  # only save mass, stiffness, damping
                 parameter_information=self.parameter_information,
+                Mu_input=self.Mu_input,
             )
 
     def get_system_matrices(self):
@@ -430,13 +434,22 @@ class MSD:
             and parameter_input_instance.damp_vals[:, 0].max()
             == parameter_input_instance.damp_vals[:, 0].min()
         ):
+            parameters = [
+                parameter_input_instance.mass_vals[0, :][:, np.newaxis],
+                parameter_input_instance.stiff_vals[0, :][:, np.newaxis],
+            ]
+            # check if damping parameters are zero
+            if not np.allclose(
+                parameter_input_instance.damp_vals[:, 0],
+                np.zeros(parameter_input_instance.damp_vals[:, 0].shape[0]),
+            ):
+                parameters.append(
+                    parameter_input_instance.damp_vals[0, :][:, np.newaxis]
+                )
+
             # same parameter value for all masses
             Mu = np.concatenate(
-                (
-                    parameter_input_instance.mass_vals[0, :][:, np.newaxis],
-                    parameter_input_instance.stiff_vals[0, :][:, np.newaxis],
-                    parameter_input_instance.damp_vals[0, :][:, np.newaxis],
-                ),
+                (*parameters,),
                 axis=1,
             )
         else:
@@ -514,6 +527,7 @@ class MSD:
             M_inv=M_inv_all,
             M=M_all,
             input_vals=input_vals,
+            Mu_input=parameter_input_instance.Mu_input,
         )
 
     @staticmethod

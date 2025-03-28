@@ -3,12 +3,15 @@ Utilities for the use in the examples
 """
 
 import os
+import re
 import logging
 import numpy as np
 import matplotlib
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
-from aphin.layers import PHQLayer
+from aphin.layers import PHQLayer, PHLayer
+from PIL import Image
+from natsort import natsorted
 
 import pandas as pd
 import itertools
@@ -793,7 +796,7 @@ def plot_Z_dt_ph_map(
         The function does not return anything. It generates and displays the plot(s), and optionally saves them.
     """
 
-    t, Z_dt, Z_dt_ph, idx_n_n, idx_n_dn, idx_sim, idx_n_f, num_plots = (
+    t, Z_dt, Z_dt_ph_map, idx_n_n, idx_n_dn, idx_sim, idx_n_f, num_plots = (
         get_quantities_of_interest(
             identified_data,
             "Z_dt",
@@ -805,19 +808,20 @@ def plot_Z_dt_ph_map(
         )
     )
 
-    variable_names = [r"\dot{\bm{Z}}", r"\dot{\bm{Z}}_{\mathrm{phmap}}"]
-    save_name = "Z_dt_ph_map"
-    plot_Z(
-        num_plots,
-        t,
-        Z_dt,
-        Z_dt_ph,
-        idx_n_f,
-        idx_sim,
-        variable_names,
-        save_name=save_name,
-        save_path=save_path,
-    )
+    if Z_dt_ph_map is not None:
+        variable_names = [r"\dot{\bm{Z}}", r"\dot{\bm{Z}}_{\mathrm{phmap}}"]
+        save_name = "Z_dt_ph_map"
+        plot_Z(
+            num_plots,
+            t,
+            Z_dt,
+            Z_dt_ph_map,
+            idx_n_f,
+            idx_sim,
+            variable_names,
+            save_name=save_name,
+            save_path=save_path,
+        )
 
 
 def plot_z_dt_ph_map(
@@ -864,7 +868,7 @@ def plot_z_dt_ph_map(
         The function does not return anything. It generates and displays the plot(s), and optionally saves them.
     """
 
-    t, z, z_ph, _, _, _, idx_n_f, num_plots = get_quantities_of_interest(
+    t, z_dt, z_dt_ph_map, _, _, _, idx_n_f, num_plots = get_quantities_of_interest(
         identified_data,
         "z_dt",
         "z_dt_ph_map",
@@ -874,17 +878,18 @@ def plot_z_dt_ph_map(
         idx_custom_tuple=idx_custom_tuple,
     )
 
-    variable_name = [r"\dot{\bm{z}}", r"\dot{\bm{z}}_{\mathrm{phmap}}"]
-    save_name = "z_dt_ph_map"
-    plot_z(
-        num_plots,
-        z,
-        z_ph,
-        idx_n_f,
-        variable_name,
-        save_name=save_name,
-        save_path=save_path,
-    )
+    if z_dt_ph_map is not None:
+        variable_name = [r"\dot{\bm{z}}", r"\dot{\bm{z}}_{\mathrm{phmap}}"]
+        save_name = "z_dt_ph_map"
+        plot_z(
+            num_plots,
+            z_dt,
+            z_dt_ph_map,
+            idx_n_f,
+            variable_name,
+            save_name=save_name,
+            save_path=save_path,
+        )
 
 
 def plot_Z_dt_ph(
@@ -1015,8 +1020,8 @@ def plot_z_dt_ph(
 
 def get_quantities_of_interest(
     data,
-    quantity_1: str,
-    quantity_2: str,
+    id_quantity_1: str,
+    id_quantity_2: str,
     use_train_data=False,
     data_type="X",
     idx_gen="rand",
@@ -1077,8 +1082,17 @@ def get_quantities_of_interest(
     )
 
     t = data.t
-    quantity_1 = getattr(data, quantity_1)
-    quantity_2 = getattr(data, quantity_2)
+    quantity_1 = getattr(data, id_quantity_1)
+    quantity_2 = getattr(data, id_quantity_2)
+
+    for quantity, quantity_name in [
+        (quantity_1, id_quantity_1),
+        (quantity_2, id_quantity_2),
+    ]:
+        if quantity is None:
+            logging.info(
+                f"Quantity {quantity_name} is not given in the dataset. Plot will not be created."
+            )
 
     return t, quantity_1, quantity_2, idx_n_n, idx_n_dn, idx_sim, idx_n_f, num_plots
 
@@ -1154,10 +1168,13 @@ def get_quantity_of_interest(
     quantity_1 = getattr(original_data, og_quantity)
     quantity_2 = getattr(identified_data, id_quantity)
 
-    for quantity in [quantity_1, quantity_2]:
+    for quantity, quantity_name in [
+        (quantity_1, og_quantity),
+        (quantity_2, id_quantity),
+    ]:
         if quantity is None:
             logging.info(
-                f"Quantity {quantity} is not given in the dataset. Plot will not be created."
+                f"Quantity {quantity_name} is not given in the dataset. Plot will not be created."
             )
 
     return t, quantity_1, quantity_2, idx_n_n, idx_n_dn, idx_sim, idx_n_f, num_plots
@@ -1184,6 +1201,7 @@ def plot_u(
     if num_plots == 1:
         ax = [ax]
     plt.title("Inputs")
+    ax[0].set_title("Inputs")
     for i_u in range(num_plots):
         ax[i_u].plot(u[:, i_u], label=rf"$u_{i_u}$")
         ax[i_u].set_ylabel(
@@ -1193,9 +1211,10 @@ def plot_u(
             va="center",
         )
         ax[i_u].grid(linestyle=":", linewidth=1)
+        ax[i_u].legend()
     # plt.xlabel("time t [s]")
     fig.align_ylabels(ax[:])
-    plt.legend(bbox_to_anchor=(1.04, 0.0), loc="lower left", borderaxespad=0.0)
+    # plt.legend(bbox_to_anchor=(1.04, 0.0), loc="lower left", borderaxespad=0.0)
     # fig.legend(loc='outside center right', bbox_to_anchor=(1.3, 0.6))
     plt.tight_layout()
     plt.show(block=False)
@@ -1205,7 +1224,6 @@ def plot_u(
 def plot_errors(
     data,
     use_train_data=False,
-    t=None,
     # title_label="",
     save_name="rms_error",
     domain_names=None,
@@ -1273,7 +1291,7 @@ def plot_errors(
         title_label = f"state_error_{domain_names[i_domain]}"
         single_error_plot(
             norm_rms_error=norm_rms_error,
-            t=t,
+            t=data.t,
             title_label=title_label,
             save_name=save_name_dom,
             save_to_csv=save_to_csv,
@@ -1286,12 +1304,74 @@ def plot_errors(
         title_label = f"latent_error"
         single_error_plot(
             norm_rms_error=data.latent_error,
-            t=t,
+            t=data.t,
             title_label=title_label,
             save_name=save_name_lat,
             save_to_csv=save_to_csv,
             yscale=yscale,
         )
+
+
+def single_parameter_space_error_plot(
+    norm_rms_error,
+    Mu,
+    Mu_input: np.ndarray = None,
+    parameter_names: list[str] = None,
+    save_name: str = None,
+):
+    if Mu_input is not None:
+        Mu_with_input = np.concatenate((Mu, Mu_input), axis=1)
+    else:
+        Mu_with_input = Mu
+    n_parameter_space = Mu_with_input.shape[1]
+    if n_parameter_space > 4:
+        raise NotImplementedError(
+            f"Parameter space of size {n_parameter_space} is too large. Please reduce to a size of at most 4."
+        )
+    if parameter_names is not None:
+        assert len(parameter_names) == n_parameter_space
+
+    # prepare scatter data
+    x_data = Mu_with_input[:, 0]
+    y_data = Mu_with_input[:, 1]
+    if n_parameter_space > 2:
+        z_data = Mu_with_input[:, 2]
+    if n_parameter_space > 3:
+        colors = Mu_with_input[:, 3]
+
+    # size of scatter dots is the error
+    norm_rms_error_max_time = np.max(norm_rms_error, axis=1)
+    error_sizes = norm_rms_error_max_time
+    size_min = 10
+    size_max = 50
+    error_sizes_scaled = (
+        (error_sizes - error_sizes.min(axis=0))
+        / (error_sizes.max(axis=0) - error_sizes.min(axis=0))
+    ) * (size_max - size_min) + size_min
+
+    fig = plt.figure()
+    ax = fig.add_subplot(projection="3d")
+    if n_parameter_space == 2:
+        ax.scatter(x_data, y_data, sizes=error_sizes_scaled)
+    elif n_parameter_space == 3:
+        ax.scatter(x_data, y_data, z_data, sizes=error_sizes_scaled)
+    elif n_parameter_space == 4:
+        im = ax.scatter(x_data, y_data, z_data, c=colors, sizes=error_sizes_scaled)
+        cbar = fig.colorbar(im, ax=ax)
+
+    if parameter_names is not None:
+        for i_dim in range(n_parameter_space):
+            if i_dim == 0:
+                ax.set_xlabel(parameter_names[0])
+            elif i_dim == 1:
+                ax.set_ylabel(parameter_names[1])
+            elif i_dim == 2:
+                ax.set_zlabel(parameter_names[2])
+            elif i_dim == 3:
+                cbar.set_label(parameter_names[3])
+
+    plt.title(f"Error = Circle size")
+    plt.show(block=False)
 
 
 def single_error_plot(
@@ -1533,6 +1613,8 @@ def get_sim_idx(
 
     # random simulation
     idx_sim = np.random.randint(0, data_instance.n_sim)
+    # TODO: Remove next line!!!
+    idx_sim = 0
 
     return idx_n_n, idx_n_dn, idx_sim, idx_n_f, num_plots
 
@@ -1606,8 +1688,8 @@ def plot_x(num_plots, x, x_id, idx_n_f, variable_names, save_name=None, save_pat
         # rel_error_for_each_state = np.max(np.abs(x - x_id), axis=0) / np.max(
         #     np.abs(x), axis=0
         # )
-        np.savetxt(f"error_for_each_state_{save_name}", rel_error_for_each_state)
-        plt.bar(np.arange(x.shape[1]) + 1, rel_error_for_each_state)
+        # np.savetxt(f"error_for_each_state_{save_name}", rel_error_for_each_state)
+        plt.bar(np.arange(x.shape[1]) + 1, rel_error_for_each_state, log=True)
         plt.xlabel("features")
         plt.title(f"{save_name}")
         plt.show(block=False)
@@ -2278,3 +2360,772 @@ def plot_train_history(train_hist, validation=False, save_name="train_history"):
     plt.legend()
 
     save_as_png(f"{save_name}{name_extension}")
+
+def custom_state_plot(
+    data,
+    data_id,
+    attributes: list[str],
+    index_list: list[tuple],
+    train_or_test: str = "test",
+    cut_time_idx: int | None = None,
+    subplot_idx: list[int] = None,
+    subplot_title: list[str] = None,
+    legend: list[str] = None,
+    result_dir: str = "",
+):
+    """
+    indices list of tuples with size (n_sim,n_n,n_dn)
+    attributes list of str with [attribute of data, attribute of data_id], e.g. ["X","X_ph"]
+    legend list of entries for orig system
+    """
+    # get data
+    if train_or_test.lower() == "train":
+        data_train_or_test = data.TRAIN
+        data_id_train_or_test = data_id.TRAIN
+
+    elif train_or_test.lower() == "test":
+        data_train_or_test = data.TEST
+        data_id_train_or_test = data_id.TEST
+    # get attribute
+    state = getattr(data_train_or_test, attributes[0])
+    state_id = getattr(data_id_train_or_test, attributes[1])
+
+    t = data_train_or_test.t
+    if cut_time_idx is None:
+        n_t = t.shape[0]
+    else:
+        t = t[:cut_time_idx]
+        n_t = t.shape[0]
+
+    plot_state = np.zeros((len(index_list), n_t))
+    plot_state_id = np.zeros((len(index_list), n_t))
+    for i_index, index in enumerate(index_list):
+        n_sim = index[0]
+        n_n = index[1]
+        n_dn = index[2]
+        plot_state[i_index] = state[n_sim, :n_t, n_n, n_dn]
+        plot_state_id[i_index] = state_id[n_sim, :n_t, n_n, n_dn]
+
+    num_subplots = max(subplot_idx) + 1
+    if legend is None:
+        legend = [[None]] * len(index_list)
+
+    # plot data
+    width = 6
+    height = 6 / 1.61  # golden ratio
+    fig, ax = plt.subplots(
+        num_subplots, 1, figsize=(width, height), dpi=600, sharex="all"
+    )
+    for i_index in range(len(index_list)):
+        if num_subplots == 1:
+            ax.plot(t, plot_state[i_index], label=rf"{legend[i_index]}")
+            ax.plot(t, plot_state_id[i_index], "--")
+            ax.legend()
+            ax.title.set_text(subplot_title)
+        else:
+            ax[subplot_idx[i_index]].plot(
+                t, plot_state[i_index], label=rf"{legend[i_index]}"
+            )
+            ax[subplot_idx[i_index]].plot(t, plot_state_id[i_index], "--")
+            ax[subplot_idx[i_index]].legend()
+            ax[subplot_idx[i_index]].title.set_text(subplot_title[subplot_idx[i_index]])
+    plt.xlabel("Time in s")
+    plt.savefig(os.path.join(result_dir, "custom_state_plot.png"))
+
+    print("debug in custom_state_plot")
+
+
+def compare_x_and_x_dt(
+    data, use_train_data=True, idx_gen="rand", idx_custom_tuple=None
+):
+
+    # if use_train_data:
+    #     data = getattr(data,"TRAIN")
+    # else:
+    #     data = getattr(data,"TEST")
+    # x = data.x
+    # dx_dt = data.dx_dt
+
+    t, x, dx_dt, _, _, _, idx_n_f, num_plots = get_quantities_of_interest(
+        data,
+        "x",
+        "dx_dt",
+        use_train_data,
+        "x",
+        idx_gen,
+        idx_custom_tuple=idx_custom_tuple,
+    )
+
+    num_plots = 2
+    fig, ax = new_fig(num_plots, window_title="")
+    for i in range(num_plots):
+        if i == 0:
+            x_or_x_dt = x
+            title = "x"
+        else:
+            x_or_x_dt = dx_dt
+            title = "x_dt"
+        ax[i].plot(x_or_x_dt[:, idx_n_f])
+        ax[i].grid(linestyle=":", linewidth=1)
+        ax[i].set_title(title)
+    plt.xlabel(f"Time")
+    plt.show(block=False)
+    # save_as_png(os.path.join(result_dir, save_name_coeff))
+
+
+def get_weight_files(
+    phin_or_aphin,
+    weight_dir,
+    weight_name_pre_weights,
+    every_n_epoch=None,
+    weight_indices=None,
+):
+    """
+    Typically requires the fit to run with `save_many_weights=True` callback.
+    """
+    if every_n_epoch is not None and weight_indices is not None:
+        raise ValueError(f"Specifiy either `every_n_epoch` or `weight_indices`")
+
+    if not isinstance(phin_or_aphin.system_layer, PHLayer):
+        raise TypeError(
+            f"The system layer of ApHIN/pHIN must be a PHLayer. PHQLayer is not implemented."
+        )
+
+    # use tex for plots
+    plt.rcParams["text.usetex"] = True
+
+    # Lists to store the extracted numbers and matching files
+    epoch_numbers = []
+    weight_files = []
+
+    # Regular expression to match the weight name pattern
+    pattern = re.compile(rf"^{weight_name_pre_weights}(\d+)\.weights\.h5$")
+
+    # Walk through the directory
+    for root, dirs, files in os.walk(weight_dir):
+        for file in files:
+            match = pattern.match(file)
+            if match:
+                # Extract the number and convert it to an integer
+                epoch_numbers.append(int(match.group(1)))
+                # Store the full path of the matching file
+                weight_files.append(os.path.join(root, file))
+
+    if weight_files:
+        logging.info(
+            f"{len(weight_files)} files with a starting string `{weight_name_pre_weights}` were found."
+        )
+    else:
+        raise ValueError(
+            f"No weight files have been found with the starting string {weight_name_pre_weights} in directory {weight_dir}."
+        )
+    # sort alphabettically
+    weight_files = np.array(natsorted(weight_files))
+    epoch_numbers = np.array(natsorted(epoch_numbers))
+
+    # choose indices
+    if every_n_epoch is None and weight_indices is None:
+        every_n_epoch = 5
+        weight_indices = slice(0, len(weight_files), every_n_epoch)
+    elif every_n_epoch:
+        weight_indices = slice(0, len(weight_files), every_n_epoch)
+    elif weight_indices is not None:
+        weight_indices = weight_indices
+
+    return weight_files, epoch_numbers, weight_indices
+
+
+def plot_weight_coefficient_evolution(
+    phin_or_aphin,
+    data,
+    result_dir,
+    weight_dir,
+    weight_name_pre_weights,
+    every_n_epoch=None,
+    weight_indices=None,
+    sim_idx=0,
+    save_name="coefficient_evolution",
+    use_train_data=False,
+):
+
+    weight_files, epoch_numbers, weight_indices = get_weight_files(
+        phin_or_aphin,
+        weight_dir,
+        weight_name_pre_weights,
+        every_n_epoch=every_n_epoch,
+        weight_indices=weight_indices,
+    )
+
+    if use_train_data:
+        mu = data.data[-1]
+        n_sim = data.TRAIN.shape[0]
+        n_t = data.TRAIN.shape[1]
+        idx_prefix = "train"
+    else:
+        mu = data.test_data[-1]
+        n_sim = data.TEST.shape[0]
+        n_t = data.TEST.shape[1]
+        idx_prefix = "test"
+
+    for i_weight_file, weight_file in enumerate(weight_files[weight_indices]):
+        # logging.info()
+        phin_or_aphin.load_weights(weight_file)
+        if mu is not None:
+            dof_J, dof_R, dof_B, dof_Q, _ = (
+                phin_or_aphin.system_layer.get_parameter_dependent_weights(mu)
+            )
+        else:
+            raise NotImplementedError(f"Non-parametric version not yet implemented.")
+
+        # convert from Tensor to (n_sim, n_coeff)
+        dof_J = np.reshape(dof_J.numpy(), (n_sim, n_t, dof_J.numpy().shape[1]))[:, 0, :]
+        dof_R = np.reshape(dof_R.numpy(), (n_sim, n_t, dof_R.numpy().shape[1]))[:, 0, :]
+        dof_B = np.reshape(
+            dof_B.numpy(), (n_sim, n_t, dof_B.numpy().shape[1] * dof_B.numpy().shape[2])
+        )[:, 0, :]
+        dof_Q = np.reshape(dof_Q.numpy(), (n_sim, n_t, dof_Q.numpy().shape[1]))[:, 0, :]
+        if i_weight_file == 0:
+            # initialize arrays
+            num_epochs = len(weight_files[weight_indices])
+            J_coefficients = np.zeros((num_epochs, dof_J.shape[1]))
+            R_coefficients = np.zeros((num_epochs, dof_R.shape[1]))
+            B_coefficients = np.zeros((num_epochs, dof_B.shape[1]))
+            Q_coefficients = np.zeros((num_epochs, dof_Q.shape[1]))
+
+        J_coefficients[i_weight_file, :] = dof_J[sim_idx]
+        R_coefficients[i_weight_file, :] = dof_R[sim_idx]
+        B_coefficients[i_weight_file, :] = dof_B[sim_idx]
+        Q_coefficients[i_weight_file, :] = dof_Q[sim_idx]
+
+    coefficient_names = ["J", "R", "B", "Q"]
+    coefficient_values = [
+        J_coefficients,
+        R_coefficients,
+        B_coefficients,
+        Q_coefficients,
+    ]
+    # plot coefficients
+    for coefficient_name, coefficient_value in zip(
+        coefficient_names, coefficient_values
+    ):
+        save_name_coeff = f"{save_name}_{coefficient_name}"
+        fig, ax = new_fig(1, window_title=save_name_coeff)
+        ax.plot(epoch_numbers[weight_indices], coefficient_value)
+        ax.grid(linestyle=":", linewidth=1)
+        plt.title(
+            f"Coefficient evolution of {coefficient_name}, {idx_prefix} sim: {sim_idx}"
+        )
+        plt.xlabel(f"Epochs")
+        plt.show(block=False)
+        save_as_png(os.path.join(result_dir, save_name_coeff))
+
+
+def create_gif(
+    phin_or_aphin,
+    data,
+    result_dir,
+    weight_dir,
+    weight_name_pre_weights,
+    test_idx,
+    every_n_epoch=None,
+    weight_indices=None,
+    duration=1,
+    loop=0,
+    dpi=600,
+):
+    assert isinstance(test_idx, int)
+
+    weight_files, epoch_numbers, weight_indices = get_weight_files(
+        phin_or_aphin,
+        weight_dir,
+        weight_name_pre_weights,
+        every_n_epoch=every_n_epoch,
+        weight_indices=weight_indices,
+    )
+
+    # over max and min values
+    J_max_overall, R_max_overall, B_max_overall, e_max_overall = [-np.inf] * 4
+    J_min_overall, R_min_overall, B_min_overall, e_min_overall = [np.inf] * 4
+
+    # colormaps
+    cmap_error = plt.get_cmap("inferno")
+
+    for weight_file, epoch_number in zip(
+        weight_files[weight_indices], epoch_numbers[weight_indices]
+    ):
+        phin_or_aphin.load_weights(weight_file)
+        # (
+        #     J_pred,
+        #     R_pred,
+        #     B_pred,
+        #     J_test_,
+        #     R_test_,
+        #     B_test_,
+        #     J_min,
+        #     J_max,
+        #     R_min,
+        #     R_max,
+        #     B_min,
+        #     B_max,
+        #     e_J,
+        #     e_R,
+        #     e_B,
+        # ) = extract_matrices_and_errors(data, phin_or_aphin.system_layer, test_idx)
+
+        # fig, axs = plt.subplots(3, 3)
+        # color_factor = 1
+        # fig.suptitle(f"Epoch {epoch_number}")
+        # im = axs[0, 0].imshow(
+        #     J_pred, vmin=color_factor * J_min, vmax=color_factor * J_max
+        # )
+        # im = axs[1, 0].imshow(
+        #     J_test_, vmin=color_factor * J_min, vmax=color_factor * J_max
+        # )
+        # im = axs[2, 0].imshow(e_J, vmin=color_factor * J_min, vmax=color_factor * J_max)
+        # im = axs[0, 1].imshow(
+        #     R_pred, vmin=color_factor * R_min, vmax=color_factor * R_max
+        # )
+        # im = axs[1, 1].imshow(
+        #     R_test_, vmin=color_factor * R_min, vmax=color_factor * R_max
+        # )
+        # im = axs[2, 1].imshow(e_R, vmin=color_factor * R_min, vmax=color_factor * R_max)
+        # im = axs[0, 2].imshow(
+        #     B_pred, vmin=color_factor * B_min, vmax=color_factor * B_max
+        # )
+        # im = axs[1, 2].imshow(
+        #     B_test_, vmin=color_factor * B_min, vmax=color_factor * B_max
+        # )
+        # im = axs[2, 2].imshow(e_B, vmin=color_factor * B_min, vmax=color_factor * B_max)
+
+        (
+            J_pred,
+            R_pred,
+            B_pred,
+            J_test_,
+            R_test_,
+            B_test_,
+            _,
+            _,
+            _,
+            _,
+            _,
+            _,
+            e_J,
+            e_R,
+            e_B,
+        ) = extract_matrices_and_errors(
+            data, phin_or_aphin.system_layer, test_idx, returnJRBminmax=False
+        )
+
+        # normalize matrices
+        normalize_min_value = -1
+        normalize_max_value = 1
+        J_test_, J_original_min, J_original_max = normalize_to_range(
+            J_test_, min_val=normalize_min_value, max_val=normalize_max_value
+        )
+        R_test_, R_original_min, R_original_max = normalize_to_range(
+            R_test_, min_val=normalize_min_value, max_val=normalize_max_value
+        )
+        B_test_, B_original_min, B_original_max = normalize_to_range(
+            B_test_, min_val=normalize_min_value, max_val=normalize_max_value
+        )
+
+        J_pred = scale_array_with_orig_values(
+            J_pred,
+            J_original_min,
+            J_original_max,
+            min_val=normalize_min_value,
+            max_val=normalize_max_value,
+        )
+        R_pred = scale_array_with_orig_values(
+            R_pred,
+            R_original_min,
+            R_original_max,
+            min_val=normalize_min_value,
+            max_val=normalize_max_value,
+        )
+        B_pred = scale_array_with_orig_values(
+            B_pred,
+            B_original_min,
+            B_original_max,
+            min_val=normalize_min_value,
+            max_val=normalize_max_value,
+        )
+
+        e_J = np.abs(J_pred - J_test_)  # / J_test[test_ids].max()
+        e_R = np.abs(R_pred - R_test_)  # / R_test_.max()
+        e_B = np.abs(B_pred - B_test_)  # / B_test[test_ids].max()
+
+        J_max, J_min = J_pred.max(), J_pred.min()
+        R_max, R_min = R_pred.max(), R_pred.min()
+        B_max, B_min = B_pred.max(), B_pred.min()
+        e_J_max, e_J_min = e_J.max(), e_J.min()
+        e_R_max, e_R_min = R_pred.max(), e_R.min()
+        e_B_max, e_B_min = e_B.max(), e_B.min()
+        if J_max > J_max_overall:
+            J_max_overall = J_max
+        if R_max > R_max_overall:
+            R_max_overall = R_max
+        if B_max > B_max_overall:
+            B_max_overall = B_max
+        if J_min < J_min_overall:
+            J_min_overall = J_min
+        if R_min < R_min_overall:
+            R_min_overall = R_min
+        if B_min < B_min_overall:
+            B_min_overall = B_min
+
+        # error
+        if min(e_J_min, e_R_min, e_B_min) < e_min_overall:
+            e_min_overall = min(e_J_min, e_R_min, e_B_min)
+        if max(e_J_max, e_R_max, e_B_max) > e_max_overall:
+            e_max_overall = max(e_J_max, e_R_max, e_B_max)
+
+        max_pred_overall = max(J_max_overall, R_max_overall, B_max_overall)
+        min_pred_overall = max(J_min_overall, R_min_overall, B_min_overall)
+        # overall_range = max_pred_overall - min_pred_overall
+        # original_range = normalize_max_value - normalize_min_value
+        test_max = max_pred_overall
+        pred_max = max_pred_overall
+        test_min = min_pred_overall
+        pred_min = min_pred_overall
+        # set to overall
+        error_to_overall = False
+        if error_to_overall:
+            error_max = e_max_overall
+            error_min = e_min_overall
+        else:
+            # set to fixed
+            error_max = 0.5
+            error_min = 0
+
+    image_list = []
+    for weight_file, epoch_number in zip(
+        weight_files[weight_indices], epoch_numbers[weight_indices]
+    ):
+        phin_or_aphin.load_weights(weight_file)
+
+        (
+            J_pred,
+            R_pred,
+            B_pred,
+            J_test_,
+            R_test_,
+            B_test_,
+            _,
+            _,
+            _,
+            _,
+            _,
+            _,
+            _,
+            _,
+            _,
+        ) = extract_matrices_and_errors(
+            data, phin_or_aphin.system_layer, test_idx, returnJRBminmax=False
+        )
+
+        # normalize matrices
+        normalize_min_value = -1
+        normalize_max_value = 1
+        J_test_, J_original_min, J_original_max = normalize_to_range(
+            J_test_, min_val=normalize_min_value, max_val=normalize_max_value
+        )
+        R_test_, R_original_min, R_original_max = normalize_to_range(
+            R_test_, min_val=normalize_min_value, max_val=normalize_max_value
+        )
+        B_test_, B_original_min, B_original_max = normalize_to_range(
+            B_test_, min_val=normalize_min_value, max_val=normalize_max_value
+        )
+
+        J_pred = scale_array_with_orig_values(
+            J_pred,
+            J_original_min,
+            J_original_max,
+            min_val=normalize_min_value,
+            max_val=normalize_max_value,
+        )
+        R_pred = scale_array_with_orig_values(
+            R_pred,
+            R_original_min,
+            R_original_max,
+            min_val=normalize_min_value,
+            max_val=normalize_max_value,
+        )
+        B_pred = scale_array_with_orig_values(
+            B_pred,
+            B_original_min,
+            B_original_max,
+            min_val=normalize_min_value,
+            max_val=normalize_max_value,
+        )
+
+        e_J = np.abs(J_pred - J_test_)  # / J_test[test_ids].max()
+        e_R = np.abs(R_pred - R_test_)  # / R_test_.max()
+        e_B = np.abs(B_pred - B_test_)  # / B_test[test_ids].max()
+
+        fig, axs = plt.subplots(3, 3)
+        color_factor = 1
+        fig.suptitle(f"Epoch {epoch_number}")
+        im = []
+        im.append(
+            axs[0, 0].imshow(
+                J_pred, vmin=color_factor * pred_min, vmax=color_factor * pred_max
+            )
+        )
+        im.append(
+            axs[1, 0].imshow(
+                J_test_, vmin=color_factor * test_min, vmax=color_factor * test_max
+            )
+        )
+        im.append(
+            axs[2, 0].imshow(
+                e_J,
+                vmin=color_factor * error_min,
+                vmax=color_factor * error_max,
+                cmap=cmap_error,
+            )
+        )
+        im.append(
+            axs[0, 1].imshow(
+                R_pred, vmin=color_factor * pred_min, vmax=color_factor * pred_max
+            )
+        )
+        im.append(
+            axs[1, 1].imshow(
+                R_test_, vmin=color_factor * test_min, vmax=color_factor * test_max
+            )
+        )
+
+        axs[2, 1].imshow(
+            e_R,
+            vmin=color_factor * error_min,
+            vmax=color_factor * error_max,
+            cmap=cmap_error,
+        )
+
+        im_pred = axs[0, 2].imshow(
+            B_pred, vmin=color_factor * pred_min, vmax=color_factor * pred_max
+        )
+
+        im_test = axs[1, 2].imshow(
+            B_test_, vmin=color_factor * test_min, vmax=color_factor * test_max
+        )
+
+        im_e = axs[2, 2].imshow(
+            e_B,
+            vmin=color_factor * error_min,
+            vmax=color_factor * error_max,
+            cmap=cmap_error,
+        )
+
+        im_cb_list = [im_pred, im_test, im_e]
+
+        print(f"error_min: {error_min}, error_max: {error_max}")
+        print(f"error_min: {test_min}, error_max: {test_max}")
+
+        # common options for all axes
+        for ax in axs.flatten():
+            ax.set_xticks([])
+            ax.set_yticks([])
+
+        axs[0, 0].set_ylabel(r"$\tilde{\bm{J}}$")
+        axs[1, 0].set_ylabel(r"$\hat{\bm{J}}$")
+        axs[2, 0].set_ylabel(r"$\bm{J}_e$")
+        axs[0, 1].set_ylabel(r"$\tilde{\bm{R}}$")
+        axs[1, 1].set_ylabel(r"$\hat{\bm{R}}$")
+        axs[2, 1].set_ylabel(r"$\bm{R}_e$")
+        axs[0, 2].set_ylabel(r"$\tilde{\bm{B}}$")
+        axs[1, 2].set_ylabel(r"$\hat{\bm{B}}$")
+        axs[2, 2].set_ylabel(r"$\bm{B}_e$")
+
+        # plt.subplots_adjust(wspace=0, hspace=0)
+        # plt.subplot_tool()
+        # plt.show()
+
+        # cbar = fig.colorbar(im, ax=axs[0, 2], label="scaled values")
+        # fig.colorbar(im, ax=axs[1, 2], label="scaled values")
+        # fig.colorbar(im, ax=axs[2, 2], label="error")
+
+        # cbar.get_position()
+
+        # move B matrix to the left
+        posB_x = axs[0, 2].get_position().x0  # Get the original position
+        posR_x = axs[0, 1].get_position().x1
+        gap = posB_x - posR_x  # Calculate the gap between the subplots
+        desired_gap = 0.07
+        transition = gap - desired_gap
+        cbar_labels = ["norm. to orig.", "normalized", "rel. error"]
+        for i in range(3):
+            pos_ax = axs[i, 2].get_position()
+            axs[i, 2].set_position(
+                [pos_ax.x0 - transition, pos_ax.y0, pos_ax.width, pos_ax.height]
+            )
+            # add colorbar to the right
+            l, b, w, h = axs[i, 2].get_position().bounds
+            distance_to_cbar = 0.05
+            cax = fig.add_axes([l + w + distance_to_cbar, b, distance_to_cbar, h])
+            fig.colorbar(im_cb_list[i], cax=cax, label=cbar_labels[i])
+
+        # ax2 = axs[0,2]
+        # l, b, w, h = ax2.get_position().bounds         # get position of `ax2`
+        # cax = fig.add_axes([l + w + 0.03, b, 0.03, h]) # add colorbar's axes next to `ax2`
+        # fig.colorbar(im, cax=cax)
+
+        # cbar = fig.colorbar(im, ax=axs[0, 2], label="scaled values")
+        # fig.colorbar(im, ax=axs[1, 2], label="scaled values")
+        # fig.colorbar(im, ax=axs[2, 2], label="error")
+
+        # fig.tight_layout()
+
+        # from mpl_toolkits.axes_grid1 import make_axes_locatable
+
+        # divider = make_axes_locatable(axs[0, 2])
+        # cax = divider.new_vertical(size="5%", pad=0.7, pack_start=True)
+        # fig.add_axes(cax)
+        # fig.colorbar(im, cax=cax,orientation="vertical")
+
+        # plt.tight_layout()
+        plt.savefig(
+            os.path.join(result_dir, f"matrices_for_gif_{epoch_number}.png"),
+            bbox_inches="tight",
+            pad_inches=0.1,
+            transparent=True,
+            dpi=dpi,
+        )
+        plt.close()
+
+        # create image list
+        image_list.append(
+            Image.open(os.path.join(result_dir, f"matrices_for_gif_{epoch_number}.png"))
+        )
+
+        del fig
+        del axs
+        del im
+
+    logging.info(f"J_max_overall: {J_max_overall}")
+    logging.info(f"R_max_overall: {R_max_overall}")
+    logging.info(f"B_max_overall: {B_max_overall}")
+    logging.info(f"J_min_overall: {J_min_overall}")
+    logging.info(f"R_min_overall: {R_min_overall}")
+    logging.info(f"B_min_overall: {B_min_overall}")
+
+    # create gif from png files
+    image_list[0].save(
+        os.path.join(result_dir, "matrix_evolution_msd.gif"),
+        save_all=True,
+        append_images=image_list[1:],
+        duration=duration,
+        loop=loop,
+        disposal=2,
+    )
+
+
+def normalize_to_range(arr, min_val=-1, max_val=1):
+    original_min = np.min(arr)
+    original_max = np.max(arr)
+
+    # Normalize the array to [0, 1]
+    normalized_arr = (arr - original_min) / (original_max - original_min)
+
+    # Scale to [min_val, max_val]
+    normalized_arr = normalized_arr * (max_val - min_val) + min_val
+
+    return normalized_arr, original_min, original_max
+
+
+def scale_array_with_orig_values(
+    arr, original_min, original_max, min_val=-1, max_val=1
+):
+    # Normalize the array to [0, 1] using original min and max
+    scaled_arr = (arr - original_min) / (original_max - original_min)
+
+    # Scale to [min_val, max_val]
+    scaled_arr = scaled_arr * (max_val - min_val) + min_val
+
+    return scaled_arr
+
+
+def truncate_colormap(cmap, minval=0.0, maxval=1.0, n=100):
+    new_cmap = matplotlib.colors.LinearSegmentedColormap.from_list(
+        "trunc({n},{a:.2f},{b:.2f})".format(n=cmap.name, a=minval, b=maxval),
+        cmap(np.linspace(minval, maxval, n)),
+    )
+    return new_cmap
+
+
+def extract_matrices_and_errors(data, system_layer, test_ids, returnJRBminmax=True):
+    mu_test = data.test_data[-1]
+    n_sim_test, n_t_test, _, _, _, _ = data.shape_test
+    # predicted matrices
+    J_pred, R_pred, B_pred = system_layer.get_system_matrices(mu_test, n_t=n_t_test)
+    # original test matrices
+    J_test_, R_test_, Q_test_, B_test_ = data.ph_matrices_test
+
+    J_pred, R_pred, B_pred = (
+        J_pred[test_ids],
+        R_pred[test_ids],
+        B_pred[test_ids],
+    )
+    J_test_, R_test_, B_test_ = (
+        J_test_[test_ids],
+        R_test_[test_ids],
+        B_test_[test_ids],
+    )
+
+    e_J = np.abs(J_pred - J_test_)  # / J_test[test_ids].max()
+    e_R = np.abs(R_pred - R_test_)  # / R_test_.max()
+    e_B = np.abs(B_pred - B_test_)  # / B_test[test_ids].max()
+
+    # get min max values
+    J_min, J_max = min(J_pred.min(), J_test_.min()), max(J_pred.max(), J_test_.max())
+    R_min, R_max = min(R_pred.min(), R_test_.min()), max(R_pred.max(), R_test_.max())
+    B_min, B_max = min(B_pred.min(), B_test_.min()), max(B_pred.max(), B_test_.max())
+
+    pred_min, pred_max = min(J_pred.min(), R_pred.min(), B_pred.min()), max(
+        J_pred.max(), R_pred.max(), B_pred.max()
+    )
+    test_min, test_max = min(J_test_.min(), R_test_.min(), B_test_.min()), max(
+        J_test_.max(), R_test_.max(), B_test_.max()
+    )
+    error_min, error_max = min(e_J.min(), e_R.min(), e_B.min()), max(
+        e_J.max(), e_R.max(), e_B.max()
+    )
+
+    if returnJRBminmax:
+        return (
+            J_pred,
+            R_pred,
+            B_pred,
+            J_test_,
+            R_test_,
+            B_test_,
+            J_min,
+            J_max,
+            R_min,
+            R_max,
+            B_min,
+            B_max,
+            e_J,
+            e_R,
+            e_B,
+        )
+    else:
+        return (
+            J_pred,
+            R_pred,
+            B_pred,
+            J_test_,
+            R_test_,
+            B_test_,
+            pred_min,
+            pred_max,
+            test_min,
+            test_max,
+            error_min,
+            error_max,
+            e_J,
+            e_R,
+            e_B,
+        )

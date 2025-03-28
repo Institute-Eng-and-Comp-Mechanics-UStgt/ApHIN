@@ -11,6 +11,7 @@ def callbacks(
     log_dir=None,
     earlystopping=False,
     patience=100,
+    save_many_weights=False,
 ):
     """
     Create a list of TensorFlow Keras callbacks for model training.
@@ -73,4 +74,27 @@ def callbacks(
             )
         )
 
+    if save_many_weights:
+        callback_list.append(
+            WeightBeforeEpochCallback(
+                os.path.join(weight_dir, "before_ep{epoch}.weights.h5"),
+                monitor="val_loss",
+                save_best_only=False,
+                save_weights_only=True,
+            )
+        )
+
     return callback_list
+
+
+class WeightBeforeEpochCallback(tf.keras.callbacks.ModelCheckpoint):
+    # overwrite epoch_on_begin
+    def on_epoch_begin(self, epoch, logs=None):
+        if self.save_freq == "epoch":
+            if epoch % 5 == 0:
+                self._save_model(epoch=epoch, batch=None, logs=logs)
+                print(f"I'm saving the model for epoch {epoch}.")
+
+    def on_epoch_end(self, epoch, logs=None):
+        self._current_epoch = epoch
+        # print("I'm at the end of an epoch.")

@@ -10,7 +10,7 @@ logging.basicConfig()
 logging.getLogger().setLevel(logging.INFO)
 
 
-class PHIN(PHBasemodel, ABC):
+class PHIN(PHBasemodel):
     """
     port-Hamiltonian identification network (phin).
     Model to discover the dynamics of a system using a layer for identification of other dynamical systems

@@ -20,6 +20,9 @@ from aphin.utils.save_results import (
 from aphin.utils.experiments import run_various_experiments
 from aphin.utils.print_matrices import print_matrices
 
+# TODO: add the following line into dtype context
+# tf.keras.backend.set_floatx("float64")
+
 # tf.config.run_functions_eagerly(True)
 
 
@@ -41,7 +44,7 @@ def main(
     #                         -result_folder_name     searches for a subfolder with result_folder_name under working dir that
     #                                                 includes a config.yml and .weights.h5
     #                                                 -> config for loading results
-    manual_results_folder = "synrm_with_pca_and_dynamic_high_l_dx000001"  # {None} if no results shall be loaded, else create str with folder name or path to results folder
+    manual_results_folder = "synrm_indiv_scaled_modes_more_phi_scale50_with_dynamics"  # {None} if no results shall be loaded, else create str with folder name or path to results folder
 
     # write to config_info
     if config_path_to_file is not None:
@@ -58,7 +61,9 @@ def main(
     data_dir, log_dir, weight_dir, result_dir = configuration.directories
 
     synrm_data = SynRMDataset.from_matlab(
-        data_path=srm_cfg["matfile_path"], exclude_states=srm_cfg["exclude_states"]
+        data_path=srm_cfg["matfile_path"],
+        exclude_states=srm_cfg["exclude_states"],
+        scale_modes_individually=srm_cfg["scale_modes_individually"],
     )
 
     V = SynRMDataset.from_matlab(data_path=srm_cfg["matfile_path"], return_V=True)
@@ -78,7 +83,7 @@ def main(
     # train-test split
     # sim_idx_train = np.arange(10)
     # sim_idx_test = np.arange(5) + len(sim_idx_train)
-    sim_idx_train = [0]
+    sim_idx_train = [0, 2, 3]
     sim_idx_test = [1]
     synrm_data.train_test_split_sim_idx(
         sim_idx_train=sim_idx_train, sim_idx_test=sim_idx_test
@@ -145,15 +150,24 @@ def main(
         idx_elastic_modes = np.arange(75, 95)
         # idx_Drigid = np.arange(100, 105)
         idx_Delastic = np.arange(95, 115)
-        scaling_phi = np.max(np.abs(synrm_data.TRAIN.X[..., idx_phi])) * 36
+        scaling_phi = (
+            np.max(np.abs(synrm_data.TRAIN.X[..., idx_phi]))
+            * srm_cfg["extra_scaling_phi"]
+        )
         scaling_Delastic = np.max(np.abs(synrm_data.TRAIN.X[..., idx_Delastic]))
-        scaling_eta = np.max(np.abs(synrm_data.TRAIN.X[..., idx_eta])) * 3
+        scaling_eta = (
+            np.max(np.abs(synrm_data.TRAIN.X[..., idx_eta]))
+            * srm_cfg["extra_scaling_eta"]
+        )
     elif srm_cfg["exclude_states"] == "no_velocities":
         idx_eta = np.arange(3)
         idx_phi = np.arange(3, 75)
         idx_rigid = np.arange(75, 80)
         idx_elastic_modes = np.arange(80, 100)
-        scaling_phi = np.max(np.abs(synrm_data.TRAIN.X[..., idx_phi])) * 36
+        scaling_phi = (
+            np.max(np.abs(synrm_data.TRAIN.X[..., idx_phi]))
+            * srm_cfg["extra_scaling_phi"]
+        )
         scaling_rigid = np.max(np.abs(synrm_data.TRAIN.X[..., idx_rigid]))
     elif srm_cfg["exclude_states"] == "only_elastic":
         idx_elastic_modes = np.arange(0, 20)
@@ -171,8 +185,14 @@ def main(
             idx_elastic_modes = np.arange(80, 100)
             idx_Delastic = np.arange(105, 125)
         idx_Drigid = np.arange(100, 105)
-        scaling_eta = np.max(np.abs(synrm_data.TRAIN.X[..., idx_eta])) * 3
-        scaling_phi = np.max(np.abs(synrm_data.TRAIN.X[..., idx_phi])) * 36
+        scaling_eta = (
+            np.max(np.abs(synrm_data.TRAIN.X[..., idx_eta]))
+            * srm_cfg["extra_scaling_eta"]
+        )
+        scaling_phi = (
+            np.max(np.abs(synrm_data.TRAIN.X[..., idx_phi]))
+            * srm_cfg["extra_scaling_phi"]
+        )
         scaling_rigid = np.max(np.abs(synrm_data.TRAIN.X[..., idx_rigid]))
         scaling_Drigid = np.max(np.abs(synrm_data.TRAIN.X[..., idx_Drigid]))
         scaling_Delastic = np.max(np.abs(synrm_data.TRAIN.X[..., idx_Delastic]))
@@ -273,16 +293,28 @@ def main(
 
     n_sim, n_t, n_n, n_dn, n_u, n_mu = synrm_data.shape
     regularizer = tf.keras.regularizers.L1L2(l1=srm_cfg["l1"], l2=srm_cfg["l2"])
-    system_layer = PHQLayer(
-        r,
-        n_u=n_u,
-        n_mu=n_mu,
-        name="phq_layer",
-        layer_sizes=srm_cfg["layer_sizes_ph"],
-        activation=srm_cfg["activation_ph"],
-        regularizer=regularizer,
-        # dtype=tf.float64,
-    )
+    if srm_cfg["system_layer"] == "phq":
+        system_layer = PHQLayer(
+            r,
+            n_u=n_u,
+            n_mu=n_mu,
+            name="phq_layer",
+            layer_sizes=srm_cfg["layer_sizes_ph"],
+            activation=srm_cfg["activation_ph"],
+            regularizer=regularizer,
+            # dtype=tf.float64,
+        )
+    elif srm_cfg["system_layer"] == "ph":
+        system_layer = PHLayer(
+            r,
+            n_u=n_u,
+            n_mu=n_mu,
+            name="ph_layer",
+            layer_sizes=srm_cfg["layer_sizes_ph"],
+            activation=srm_cfg["activation_ph"],
+            regularizer=regularizer,
+            # dtype=tf.float64,
+        )
 
     aphin = APHIN(
         r,
@@ -378,19 +410,31 @@ def main(
     )
 
     # reproject
-    # num_rand_pick_entries = 1000
+    # reproject_method = "input"  # "input" | "rand"
+    # if reproject_method == "rand":
+    #     pick_method = "rand"
+    #     pick_entry = 1000
+    #     V = V
+    #     split_values_reprojected = pick_entry
+    # elif reproject_method == "input":
+    #     pick_method = "all"
+    #     pick_entry = None
+    #     B = SynRMDataset.from_matlab(data_path=srm_cfg["matfile_path"], return_B=True)
+    #     V = B.T @ V
+    #     split_values_reprojected = B.shape[1]
+
     # synrm_data.reproject_with_basis(
     #     [V, V],
     #     idx=[slice(80, 100), slice(105, 125)],
-    #     pick_method="rand",
-    #     pick_entry=num_rand_pick_entries,
+    #     pick_method=pick_method,
+    #     pick_entry=pick_entry,
     #     seed=srm_cfg["seed"],
     # )
     # synrm_data_id.reproject_with_basis(
     #     [V, V],
     #     idx=[slice(80, 100), slice(105, 125)],
-    #     pick_method="rand",
-    #     pick_entry=num_rand_pick_entries,
+    #     pick_method=pick_method,
+    #     pick_entry=pick_entry,
     #     seed=srm_cfg["seed"],
     # )
 
@@ -398,9 +442,9 @@ def main(
     #     3,
     #     72,
     #     5,
-    #     num_rand_pick_entries,
+    #     split_values_reprojected,
     #     5,
-    #     num_rand_pick_entries,
+    #     split_values_reprojected,
     # ]
 
     # synrm_data.calculate_errors(
@@ -465,36 +509,291 @@ def main(
     # avoid that the script stops and keep the plots open
     # plt.show()
 
-    attributes = ["X", "X"]
-    index_list = [(0, 0, 0), (0, 0, 3), (0, 0, 80)]
-    subplot_idx = [0, 0, 1]
-    subplot_title = ["magnetic", "mechanic"]
-    cut_time_idx = 2500
-    legend = ["$\eta$", "$\phi$", "$q$"]
-    aphin_vis.custom_state_plot(
-        synrm_data,
-        synrm_data_id,
-        attributes=attributes,
-        index_list=index_list,
-        train_or_test="train",
-        subplot_idx=subplot_idx,
-        subplot_title=subplot_title,
-        cut_time_idx=cut_time_idx,
-        legend=legend,
-        result_dir=result_dir,
-    )
+    # attributes = ["X", "X"]
+    # index_list = [(0, 0, 0), (0, 0, 3), (0, 0, 80)]
+    # subplot_idx = [0, 0, 1]
+    # subplot_title = ["magnetic", "mechanic"]
+    # cut_time_idx = 2500
+    # legend = ["$\eta$", "$\phi$", "$q$"]
+    # aphin_vis.custom_state_plot(
+    #     synrm_data,
+    #     synrm_data_id,
+    #     attributes=attributes,
+    #     index_list=index_list,
+    #     train_or_test="train",
+    #     subplot_idx=subplot_idx,
+    #     subplot_title=subplot_title,
+    #     cut_time_idx=cut_time_idx,
+    #     legend=legend,
+    #     result_dir=result_dir,
+    # )
 
     print("debug")
+
+    import plotly.graph_objects as go
+    import plotly.express as px
+
+    show_latent_state_num = 1
+    # Jonas dz test
+    # %% Chain rule erivative vs numerical derivative
+    z = aphin.encode(synrm_data.TEST.X[0, :, 0, :]).numpy()
+    # calc time derivatives
+    dzdt_numeric = np.gradient(z, t.squeeze(), axis=0)
+    z, dzdt_chain = aphin.calc_latent_time_derivatives(
+        synrm_data.TEST.X[0].squeeze(), synrm_data.TEST.X_dt[0].squeeze()
+    )
+    i_state = 0
+    plt.figure()
+    plt.plot(dzdt_numeric[:, i_state])
+    plt.plot(dzdt_chain[:, i_state], "--")
+    plt.xlabel("time")
+    plt.ylabel(r"$\dot{z}$")
+    plt.legend(["dzdt numerically", "dzdt chain rule"])
+    plt.show()
+    plt.savefig("test_z_dt_numeric_vs_chain.png")
+
+    # z_dt_encoded = ph_network.encode(data.dx_dt).numpy()
+    x_dt_encoded = aphin.encode(synrm_data.TRAIN.dx_dt).numpy()
+    fig = go.Figure()
+    fig.add_trace(
+        go.Scatter(
+            x=np.arange(x_dt_encoded.shape[0]),
+            y=x_dt_encoded[:, show_latent_state_num],
+            mode="lines",
+            name="x_dt_encoded",
+        )
+    )
+    fig.update_layout(showlegend=True)
+    fig.show()
+
+    # dz_dt mannually, but literally the same as in .from_identification
+    dz_dxr = aphin.calc_latent_time_derivatives(
+        synrm_data.TRAIN.x, synrm_data.TRAIN.dx_dt, return_dz_dxr=True
+    )
+    dz_dxr = dz_dxr.numpy()
+    dz_dt_manual = np.zeros(x_dt_encoded.shape)
+    # x_dt_pca_encoded = np.zeros((x_dt_encoded.shape[0], srm_cfg["n_pca"]))
+    x_dt_pca_encoded = aphin.pca_encoder(synrm_data.TRAIN.dx_dt).numpy()
+    x_pca_encoded = aphin.pca_encoder(synrm_data.TRAIN.x).numpy()
+    x_pca_decoded = aphin.nonlinear_decoder(synrm_data_id.TRAIN.z).numpy()
+    error_pca = np.abs(x_pca_encoded - x_pca_decoded).mean(axis=0)
+    error_pca_rel = error_pca / np.abs(x_pca_encoded).mean(axis=0)
+
+    fig = px.line(error_pca)
+    fig.show()
+
+    fig = px.line(error_pca_rel)
+    fig.show()
+
+    for i in range(x_dt_encoded.shape[0]):
+        # x_dt_pca_encoded[i] = aphin.pca_encoder(synrm_data.TRAIN.dx_dt).numpy()[i]
+        dz_dt_manual[i] = dz_dxr[i] @ x_dt_pca_encoded[i]
+
+    fig = go.Figure()
+    fig.add_trace(
+        go.Scatter(
+            x=np.arange(dz_dt_manual.shape[0]),
+            y=dz_dxr[:, show_latent_state_num, show_latent_state_num],
+            mode="lines",
+            name="dz_dxr",
+        )
+    )
+    fig.update_layout(showlegend=True)
+    fig.show()
+
+    dz_dt_one_state = np.array(
+        [
+            dz_dxr[i, show_latent_state_num, :] @ x_dt_pca_encoded[i, :].T
+            for i in range(x_dt_pca_encoded.shape[0])
+        ]
+    )
+    fig = go.Figure()
+    fig.add_trace(
+        go.Scatter(
+            x=np.arange(dz_dt_manual.shape[0]),
+            y=dz_dt_one_state,
+            mode="lines",
+            name="dz_dt_one_state",
+        )
+    )
+    fig.update_layout(showlegend=True)
+    fig.show()
+
+    dz_dt_one_state_sum_terms = np.zeros((x_dt_pca_encoded.shape[0], srm_cfg["n_pca"]))
+    for i_pca in range(srm_cfg["n_pca"]):
+        dz_dt_one_state_sum_terms[:, i_pca] = np.array(
+            [
+                dz_dxr[i, show_latent_state_num, i_pca] * x_dt_pca_encoded[i, i_pca].T
+                for i in range(x_dt_pca_encoded.shape[0])
+            ]
+        )
+    import pandas as pd
+
+    df_dz_dt_one_state_sum_terms = pd.DataFrame(dz_dt_one_state_sum_terms)
+    sum_of_df_dz_dt_one_state_sum_terms = np.sum(df_dz_dt_one_state_sum_terms, axis=1)
+
+    # fig = go.Figure()
+    # fig.add_trace(
+    #     go.Scatter(
+    #         x=np.arange(dz_dt_manual.shape[0]),
+    #         y=df_dz_dt_one_state_sum_terms,
+    #         mode="lines",
+    #         name="dz_dt_one_state_sum_terms",
+    #     )
+    # )
+    # fig.update_layout(showlegend=True)
+    fig = px.line(df_dz_dt_one_state_sum_terms)
+    fig.add_trace(
+        go.Scatter(
+            x=np.arange(dz_dt_manual.shape[0]),
+            y=sum_of_df_dz_dt_one_state_sum_terms,
+            mode="lines",
+            name="sum",
+        )
+    )
+    fig.show()
+
+    #  dominant entry from previous plot
+    # plot multiplication terms
+    dominant_entry = 5
+    fig = go.Figure()
+    fig.add_trace(
+        go.Scatter(
+            x=np.arange(dz_dt_manual.shape[0]),
+            y=dz_dxr[:, show_latent_state_num, dominant_entry],
+            mode="lines",
+            name="dz_dxr_45",
+        )
+    )
+    fig.add_trace(
+        go.Scatter(
+            x=np.arange(dz_dt_manual.shape[0]),
+            y=x_dt_pca_encoded[:, dominant_entry],
+            mode="lines",
+            name="x_dt_pca_encoded_45",
+        )
+    )
+    fig.update_layout(showlegend=True)
+    fig.show()
+
+    # x_pca_encoded
+    #  dominant entry from previous plot
+    # plot multiplication terms
+    dominant_entry = 5
+    fig = go.Figure()
+    fig.add_trace(
+        go.Scatter(
+            x=np.arange(dz_dt_manual.shape[0]),
+            y=x_pca_encoded[:, 2],
+            mode="lines",
+            name="x_pca_encoded5",
+        )
+    )
+    fig.add_trace(
+        go.Scatter(
+            x=np.arange(dz_dt_manual.shape[0]),
+            y=x_pca_encoded[:, 3],
+            mode="lines",
+            name="x_pca_encoded6",
+        )
+    )
+    fig.update_layout(showlegend=True)
+    fig.show()
+
+    fig = go.Figure()
+    fig.add_trace(
+        go.Scatter(
+            x=np.arange(dz_dt_manual.shape[0]),
+            y=x_dt_pca_encoded[:, show_latent_state_num],
+            mode="lines",
+            name="x_dt_pca_encoded",
+        )
+    )
+    fig.update_layout(showlegend=True)
+    fig.show()
+
+    fig = go.Figure()
+    fig.add_trace(
+        go.Scatter(
+            x=np.arange(dz_dt_manual.shape[0]),
+            y=dz_dt_manual[:, show_latent_state_num],
+            mode="lines",
+            name="dz_dt_manual",
+        )
+    )
+    fig.update_layout(showlegend=True)
+    fig.show()
+
+    # z
+    fig = go.Figure()
+    fig.add_trace(
+        go.Scatter(
+            x=np.arange(synrm_data_id.TRAIN.z.shape[0]),
+            y=synrm_data_id.TRAIN.z[:, show_latent_state_num],
+            mode="lines",
+            name="z",
+        )
+    )
+    fig.update_layout(showlegend=True)
+    fig.show()
+
+    # z_dt
+    fig = go.Figure()
+    fig.add_trace(
+        go.Scatter(
+            x=np.arange(synrm_data_id.TRAIN.z_dt.shape[0]),
+            y=synrm_data_id.TRAIN.z_dt[:, show_latent_state_num],
+            mode="lines",
+            name="z_dt",
+        )
+    )
+    fig.update_layout(showlegend=True)
+    fig.show()
+
+    # z_dt numerically
+    z_dt_numerically = np.gradient(synrm_data_id.TRAIN.z, axis=0)
+    fig = go.Figure()
+    fig.add_trace(
+        go.Scatter(
+            x=np.arange(synrm_data_id.TRAIN.z_dt.shape[0]),
+            y=z_dt_numerically[:, show_latent_state_num],
+            mode="lines",
+            name="z_dt_numerically",
+        )
+    )
+    fig.update_layout(showlegend=True)
+    fig.show()
+
+    # %%
+    state_num = 252
+    fig = go.Figure()
+    fig.add_trace(
+        go.Scatter(
+            x=np.arange(synrm_data.TRAIN.x.shape[0]),
+            y=np.squeeze(synrm_data.TRAIN.x[:, state_num]),
+            mode="lines",
+            line=dict(color="red"),
+        )
+    )
+    fig.add_trace(
+        go.Scatter(
+            x=np.arange(synrm_data_id.TRAIN.x.shape[0]),
+            y=np.squeeze(synrm_data_id.TRAIN.x[:, state_num]),
+            mode="lines",
+            line=dict(color="blue"),
+        )
+    )
+    fig.show()
 
 
 # parameter variation for multiple experiment runs
 # requires calc_various_experiments = True
 def create_variation_of_parameters():
     parameter_variation_dict = {
-        "l_rec": [1],
-        "l_dz": [0.001],
         "l_dx": [0, 0.000001],
-        "r": [20, 40, 60],
+        "r": [40, 80, 160],
+        "n_epochs": [2000, 6000],
+        "use_pca": [True, False],
     }
     return parameter_variation_dict
 

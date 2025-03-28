@@ -94,6 +94,9 @@ class PHBasemodel(tf.keras.Model, ABC):
         with open(model_path, "wb") as outp:  # Overwrites any existing file.
             pickle.dump(self.config, outp)
 
+    def compute_loss(self, x, y, y_pred):
+        return tf.reduce_mean(self.loss(y, y_pred))
+
     @staticmethod
     def load(
         ph_network,
@@ -185,12 +188,17 @@ class PHBasemodel(tf.keras.Model, ABC):
             validation_data = (validation_x, validation_y)
 
         import time
+
         start = time.time()
-        history = super(PHBasemodel, self).fit(x, y, validation_data=validation_data, **kwargs)
+        history = super(PHBasemodel, self).fit(
+            x, y, validation_data=validation_data, **kwargs
+        )
         end = time.time()
         time = end - start
         time_per_epoch = time / len(history.history["loss"])
-        logging.info(f"Training took {time} s with an average of {time_per_epoch} s per epoch.")
+        logging.info(
+            f"Training took {time} s with an average of {time_per_epoch} s per epoch."
+        )
         # save the time per epoch in the history
         history.history["time_per_epoch"] = time_per_epoch
         history.history["time"] = time

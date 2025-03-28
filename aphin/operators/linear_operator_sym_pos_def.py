@@ -70,7 +70,9 @@ class LinearOperatorSymPosDef(tf.linalg.LinearOperatorFullMatrix):
             self._chol = tfp.math.fill_triangular(self._dof, upper=False)
             self._chol_t = _transpose_last2d(self._chol)
             # add regularization for Q to become pos. def instead of only semi-def.
-            reg_matrix = epsilon * tf.eye(self._chol.shape[-1])
+            reg_matrix = tf.cast(
+                epsilon * tf.eye(self._chol.shape[-1]), dtype=self._dof.dtype
+            )
             self._matrix = tf.matmul(self._chol, self._chol_t) + reg_matrix
             # Check and auto-set hints.
             if is_square is False:

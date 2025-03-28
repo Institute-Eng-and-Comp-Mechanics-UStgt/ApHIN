@@ -14,7 +14,7 @@ logging.basicConfig()
 logging.getLogger().setLevel(logging.INFO)
 
 
-class APHIN(PHBasemodel, ABC):
+class APHIN(PHBasemodel):
     """
     Autoencoder-based port-Hamiltonian Identification Network (ApHIN)
     """
@@ -37,7 +37,7 @@ class APHIN(PHBasemodel, ABC):
         l_dx: float = 1,
         l1=0,
         l2=0,
-        dtype="float32",
+        dtype=tf.float32,
         **kwargs,
     ):
         """
@@ -85,7 +85,7 @@ class APHIN(PHBasemodel, ABC):
         """
         # tf.keras.backend.set_floatx(dtype)
         self.dtype_ = dtype
-        super(APHIN, self).__init__(**kwargs)
+        super(APHIN, self).__init__(dtype=dtype, **kwargs)
 
         # general parameters
         self.system_optimizer = None
@@ -105,6 +105,10 @@ class APHIN(PHBasemodel, ABC):
         self.pca_only = pca_only
         if self.pca_only:
             self.use_pca = True
+            if pca_order is not None:
+                logging.info(
+                    f"pca_only is chosen. Setting pca_order to reduced_order of size {self.reduced_order}."
+                )
             self.pca_order = self.reduced_order
             self.layer_sizes = []
         if system_layer is None:
@@ -184,7 +188,7 @@ class APHIN(PHBasemodel, ABC):
 
         # System inputs
         if u is not None:
-            u_input = tf.keras.Input(shape=(u.shape[1],))
+            u_input = tf.keras.Input(shape=(u.shape[1],), dtype=u.dtype)
         else:
             u_input = tf.keras.Input(shape=(0,))
 
@@ -230,7 +234,7 @@ class APHIN(PHBasemodel, ABC):
         tuple
             Tuple containing inputs and outputs of the autoencoder.
         """
-        x_input = tf.keras.Input(shape=(x.shape[1],))
+        x_input = tf.keras.Input(shape=(x.shape[1],), dtype=self.dtype_)
         # first part of the encoder may consist of a linear projection based on PCA
         z_pca = self.build_pca_encoder(x, x_input)
         # second part of the encoder and first part of the decoder is a nonlinear part
@@ -283,7 +287,7 @@ class APHIN(PHBasemodel, ABC):
                 )
             else:
                 # scale every feature by its maximum value to avoid numerical issues
-                self.scale_factor = 1 / tf.sqrt(tf.reduce_max(tf.abs(x), axis=0))
+                self.scale_factor = 1 / tf.reduce_max(tf.abs(x), axis=0)
         # if no individual scaling is used, scale the whole data set by its maximum value
         else:
             self.scale_factor = 1 / tf.reduce_max(tf.abs(x))
@@ -344,14 +348,21 @@ class APHIN(PHBasemodel, ABC):
                 n_neurons,
                 activation=self.activation,
                 activity_regularizer=self.regularizer,
+                dtype=self.dtype_,
             )(z)
-        z = tf.keras.layers.Dense(self.reduced_order, activation="linear")(z)
+        z = tf.keras.layers.Dense(
+            self.reduced_order, activation="linear", dtype=self.dtype_
+        )(z)
 
         # new decoder
         x_ = z
         for n_neurons in reversed(self.layer_sizes):
-            x_ = tf.keras.layers.Dense(n_neurons, activation=self.activation)(x_)
-        z_dec = tf.keras.layers.Dense(self.pca_order, activation="linear")(x_)
+            x_ = tf.keras.layers.Dense(
+                n_neurons, activation=self.activation, dtype=self.dtype_
+            )(x_)
+        z_dec = tf.keras.layers.Dense(
+            self.pca_order, activation="linear", dtype=self.dtype_
+        )(x_)
         return z, z_dec
 
     @tf.function
@@ -415,7 +426,7 @@ class APHIN(PHBasemodel, ABC):
             "reg_loss": reg_loss,
         }
 
-    def calc_latent_time_derivatives(self, x, dx_dt):
+    def calc_latent_time_derivatives(self, x, dx_dt, return_dz_dxr=False):
         """
         Calculate time derivatives of latent variables given the time derivatives of the input variables.
 
@@ -454,6 +465,8 @@ class APHIN(PHBasemodel, ABC):
             dz_dt = dz_dxr @ dx_dt
         dz_dt = tf.squeeze(dz_dt, axis=2)
 
+        if return_dz_dxr:
+            return dz_dxr
         return z.numpy(), dz_dt.numpy()
 
     def calc_pca_time_derivatives(self, x, dx_dt):
@@ -669,6 +682,12 @@ class APHIN(PHBasemodel, ABC):
             / tf.reduce_mean(tf.abs(dz_dt_lhs))
         )
         return rec_loss, dz_loss, dx_loss
+
+    # def compute_loss(self, x, y, y_pred):
+    #     """
+    #     custom loss function
+    #     """
+    #     return tf.reduce_mean(self.loss(y, y_pred))
 
     def reshape_dxr_dz(self, dxr_dz):
         """

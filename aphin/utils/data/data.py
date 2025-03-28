@@ -41,6 +41,7 @@ class Data(ABC):
         R=None,
         Q=None,
         B=None,
+        Mu_input=None,
     ):
         """
         Initializes the Data container with multiple datasets (train and test) including states, inputs, and parameters.
@@ -91,9 +92,6 @@ class Data(ABC):
         if t.ndim == 1:
             t = t[:, np.newaxis]
         self.t = t
-        # initialize test time interval as training time interval
-        self.n_t_test = self.n_t
-        self.t_test = t
 
         self.X = X
         if X_dt is None:
@@ -143,6 +141,9 @@ class Data(ABC):
                 and ph_matrices[i].ndim == 3
             )
         self.J, self.R, self.Q, self.B = ph_matrices
+
+        self.Mu_input = Mu_input
+
         # Initialize x, dx_dt and x_init. Subclasses should override these values
         self.x = None
         self.dx_dt = None
@@ -279,9 +280,24 @@ class Data(ABC):
         self.X_dt = self.X_dt[:, :idx_truncate]
         if self.U is not None:
             self.U = self.U[:, :idx_truncate]
-        if self.Mu is not None:
-            self.Mu = self.Mu[:, :idx_truncate]
         self.n_t = self.X.shape[1]
+        self.states_to_features()
+
+    def cut_time_start_and_end(self, num_cut_idx=5):
+        """
+        Cut first and last `num_cut_idx` entries from the data.
+        Sometimes some numerical time derivative abnormalities happened at the start and end of X_dt
+        """
+        logging.info(
+            f"If the data is cut due to X_dt abnormalities. Use this before scaling the data."
+        )
+        self.t = self.t[num_cut_idx:-num_cut_idx]
+        self.X = self.X[:, num_cut_idx:-num_cut_idx]
+        self.X_dt = self.X_dt[:, num_cut_idx:-num_cut_idx]
+        if self.U is not None:
+            self.U = self.U[:, num_cut_idx:-num_cut_idx]
+        self.n_t = self.X.shape[1]
+        self.states_to_features()
 
     def decrease_num_simulations(
         self,
@@ -356,7 +372,7 @@ class Data(ABC):
         self.n_t = self.X.shape[1]
 
     @staticmethod
-    def save_data(data_path, t, X, U, Mu=None):
+    def save_data(data_path, t, X, U, Mu=None, Mu_input: np.ndarray = None):
         """
         Saves time steps, state data, and inputs to a compressed .npz file.
 
@@ -382,9 +398,15 @@ class Data(ABC):
             This method does not return any value. It saves the data to the specified file path.
         """
         if Mu is not None:
-            np.savez_compressed(data_path, t=t, X=X, U=U, Mu=Mu)
+            if Mu_input is not None:
+                np.savez_compressed(data_path, t=t, X=X, U=U, Mu=Mu, Mu_input=Mu_input)
+            else:
+                np.savez_compressed(data_path, t=t, X=X, U=U, Mu=Mu)
         else:
-            np.savez_compressed(data_path, t=t, X=X, U=U)
+            if Mu_input is not None:
+                np.savez_compressed(data_path, t=t, X=X, U=U, Mu_input=Mu_input)
+            else:
+                np.savez_compressed(data_path, t=t, X=X, U=U)
 
     @classmethod
     def from_data(cls, data_path, **kwargs):
@@ -465,7 +487,7 @@ class Data(ABC):
         data = np.load(data_path, allow_pickle=True)
         X = data["X"]
         t = data["t"]
-        U, X_dt, Mu, J, R, Q, B = [None] * 7
+        U, X_dt, Mu, J, R, Q, B, Mu_input = [None] * 8
         if "X_dt" in data.keys():
             X_dt = data["X_dt"] if np.any(data["X_dt"])else None
         if "U" in data.keys():
@@ -482,6 +504,8 @@ class Data(ABC):
         if "B" in data.keys():
             # B matrix in  format (r,n_u,n_sim)
             B = data["B"]
+        if "Mu_input" in data.keys():
+            Mu_input = data["Mu_input"]
 
         data_dict = {
             "t": t,
@@ -493,6 +517,7 @@ class Data(ABC):
             "R": R,
             "Q": Q,
             "B": B,
+            "Mu_input": Mu_input,
         }
 
         return data_dict
@@ -804,7 +829,7 @@ class Data(ABC):
                 "Don't call this function without scaling_values for testing"
             )
             # split data into domains
-            X_dom_list, _ = self.split_state_into_domains(
+            X_dom_list = self.split_state_into_domains(
                 domain_split_vals=domain_split_vals
             )
             current_idx = 0
@@ -813,16 +838,22 @@ class Data(ABC):
                 scaling_values_list.append(np.max(np.abs(X)))
         else:
             scaling_values_list = scaling_values
-            len(scaling_values_list) == len(domain_split_vals)
 
         # reformulate scaling values into array format
-        current_idx = 0
-        scaling_values = np.zeros((self.n_dn, 1))
-        for i in range(len(domain_split_vals)):
-            scaling_values[current_idx : current_idx + domain_split_vals[i], :] = (
-                scaling_values_list[i] * np.ones((domain_split_vals[i], 1))
-            )
-            current_idx += domain_split_vals[i]
+        if len(scaling_values_list) == len(domain_split_vals):
+            # repeat scaling values for all domain entries
+            current_idx = 0
+            scaling_values = np.zeros((self.n_dn, 1))
+            for i in range(len(domain_split_vals)):
+                scaling_values[current_idx : current_idx + domain_split_vals[i], :] = (
+                    scaling_values_list[i] * np.ones((domain_split_vals[i], 1))
+                )
+                current_idx += domain_split_vals[i]
+        elif len(scaling_values_list) == self.n_dn:
+            # transform to numpy array
+            scaling_values = np.array(scaling_values)
+        else:
+            raise ValueError(f"Scaling values are not given in the right format.")
 
         self.scaling_values = scaling_values
         self.is_scaled = True
@@ -1375,6 +1406,8 @@ class PHIdentifiedData(Data):
         B=None,
         Q=None,
         solving_times=None,
+        is_scaled=False,
+        scaling_values=None,
         **kwargs,
     ):
         """
@@ -1478,7 +1511,16 @@ class PHIdentifiedData(Data):
         reconstructed data.
         """
         super().__init__(t, X, X_dt, U=U, Mu=Mu, J=J, R=R, B=B, Q=Q)
-        self.n_red = n_red
+        if n_red is None:
+            if z is not None:
+                self.n_red = z.shape[1]
+            elif Z is not None:
+                self.n_red = Z.shape[2]
+            else:
+                self.n_red = n_red
+
+        else:
+            self.n_red = n_red
         self.x = x_ph
         self.dx_dt = dx_dt_ph
         self.z = z
@@ -1497,6 +1539,8 @@ class PHIdentifiedData(Data):
         self.Z_dt_ph = Z_dt_ph
         self.H_ph = H_ph
         self.solving_times = solving_times
+        self.is_scaled = is_scaled
+        self.scaling_values = scaling_values
 
     @staticmethod
     def obtain_results_from_ph_autoencoder(data, system_layer, ph_network):
@@ -1692,6 +1736,7 @@ class PHIdentifiedData(Data):
         E_ph,
         integrator_type,
         decomp_option,
+        calc_u_midpoints=False,
     ):
         """
         Obtain the port-Hamiltonian (pH) system data, including latent variables, time derivatives,
@@ -1805,7 +1850,13 @@ class PHIdentifiedData(Data):
             if data.U is None:
                 u = None
             else:
-                u = data.U[i_sim]
+                if calc_u_midpoints:
+                    u = np.zeros_like(data.U[i_sim])
+                    u[:-1] = (
+                        data.U[i_sim, 1:] + data.U[i_sim, :-1]
+                    ) / 2  # last u step is not used, padded for input format
+                else:
+                    u = data.U[i_sim]
             Z_ph[i_sim], Z_dt_ph[i_sim] = system_ph_list[i_sim].solve_dt(
                 data.t,
                 z_init,
@@ -1879,6 +1930,17 @@ class PHIdentifiedData(Data):
             solving_times,
         )
 
+    def states_to_features(self):
+        super().states_to_features()
+        if self.Z_ph is not None:
+            self.z_ph, self.z_dt_ph = reshape_states_to_features(
+                self.Z_ph, self.Z_dt_ph
+            )
+        if self.Z is not None:
+            self.z, self.z_dt = reshape_states_to_features(self.Z, self.Z_dt)
+        if self.Z_dt_ph_map is not None:
+            self.z_dt_ph_map = reshape_states_to_features(self.Z_dt_ph_map)
+
     @classmethod
     def from_identification(
         cls,
@@ -1887,6 +1949,7 @@ class PHIdentifiedData(Data):
         ph_network,
         integrator_type="IMR",
         decomp_option="lu",
+        calc_u_midpoints=False,
         **kwargs,
     ):
         """
@@ -1978,6 +2041,8 @@ class PHIdentifiedData(Data):
         else:
             raise NotImplementedError(f"The layer {type(system_layer)} is unknown.")
 
+        if calc_u_midpoints:
+            logging.info(f"Calculating midpoints from given input U.")
         # simulate training data
         (
             z_ph_s,
@@ -2001,7 +2066,15 @@ class PHIdentifiedData(Data):
             E_ph,
             integrator_type,
             decomp_option,
+            calc_u_midpoints,
         )
+
+        if data.is_scaled:
+            is_scaled = True
+            scaling_values = data.scaling_values
+        else:
+            scaling_values = None
+            is_scaled = False
 
         return cls(
             t=data.t,
@@ -2028,6 +2101,8 @@ class PHIdentifiedData(Data):
             H_ph=H_ph,
             n_red=system_layer.r,
             solving_times=solving_times,
+            is_scaled=is_scaled,
+            scaling_values=scaling_values,
             **kwargs,
         )
 
