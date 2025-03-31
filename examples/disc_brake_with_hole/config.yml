@@ -3,9 +3,9 @@ setup_matplotlib: False  # Show plots and visualization
 
 
 # %% General identification framework settings
-experiment: db_with_hole_convex_multExp #    name of the experiment
+experiment: db_with_hole_test_param #    name of the experiment
 load_network: False  # train the network or load the last pre-trained one
-sim_name: disc_brake_with_hole_low_freq_convex  # sim_onlyHeat_1Point_smallHalton_d3_samp100
+sim_name: disc_brake_with_hole_very_small_with_vel  # sim_onlyHeat_1Point_smallHalton_d3_samp100
 file_url: https://darus.uni-stuttgart.de/api/access/datafile/:persistentId?persistentId=doi:10.18419/darus-4418/1
 ref_coords: disc_ref_coords.npy
 faces:  disc_faces.npy
@@ -14,7 +14,7 @@ t_end: 0.2 # truncate when reading from .txt to reduce data memory
 seed: 1 #  For reproducibility
 
 # scaling_values: (list) scalar scalar values that each domain, defined by domain_split_vals, should be scaled with, if {None} it is scaled by the maximum value of each domain
-scaling_values: Null #[1000,0.00001,0.00001] #[theta_scaling, disp_scaling, optional: velocity_scaling]
+scaling_values: Null #[10,0.00001,0.00001] #[theta_scaling, disp_scaling, optional: velocity_scaling]
 # domain_split_vals: (list) integers that define the number of dofs for each domain, sum of all values needs to conincide with n_dn. If {None} it is considered as a single domain
 domain_split_vals: [1,3,3] # [theta, displacement, optional: velocity]
 domain_names: ["temp","disp","vel"]
@@ -27,7 +27,7 @@ use_velocities: False # might be included in data already
 num_sim: Null # Null if number of simulations should not be decreased or integer with the target number of simulations
 
 # decrease number of time steps
-num_time_steps: Null # {Null} if number of time steps should not be decreased or integer with the target number of time steps per trajectory
+num_time_steps: 1000 # {Null} if number of time steps should not be decreased or integer with the target number of time steps per trajectory
 
 # train-test split
 train_test_split_method: sim_idx # sim_idx | rand, sim_idx uses predefined indices, rand uses test_size value
@@ -62,7 +62,7 @@ l_dz: 0.01 #  loss weight for the dz
 l_dx: 0.0000001 #  loss weight for the dx
 l1: 0.0000000001  # L1 regularization
 l2: 0  # L2 regularization
-n_epochs: 1400 
+n_epochs: 2000 
 #   number of epochs
 batch_size: 128  # batch size
 layer_sizes_ph: # layer sizes

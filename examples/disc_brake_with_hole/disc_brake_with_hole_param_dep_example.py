@@ -125,6 +125,7 @@ def main(
         rng.shuffle(idx_sorted)
         sim_idx_train = idx_sorted[:10]
         sim_idx_test = idx_sorted[10:]
+
     create_low_freq_and_convex_data = False
     if create_low_freq_and_convex_data:
         mu_param_and_input = np.concatenate(
@@ -384,6 +385,9 @@ def main(
     )
     save_evaluation_times(disc_brake_data_id, result_dir)
 
+    # disc_brake_data.save_video_data(result_dir,data_name="video_data_pred_ref")
+    # disc_brake_data_id.save_video_data(result_dir,data_name="video_data_pred")
+
     # %% finer time discretization
     # if isinstance(system_layer, PHQLayer):
     #     J_ph, R_ph, B_ph, Q_ph = system_layer.get_system_matrices(
@@ -488,7 +492,7 @@ def main(
     # %% Train data
     use_train_data = True
     # TODO: cleanup directory code
-    result_dir_train = os.path.join(result_dir, "test")
+    result_dir_train = os.path.join(result_dir, "train")
     if not os.path.exists(result_dir_train):
         os.makedirs(result_dir_train)
     aphin_vis.plot_errors(
@@ -501,9 +505,9 @@ def main(
     )
 
     aphin_vis.single_parameter_space_error_plot(
-        disc_brake_data.TEST.state_error_list[0],
-        disc_brake_data.TEST.Mu,
-        disc_brake_data.TEST.Mu_input,
+        disc_brake_data.TRAIN.state_error_list[0],
+        disc_brake_data.TRAIN.Mu,
+        disc_brake_data.TRAIN.Mu_input,
         parameter_names=["conductivity", "density", "heat flux", "frequency"],
         save_name="",
     )
@@ -538,6 +542,14 @@ def main(
         domain_names=db_cfg["domain_names"],
         save_to_csv=False,
         yscale="log",
+    )
+
+    aphin_vis.single_parameter_space_error_plot(
+        disc_brake_data.TEST.state_error_list[0],
+        disc_brake_data.TEST.Mu,
+        disc_brake_data.TEST.Mu_input,
+        parameter_names=["conductivity", "density", "heat flux", "frequency"],
+        save_name="",
     )
 
     # avoid that the script stops and keep the plots open
@@ -713,9 +725,13 @@ def create_variation_of_parameters():
 
 
 if __name__ == "__main__":
-    calc_various_experiments = True
+    calc_various_experiments = False
     if calc_various_experiments:
-        logging.info(f"Multiple simulation runs...")
+        logging.info(
+            f"%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%"
+            "Multiple simulation runs..."
+            "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%"
+        )
         # Run multiple simulation runs defined by parameter_variavation_dict
         working_dir = os.path.dirname(__file__)
         configuration = Configuration(working_dir)
