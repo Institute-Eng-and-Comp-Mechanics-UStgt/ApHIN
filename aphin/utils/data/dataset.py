@@ -828,6 +828,21 @@ class Dataset(Data):
         data_path = os.path.join(data_dir, f"{save_name}.npz")
         np.savez_compressed(data_path, t=t, X=X, U=U, Mu=Mu, Mu_input=Mu_input)
 
+    def save_video_data(self, data_dir, data_name: str = "video_data"):
+        """TODO: write header"""
+        # rescale data
+        if self.TRAIN.is_scaled:
+            self.TRAIN.rescale_X()
+        if self.TEST.is_scaled:
+            self.TEST.rescale_X()
+        # save state data
+        logging.info(f"Saving state data for video creation.")
+        np.savez_compressed(
+            os.path.join(data_dir, f"{data_name}.npz"),
+            X_train=self.TRAIN.X,
+            X_test=self.TEST.X,
+        )
+
 
 class PHIdentifiedDataset(Dataset):
     """
