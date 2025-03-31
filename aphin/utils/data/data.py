@@ -865,8 +865,8 @@ class Data(ABC):
 
         if scaling_values is None:
             logging.warning(
-                "No scaling values are given. Scaling with maximum value. Only define the scale values for the training data set."
-                "Don't call this function without scaling_values for testing"
+                "No scaling values are given. Scaling with maximum value. Only define the scale values for the training data set. "
+                "Don't call this function without scaling_values for test data."
             )
             # split data into domains
             X_dom_list = self.split_state_into_domains(
@@ -1073,6 +1073,9 @@ class Data(ABC):
         # in case of (n_sim x n_t x n_quantity) (time-dependent) we take the minima and maxima over axis=(0, 1)
         elif Quantity.ndim == 3:
             axes = ((0, 1), 2)
+
+        # ensure Quantity is of dtype float64 - leads to error if scaled to e.g. [0,1] because int does not allow for 0.x values
+        Quantity = Quantity.astype("float64")
 
         n_q = Quantity.shape[-1]
         if desired_bounds == "max":
