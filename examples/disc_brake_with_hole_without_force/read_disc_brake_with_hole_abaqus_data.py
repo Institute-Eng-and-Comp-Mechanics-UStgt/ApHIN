@@ -55,6 +55,7 @@ def read_abaqus_data_from_txt_files(disc_brake_txt_path):
 
 if __name__ == "__main__":
     disc_brake_txt_path = "/path/to/txt/folder/"
-    disc_brake_txt_path = "/scratch/tmp/jrettberg/Projects/ApHIN_Review/disc_brake_with_hole/abaqus_data_generation/data/job_disc_brake_with_hole_without_force/txt_files/"  # TODO: remove later
-    # disc_brake_txt_path = "/scratch/tmp/jrettberg/Projects/ApHIN_Review/disc_brake_with_hole/abaqus_data_generation/data/test_folder/txt_files/"  # TODO: remove later
+    # disc_brake_txt_path = "/scratch/tmp/jrettberg/Projects/ApHIN_Review/disc_brake_with_hole/abaqus_data_generation/data/job_disc_brake_with_hole_without_force/txt_files/" t_end: 0.2 # TODO: remove later
+    # disc_brake_txt_path = "/scratch/tmp/jrettberg/Projects/ApHIN_Review/disc_brake_with_hole/abaqus_data_generation/data/test_folder/txt_files/" # t_end: 0.2 # TODO: remove later
+    disc_brake_txt_path = "/scratch/tmp/jrettberg/Projects/ApHIN_Review/disc_brake_with_hole/abaqus_data_generation/data/job_disc_brake_with_hole_without_force_large_heat_alu_10s/txt_files/"  # t_end: Null # TODO: remove later
     read_abaqus_data_from_txt_files(disc_brake_txt_path)
