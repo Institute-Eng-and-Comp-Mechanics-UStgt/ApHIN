@@ -72,7 +72,6 @@ class SystemLayer(tf.keras.layers.Layer):
         """
         pass
 
-    @tf.function
     def lhs(self, dz_dt):
         """
         Evaluate left-hand side of the system ODE given z'(t) as dz_dt.

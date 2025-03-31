@@ -8,7 +8,7 @@ import tensorflow as tf
 import matplotlib.pyplot as plt
 
 # own packages
-# from visualizer import Visualizer
+from visualizer import Visualizer
 from aphin.utils.data import PHIdentifiedDataset, DiscBrakeDataset
 from aphin.utils.save_results import (
     save_weights,
@@ -45,7 +45,7 @@ def main(
     #                         -result_folder_name     searches for a subfolder with result_folder_name under working dir that
     #                                                 includes a config.yml and .weights.h5
     #                                                 -> config for loading results
-    manual_results_folder = "final_new_data_var_exp_l_rec0.1_l_dz1_l_dx0.001"  # {None} if no results shall be loaded, else create str with folder name or path to results folder
+    manual_results_folder = None  # {None} if no results shall be loaded, else create str with folder name or path to results folder
 
     # write to config_info
     if config_path_to_file is not None:
@@ -131,8 +131,6 @@ def main(
     # transform to feature form that is used by the deep learning
     disc_brake_data.states_to_features()
     t, x, dx_dt, u, mu = disc_brake_data.data
-
-    aphin_vis.compare_x_and_x_dt(disc_brake_data, use_train_data=True, idx_gen="rand")
 
     # %% Create APHIN
     logging.info(
@@ -284,42 +282,43 @@ def main(
     ref_coords_path = os.path.join(data_dir, db_cfg["ref_coords"])
     faces = np.load(faces_path)
     ref_coords = np.load(ref_coords_path)
-    vis = Visualizer(background_color=(1, 1, 1, 0))
+    vis = Visualizer(background_color=(1, 1, 1, 1))
+    n_sim_test, n_t_test, _, _, _, _ = disc_brake_data.shape_test
 
     # rescale data
-    disc_brake_data.rescale_X()
-    disc_brake_data_id.is_scaled = True
-    disc_brake_data_id.TRAIN.is_scaled = True
-    disc_brake_data_id.TEST.is_scaled = True
-    disc_brake_data_id.scaling_values = disc_brake_data.TRAIN.scaling_values
-    disc_brake_data_id.TRAIN.scaling_values = disc_brake_data.TRAIN.scaling_values
-    disc_brake_data_id.TEST.scaling_values = disc_brake_data.TRAIN.scaling_values
-    disc_brake_data_id.rescale_X()
+    # disc_brake_data.rescale_X()
+    # disc_brake_data_id.is_scaled = True
+    # disc_brake_data_id.TRAIN.is_scaled = True
+    # disc_brake_data_id.TEST.is_scaled = True
+    # disc_brake_data_id.scaling_values = disc_brake_data.TRAIN.scaling_values
+    # disc_brake_data_id.TRAIN.scaling_values = disc_brake_data.TRAIN.scaling_values
+    # disc_brake_data_id.TEST.scaling_values = disc_brake_data.TRAIN.scaling_values
+    # disc_brake_data_id.rescale_X()
 
     disps_ref = disc_brake_data.TEST.X[:, :, :, 1:4]
-    disps_pred = disc_brake_data_id.TEST.X[:, :, :, 1:4]
-    e_disp = np.linalg.norm(disps_ref - disps_pred, axis=-1)
-    vels_ref = np.linalg.norm(disc_brake_data.TEST.X[:, :, :, 4:], axis=-1)
-    vels_pred = np.linalg.norm(disc_brake_data_id.TEST.X[:, :, :, 4:], axis=-1)
-    e_vel = np.abs(vels_ref - vels_pred)
+    # disps_pred = disc_brake_data_id.TEST.X[:, :, :, 1:4]
+    # e_disp = np.linalg.norm(disps_ref - disps_pred, axis=-1)
+    # vels_ref = np.linalg.norm(disc_brake_data.TEST.X[:, :, :, 4:], axis=-1)
+    # vels_pred = np.linalg.norm(disc_brake_data_id.TEST.X[:, :, :, 4:], axis=-1)
+    # e_vel = np.abs(vels_ref - vels_pred)
     temp_ref = disc_brake_data.TEST.X[:, :, :, 0]
-    temp_pred = disc_brake_data_id.TEST.X[:, :, :, 0]
-    e_temp = np.abs(temp_ref - temp_pred)
+    # temp_pred = disc_brake_data_id.TEST.X[:, :, :, 0]
+    # e_temp = np.abs(temp_ref - temp_pred)
 
     # anim settings
     camera_distance = 0.2
     view = [45, 0]
-    temp_max = 1500
+    temp_max = temp_ref.max()
     video_dir = os.path.join(result_dir, "videos")
     if not os.path.exists(video_dir):
         os.makedirs(video_dir)
 
-    ampl = 400
+    ampl = 40000
     time_ids = np.arange(n_t_test - 1, n_t_test, 1)
 
-    e_temp_max = e_temp.max()  # e_temp.mean() + 3 * e_temp.std()
-    e_disp_max = e_disp.max()  # e_disp.mean() + 3 * e_disp.std()
-    e_vel_max = e_vel.max()  # e_vel.mean() + 3 * e_vel.std()
+    # e_temp_max = e_temp.max()  # e_temp.mean() + 3 * e_temp.std()
+    # e_disp_max = e_disp.max()  # e_disp.mean() + 3 * e_disp.std()
+    # e_vel_max = e_vel.max()  # e_vel.mean() + 3 * e_vel.std()
 
     videos = dict(
         ref=dict(
@@ -328,54 +327,54 @@ def main(
             color_scale_limits=[0, temp_max],
             colormap="plasma",
         ),
-        pred=dict(
-            disps=disps_pred,
-            color=temp_pred,
-            color_scale_limits=[0, temp_max],
-            colormap="plasma",
-        ),
-        e_disp=dict(
-            disps=disps_pred,
-            color=e_disp,
-            color_scale_limits=[0, e_disp_max],
-            colormap="viridis",
-        ),
-        e_vel=dict(
-            disps=disps_pred,
-            color=e_vel,
-            color_scale_limits=[0, e_vel_max],
-            colormap="viridis",
-        ),
-        e_temp=dict(
-            disps=disps_pred,
-            color=e_temp,
-            color_scale_limits=[0, e_temp_max],
-            colormap="viridis",
-        ),
+        # pred=dict(
+        #     disps=disps_pred,
+        #     color=temp_pred,
+        #     color_scale_limits=[0, temp_max],
+        #     colormap="plasma",
+        # ),
+        # e_disp=dict(
+        #     disps=disps_pred,
+        #     color=e_disp,
+        #     color_scale_limits=[0, e_disp_max],
+        #     colormap="viridis",
+        # ),
+        # e_vel=dict(
+        #     disps=disps_pred,
+        #     color=e_vel,
+        #     color_scale_limits=[0, e_vel_max],
+        #     colormap="viridis",
+        # ),
+        # e_temp=dict(
+        #     disps=disps_pred,
+        #     color=e_temp,
+        #     color_scale_limits=[0, e_temp_max],
+        #     colormap="viridis",
+        # ),
     )
 
     # save colorbar limits
-    np.savetxt(
-        os.path.join(result_dir, f"colorbar_limits.csv"),
-        np.array(
-            [
-                e_temp_max,
-                e_disp_max,
-                e_vel_max,
-            ]
-        ),
-        delimiter=",",
-        header="temp,disp,vel",
-        comments="",
-    )
-
+    # np.savetxt(
+    #     os.path.join(result_dir, f"colorbar_limits.csv"),
+    #     np.array(
+    #         [
+    #             e_temp_max,
+    #             e_disp_max,
+    #             e_vel_max,
+    #         ]
+    #     ),
+    #     delimiter=",",
+    #     header="temp,disp,vel",
+    #     comments="",
+    # )
+    n_th_time = 3
     for sim_id in range(n_sim_test):
         for key, video_setting in videos.items():
             print(key)
             vis.animate(
-                ampl * disps_ref[sim_id, time_ids] + ref_coords[:, 1:],
+                ampl * disps_ref[sim_id,::n_th_time] + ref_coords,
                 faces=faces,
-                color=video_setting["color"][sim_id, time_ids],
+                color=video_setting["color"][sim_id,::n_th_time],
                 camera_distance=camera_distance,
                 colormap=video_setting["colormap"],
                 color_scale_limits=video_setting["color_scale_limits"],
@@ -385,6 +384,7 @@ def main(
                 animation_name=os.path.join(video_dir, f"{key}_sim_{sim_id}"),
                 close_on_end=True,
             )
+
 
 
 # parameter variation for multiple experiment runs

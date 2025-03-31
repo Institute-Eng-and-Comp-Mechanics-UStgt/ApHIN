@@ -18,13 +18,9 @@ from aphin.utils.transformations import (
     reshape_inputs_to_features,
     reshape_features_to_states,
 )
-from aphin.systems.ph_systems import PHSystem
-from aphin.systems.ph_systems import DescrPHSystem
-from aphin.identification import PHIN
-from aphin.identification import APHIN
-from aphin.layers.ph_layer import PHLayer
-from aphin.layers.phq_layer import PHQLayer
-from aphin.layers.descriptor_ph_layer import DescriptorPHLayer, DescriptorPHQLayer
+from aphin.systems import PHSystem, DescrPHSystem
+from aphin.identification import PHIN, APHIN
+from aphin.layers import PHLayer, PHQLayer, LTILayer, DescriptorPHLayer, DescriptorPHQLayer
 
 
 class Data(ABC):
@@ -93,6 +89,8 @@ class Data(ABC):
 
         if self.n_t != len(t):
             raise ValueError("number of time steps in t and in states X does not match")
+        if t.ndim == 1:
+            t = t[:, np.newaxis]
         self.t = t
 
         self.X = X
@@ -524,11 +522,11 @@ class Data(ABC):
         t = data["t"]
         U, X_dt, Mu, J, R, Q, B, Mu_input = [None] * 8
         if "X_dt" in data.keys():
-            X_dt = data["X_dt"]
+            X_dt = data["X_dt"] if np.any(data["X_dt"])else None
         if "U" in data.keys():
-            U = data["U"]
+            U = data["U"] if np.any(data["U"]) else None
         if "Mu" in data.keys():
-            Mu = data["Mu"]
+            Mu = data["Mu"] if np.any(data["Mu"]) else None
         # matrices in format (r,r,n_sim)
         if "J" in data.keys():
             J = data["J"]
@@ -1911,6 +1909,16 @@ class PHIdentifiedData(Data):
                 np.expand_dims(Z_dt_ph[i_sim], axis=0),
             )
 
+
+            # z_ref = ph_network.encode(data.x[i_sim*1001:(i_sim+1)*1001]).numpy()
+            # import matplotlib.pyplot as plt
+            # i_state = 6
+            # plt.figure()
+            # plt.plot(Z_ph[i_sim, :, i_state])
+            # plt.plot(z_ref[:, i_state])
+            # plt.show()
+
+
             # DECODING
             if isinstance(ph_network, APHIN):
                 # decode time integrated latent state
@@ -2065,7 +2073,7 @@ class PHIdentifiedData(Data):
                 data.mu, n_t=data.n_t
             )
             E_ph = None
-        elif isinstance(system_layer, PHLayer):
+        elif isinstance(system_layer, PHLayer) or isinstance(system_layer, LTILayer):
             J_ph, R_ph, B_ph = system_layer.get_system_matrices(data.mu, n_t=data.n_t)
             Q_ph = None
             E_ph = None

@@ -4,11 +4,11 @@ setup_matplotlib: False  # Show plots and visualization
 
 # %% General identification framework settings
 experiment: final_new_data_var_exp_l_rec0.1_l_dz1_l_dx0.001 #    name of the experiment
-load_network: True  # train the network or load the last pre-trained one
-sim_name: /Users/jonaskneifl/Develop/26_ApHIN/examples/disc_brake/data/sim_onlyHeat_1Point_smallHalton_newQ_d3_samp100.npz  # sim_onlyHeat_1Point_smallHalton_d3_samp100
+load_network: False  # train the network or load the last pre-trained one
+sim_name: /Users/jonaskneifl/Develop/27_ApHIN_fork/examples/disc_brake_2/data/disc_brake_with_hole_very_small_with_vel.npz  # sim_onlyHeat_1Point_smallHalton_d3_samp100
 file_url: https://darus.uni-stuttgart.de/api/access/datafile/:persistentId?persistentId=doi:10.18419/darus-4418/1
-ref_coords: disc_ref_coords.npy
-faces:  disc_faces.npy
+ref_coords: /Users/jonaskneifl/Develop/27_ApHIN_fork/examples/disc_brake/data/nodes.npy
+faces:  /Users/jonaskneifl/Develop/27_ApHIN_fork/examples/disc_brake/data/faces.npy
 
 seed: 1 #  For reproducibility
 
@@ -21,14 +21,14 @@ desired_bounds: [0, 1]   # desired bounds after scaling for u and mu
 use_velocities: True
 
 # decrease number of simulations
-num_sim: 48 # Null if number of simulations should not be decreased or integer with the target number of simulations
+num_sim: Null # Null if number of simulations should not be decreased or integer with the target number of simulations
 
 # decrease number of time steps
 num_time_steps: Null # {Null} if number of time steps should not be decreases or integer with the target number of time steps per trajectory
 
 # train-test split
 train_test_split_method: rand # sim_idx | rand, sim_idx uses predefined indices, rand uses test_size value
-test_size: 20
+test_size: 2
 
 # filter data (using a savgol filter)
 filter_data: False 

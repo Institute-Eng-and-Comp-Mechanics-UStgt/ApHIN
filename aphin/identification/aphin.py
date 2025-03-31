@@ -264,12 +264,16 @@ class APHIN(PHBasemodel):
         if self.use_pca:
             # calculate the PCA
             pca = TruncatedSVD(n_components=self.pca_order)
-            x = pca.fit_transform(x)
+            pca.fit(x)
             # use the projection matrix as linear encoder
             self.down = tf.cast(pca.components_, dtype=self.dtype_)
             self.up = tf.cast(pca.components_.T, dtype=self.dtype_)
             self.singular_values = pca.singular_values_
             z_pca = x_input @ tf.transpose(self.down)
+            # compute relative reconstruction error
+            x_rec = pca.inverse_transform(pca.transform(x))
+            x_rel = np.linalg.norm(x - x_rec) / np.linalg.norm(x)
+            logging.info(f"Relative reconstruction error of PCA: {x_rel:.4g}")
         # in case no PCA is used, the encoder is just the identity
         else:
             z_pca = x_input * 1
@@ -530,7 +534,6 @@ class APHIN(PHBasemodel):
 
         return x.numpy(), dx_dt.numpy()
 
-    @tf.function
     def _get_loss_rec(self, x, dx_dt, u, mu):
         """
         Calculate reconstruction loss of autoencoder.
@@ -568,7 +571,6 @@ class APHIN(PHBasemodel):
 
         return rec_loss, dz_loss, dx_loss, reg_loss, total_loss
 
-    @tf.function
     def _get_loss(self, x, dx_dt, u, mu):
         """
         Calculate loss.
@@ -773,7 +775,6 @@ class APHIN(PHBasemodel):
         fig.tight_layout()
         plt.show(block=block)
 
-    # @tf.function
     def encode(self, x):
         """
         Encode full state.
@@ -791,7 +792,6 @@ class APHIN(PHBasemodel):
         z = self.encoder(x)
         return z
 
-    # @tf.function
     def decode(self, z):
         """
         Decode latent variable.
@@ -809,7 +809,6 @@ class APHIN(PHBasemodel):
         x_rec = self.decoder(z)
         return x_rec
 
-    # @tf.function
     def reconstruct(self, x, _=None):
         """
         Reconstruct full state.

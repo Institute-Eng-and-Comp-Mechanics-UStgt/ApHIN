@@ -46,7 +46,7 @@ class CheckPHProperties:
         """
 
         J_check = np.allclose(J, -J.T, rtol=rtol, atol=atol)
-        R_check = self.check_spd(R)
+        R_check = self.check_spd(R.copy())
 
         if E is None:
             E = np.eye(J.shape[0])
@@ -130,13 +130,19 @@ class PHSystem(LTISystem, CheckPHProperties):
         Q_ph : array-like, shape (n, n), optional
             The Q matrix associated with the port-Hamiltonian system. If not provided, the identity matrix is used.
         """
-        self.J_ph = np.squeeze(J_ph)
-        self.R_ph = np.squeeze(R_ph)
+        if J_ph.shape[0]==1:
+            J_ph = np.squeeze(J_ph, axis=0)
+        self.J_ph = J_ph
+        if R_ph.shape[0]==1:
+            R_ph = np.squeeze(R_ph, axis=0)
+        self.R_ph = R_ph
         if Q_ph is None:
             self.Q_ph = np.eye(*self.J_ph.shape)
             self.Q_is_identity = True
         else:
-            self.Q_ph = np.squeeze(Q_ph)
+            if Q_ph.shape[0]==1:
+                Q_ph = np.squeeze(Q_ph, axis=0)
+            self.Q_ph = Q_ph
             self.Q_is_identity = False
         assert self.J_ph.shape[0] == self.J_ph.shape[1]
         assert self.R_ph.shape[0] == self.R_ph.shape[1]

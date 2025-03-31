@@ -1,7 +1,7 @@
 model_name: msd
 
-experiment: msd_interpolation_data_multExp # name of the experiment
-sim_name: MSD_Qeye_ph_input_siso_matrix_interpolation.npz # name of data  msd_state_ICrand_Qeye_autonomous_n3_m4.npz
+experiment: msd_interpolation_data_mass_vals # name of the experiment
+sim_name: MSD_Qeye_ph_input_siso.npz # name of data  msd_state_ICrand_Qeye_autonomous_n3_m4.npz
 load_network: False  # train the network or load the last pre-trained one
 
 seed: 1  # For reproducibility

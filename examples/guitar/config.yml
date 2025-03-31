@@ -1,0 +1,60 @@
+experiment: time_truncation_pca_domain_1
+setup_matplotlib: True  # Show plots and visualization pca_per_domain_low_variance_r_20
+
+matfile_path: /Users/jonaskneifl/Develop/27_ApHIN_fork/examples/guitar/SnapshotDataFOM_Mom.mat
+
+# %% General identification framework settings
+load_network: False  # train the network or load a pre-trained one
+
+# for reproducability
+seed: 100
+# decrease number of simulations
+num_sim: 1
+
+exclude_states: Null
+
+# filter data (using a savgol filter)
+filter_data: False 
+
+
+# scaling
+# scaling_values: [1,1,1,1] 
+# domain_split_vals: (list) integers that define the number of dofs for each domain, sum of all values needs to conincide with n_dn. If {None} it is considered as a single domain
+domain_split_vals: [1]
+domain_split_vals_: [2454,3170,2454,3170]
+domain_names: ["all"]
+domain_names_: ["mech","acoustic","Dmech","Dacoustic"]
+#scaling_values: [0.24518286954037954, 0.017109124553781923, 0.24518286954037954, 0.017109124553781923] #
+scaling_values: [0.017109124553781923, 0.2540585013834292, 0.0010648286597949724, 1.757633990132496e-08] #
+#scaling_values: [0.01068097493552507, 0.004821828310409735, 4.638745050671555e-05, 4.953502621550509e-09] #
+desired_bounds: [-1, 1]   # desired bounds after scaling for u and mu
+test_size: 0.4  # test size for train-test split
+
+
+# %% identification settings
+r: 16
+use_pca: False  # use PCA for the input
+n_pca_per_domain: 1  # number of PCA components
+n_pca: 30  # number of PCA components
+pca_scaling: False  # scale the PCA components
+pca_comparison: False
+pca_only: False  # only use PCA components without nonlinear autoencoder
+l_rec: 1 #  loss weight for the reconstruction
+l_dz:  0.0005 #  loss weight for the dz
+l_dx:  0.000000000 #  loss weight for the dx
+l1: 0  # L1 regularization
+l2: 0  # L2 regularization
+n_epochs: 3000 #  number of epochs
+batch_size: 256  # batch size
+layer_sizes_ph: # layer sizes
+  - 32  # first layer
+  - 32  # second layer
+  - 32  # third layer
+layer_sizes_ae: # layer sizes
+  - 32  # first layer
+  - 32 # second layer
+  - 32  # third layer
+activation_ae: elu  # activation function
+activation_ph: elu  # activation function
+lr: 0.001  # learning rate
+tensorboard: False  # Save model information for analysis in tensorboard
