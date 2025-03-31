@@ -50,7 +50,7 @@ def main(
     #                         -result_folder_name     searches for a subfolder with result_folder_name under working dir that
     #                                                 includes a config.yml and .weights.h5
     #                                                 -> config for loading results
-    manual_results_folder = None  # {None} if no results shall be loaded, else create str with folder name or path to results folder
+    manual_results_folder = "db_large_heat_new_first_try"  # {None} if no results shall be loaded, else create str with folder name or path to results folder
 
     # write to config_info
     if config_path_to_file is not None:
@@ -126,6 +126,8 @@ def main(
             db_cfg["sim_name"] == "disc_brake_with_hole_small_with_vel"
             or db_cfg["sim_name"]
             == "disc_brake_with_hole_small_with_vel_small_time_steps"
+            or db_cfg["sim_name"]
+            == "disc_brake_with_hole_without_force_small_data_large_heat"
         ):
             # small
             sim_idx_train = np.arange(10)
@@ -144,7 +146,9 @@ def main(
             sim_idx_train = [0]
             sim_idx_test = [1]
         else:
-            raise ValueError(f"Unknown sim name.")
+            logging.warning(
+                f"!!!!!!!!!!!!!!!!!!!!!!!! Unknown sim name. !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+            )
         disc_brake_data.train_test_split_sim_idx(sim_idx_train, sim_idx_test)
     elif train_test_split_method == "rand":
         test_size = db_cfg["test_size"]
@@ -166,7 +170,8 @@ def main(
 
     # save smaller version of data for faster loading times
     # disc_brake_data.save_data_conc(
-    #     data_dir=data_dir, save_name=f"disc_brake_with_hole_small_with_vel_small_time_steps"
+    #     data_dir=data_dir,
+    #     save_name=f"disc_brake_with_hole_without_force_small_data_large_heat",
     # )
 
     # scale data
@@ -385,10 +390,16 @@ def main(
         disc_brake_data,
         system_layer,
         aphin,
-        integrator_type="lsim",
+        integrator_type="imr",
         calc_u_midpoints=True,
     )
     save_evaluation_times(disc_brake_data_id, result_dir)
+
+    # save states for 3d visualisation
+    save_video_data = False
+    if save_video_data:
+        disc_brake_data.save_video_data(result_dir, data_name="video_data_ref")
+        disc_brake_data_id.save_video_data(result_dir, data_name="video_data_pred")
 
     # %% finer time discretization
     # if isinstance(system_layer, PHQLayer):
@@ -500,6 +511,22 @@ def main(
         yscale="log",
     )
 
+    aphin_vis.single_parameter_space_error_plot(
+        disc_brake_data.TEST.state_error_list[0],
+        disc_brake_data.TEST.Mu,
+        disc_brake_data.TEST.Mu_input,
+        parameter_names=["conductivity", "density", "heat flux"],
+        save_name="",
+    )
+
+    aphin_vis.single_parameter_space_error_plot(
+        disc_brake_data.TRAIN.state_error_list[0],
+        disc_brake_data.TRAIN.Mu,
+        disc_brake_data.TRAIN.Mu_input,
+        parameter_names=["conductivity", "density", "heat flux"],
+        save_name="",
+    )
+
     # %% plot trajectories
     idx_gen = "rand"
     aphin_vis.plot_time_trajectories_all(
@@ -510,15 +537,15 @@ def main(
         result_dir=result_dir,
     )
 
-    node = 1432
-    node = np.random.randint(0, 2250)
-    plt.figure()
-    plt.plot(disc_brake_data.TRAIN.X[1, :, node, :])
-    plt.plot(disc_brake_data_id.TRAIN.X_rec[1, :, node, :], "-.")
-    legend = [f"dof{i}" for i in range(7)]
-    legend.extend([f"rec{i}" for i in range(7)])
-    plt.legend()
-    plt.show(block=True)
+    # node = 1432
+    # node = np.random.randint(0, 2250)
+    # plt.figure()
+    # plt.plot(disc_brake_data.TRAIN.X[1, :, node, :])
+    # plt.plot(disc_brake_data_id.TRAIN.X_rec[1, :, node, :], "-.")
+    # legend = [f"dof{i}" for i in range(7)]
+    # legend.extend([f"rec{i}" for i in range(7)])
+    # plt.legend()
+    # plt.show(block=True)
 
     # avoid that the script stops and keep the plots open
     # plt.show()
@@ -684,10 +711,11 @@ def main(
 # requires calc_various_experiments = True
 def create_variation_of_parameters():
     parameter_variation_dict = {
-        "n_epochs": [2000, 12000],
-        "l_dx": [0.000001, 0],
-        "r": [16, 30, 60],
-        "ph_layer": ["ph", "phq"],
+        "l_dz": [1, 10, 0.1],
+        "l_dx": [0, 0.1, 0.000001],
+        "l_rec": [1, 10, 0.1],
+        "r": [8, 16],
+        # "ph_layer": ["ph", "phq"],
     }
     return parameter_variation_dict
 

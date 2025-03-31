@@ -3,13 +3,13 @@ setup_matplotlib: False  # Show plots and visualization
 
 
 # %% General identification framework settings
-experiment: db_without_force_test #    name of the experiment
+experiment: db_large_heat_new_second_try #    name of the experiment
 load_network: False  # train the network or load the last pre-trained one
-sim_name: disc_brake_with_hole #disc_brake_with_hole_very_small_with_vel  # sim_onlyHeat_1Point_smallHalton_d3_samp100
+sim_name: disc_brake_with_hole_without_force_small_data_large_heat #disc_brake_with_hole_very_small_with_vel  # sim_onlyHeat_1Point_smallHalton_d3_samp100
 file_url: https://darus.uni-stuttgart.de/api/access/datafile/:persistentId?persistentId=doi:10.18419/darus-4418/1
 ref_coords: disc_ref_coords.npy
 faces:  disc_faces.npy
-t_end: 0.2 # truncate when reading from .txt to reduce data memory
+t_end: Null # truncate when reading from .txt to reduce data memory
 num_time_steps_load: Null # {Null} - use only for loading once, define integer number of target time steps
 
 
@@ -46,7 +46,7 @@ order: 1
 cut_time_start_and_end: True
 
 # %% Disc brake data settings (get information from loaded data)
-n_u: 3      # number of inputs
+n_u: 1      # number of inputs
 n_mu: 2     # number of parameters (not varying inputs)
 
 ph_layer: phq   # ph | phq
@@ -60,12 +60,12 @@ n_pca: 32  # number of PCA components
 pca_scaling: False  # scale the PCA components
 pca_comparison: True
 pca_only: False  # only use PCA components without nonlinear autoencoder
-l_rec: 0.1 #  loss weight for the reconstruction
-l_dz: 1 #  loss weight for the dz
-l_dx: 0.001 #  loss weight for the dx
+l_rec: 1 #  loss weight for the reconstruction
+l_dz: 0.1 #  loss weight for the dz
+l_dx: 0.1 #  loss weight for the dx
 l1: 0.0000000001  # L1 regularization
 l2: 0  # L2 regularization
-n_epochs: 4000 
+n_epochs: 2000 
 #   number of epochs
 batch_size: 128  # batch size
 layer_sizes_ph: # layer sizes
