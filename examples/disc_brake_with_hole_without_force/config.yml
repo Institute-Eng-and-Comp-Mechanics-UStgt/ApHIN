@@ -3,25 +3,28 @@ setup_matplotlib: False  # Show plots and visualization
 
 
 # %% General identification framework settings
-experiment: db_with_hole_small_data_multExp_prayers #    name of the experiment
+experiment: db_large_heat_new_second_try #    name of the experiment
 load_network: False  # train the network or load the last pre-trained one
-sim_name: disc_brake_with_hole_small_with_vel  # sim_onlyHeat_1Point_smallHalton_d3_samp100
+sim_name: disc_brake_with_hole_without_force_small_data_large_heat #disc_brake_with_hole_very_small_with_vel  # sim_onlyHeat_1Point_smallHalton_d3_samp100
 file_url: https://darus.uni-stuttgart.de/api/access/datafile/:persistentId?persistentId=doi:10.18419/darus-4418/1
 ref_coords: disc_ref_coords.npy
 faces:  disc_faces.npy
-t_end: 0.2 # truncate when reading from .txt to reduce data memory
+t_end: Null # truncate when reading from .txt to reduce data memory
+num_time_steps_load: Null # {Null} - use only for loading once, define integer number of target time steps
+
 
 seed: 1 #  For reproducibility
 
 # scaling_values: (list) scalar scalar values that each domain, defined by domain_split_vals, should be scaled with, if {None} it is scaled by the maximum value of each domain
 scaling_values: Null #[1000,0.00001,0.00001] #[theta_scaling, disp_scaling, optional: velocity_scaling]
 # domain_split_vals: (list) integers that define the number of dofs for each domain, sum of all values needs to conincide with n_dn. If {None} it is considered as a single domain
-domain_split_vals: [1,3,3] # [theta, displacement, optional: velocity]
-domain_names: ["temp","disp","vel"]
 # domain_split_vals: [1,3] # [theta, displacement, optional: velocity]
 # domain_names: ["temp","disp"]
+domain_split_vals: [1,3,3] # [theta, displacement, optional: velocity]
+domain_names: ["temp","disp","vel"]
 desired_bounds: [0, 1]   # desired bounds after scaling for u and mu
 use_velocities: False # might be included in data already
+use_savgol: False # load data with savgol
 
 # decrease number of simulations
 num_sim: Null # Null if number of simulations should not be decreased or integer with the target number of simulations
@@ -37,46 +40,44 @@ test_size: 20 # required for rand
 filter_data: False 
 interp_equidis_t: True
 window: 20
-order: 3
+order: 1
 
 # cut start and end data
 cut_time_start_and_end: True
 
 # %% Disc brake data settings (get information from loaded data)
-n_u: 3      # number of inputs
+n_u: 1      # number of inputs
 n_mu: 2     # number of parameters (not varying inputs)
 
-ph_layer: ph   # ph | phq
+ph_layer: phq   # ph | phq
 
 # %% identification settings
 r: 16 
 #   reduced order
 use_pca: True 
 #  use PCA for the input
-n_pca: 60  # number of PCA components
+n_pca: 32  # number of PCA components
 pca_scaling: False  # scale the PCA components
 pca_comparison: True
 pca_only: False  # only use PCA components without nonlinear autoencoder
 l_rec: 1 #  loss weight for the reconstruction
-l_dz: 0.01 #  loss weight for the dz
-l_dx: 0.000001 #  loss weight for the dx
-l1: 0  # L1 regularization
+l_dz: 0.1 #  loss weight for the dz
+l_dx: 0.1 #  loss weight for the dx
+l1: 0.0000000001  # L1 regularization
 l2: 0  # L2 regularization
 n_epochs: 2000 
 #   number of epochs
 batch_size: 128  # batch size
 layer_sizes_ph: # layer sizes
   - 32  # first layer
-  - 64  # second layer
-  - 128  # third layer
+  - 32  # second layer
+  - 32  # third layer
 layer_sizes_ae: # layer sizes
-  - 60  # first layer
-  - 50  # first layer
-  - 40 # second layer
-  - 30  # third layer
-  # - 16  # third layer
-activation_ae: selu  # activation function
-activation_ph: selu  # activation function
-lr: 0.000025  # learning rate
+  - 32  # first layer
+  - 24 # second layer
+  - 16  # third layer
+activation_ae: elu  # activation function
+activation_ph: elu  # activation function
+lr: 0.00025  # learning rate
 tensorboard: False  # Save model information for analysis in tensorboard
 save_many_weights: False

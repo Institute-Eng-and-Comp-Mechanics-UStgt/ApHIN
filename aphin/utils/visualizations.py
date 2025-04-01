@@ -1197,10 +1197,8 @@ def plot_u(
         num_plots = num_plots_max
 
     fig, ax = new_fig(num_plots, window_title="Input u")
-    # make axis plot at least 2d
     if num_plots == 1:
         ax = [ax]
-    plt.title("Inputs")
     ax[0].set_title("Inputs")
     for i_u in range(num_plots):
         ax[i_u].plot(u[:, i_u], label=rf"$u_{i_u}$")
@@ -1229,6 +1227,7 @@ def plot_errors(
     domain_names=None,
     save_to_csv=False,
     yscale="linear",
+    create_train_test_subfolder: bool = False,
 ):
     """
     Generates and saves plots of RMS errors for state and latent errors from the given dataset.
@@ -1274,6 +1273,14 @@ def plot_errors(
         data = data.TRAIN
     else:
         data = data.TEST
+
+    if create_train_test_subfolder:
+        if use_train_data:
+            result_dir = os.path.join(result_dir, "train")
+        else:
+            result_dir = os.path.join(result_dir, "test")
+        if not os.path.exists(result_dir):
+            os.makedirs(result_dir)
 
     # plot state error
     if domain_names is None:
@@ -1681,16 +1688,40 @@ def plot_x(num_plots, x, x_id, idx_n_f, variable_names, save_name=None, save_pat
     if bar_plot_all_features:
         fig, ax = new_fig(1, window_title=save_name)
         # use norm
-        rel_error_for_each_state = (np.linalg.norm(x - x_id, axis=0)) / np.linalg.norm(
-            x, axis=0
-        )
+        normalization_value = np.linalg.norm(x, axis=0).clip(
+            1e-10
+        )  # set threshold to 1e-10
+        rel_error_for_each_state = (
+            np.linalg.norm(x - x_id, axis=0)
+        ) / normalization_value
+        domain_names = ["T", "disp_x", "disp_y", "disp_z", "vel_x", "vel_y", "vel_z"]
+        if domain_names is not None:
+            num_groups = rel_error_for_each_state.shape[0] // len(
+                domain_names
+            )  # should equal number of nodes
+            colors = ["red", "blue", "green", "cyan", "purple", "black", "pink"]
+            color_list = colors[: len(domain_names)] * num_groups
+            label_list = domain_names
+            label_list.extend(
+                [f"_{domain_name}" for domain_name in domain_names] * (num_groups - 1)
+            )
+        else:
+            color_list = None
+            label_list = None
         # use max
         # rel_error_for_each_state = np.max(np.abs(x - x_id), axis=0) / np.max(
         #     np.abs(x), axis=0
         # )
         # np.savetxt(f"error_for_each_state_{save_name}", rel_error_for_each_state)
-        plt.bar(np.arange(x.shape[1]) + 1, rel_error_for_each_state, log=True)
+        plt.bar(
+            np.arange(x.shape[1]) + 1,
+            rel_error_for_each_state,
+            log=True,
+            color=color_list,
+            label=label_list,
+        )
         plt.xlabel("features")
+        plt.legend()
         plt.title(f"{save_name}")
         plt.show(block=False)
         save_as_png(os.path.join(save_path, f"bar_error_{save_name}"))
@@ -2025,6 +2056,7 @@ def plot_time_trajectories_all(
     idx_gen="rand",
     result_dir="",
     idx_custom_tuple: list[tuple] | None = None,
+    create_train_test_subfolder: bool = False,
 ):
     """
     Generates and saves a series of plots comparing and reconstructing time trajectories of state and latent features.
@@ -2060,6 +2092,14 @@ def plot_time_trajectories_all(
     None
         The function does not return anything. It generates and displays plots, and optionally saves them to files.
     """
+    if create_train_test_subfolder:
+        if use_train_data:
+            result_dir = os.path.join(result_dir, "train")
+        else:
+            result_dir = os.path.join(result_dir, "test")
+        if not os.path.exists(result_dir):
+            os.makedirs(result_dir)
+
     state_functions = [
         plot_X_comparison,
         plot_X_dt_comparison,
@@ -2443,13 +2483,6 @@ def compare_x_and_x_dt(
     data, use_train_data=True, idx_gen="rand", idx_custom_tuple=None
 ):
 
-    # if use_train_data:
-    #     data = getattr(data,"TRAIN")
-    # else:
-    #     data = getattr(data,"TEST")
-    # x = data.x
-    # dx_dt = data.dx_dt
-
     t, x, dx_dt, _, _, _, idx_n_f, num_plots = get_quantities_of_interest(
         data,
         "x",
@@ -2459,6 +2492,8 @@ def compare_x_and_x_dt(
         idx_gen,
         idx_custom_tuple=idx_custom_tuple,
     )
+
+    idx_n_f.append(1842 * 4 + 3)
 
     num_plots = 2
     fig, ax = new_fig(num_plots, window_title="")
@@ -2472,6 +2507,7 @@ def compare_x_and_x_dt(
         ax[i].plot(x_or_x_dt[:, idx_n_f])
         ax[i].grid(linestyle=":", linewidth=1)
         ax[i].set_title(title)
+        ax[i].legend([f"x{i_n_f}" for i_n_f in idx_n_f])
     plt.xlabel(f"Time")
     plt.show(block=False)
     # save_as_png(os.path.join(result_dir, save_name_coeff))

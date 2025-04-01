@@ -39,6 +39,8 @@ from state_space_ph.matrix_interpolation import (
     in_hull,
 )
 from aphin.systems import LTISystem, PHSystem
+from aphin.utils.experiments import run_various_experiments
+
 
 # tf.config.run_functions_eagerly(True)
 
@@ -152,7 +154,7 @@ def phin_learning(
     return msd_data_id, system_layer, phin
 
 
-def main(config_path_to_file=None):
+def main(config_path_to_file=None, only_usual_phin: bool = False):
     # {None} if no config file shall be loaded, else create str with path to config file
     # %% Configuration
     logging.info(f"Loading configuration")
@@ -253,7 +255,7 @@ def main(config_path_to_file=None):
         msd_cfg,
         configuration.directories,
         dir_extension="usual_phin ",
-        layer=msd_cfg["layer"],
+        layer=msd_cfg["ph_layer"],
     )
 
     result_dir_usual_phin = f"{result_dir}_usual_phin"
@@ -277,6 +279,9 @@ def main(config_path_to_file=None):
         parameter_names=["mass", "stiff", "omega", "delta"],
         save_name="",
     )
+
+    if only_usual_phin:
+        return
 
     load_matrices = False
     if load_matrices:
@@ -529,7 +534,39 @@ def main(config_path_to_file=None):
     fig.show()
 
 
+def create_variation_of_parameters():
+    parameter_variation_dict = {
+        "n_epochs": [1500, 6000],
+        "l1": [0.0000001, 0.00001, 0.000000001],
+        "ph_layer": ["ph_layer", "phq_layer"],
+    }
+    return parameter_variation_dict
+
+
 if __name__ == "__main__":
     working_dir = os.path.dirname(__file__)
-    config_file_path = os.path.join(working_dir, "config_msd_matrix_interpolation.yml")
-    main(config_file_path)
+    calc_various_experiments = True
+    if calc_various_experiments:
+        logging.info(f"Multiple simulation runs...")
+        # Run multiple simulation runs defined by parameter_variavation_dict
+        configuration = Configuration(working_dir)
+        _, log_dir, _, result_dir = configuration.directories
+
+        only_usual_phin = True
+        run_various_experiments(
+            experiment_main_script=main,  # main without parentheses
+            parameter_variation_dict=create_variation_of_parameters(),
+            basis_config_yml_path=os.path.join(
+                os.path.dirname(__file__), "config_msd_matrix_interpolation.yml"
+            ),
+            result_dir=result_dir,
+            log_dir=log_dir,
+            force_calculation=False,
+            only_usual_phin=only_usual_phin,
+        )
+    else:
+        # use standard config file - single run
+        config_file_path = os.path.join(
+            working_dir, "config_msd_matrix_interpolation.yml"
+        )
+        main(config_file_path)

@@ -3,6 +3,8 @@ import numpy as np
 import logging
 import os
 import scipy
+from scipy.spatial import ConvexHull
+
 
 # third party packages
 import tensorflow as tf
@@ -50,7 +52,7 @@ def main(
     #                         -result_folder_name     searches for a subfolder with result_folder_name under working dir that
     #                                                 includes a config.yml and .weights.h5
     #                                                 -> config for loading results
-    manual_results_folder = "db_with_hole_very_small_data_with_dynamics_multExp_n_epochs4000_l_dz1_l_dx1e-05"  # {None} if no results shall be loaded, else create str with folder name or path to results folder
+    manual_results_folder = None  # {None} if no results shall be loaded, else create str with folder name or path to results folder
 
     # write to config_info
     if config_path_to_file is not None:
@@ -115,11 +117,39 @@ def main(
     else:
         logging.info("Data is not filtered.")
 
+    # For data creation: choose low frequency (10+5 trajectories)
+    create_low_freq_data = False
+    if create_low_freq_data:
+        idx_sorted = np.argsort(disc_brake_data.Mu_input[:, 1])[:15]
+        rng = np.random.default_rng(seed=db_cfg["seed"])
+        rng.shuffle(idx_sorted)
+        sim_idx_train = idx_sorted[:10]
+        sim_idx_test = idx_sorted[10:]
+
+    create_low_freq_and_convex_data = False
+    if create_low_freq_and_convex_data:
+        mu_param_and_input = np.concatenate(
+            (disc_brake_data.Mu, disc_brake_data.Mu_input), axis=1
+        )
+        low_freq_idx_sorted = np.argsort(disc_brake_data.Mu_input[:, 1])[:25]
+        mu_param_and_input_low_freq = mu_param_and_input[low_freq_idx_sorted]
+        hull_convex = ConvexHull(mu_param_and_input_low_freq)
+        sim_idx_train = low_freq_idx_sorted[
+            hull_convex.vertices
+        ]  # parameters that define the convex hull
+        sim_idx_test = low_freq_idx_sorted[
+            np.setdiff1d(
+                np.arange(mu_param_and_input_low_freq.shape[0]), hull_convex.vertices
+            )
+        ]  # parameters inside the convex hull
     # %%
     # split into train and test data
     train_test_split_method = db_cfg["train_test_split_method"]
     if train_test_split_method == "sim_idx":
-        if db_cfg["sim_name"] == "disc_brake_with_hole_small_with_vel":
+        if (
+            db_cfg["sim_name"] == "disc_brake_with_hole_small_with_vel"
+            or db_cfg["sim_name"] == "disc_brake_with_hole_small_with_vel_low_freq"
+        ):
             # small
             sim_idx_train = np.arange(10)
             sim_idx_test = np.arange(5) + len(sim_idx_train)
@@ -130,6 +160,17 @@ def main(
             # very small
             sim_idx_train = np.arange(2)
             sim_idx_test = np.arange(1) + len(sim_idx_train)
+        elif db_cfg["sim_name"] == "disc_brake_with_hole_low_freq_convex":
+            mu_param_and_input = np.concatenate(
+                (disc_brake_data.Mu, disc_brake_data.Mu_input), axis=1
+            )
+            hull_convex = ConvexHull(mu_param_and_input)
+            sim_idx_train = (
+                hull_convex.vertices
+            )  # parameters that define the convex hull
+            sim_idx_test = np.setdiff1d(
+                np.arange(mu_param_and_input.shape[0]), sim_idx_train
+            )  # parameters inside the convex hull
         else:
             raise ValueError(f"Unknown sim name.")
         disc_brake_data.train_test_split_sim_idx(sim_idx_train, sim_idx_test)
@@ -153,7 +194,7 @@ def main(
 
     # save smaller version of data for faster loading times
     # disc_brake_data.save_data_conc(
-    #     data_dir=data_dir, save_name=f"disc_brake_with_hole_very_small_no_vel"
+    #     data_dir=data_dir, save_name=f"disc_brake_with_hole_low_freq_convex"
     # )
 
     # scale data
@@ -344,6 +385,9 @@ def main(
     )
     save_evaluation_times(disc_brake_data_id, result_dir)
 
+    # disc_brake_data.save_video_data(result_dir,data_name="video_data_pred_ref")
+    # disc_brake_data_id.save_video_data(result_dir,data_name="video_data_pred")
+
     # %% finer time discretization
     # if isinstance(system_layer, PHQLayer):
     #     J_ph, R_ph, B_ph, Q_ph = system_layer.get_system_matrices(
@@ -437,7 +481,6 @@ def main(
     # disc_brake_data.rescale_X()
     # disc_brake_data_id.rescale_X()
 
-    use_train_data = False
     # %% calculate errors
     disc_brake_data.calculate_errors(
         disc_brake_data_id,
@@ -445,16 +488,30 @@ def main(
         save_to_txt=True,
         result_dir=result_dir,
     )
+
+    # %% Train data
+    use_train_data = True
+    # TODO: cleanup directory code
+    result_dir_train = os.path.join(result_dir, "train")
+    if not os.path.exists(result_dir_train):
+        os.makedirs(result_dir_train)
     aphin_vis.plot_errors(
         disc_brake_data,
         use_train_data=use_train_data,
-        save_name=os.path.join(result_dir, "rms_error"),
+        save_name=os.path.join(result_dir_train, "rms_error"),
         domain_names=db_cfg["domain_names"],
-        save_to_csv=True,
+        save_to_csv=False,
         yscale="log",
     )
 
-    # %% plot trajectories
+    aphin_vis.single_parameter_space_error_plot(
+        disc_brake_data.TRAIN.state_error_list[0],
+        disc_brake_data.TRAIN.Mu,
+        disc_brake_data.TRAIN.Mu_input,
+        parameter_names=["conductivity", "density", "heat flux", "frequency"],
+        save_name="",
+    )
+
     idx_gen = "rand"
     aphin_vis.plot_time_trajectories_all(
         disc_brake_data,
@@ -462,6 +519,37 @@ def main(
         use_train_data=use_train_data,
         idx_gen=idx_gen,
         result_dir=result_dir,
+        create_train_test_subfolder=True,
+    )
+
+    # %% Test data
+    use_train_data = False
+    result_dir_test = os.path.join(result_dir, "test")
+    if not os.path.exists(result_dir_test):
+        os.makedirs(result_dir_test)
+    aphin_vis.plot_time_trajectories_all(
+        disc_brake_data,
+        disc_brake_data_id,
+        use_train_data=use_train_data,
+        idx_gen=idx_gen,
+        result_dir=result_dir,
+        create_train_test_subfolder=True,
+    )
+    aphin_vis.plot_errors(
+        disc_brake_data,
+        use_train_data=use_train_data,
+        save_name=os.path.join(result_dir_test, "rms_error"),
+        domain_names=db_cfg["domain_names"],
+        save_to_csv=False,
+        yscale="log",
+    )
+
+    aphin_vis.single_parameter_space_error_plot(
+        disc_brake_data.TEST.state_error_list[0],
+        disc_brake_data.TEST.Mu,
+        disc_brake_data.TEST.Mu_input,
+        parameter_names=["conductivity", "density", "heat flux", "frequency"],
+        save_name="",
     )
 
     # avoid that the script stops and keep the plots open
@@ -628,10 +716,10 @@ def main(
 # requires calc_various_experiments = True
 def create_variation_of_parameters():
     parameter_variation_dict = {
-        "n_epochs": [2000, 12000],
-        "l_dx": [0.000001, 0],
-        "r": [16, 30, 60],
-        "ph_layer": ["ph", "phq"],
+        "n_epochs": [2000, 6000],
+        "l_dx": [0],
+        "r": [8, 30],
+        # "ph_layer": ["ph", "phq"],
     }
     return parameter_variation_dict
 
@@ -639,7 +727,11 @@ def create_variation_of_parameters():
 if __name__ == "__main__":
     calc_various_experiments = False
     if calc_various_experiments:
-        logging.info(f"Multiple simulation runs...")
+        logging.info(
+            f"%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%"
+            "Multiple simulation runs..."
+            "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%"
+        )
         # Run multiple simulation runs defined by parameter_variavation_dict
         working_dir = os.path.dirname(__file__)
         configuration = Configuration(working_dir)

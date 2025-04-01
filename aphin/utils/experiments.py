@@ -14,6 +14,7 @@ def run_various_experiments(
     result_dir,
     log_dir,
     force_calculation=False,
+    **kwargs,
 ):
     """
     Runs multiple experiments by creating several config files.
@@ -44,6 +45,7 @@ def run_various_experiments(
         # result_dir,
         log_dir,
         # force_calculation=force_calculation,
+        **kwargs,
     )
 
 
@@ -156,6 +158,7 @@ def run_all_yaml_files(
     experiment_main_script,
     yaml_paths_list,
     log_dir,
+    **kwargs,
 ):
     """
     Execute a main experiment script for each YAML configuration file and log the results.
@@ -200,7 +203,7 @@ def run_all_yaml_files(
         logger.addHandler(file_handler)
 
         try:
-            experiment_main_script(config_path_to_file=yaml_file_path)
+            experiment_main_script(config_path_to_file=yaml_file_path, **kwargs)
         except Exception as e:
             logger.error(f"Run ended with error {e}")
 

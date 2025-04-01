@@ -828,6 +828,21 @@ class Dataset(Data):
         data_path = os.path.join(data_dir, f"{save_name}.npz")
         np.savez_compressed(data_path, t=t, X=X, U=U, Mu=Mu, Mu_input=Mu_input)
 
+    def save_video_data(self, data_dir, data_name: str = "video_data"):
+        """TODO: write header"""
+        # rescale data
+        if self.TRAIN.is_scaled:
+            self.TRAIN.rescale_X()
+        if self.TEST.is_scaled:
+            self.TEST.rescale_X()
+        # save state data
+        logging.info(f"Saving state data for video creation.")
+        np.savez_compressed(
+            os.path.join(data_dir, f"{data_name}.npz"),
+            X_train=self.TRAIN.X,
+            X_test=self.TEST.X,
+        )
+
 
 class PHIdentifiedDataset(Dataset):
     """
@@ -923,7 +938,15 @@ class DiscBrakeDataset(Dataset):
     """
 
     def __init__(
-        self, t, X, X_dt=None, U=None, Mu=None, use_velocities=False, **kwargs
+        self,
+        t,
+        X,
+        X_dt=None,
+        U=None,
+        Mu=None,
+        use_velocities=False,
+        use_savgol=False,
+        **kwargs,
     ):
         """
         Initializes an instance of the DiscBrakeDataset class.
@@ -959,7 +982,18 @@ class DiscBrakeDataset(Dataset):
 
         if X_dt is None:
             # Compute time derivatives
-            X_dt = np.gradient(X, t.ravel(), axis=1)
+            if use_savgol:
+                logging.info(f"Using Savitzki Golay filter to calculate X_dt.")
+                X_dt = scipy.signal.savgol_filter(
+                    X,
+                    window_length=20,
+                    polyorder=1,
+                    deriv=1,
+                    axis=1,
+                    delta=t.ravel()[1] - t.ravel()[0],
+                )
+            else:
+                X_dt = np.gradient(X, t.ravel(), axis=1)
         else:
             pass
 
@@ -968,12 +1002,29 @@ class DiscBrakeDataset(Dataset):
             logging.info(f"Converting to states with velocities included.")
             velocity_idx = range(1, 4)  # velocities
             X = np.concatenate((X, X_dt[:, :, :, velocity_idx]), axis=3)
-            X_dt = np.gradient(X, t.ravel(), axis=1)
-
+            if use_savgol:
+                X_ddt = scipy.signal.savgol_filter(
+                    X_dt[:, :, :, velocity_idx],
+                    window_length=20,
+                    polyorder=1,
+                    deriv=1,
+                    axis=1,
+                    delta=t.ravel()[1] - t.ravel()[0],
+                )
+            else:
+                X_ddt = np.gradient(X_dt[:, :, :, velocity_idx], t.ravel(), axis=1)
+            X_dt = np.concatenate((X_dt, X_ddt), axis=3)
         super().__init__(t, X, X_dt, U, Mu, **kwargs)
 
     @classmethod
-    def from_data(cls, data_path, use_velocities=False, **kwargs):
+    def from_data(
+        cls,
+        data_path,
+        use_velocities=False,
+        use_savgol=False,
+        num_time_steps: int | None = None,
+        **kwargs,
+    ):
         """
         Reads data from a .npz file and returns it as a dictionary.
 
@@ -997,9 +1048,11 @@ class DiscBrakeDataset(Dataset):
             - 'Q': ndarray, pH energy matrix (optional, may be None).
             - 'B': ndarray, pH input matrix (optional, may be None).
         """
-        data_dict = cls.read_data_from_npz(data_path)
+        data_dict = cls.read_data_from_npz(data_path, num_time_steps=num_time_steps)
 
-        return cls(**data_dict, use_velocities=use_velocities, **kwargs)
+        return cls(
+            **data_dict, use_velocities=use_velocities, use_savgol=use_savgol, **kwargs
+        )
 
     @classmethod
     def from_txt(
@@ -1242,13 +1295,16 @@ class DiscBrakeDataset(Dataset):
         if idx_mu is not None:
             Mu = np.squeeze(np.array(Mu))
 
-        Mu_input = np.concatenate(
-            (
-                np.array(heat_flux_list)[:, np.newaxis],
-                np.array(force_freq_list)[:, np.newaxis],
-            ),
-            axis=1,
-        )
+        if force_input_exists:
+            Mu_input = np.concatenate(
+                (
+                    np.array(heat_flux_list)[:, np.newaxis],
+                    np.array(force_freq_list)[:, np.newaxis],
+                ),
+                axis=1,
+            )
+        else:
+            Mu_input = np.array(heat_flux_list)[:, np.newaxis]
 
         if save_cache:
             cls.save_data(cache_path, t, X, U, Mu=Mu, Mu_input=Mu_input)
