@@ -2128,12 +2128,16 @@ def chessboard_visualisation(test_ids, system_layer, data, result_dir, limits=No
     mu_test = data.test_data[-1]
     n_sim_test, n_t_test, _, _, _, _ = data.shape_test
     # predicted matrices
-    J_pred, R_pred, B_pred = system_layer.get_system_matrices(mu_test, n_t=n_t_test)
+    try:
+        J_pred, R_pred, B_pred = system_layer.get_system_matrices(mu_test, n_t=n_t_test)
+        A_pred = J_pred - R_pred
+    except ValueError:
+        J_pred, R_pred, B_pred, Q_pred = system_layer.get_system_matrices(mu_test, n_t=n_t_test)
+        A_pred = (J_pred - R_pred) @ Q_pred
     # original test matrices
     J_test_, R_test_, Q_test_, B_test_ = data.ph_matrices_test
-
-    A_pred = J_pred - R_pred
     A_test_ = (J_test_ - R_test_) @ Q_test_
+
 
     J_pred, R_pred, B_pred, A_pred = (
         J_pred[test_ids],
