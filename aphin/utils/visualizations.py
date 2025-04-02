@@ -62,23 +62,27 @@ def setup_matplotlib(save_plots=False):
         ]
     )
 
-    pgf_preamble = "\n".join([
-        r"\usepackage{amsmath}",
-        r"\usepackage{bm}",
-    ])
+    pgf_preamble = "\n".join(
+        [
+            r"\usepackage{amsmath}",
+            r"\usepackage{bm}",
+        ]
+    )
 
     # Update matplotlib rcParams (only once)
-    plt.rcParams.update({
-        "pgf.texsystem": "pdflatex",  # Choose either "pdflatex" or "lualatex"
-        "pgf.rcfonts": False,
-        "text.usetex": True,
-        "text.latex.preamble": latex_preamble,
-        "pgf.preamble": pgf_preamble,
-        "font.family": "serif",
-        "font.serif": "Computer Modern Roman",
-        "font.size": 11,
-        "axes.labelsize": "large",
-    })
+    plt.rcParams.update(
+        {
+            "pgf.texsystem": "pdflatex",  # Choose either "pdflatex" or "lualatex"
+            "pgf.rcfonts": False,
+            "text.usetex": True,
+            "text.latex.preamble": latex_preamble,
+            "pgf.preamble": pgf_preamble,
+            "font.family": "serif",
+            "font.serif": "Computer Modern Roman",
+            "font.size": 11,
+            "axes.labelsize": "large",
+        }
+    )
 
 
 def animate_parameter_sweep(
@@ -192,6 +196,7 @@ def plot_X_comparison(
     idx_gen="rand",
     save_path="",
     idx_custom_tuple: list[tuple] | None = None,
+    only_save=False,
 ):
     """
     Plots a comparison of state results between original and identified data.
@@ -243,6 +248,7 @@ def plot_X_comparison(
         variable_names,
         save_name=save_name,
         save_path=save_path,
+        only_save=only_save,
     )
 
 
@@ -253,6 +259,7 @@ def plot_x_comparison(
     idx_gen="rand",
     save_path="",
     idx_custom_tuple: list[tuple] | None = None,
+    only_save=False,
 ):
     """
     Plots a comparison of the original latent features with their identified counterparts.
@@ -312,6 +319,7 @@ def plot_x_comparison(
         variable_names,
         save_name=save_name,
         save_path=save_path,
+        only_save=only_save,
     )
 
 
@@ -322,6 +330,7 @@ def plot_X_dt_comparison(
     idx_gen="rand",
     save_path="",
     idx_custom_tuple: list[tuple] | None = None,
+    only_save=False,
 ):
     """
     Plots a comparison of state derivatives between original and identified data.
@@ -375,6 +384,7 @@ def plot_X_dt_comparison(
         variable_names,
         save_name=save_name,
         save_path=save_path,
+        only_save=only_save,
     )
 
 
@@ -385,6 +395,7 @@ def plot_x_reconstruction(
     idx_gen="rand",
     save_path="",
     idx_custom_tuple: list[tuple] | None = None,
+    only_save=False,
 ):
     """
     Plots and compares the original and autoencoder-reconstructed time series data for multiple features. The data is only encoded and decoded, the pHIN layer is not involved.
@@ -437,6 +448,7 @@ def plot_x_reconstruction(
             variable_names,
             save_name=save_name,
             save_path=save_path,
+            only_save=only_save,
         )
 
 
@@ -447,6 +459,7 @@ def plot_x_dt_reconstruction(
     idx_gen="rand",
     save_path="",
     idx_custom_tuple: list[tuple] | None = None,
+    only_save=False,
 ):
     """
     Plots and compares the original and autoencoder-reconstructed time derivative of the data.
@@ -498,6 +511,7 @@ def plot_x_dt_reconstruction(
             variable_names,
             save_name=save_name,
             save_path=save_path,
+            only_save=only_save,
         )
 
 
@@ -508,6 +522,7 @@ def plot_X_reconstruction(
     idx_gen="rand",
     save_path="",
     idx_custom_tuple: list[tuple] | None = None,
+    only_save=False,
 ):
     """
     Plots a comparison of original states and reconstructed states from an autoencoder.
@@ -559,6 +574,7 @@ def plot_X_reconstruction(
             variable_names,
             save_name=save_name,
             save_path=save_path,
+            only_save=only_save,
         )
 
 
@@ -569,6 +585,7 @@ def plot_X_dt_reconstruction(
     idx_gen="rand",
     save_path="",
     idx_custom_tuple: list[tuple] | None = None,
+    only_save=False,
 ):
     """
     Plots a comparison of original state derivatives and reconstructed state derivatives from an autoencoder.
@@ -620,6 +637,7 @@ def plot_X_dt_reconstruction(
             variable_names,
             save_name=save_name,
             save_path=save_path,
+            only_save=only_save,
         )
 
 
@@ -629,6 +647,7 @@ def plot_Z_ph(
     idx_gen="rand",
     save_path="",
     idx_custom_tuple: list[tuple] | None = None,
+    only_save=False,
 ):
     """
     Plots the comparison between identified latent variables (Z) and their corresponding port-Hamiltonian versions (Z_ph).
@@ -687,6 +706,7 @@ def plot_Z_ph(
         variable_names,
         save_name=save_name,
         save_path=save_path,
+        only_save=only_save,
     )
 
 
@@ -696,6 +716,7 @@ def plot_z_ph(
     idx_gen="rand",
     save_path="",
     idx_custom_tuple: list[tuple] | None = None,
+    only_save=False,
 ):
     """
     Plots the comparison between identified latent variables (Z) and their corresponding port-Hamiltonian versions (Z_ph).
@@ -751,6 +772,7 @@ def plot_z_ph(
         variable_names,
         save_name=save_name,
         save_path=save_path,
+        only_save=only_save,
     )
 
 
@@ -760,6 +782,7 @@ def plot_Z_dt_ph_map(
     idx_gen="rand",
     save_path="",
     idx_custom_tuple: list[tuple] | None = None,
+    only_save=False,
 ):
     """
     Plots the comparison between the time derivatives of the latent features (Z_dt) and their corresponding port-Hamiltonian mapped versions (Z_dt_ph_map).
@@ -821,6 +844,7 @@ def plot_Z_dt_ph_map(
             variable_names,
             save_name=save_name,
             save_path=save_path,
+            only_save=only_save,
         )
 
 
@@ -830,6 +854,7 @@ def plot_z_dt_ph_map(
     idx_gen="rand",
     save_path="",
     idx_custom_tuple: list[tuple] | None = None,
+    only_save=False,
 ):
     """
     Plots a comparison of the derivative of latent features (`z_dt`) with their corresponding port-Hamiltonian variables
@@ -889,6 +914,7 @@ def plot_z_dt_ph_map(
             variable_name,
             save_name=save_name,
             save_path=save_path,
+            only_save=only_save,
         )
 
 
@@ -898,6 +924,7 @@ def plot_Z_dt_ph(
     idx_gen="rand",
     save_path="",
     idx_custom_tuple: list[tuple] | None = None,
+    only_save=False,
 ):
     """
     Plots the comparison between the time derivatives of the reduced latent features (`Z_dt`) and their corresponding
@@ -954,6 +981,7 @@ def plot_Z_dt_ph(
         variable_names,
         save_name=save_name,
         save_path=save_path,
+        only_save=only_save,
     )
 
 
@@ -963,6 +991,7 @@ def plot_z_dt_ph(
     idx_gen="rand",
     save_path="",
     idx_custom_tuple: list[tuple] | None = None,
+    only_save=False,
 ):
     """
     Plots the comparison between the time derivatives of the reduced latent features (`z_dt`) and their corresponding
@@ -1015,6 +1044,7 @@ def plot_z_dt_ph(
         [r"\dot{\bm{z}}", r"\dot{\bm{z}}_\mathrm{ph}"],
         save_name="z_dt",
         save_path=save_path,
+        only_save=only_save,
     )
 
 
@@ -1228,6 +1258,7 @@ def plot_errors(
     save_to_csv=False,
     yscale="linear",
     create_train_test_subfolder: bool = False,
+    only_save: bool = False,
 ):
     """
     Generates and saves plots of RMS errors for state and latent errors from the given dataset.
@@ -1303,6 +1334,7 @@ def plot_errors(
             save_name=save_name_dom,
             save_to_csv=save_to_csv,
             yscale=yscale,
+            only_save=only_save,
         )
 
     # plot latent error
@@ -1324,7 +1356,7 @@ def single_parameter_space_error_plot(
     Mu,
     Mu_input: np.ndarray = None,
     parameter_names: list[str] = None,
-    save_name: str = None,
+    save_path: str = None,
 ):
     if Mu_input is not None:
         Mu_with_input = np.concatenate((Mu, Mu_input), axis=1)
@@ -1379,6 +1411,7 @@ def single_parameter_space_error_plot(
 
     plt.title(f"Error = Circle size")
     plt.show(block=False)
+    save_as_png(save_path=os.path.join(save_path, "param_space_error.png"))
 
 
 def single_error_plot(
@@ -1388,6 +1421,7 @@ def single_error_plot(
     save_name="rms_error",
     save_to_csv=False,
     yscale="linear",
+    only_save: bool = False,
 ):
     """
     Generates a plot of RMS error across simulations and optionally saves it to a PNG file and/or a CSV file.
@@ -1443,7 +1477,8 @@ def single_error_plot(
     plt.legend(by_label.values(), by_label.keys())
     plt.tight_layout()
     save_as_png(save_name)
-    plt.show(block=False)
+    if not only_save:
+        plt.show(block=False)
 
     if save_to_csv:
         # if there are too many data points, pgfplots will throw an error and be very slow
@@ -1626,7 +1661,16 @@ def get_sim_idx(
     return idx_n_n, idx_n_dn, idx_sim, idx_n_f, num_plots
 
 
-def plot_x(num_plots, x, x_id, idx_n_f, variable_names, save_name=None, save_path=""):
+def plot_x(
+    num_plots,
+    x,
+    x_id,
+    idx_n_f,
+    variable_names,
+    save_name=None,
+    save_path="",
+    only_save=False,
+):
     """
     Plots and compares multiple time series data from the state in the feature shape.
     Data needs to be in the feature format (n_s, n_f)
@@ -1681,7 +1725,8 @@ def plot_x(num_plots, x, x_id, idx_n_f, variable_names, save_name=None, save_pat
     plt.legend(bbox_to_anchor=(1.04, 0.0), loc="lower left", borderaxespad=0.0)
     # fig.legend(loc='outside center right', bbox_to_anchor=(1.3, 0.6))
     plt.tight_layout()
-    plt.show(block=False)
+    if not only_save:
+        plt.show(block=False)
     save_as_png(os.path.join(save_path, save_name))
 
     bar_plot_all_features = True
@@ -1694,7 +1739,19 @@ def plot_x(num_plots, x, x_id, idx_n_f, variable_names, save_name=None, save_pat
         rel_error_for_each_state = (
             np.linalg.norm(x - x_id, axis=0)
         ) / normalization_value
-        domain_names = ["T", "disp_x", "disp_y", "disp_z", "vel_x", "vel_y", "vel_z"]
+        use_thermomechanic_domain = False
+        if use_thermomechanic_domain:
+            domain_names = [
+                "T",
+                "disp_x",
+                "disp_y",
+                "disp_z",
+                "vel_x",
+                "vel_y",
+                "vel_z",
+            ]
+        else:
+            domain_names = None
         if domain_names is not None:
             num_groups = rel_error_for_each_state.shape[0] // len(
                 domain_names
@@ -1738,6 +1795,7 @@ def plot_X(
     variable_names,
     save_name=None,
     save_path="",
+    only_save: bool = False,
 ):
     """
     Plots multiple time series of the states from the provided data and optionally saves the plot.
@@ -1800,7 +1858,8 @@ def plot_X(
     plt.legend(bbox_to_anchor=(1.04, 0.0), loc="lower left", borderaxespad=0.0)
     # fig.legend(loc='outside center right', bbox_to_anchor=(1.3, 0.6))
     plt.tight_layout()
-    plt.show(block=False)
+    if not only_save:
+        plt.show(block=False)
     save_as_png(os.path.join(save_path, save_name))
 
 
@@ -1814,6 +1873,7 @@ def plot_Z(
     variable_names,
     save_name=None,
     save_path="",
+    only_save=False,
 ):
     """
     Plots the comparison between original and identified latent variables over time.
@@ -1884,11 +1944,21 @@ def plot_Z(
     plt.legend(bbox_to_anchor=(1.04, 0.0), loc="lower left", borderaxespad=0.0)
     # fig.legend(loc='outside center right', bbox_to_anchor=(1.3, 0.6))
     plt.tight_layout()
-    plt.show(block=False)
+    if not only_save:
+        plt.show(block=False)
     save_as_png(os.path.join(save_path, save_name))
 
 
-def plot_z(num_plots, z, z_id, idx_n_f, variable_names, save_name=None, save_path=""):
+def plot_z(
+    num_plots,
+    z,
+    z_id,
+    idx_n_f,
+    variable_names,
+    save_name=None,
+    save_path="",
+    only_save=False,
+):
     """
     Plots a comparison between original and identified latent variables.
     Data needs to be in the feature format (n_s, n_f).
@@ -1947,7 +2017,8 @@ def plot_z(num_plots, z, z_id, idx_n_f, variable_names, save_name=None, save_pat
     # fig.legend(loc='outside center right', bbox_to_anchor=(1.3, 0.6))
     plt.tight_layout()
     save_as_png(os.path.join(save_path, save_name))
-    plt.show(block=False)
+    if not only_save:
+        plt.show(block=False)
 
 
 def new_fig(num_plots, window_title: str | None = None):
@@ -2057,6 +2128,7 @@ def plot_time_trajectories_all(
     result_dir="",
     idx_custom_tuple: list[tuple] | None = None,
     create_train_test_subfolder: bool = False,
+    only_save: bool = False,
 ):
     """
     Generates and saves a series of plots comparing and reconstructing time trajectories of state and latent features.
@@ -2126,6 +2198,7 @@ def plot_time_trajectories_all(
             idx_gen=idx_gen,
             save_path=result_dir,
             idx_custom_tuple=idx_custom_tuple,
+            only_save=only_save,
         )
 
     for latent_state_function in latent_state_functions:
@@ -2135,10 +2208,13 @@ def plot_time_trajectories_all(
             idx_gen=idx_gen,
             save_path=result_dir,
             idx_custom_tuple=idx_custom_tuple,
+            only_save=only_save,
         )
 
 
-def chessboard_visualisation(test_ids, system_layer, data, result_dir, limits=None, error_limits=None):
+def chessboard_visualisation(
+    test_ids, system_layer, data, result_dir, limits=None, error_limits=None
+):
     """
     Visualizes and compares predicted and test matrices by generating various plots.
 
@@ -2189,10 +2265,18 @@ def chessboard_visualisation(test_ids, system_layer, data, result_dir, limits=No
     )
 
     if limits is None:
-        J_min, J_max = min(J_pred.min(), J_test_.min()), max(J_pred.max(), J_test_.max())
-        R_min, R_max = min(R_pred.min(), R_test_.min()), max(R_pred.max(), R_test_.max())
-        B_min, B_max = min(B_pred.min(), B_test_.min()), max(B_pred.max(), B_test_.max())
-        A_min, A_max = min(A_pred.min(), A_test_.min()), max(A_pred.max(), A_test_.max())
+        J_min, J_max = min(J_pred.min(), J_test_.min()), max(
+            J_pred.max(), J_test_.max()
+        )
+        R_min, R_max = min(R_pred.min(), R_test_.min()), max(
+            R_pred.max(), R_test_.max()
+        )
+        B_min, B_max = min(B_pred.min(), B_test_.min()), max(
+            B_pred.max(), B_test_.max()
+        )
+        A_min, A_max = min(A_pred.min(), A_test_.min()), max(
+            A_pred.max(), A_test_.max()
+        )
     else:
         J_min, J_max, R_min, R_max, B_min, B_max, A_min, A_max = limits
 
@@ -2208,8 +2292,6 @@ def chessboard_visualisation(test_ids, system_layer, data, result_dir, limits=No
         e_A_max = e_A.max()
     else:
         e_J_max, e_R_max, e_B_max, e_A_max = error_limits
-
-
 
     np.linalg.matrix_rank(B_test_[0])
 
@@ -2237,8 +2319,12 @@ def chessboard_visualisation(test_ids, system_layer, data, result_dir, limits=No
             B_test_[i], vmin=color_factor * B_min, vmax=color_factor * B_max
         )
         axs[8, i].imshow(e_B[i], vmin=0, vmax=e_B_max)
-        axs[9, i].imshow(A_pred[i], vmin=color_factor * A_min, vmax=color_factor * A_max)
-        axs[10, i].imshow(A_pred[i], vmin=color_factor * A_min, vmax=color_factor * A_max)
+        axs[9, i].imshow(
+            A_pred[i], vmin=color_factor * A_min, vmax=color_factor * A_max
+        )
+        axs[10, i].imshow(
+            A_pred[i], vmin=color_factor * A_min, vmax=color_factor * A_max
+        )
         axs[11, i].imshow(e_A[i], vmin=0, vmax=e_A_max)
         if i == 0:
             axs[0, i].set_ylabel("J_pred")
@@ -2323,7 +2409,6 @@ def chessboard_visualisation(test_ids, system_layer, data, result_dir, limits=No
         file.write(f"error B: min: {0} max: {e_B.max()}\n")
         file.write(f"error A: min: {0} max: {e_A.max()}\n")
 
-
     # export colormap to tikz
     def convert_rgb(l):
         return [int(l[0] * 255), int(l[1] * 255), int(l[2] * 255)]
@@ -2362,7 +2447,7 @@ def chessboard_visualisation(test_ids, system_layer, data, result_dir, limits=No
     fig.tight_layout()
 
 
-def plot_train_history(train_hist, validation=False, save_name="train_history"):
+def plot_train_history(train_hist, save_path: str = "", validation=False):
     """
     Plots the training history of a machine learning model.
 
@@ -2383,23 +2468,33 @@ def plot_train_history(train_hist, validation=False, save_name="train_history"):
     None
         The function does not return any value. It generates and displays a plot of the training history.
     """
-    if validation:
-        name_extension = "val_"
-    else:
-        name_extension = ""
-    # plot training history
-    plt.figure()
-    plt.semilogy(train_hist.history[f"{name_extension}loss"], label="loss")
-    plt.semilogy(train_hist.history[f"{name_extension}dz_loss"], label="dz")
-    try:
-        plt.semilogy(train_hist.history[f"{name_extension}dx_loss"], label="dx")
-        plt.semilogy(train_hist.history[f"{name_extension}rec_loss"], label="rec")
-    except KeyError:
-        pass
-    plt.semilogy(train_hist.history["reg_loss"], label="reg")
-    plt.legend()
 
-    save_as_png(f"{save_name}{name_extension}")
+    if validation:
+        val_strings = ["", "val_"]
+    else:
+        val_strings = [""]
+    for val_str in val_strings:
+        # plot training history
+        plt.figure()
+        plt.semilogy(train_hist.history[f"{val_str}loss"], label=f"{val_str}loss")
+        plt.semilogy(train_hist.history[f"{val_str}dz_loss"], label=f"{val_str}dz_loss")
+        try:
+            plt.semilogy(
+                train_hist.history[f"{val_str}dx_loss"], label=f"{val_str}dx_loss"
+            )
+            plt.semilogy(
+                train_hist.history[f"{val_str}rec_loss"], label=f"{val_str}rec_loss"
+            )
+        except KeyError:
+            pass
+        plt.semilogy(
+            train_hist.history[f"{val_str}reg_loss"], label=f"{val_str}reg_loss"
+        )
+        plt.legend()
+        plt.show(block=False)
+        save_name = f"{val_str}train_hist"
+        save_as_png(os.path.join(save_path, save_name))
+
 
 def custom_state_plot(
     data,
@@ -2476,7 +2571,11 @@ def custom_state_plot(
 
 
 def compare_x_and_x_dt(
-    data, use_train_data=True, idx_gen="rand", idx_custom_tuple=None
+    data,
+    use_train_data=True,
+    idx_gen="rand",
+    idx_custom_tuple=None,
+    only_save=False,
 ):
 
     t, x, dx_dt, _, _, _, idx_n_f, num_plots = get_quantities_of_interest(
@@ -2505,7 +2604,8 @@ def compare_x_and_x_dt(
         ax[i].set_title(title)
         ax[i].legend([f"x{i_n_f}" for i_n_f in idx_n_f])
     plt.xlabel(f"Time")
-    plt.show(block=False)
+    if not only_save:
+        plt.show(block=False)
     # save_as_png(os.path.join(result_dir, save_name_coeff))
 
 
