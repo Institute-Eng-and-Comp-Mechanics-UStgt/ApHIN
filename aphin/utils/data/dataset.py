@@ -1232,12 +1232,8 @@ class DiscBrakeDataset(Dataset):
                         force_array = df_force.to_numpy()
                         # remove time column
                         force_array = np.delete(force_array, 0, axis=1)
-
                         # delete node and DOF rows which come from state conversion to .txt
-                        if np.allclose(
-                            force_array[:2, :], np.zeros((2, force_array.shape[1]))
-                        ):
-                            force_array = np.delete(force_array, [0, 1], axis=0)
+                        force_array = np.delete(force_array, [0, 1], axis=0)
                         # remove inputs to come from Abaqus field outputs that are zero, e.g. forces in non-excited coordinate directions
                         idx_no_force = np.argwhere(
                             np.all(force_array[..., :] == 0, axis=0)
