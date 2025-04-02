@@ -113,7 +113,7 @@ class LTISystem:
             z_sol[i, :, :] = z_out
         return z_sol
 
-    def solve_dt(self, t, z_init, U=None, integrator_type="IMR", decomp_option="lu"):
+    def solve_dt(self, t, z_init, u=None, integrator_type="IMR", decomp_option="lu"):
         """
         Solves the system of ordinary differential equations (ODEs) for given time steps, initial conditions, and inputs.
         Also computes the exact time derivative of the solution.
@@ -149,15 +149,17 @@ class LTISystem:
             Time derivative of the solution with shape (n_sim, n_t, n_f).
         """
         n_t = len(t)
+        if z_init.ndim == 1:
+            z_init = np.expand_dims(z_init, axis=1)
         n_f, n_sim = z_init.shape
         assert self.A.shape[0] == n_f
         n_u = self.B.shape[1]
-        if U is None:
+        if u is None:
             u_ = np.zeros((n_sim, n_t, n_u))
-        elif U.ndim == 2:
-            u_ = U.copy().reshape(n_sim, n_t, n_u)
-        elif U.ndim == 3:
-            u_ = U.copy()
+        elif u.ndim == 2:
+            u_ = u.copy().reshape(n_sim, n_t, n_u)
+        elif u.ndim == 3:
+            u_ = u.copy()
         else:
             raise ValueError("Shape of u does not fit")
         u_midpoint = (u_[:, 1:] + u_[:, :-1]) / 2

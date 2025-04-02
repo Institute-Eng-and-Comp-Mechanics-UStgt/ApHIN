@@ -194,7 +194,7 @@ def main(config_path_to_file=None, only_usual_phin: bool = False):
     data_dir, log_dir, weight_dir, result_dir = configuration.directories
 
     # set up matplotlib
-    aphin_vis.setup_matplotlib(msd_cfg["setup_matplotlib"])
+    # aphin_vis.setup_matplotlib(msd_cfg["setup_matplotlib"])
 
     # Reproducibility
     # tf.config.run_functions_eagerly(True)
@@ -281,6 +281,29 @@ def main(config_path_to_file=None, only_usual_phin: bool = False):
         parameter_names=["mass", "stiff", "omega", "delta"],
         save_path=result_dir_usual_phin,
     )
+
+    # 3d plot of initial conditions
+    fig = plt.figure()
+    x0 = msd_data.TRAIN.X[:,0,:,0]
+    x0_test = msd_data.TEST.X[:,0,:,0]
+    plt.scatter(x0[:,0], x0[:,1])
+    plt.scatter(x0_test[:,0], x0_test[:,1])
+    plt.xlabel("position mass 1")
+    plt.ylabel("position mass 2")
+    # plt.view([90,0])
+    # ax.set_zlim(-0.002, 0.002)
+    plt.tight_layout()
+    plt.show()
+    plt.savefig('initial_conditions')
+
+    # plot of parameters
+    fig = plt.figure()
+    plt.plot(msd_data.TRAIN.Mu[:,0], msd_data.TRAIN.Mu[:,1], "o")
+    plt.plot(msd_data.TEST.Mu[:, 0], msd_data.TEST.Mu[:, 1], "o")
+    plt.xlabel("k")
+    plt.ylabel("c")
+    plt.tight_layout()
+    plt.show()
 
     if only_usual_phin:
         return
@@ -547,7 +570,7 @@ def create_variation_of_parameters():
 
 if __name__ == "__main__":
     working_dir = os.path.dirname(__file__)
-    calc_various_experiments = True
+    calc_various_experiments = False
     if calc_various_experiments:
         logging.info(f"Multiple simulation runs...")
         # Run multiple simulation runs defined by parameter_variavation_dict

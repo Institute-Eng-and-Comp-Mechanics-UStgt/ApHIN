@@ -131,7 +131,7 @@ class ParameterInput:
                 plot_input(u, config)
 
         # generate initial condition
-        x0 = cls.generate_initial_condition(input_vals, 2 * n_mass, n_sim, seed=1)
+        x0 = cls.generate_initial_condition(config["random_initial_condition"], 2 * n_mass, n_sim, seed=1)
 
         return cls(
             n_mass,
@@ -145,7 +145,8 @@ class ParameterInput:
             Mu_input,
         )
 
-    def generate_initial_condition(input_vals, n, n_sim, seed=1):
+    @staticmethod
+    def generate_initial_condition(random, n, n_sim, seed=1):
         """
         Generate initial conditions for the system.
 
@@ -159,9 +160,11 @@ class ParameterInput:
         - np.ndarray: Array of initial conditions with shape (n, n_sim).
         """
         rng = np.random.default_rng(seed=seed)
-        if input_vals is None:
+        if random:
             # random initial conditions
-            x0 = rng.random((n, n_sim))
+            x0 = (rng.random((n, n_sim)) - 0.5) * 0.01
+            # set velocities to zero
+            x0[3:] = x0[3:]*0
         else:
             # zero initial condition if input is used
             x0 = np.zeros((n, n_sim))

@@ -69,6 +69,7 @@ random_samples: 120         # None if non-parametric
 
 # input
 input_vals: 0 # null/None (autonomous) | 0 (first mass excitation - SISO)
+random_initial_condition: 1 #
 
 # time values for trajectories
 T_training: 20

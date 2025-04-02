@@ -4,7 +4,9 @@ import os
 
 import numpy as np
 # third party packages
+import numpy as np
 import tensorflow as tf
+from scipy.spatial import ConvexHull
 # import matplotlib
 # matplotlib.use("TkAgg")  # Force interactive backend
 import matplotlib.pyplot as plt
@@ -12,7 +14,7 @@ import matplotlib.pyplot as plt
 # own packages
 import aphin.utils.visualizations as aphin_vis
 from aphin.identification import PHIN
-from aphin.layers import PHLayer, LTILayer
+from aphin.layers import PHLayer, LTILayer, PHQLayer
 from aphin.utils.data import Dataset, PHIdentifiedDataset
 from aphin.utils.callbacks_tensorflow import callbacks
 from aphin.utils.configuration import Configuration
@@ -88,9 +90,72 @@ def main(config_path_to_file=None):
             f"File could not be found. If this is the first time you run this example, please execute the data generating script `./data_generation/mass_spring_damper_data_gen.py` first."
         )
 
+    import numpy as np
+    _, idx = np.unique(msd_data.Mu, axis=0, return_index=True)
+    mu_all = msd_data.Mu[np.sort(idx), :]
+    hull_convex = ConvexHull(mu_all)
+    idx_train = hull_convex.vertices  # parameters that define the convex hull
+    idx_test = np.setdiff1d(
+        np.arange(mu_all.shape[0]), idx_train
+    )  # parameters inside the convex hull
+    assert idx_test.shape[0] >= 3  # at least 3 test trajectories
+
+    train_idx = np.array(
+        [
+            (i_same_mu_scenario) * 3 + np.array([0, 1, 2])
+            for i_same_mu_scenario in idx_train
+        ]
+    ).flatten()
+    test_idx = np.array(
+        [
+            (i_same_mu_scenario) * 3 + np.array([0, 1, 2])
+            for i_same_mu_scenario in idx_test
+        ]
+    ).flatten()
+    shift_to_train = 30 # 69
+    train_idx = np.concatenate([train_idx, test_idx[:shift_to_train]])
+    test_idx = test_idx[shift_to_train:]
+
     # split into train and test data
-    msd_data.train_test_split(test_size=msd_cfg["test_size"], seed=msd_cfg["seed"])
-    msd_data.truncate_time(trunc_time_ratio=msd_cfg["trunc_time_ratio"])
+    msd_data.train_test_split_sim_idx(sim_idx_train=train_idx, sim_idx_test=test_idx)
+
+    # 3d plot of initial conditions
+    fig = plt.figure()
+    x0 = msd_data.TRAIN.X[:,0,:,0]
+    x0_test = msd_data.TEST.X[:,0,:,0]
+    plt.scatter(x0[:,0], x0[:,1])
+    plt.scatter(x0_test[:,0], x0_test[:,1])
+    plt.xlabel("position mass 1")
+    plt.ylabel("position mass 2")
+    plt.legend(["train", "test"])
+    # plt.view([90,0])
+    # ax.set_zlim(-0.002, 0.002)
+    plt.tight_layout()
+    plt.show()
+    plt.savefig('initial_conditions')
+
+    # plot of parameters
+    fig = plt.figure()
+    plt.plot(msd_data.TRAIN.Mu[:,0], msd_data.TRAIN.Mu[:,1], "o")
+    plt.plot(msd_data.TEST.Mu[:, 0], msd_data.TEST.Mu[:, 1], "o")
+    plt.xlabel("k")
+    plt.ylabel("c")
+    plt.tight_layout()
+    plt.show()
+
+    # truncate time for training data
+    # msd_data.truncate_time(trunc_time_ratio=msd_cfg["trunc_time_ratio"])
+
+
+    # plot all input trajectories
+    fig = plt.figure()
+    plt.plot(msd_data.TRAIN.t[:,0], msd_data.TRAIN.U[:,:,0].T, "darkgray", label="train")
+    plt.plot(msd_data.TEST.t[:,0], msd_data.TEST.U[:,:,0].T)
+    plt.ylabel("u")
+    plt.legend(["train"])
+    plt.xlabel("time in s")
+    plt.show()
+    plt.savefig("inputs")
 
     # scale data
     msd_data.scale_Mu(desired_bounds=msd_cfg["desired_bounds"])
@@ -101,21 +166,26 @@ def main(config_path_to_file=None):
     n_f = n_n * n_dn
 
     # plt.figure()
-    # plt.plot(t, msd_data.Data[0][0, :, 0, 0])
-    # plt.plot(msd_data.t_test, msd_data.Data_test[0][0, :, 0, 0])
+    # plt.plot(t, msd_data.Data[0][0, :, 0, 0], "darkgray")
+    # plt.plot(msd_data.t, msd_data.Data_test[0][0, :, 0, 0])
     # plt.show()
 
     # %% Create PHAutoencoder
     logging.info(
         "################################   2. Model      ################################"
     )
-
+    if msd_cfg["validation"]:
+        monitor = "val_loss"
+        n_train = int(0.8 * x.shape[0])
+    else:
+        monitor = "loss"
+        n_train = x.shape[0]
     # ph identification network (pHIN)
     callback = callbacks(
         weight_dir,
         tensorboard=msd_cfg["tensorboard"],
         log_dir=log_dir,
-        monitor="val_loss",
+        monitor=monitor,
         earlystopping=True,
         patience=500,
     )
@@ -155,18 +225,18 @@ def main(config_path_to_file=None):
         optimizer=tf.keras.optimizers.Adam(learning_rate=msd_cfg["lr"]),
         loss=tf.keras.losses.MSE,
     )
-    n_train = int(0.8 * x.shape[0])
+    n_th_sample = 1
     import numpy as np
     if np.any(u):
-        x_train = [x[:n_train], dx_dt[:n_train], u[:n_train], mu[:n_train]]
+        x_train = [x[:n_train:n_th_sample], dx_dt[:n_train:n_th_sample], u[:n_train:n_th_sample], mu[:n_train:n_th_sample]]
         x_val = [x[n_train:], dx_dt[n_train:], u[n_train:], mu[n_train:]]
     else:
-        x_train = [x[:n_train], dx_dt[:n_train], np.empty((x[:n_train].shape[0], 0)), mu[:n_train]]
+        x_train = [x[:n_train:n_th_sample], dx_dt[:n_train:n_th_sample], np.empty((x[:n_train:n_th_sample].shape[0], 0)), mu[:n_train:n_th_sample]]
         x_val = [x[n_train:], dx_dt[n_train:], np.empty((x[n_train:].shape[0], 0)), mu[n_train:]]
     phin.build(input_shape=([data_.shape for data_ in x_train], None))
+    #
+    # phin.load_weights(os.path.join(weight_dir, ".weights.h5"))
 
-    # phin.load_weights(data_path_weights_filename)
-    phin.load_weights(os.path.join(weight_dir, ".weights.h5"))
     if msd_cfg["load_network"]:
         logging.info(f"Loading NN weights.")
         phin.load_weights(os.path.join(weight_dir, ".weights.h5"))
@@ -174,7 +244,7 @@ def main(config_path_to_file=None):
         logging.info(f"Fitting NN weights.")
         train_hist = phin.fit(
             x=x_train,
-            validation_data=(x_val, None),
+            validation_data=(x_val, None) if msd_cfg["validation"] else None,
             epochs=msd_cfg["n_epochs"],
             batch_size=msd_cfg["batch_size"],
             verbose=2,
@@ -182,8 +252,48 @@ def main(config_path_to_file=None):
         )
         save_training_times(train_hist, result_dir)
         aphin_vis.plot_train_history(train_hist, save_name=os.path.join(result_dir, "train_history"))
-        aphin_vis.plot_train_history(train_hist, validation=True, save_name=os.path.join(result_dir, "train_history"))
+        if "val_loss" in train_hist.history.keys():
+            aphin_vis.plot_train_history(train_hist, validation=True, save_name=os.path.join(result_dir, "train_history"))
         phin.load_weights(os.path.join(weight_dir, ".weights.h5"))
+
+        # # phin.load_weights(data_path_weights_filename)
+        # phin.load_weights(os.path.join(weight_dir, ".weights.h5"))
+
+        # train using lbfgs
+        # Flatten and restore model weights
+        # def get_weights():
+        #     return tf.concat([tf.reshape(var, [-1]) for var in phin.trainable_variables], axis=0).numpy()
+        #
+        # def set_weights(flat_weights):
+        #     idx = 0
+        #     for var in phin.trainable_variables:
+        #         shape = var.shape
+        #         size = tf.size(var).numpy()
+        #         var.assign(tf.reshape(flat_weights[idx:idx + size], shape))
+        #         idx += size
+        #
+        # # Prepare input data
+        # x_train_tf = [tf.convert_to_tensor(v, dtype=tf.float32) for v in x_train]
+        #
+        # # L-BFGS loss + gradient wrapper using model logic
+        # def loss_and_grads(w):
+        #     set_weights(w)
+        #     with tf.GradientTape() as tape:
+        #         dz_loss, reg_loss, loss = phin.build_loss([x_train_tf])
+        #     grads = tape.gradient(loss, phin.trainable_variables)
+        #     grad_flat = tf.concat([tf.reshape(g, [-1]) for g in grads], axis=0).numpy()
+        #     logging.info(f"loss: {loss}")
+        #     return loss.numpy().astype(np.float64), grad_flat.astype(np.float64)
+        #
+        # from scipy.optimize import minimize
+        # # Run L-BFGS
+        # res = minimize(
+        #     fun=loss_and_grads,
+        #     x0=get_weights(),
+        #     jac=True,
+        #     method='L-BFGS-B',
+        #     options={'maxiter': 500, 'disp': True}
+        # )
 
     # write data to results directory
     save_weights(weight_dir, result_dir, load_network=msd_cfg["load_network"])
@@ -201,6 +311,9 @@ def main(config_path_to_file=None):
 
 
     msd_data.calculate_errors(msd_data_id, domain_split_vals=[1, 1])
+    logging.info(f"error z: {msd_data.TRAIN.latent_error_mean}/{msd_data.TEST.latent_error_mean}")
+    logging.info(f"error x: {msd_data.TRAIN.state_error_mean}/{msd_data.TEST.state_error_mean}")
+
     use_train_data = False
     aphin_vis.plot_errors(
         msd_data,
@@ -229,16 +342,19 @@ def main(config_path_to_file=None):
 
 
     # predicted matrices
-    J_pred, R_pred, B_pred = system_layer.get_system_matrices(mu_test, n_t=n_t_test)
+    try:
+        J_pred, R_pred, B_pred, Q_pred = system_layer.get_system_matrices(mu_test, n_t=n_t_test)
+        A_pred = (J_pred - R_pred) @ Q_pred
+    except ValueError:
+        J_pred, R_pred, B_pred = system_layer.get_system_matrices(mu_test, n_t=n_t_test)
+        A_pred = J_pred - R_pred
+
     # original test matrices
     J_test_, R_test_, Q_test_, B_test_ = msd_data.ph_matrices_test
-
-    A_pred = J_pred - R_pred
     A_test = (J_test_ - R_test_) @ Q_test_
 
     error_A = np.linalg.norm(A_pred - A_test, axis=(1,2)) / np.linalg.norm(A_test, axis=(1,2))
 
-    import numpy as np
     max_eigs_pred = np.array([np.real(np.linalg.eig(A_).eigenvalues).max() for A_ in A_pred])
     max_eigs_ref = np.array([np.real(np.linalg.eig(A_).eigenvalues).max() for A_ in A_test])
 
@@ -258,10 +374,14 @@ def main(config_path_to_file=None):
     # plt.close("all")
     es = []
     i_test = 1
-    for i_test in range(msd_data_id.TEST.Z_ph.shape[0]):
+    for i_test in range(3):
         plt.figure()
-        plt.plot(msd_data_id.TEST.Z_ph[i_test, :, 0], label="pred")
-        plt.plot(msd_data_id.TEST.Z[i_test, :, 0], label="ref")
+        plt.plot(msd_data_id.TEST.Z_ph[i_test, :, 0], label="pred", color="red")
+        plt.plot(msd_data_id.TEST.Z[i_test, :, 0], label="ref", color="red", linestyle="--")
+        plt.plot(msd_data_id.TEST.Z_ph[i_test, :, 1], label="pred", color="blue")
+        plt.plot(msd_data_id.TEST.Z[i_test, :, 1], label="ref", color="blue", linestyle="--")
+        plt.plot(msd_data_id.TEST.Z_ph[i_test, :, 2], label="pred", color="teal")
+        plt.plot(msd_data_id.TEST.Z[i_test, :, 2], label="ref", color="teal", linestyle="--")
         plt.legend()
         e = np.linalg.norm(msd_data_id.TEST.Z_ph[i_test, :, 0] - msd_data_id.TEST.Z[i_test, :, 0]) / np.linalg.norm(msd_data_id.TEST.Z[i_test, :, 0])
         es.append(e)
@@ -300,7 +420,7 @@ def main(config_path_to_file=None):
 
     # plot chessboard visualisation
     test_ids = [0, 1, 3, 6, 7]  # test_ids = range(10) # range(6) test_ids = [0]
-    aphin_vis.chessboard_visualisation(test_ids, system_layer, msd_data, result_dir, error_limits=[0.022277599200606346, 0.01978847570717334, 0.04014775591542816, 0.023013601874971812])
+    # aphin_vis.chessboard_visualisation(test_ids, system_layer, msd_data, result_dir, error_limits=[0.022277599200606346, 0.01978847570717334, 0.04014775591542816, 0.023013601874971812])
 
     # avoid that the script stops and keep the plots open
     plt.show()
