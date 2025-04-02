@@ -31,7 +31,7 @@ from aphin.utils.transformations import (
     reshape_features_to_states,
 )
 from aphin.utils.print_matrices import print_matrices
-from state_space_ph.matrix_interpolation import (
+from data_generation.matrix_interpolation import (
     get_coeff_values,
     evaluate_interpolation,
     get_weighting_function_values,
@@ -175,10 +175,11 @@ def main(config_path_to_file=None, only_usual_phin: bool = False):
     manual_results_folder = None  # {None} if no results shall be loaded, else create str with folder name or path to results folder
 
     # write to config_info
-    if config_path_to_file is not None:
-        config_info = config_path_to_file
-    elif manual_results_folder is not None:
+    if manual_results_folder is not None:
+        # changed priority
         config_info = manual_results_folder
+    elif config_path_to_file is not None:
+        config_info = config_path_to_file
     else:
         config_info = None
 
@@ -212,7 +213,7 @@ def main(config_path_to_file=None, only_usual_phin: bool = False):
         msd_data = Dataset.from_data(cache_path)
     except FileNotFoundError:
         raise FileNotFoundError(
-            f"File could not be found. If this is the first time you run this example, please execute the data generating script `./state_space_ph/mass_spring_damper_data_gen.py` first."
+            f"File could not be found. If this is the first time you run this example, please execute the data generating script `./data_generation/mass_spring_damper_data_gen.py` first."
         )
 
     _, idx = np.unique(msd_data.Mu, axis=0, return_index=True)
@@ -236,7 +237,7 @@ def main(config_path_to_file=None, only_usual_phin: bool = False):
             for i_same_mu_scenario in idx_test
         ]
     ).flatten()
-    shift_to_train = 30
+    shift_to_train = 30  # divisible by 3
     train_idx = np.concatenate([train_idx, test_idx[:shift_to_train]])
     test_idx = test_idx[shift_to_train:]
 
@@ -250,15 +251,16 @@ def main(config_path_to_file=None, only_usual_phin: bool = False):
     msd_data.states_to_features()
 
     # usual PHIN framework with mu DNN
+    dir_extension = "usual_phin "
     msd_data_id, system_layer_interp, phin_interp = phin_learning(
         msd_data,
         msd_cfg,
         configuration.directories,
-        dir_extension="usual_phin ",
+        dir_extension=dir_extension,
         layer=msd_cfg["ph_layer"],
     )
 
-    result_dir_usual_phin = f"{result_dir}_usual_phin"
+    result_dir_usual_phin = os.path.join(result_dir, dir_extension)
     if not os.path.isdir(result_dir_usual_phin):
         os.mkdir(result_dir_usual_phin)
     use_train_data = False
@@ -277,7 +279,7 @@ def main(config_path_to_file=None, only_usual_phin: bool = False):
         msd_data.TEST.Mu,
         msd_data.TEST.Mu_input,
         parameter_names=["mass", "stiff", "omega", "delta"],
-        save_name="",
+        save_path=result_dir_usual_phin,
     )
 
     if only_usual_phin:
@@ -569,4 +571,4 @@ if __name__ == "__main__":
         config_file_path = os.path.join(
             working_dir, "config_msd_matrix_interpolation.yml"
         )
-        main(config_file_path)
+        main(config_file_path, only_usual_phin=True)
