@@ -509,7 +509,7 @@ def main(
         disc_brake_data.TRAIN.Mu,
         disc_brake_data.TRAIN.Mu_input,
         parameter_names=["conductivity", "density", "heat flux", "frequency"],
-        save_name="",
+        save_path="",
     )
 
     idx_gen = "rand"
@@ -549,7 +549,7 @@ def main(
         disc_brake_data.TEST.Mu,
         disc_brake_data.TEST.Mu_input,
         parameter_names=["conductivity", "density", "heat flux", "frequency"],
-        save_name="",
+        save_path="",
     )
 
     # avoid that the script stops and keep the plots open
