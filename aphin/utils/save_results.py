@@ -1,7 +1,9 @@
 import os
+import logging
 import numpy as np
 import shutil
 import pandas as pd
+import yaml
 
 
 def save_results(weight_dir, path_to_config, config_dict, result_dir, load_network):
@@ -24,6 +26,7 @@ def save_results(weight_dir, path_to_config, config_dict, result_dir, load_netwo
     save_config(path_to_config, result_dir, load_network)
     write_to_experiment_overview(config_dict, result_dir, load_network)
 
+
 def save_evaluation_times(data_id, result_dir):
     """
     Save the evaluation times to a CSV file.
@@ -44,7 +47,9 @@ def save_evaluation_times(data_id, result_dir):
         # print(range(1, data_.n_sim + 1))
         header = ",".join([str(i) for i in list(range(1, data_.n_sim + 1))])
         header = "mean," + header
-        solving_times = np.insert(data_.solving_times['per_run'], 0, data_.solving_times['mean'])[np.newaxis]
+        solving_times = np.insert(
+            data_.solving_times["per_run"], 0, data_.solving_times["mean"]
+        )[np.newaxis]
 
         np.savetxt(
             file_dir,
@@ -54,6 +59,7 @@ def save_evaluation_times(data_id, result_dir):
             comments="",
             header=header,
         )
+
 
 def save_training_times(tran_hist, result_dir):
     """
@@ -69,9 +75,13 @@ def save_training_times(tran_hist, result_dir):
     file_name = "training_time.csv"
     file_dir = os.path.join(result_dir, file_name)
     header = "epochs,time,time_per_epoch"
-    values = np.array([str(tran_hist.params['epochs']),
-                       str(tran_hist.history['time']),
-                       str(tran_hist.history['time_per_epoch'])])[np.newaxis]
+    values = np.array(
+        [
+            str(tran_hist.params["epochs"]),
+            str(tran_hist.history["time"]),
+            str(tran_hist.history["time_per_epoch"]),
+        ]
+    )[np.newaxis]
     np.savetxt(
         file_dir,
         values,
@@ -145,6 +155,80 @@ def save_config(path_to_config, result_dir, load_network):
             path_to_config,
             os.path.join(result_dir, "config.yml"),
         )
+
+
+def save_config_sweep_data(
+    root_result_dir: str,
+    common_folder_name: str,
+    sweep_key: str,
+    metric_over_t: str = "mean",
+    domain_names: list[str] | str = "",
+):
+    """ """
+    # Find all subfolder in which the results are stored
+    sweep_dirs = []
+    for dirpath, dirnames, _ in os.walk(root_result_dir):
+        for dirname in dirnames:
+            if common_folder_name in dirname:
+                sweep_dirs.append(os.path.join(dirpath, dirname))
+    assert sweep_dirs is not None
+
+    if isinstance(domain_names, str):
+        domain_names = [domain_names]
+
+    rms_file_names = []
+    for domain_name in domain_names:
+        rms_file_names.append(f"rms_error_state_{domain_name}.csv")
+
+    dict_metric_list = [{} for _ in range(len(rms_file_names))]
+    for i_dir, sweep_dir in enumerate(sweep_dirs):
+        path_to_config = os.path.join(sweep_dir, "config.yml")
+
+        # check for .csv files
+        if not os.path.isfile(os.path.join(sweep_dir, ".weights.h5")):
+            continue
+
+        logging.info(f"Using default configuration from {path_to_config}.")
+        cfg_dict = yaml.safe_load(open(path_to_config))
+        if i_dir == 0:
+            basis_cfg_dict = cfg_dict.copy()
+        else:
+            # check if dictionaries are the same except for one key
+            assert (
+                not cfg_dict.keys() != basis_cfg_dict.keys()
+            )  # Different keys, so they can't match except for one
+            differing_keys = [
+                key for key in cfg_dict if cfg_dict[key] != basis_cfg_dict[key]
+            ]
+            assert (
+                len(differing_keys) == 2 and sweep_key in differing_keys
+            )  # 'experiment' and sweep_key
+
+        # read data from folder
+        for i_rms_file, rms_file_name in enumerate(rms_file_names):
+            df = pd.read_csv(os.path.join(sweep_dir, rms_file_name))
+            metric_over_t_values = []
+            for col in df.columns:
+                if col != "t" and not col.startswith("mean"):
+                    if metric_over_t == "mean":
+                        metric_over_t_values.append(df[col].mean())
+                    elif metric_over_t == "max":
+                        metric_over_t_values.append(df[col].max())
+            dict_metric_list[i_rms_file][
+                f"{sweep_key}{cfg_dict[sweep_key]}"
+            ] = metric_over_t_values
+
+    # create dataframes and write to csv
+    common_path_folder = os.path.join(root_result_dir, common_folder_name)
+    if not os.path.isdir(common_path_folder):
+        os.makedirs(common_path_folder)
+    for i_dict, error_dict in enumerate(dict_metric_list):
+        df = pd.DataFrame(error_dict)
+        path_to_csv_file = os.path.join(
+            common_path_folder,
+            f"{os.path.splitext(rms_file_names[i_dict])[0]}_{metric_over_t}_over_t.csv",
+        )
+        df.to_csv(path_to_csv_file)
 
 
 def write_to_experiment_overview(config_dict, result_dir, load_network):
