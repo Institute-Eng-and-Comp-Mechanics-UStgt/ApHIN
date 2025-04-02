@@ -1694,7 +1694,11 @@ def plot_x(num_plots, x, x_id, idx_n_f, variable_names, save_name=None, save_pat
         rel_error_for_each_state = (
             np.linalg.norm(x - x_id, axis=0)
         ) / normalization_value
-        domain_names = ["T", "disp_x", "disp_y", "disp_z", "vel_x", "vel_y", "vel_z"]
+        disc_brake_data = False
+        if disc_brake_data:
+            domain_names = ["T", "disp_x", "disp_y", "disp_z", "vel_x", "vel_y", "vel_z"]
+        else:
+            domain_names = None
         if domain_names is not None:
             num_groups = rel_error_for_each_state.shape[0] // len(
                 domain_names

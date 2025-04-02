@@ -522,7 +522,7 @@ class Data(ABC):
         t = data["t"]
         U, X_dt, Mu, J, R, Q, B, Mu_input = [None] * 8
         if "X_dt" in data.keys():
-            X_dt = data["X_dt"] if np.any(data["X_dt"])else None
+            X_dt = data["X_dt"] if np.any(data["X_dt"]) else None
         if "U" in data.keys():
             U = data["U"] if np.any(data["U"]) else None
         if "Mu" in data.keys():

@@ -1,7 +1,7 @@
 model_name: msd
 
-experiment: ph_retti # name of the experiment {lti, ph}
-sim_name: MSD_Qeye_ph_input_siso.npz # name of data  msd_state_ICrand_Qeye_autonomous_n3_m4.npz
+experiment: ph_finished # name of the experiment {lti, ph}
+sim_name: MSD_Qeye_random_ic.npz # name of data  msd_state_ICrand_Qeye_autonomous_n3_m4.npz
 load_network: False  # train the network or load the last pre-trained one
 
 seed: 1  # For reproducibility
@@ -18,15 +18,16 @@ desired_bounds: [0, 1]  # desired bounds after scaling for u and mu
 
 # time extrapolation
 trunc_time_ratio: 1  # ratio of time steps to be truncated for time extrapolation
+validation: True  # ratio of data to be used for validation
 
 # %% identification settings
-l1: 0.00000000001  # L1 regularization
+l1: 0.0000001  # L1 regularization
 l2: 0  # L2 regularization
-n_epochs: 2000  # number of epochs
+n_epochs: 3000  # number of epochs
 batch_size: 64  # batch size
 layer_sizes_ph: # layer sizes
   - 16  # first layer
   - 32  # second layer
   - 64  # third layer
 activation_ph: selu  # activation function
-lr: 0.00001  # learning rate
+lr: 0.00005  # learning rate

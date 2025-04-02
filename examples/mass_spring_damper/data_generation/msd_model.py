@@ -164,16 +164,17 @@ class MSD:
         # initialize solution array
         system = self.system_list[0]
         X = np.zeros((self.n_sim, t.shape[0], int(system.n / 2), 2))
+        X_dt = np.zeros((self.n_sim, t.shape[0], int(system.n / 2), 2))
 
         for i, system in enumerate(self.system_list):
             if u is not None:
                 u_i = u[i]
-                u_i = self.convert_input(u_i, t)
+                u_i, u_i_mid = self.convert_input(u_i, t)
                 if i == 0:
                     # initialize array of overall u
                     U = np.zeros((self.n_sim, t.shape[0], u_i.shape[2]))
                 # set last one to zero due to midpoints
-                U[i, :-1, :] = u_i
+                U[i] = u_i
             else:
                 u_i = None
                 U = None
@@ -183,10 +184,17 @@ class MSD:
             x = system.solve(
                 t,
                 z_init=z_init_i,
-                u=u_i,
+                u=u_i_mid,
                 integrator_type=integrator_type,
                 decomp_option=decomp_option,
             )
+
+            x_dt = np.empty((x.shape))
+            for j in range(x.shape[0]):
+                x_dt_j = (
+                        system.A @ x[j, :, :].transpose() + system.B @ u_i[j, :, :].transpose()
+                )  # dx_dt_i of size (n_f,n_t)
+                x_dt[j, :, :] = x_dt_j.transpose()  # of size (n_sim,n_t,n_f)
 
             # use reshape function (attention be aware, that even though it its of size (n_sim,n_t,n_mass,n_dn)
             # the last entries are not displacement and velocities of each mass accordingly - "Fortran" reshaping would be needed)
@@ -194,10 +202,14 @@ class MSD:
             X[i, :, :, :] = reshape_features_to_states(
                 x, n_sim=1, n_t=n_t, n_n=int(system.n / 2), n_dn=2
             )
+            X_dt[i, :, :, :] = reshape_features_to_states(
+                x_dt, n_sim=1, n_t=n_t, n_n=int(system.n / 2), n_dn=2
+            )
             # X[i, :, :, 0] = x[0, :, : int(system.n / 2)]
             # X[i, :, :, 1] = x[0, :, int(system.n / 2) :]
 
         self.X = X
+        self.X_dt = X_dt
         self.t = t
         self.U = U
 
@@ -253,23 +265,25 @@ class MSD:
         plt.show(block=False)
         plt.savefig(os.path.join(debug_dir, "state_plot.png"))
 
-    def convert_input(self, u, t):
+    def convert_input(self, u_fun, t):
         """
         convert input into the required PHSystem.solve format (n_sim,n_t,n_u)
         """
         n_t = t.shape[0]
         t_midpoints = 0.5 * (t[1:] + t[:-1])
-        u = u(t_midpoints)[np.newaxis, :]
+        u_mid = u_fun(t_midpoints)[np.newaxis, :]
+        u = u_fun(t)[np.newaxis, :]
         # for MIMO systems
-        if u.ndim > 1:
+        if u_mid.ndim > 1:
+            u_mid = u_mid.T
             u = u.T
         # add n_sim = 1 axis
+        u_mid = u_mid[np.newaxis, :]
         u = u[np.newaxis, :]
 
-        assert u.shape[0] == 1
-        assert u.shape[1] == n_t - 1
-
-        return u
+        assert u_mid.shape[0] == 1
+        assert u_mid.shape[1] == n_t - 1
+        return u, u_mid
 
     def save(
         self, save_path=None, save_name: str | None = None, save_name_suffix: str = ""
@@ -326,6 +340,7 @@ class MSD:
             np.savez(
                 os.path.join(save_path, save_name),
                 X=self.X,
+                X_dt=self.X_dt,
                 t=self.t,
                 U=self.U,
                 J=J,
@@ -341,6 +356,7 @@ class MSD:
             np.savez(
                 os.path.join(save_path, save_name),
                 X=self.X,
+                X_dt=self.X_dt,
                 t=self.t,
                 U=self.U,
                 A=A,

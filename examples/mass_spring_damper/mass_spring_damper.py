@@ -112,7 +112,7 @@ def main(config_path_to_file=None):
             for i_same_mu_scenario in idx_test
         ]
     ).flatten()
-    shift_to_train = 60 # 69
+    shift_to_train = 30 # 69
     train_idx = np.concatenate([train_idx, test_idx[:shift_to_train]])
     test_idx = test_idx[shift_to_train:]
 
@@ -127,6 +127,7 @@ def main(config_path_to_file=None):
     plt.scatter(x0_test[:,0], x0_test[:,1])
     plt.xlabel("position mass 1")
     plt.ylabel("position mass 2")
+    plt.legend(["train", "test"])
     # plt.view([90,0])
     # ax.set_zlim(-0.002, 0.002)
     plt.tight_layout()
@@ -143,18 +144,18 @@ def main(config_path_to_file=None):
     plt.show()
 
     # truncate time for training data
-    msd_data.truncate_time(trunc_time_ratio=msd_cfg["trunc_time_ratio"])
+    # msd_data.truncate_time(trunc_time_ratio=msd_cfg["trunc_time_ratio"])
 
 
     # plot all input trajectories
-    # fig = plt.figure()
-    # plt.plot(msd_data.TRAIN.t[:,0], msd_data.TRAIN.U[:,:,0].T, "darkgray", label="train")
-    # plt.plot(msd_data.TEST.t[:,0], msd_data.TEST.U[:10,:,0].T)
-    # plt.ylabel("u")
-    # plt.legend(["train"])
-    # plt.xlabel("time in s")
-    # plt.show()
-    # plt.savefig("inputs")
+    fig = plt.figure()
+    plt.plot(msd_data.TRAIN.t[:,0], msd_data.TRAIN.U[:,:,0].T, "darkgray", label="train")
+    plt.plot(msd_data.TEST.t[:,0], msd_data.TEST.U[:,:,0].T)
+    plt.ylabel("u")
+    plt.legend(["train"])
+    plt.xlabel("time in s")
+    plt.show()
+    plt.savefig("inputs")
 
     # scale data
     msd_data.scale_Mu(desired_bounds=msd_cfg["desired_bounds"])
@@ -173,13 +174,18 @@ def main(config_path_to_file=None):
     logging.info(
         "################################   2. Model      ################################"
     )
-
+    if msd_cfg["validation"]:
+        monitor = "val_loss"
+        n_train = int(0.8 * x.shape[0])
+    else:
+        monitor = "loss"
+        n_train = x.shape[0]
     # ph identification network (pHIN)
     callback = callbacks(
         weight_dir,
         tensorboard=msd_cfg["tensorboard"],
         log_dir=log_dir,
-        monitor="val_loss",
+        monitor=monitor,
         earlystopping=True,
         patience=500,
     )
@@ -219,8 +225,7 @@ def main(config_path_to_file=None):
         optimizer=tf.keras.optimizers.Adam(learning_rate=msd_cfg["lr"]),
         loss=tf.keras.losses.MSE,
     )
-    n_train = int(0.8 * x.shape[0])
-    n_th_sample = 5
+    n_th_sample = 1
     import numpy as np
     if np.any(u):
         x_train = [x[:n_train:n_th_sample], dx_dt[:n_train:n_th_sample], u[:n_train:n_th_sample], mu[:n_train:n_th_sample]]
@@ -239,7 +244,7 @@ def main(config_path_to_file=None):
         logging.info(f"Fitting NN weights.")
         train_hist = phin.fit(
             x=x_train,
-            validation_data=(x_val, None),
+            validation_data=(x_val, None) if msd_cfg["validation"] else None,
             epochs=msd_cfg["n_epochs"],
             batch_size=msd_cfg["batch_size"],
             verbose=2,
@@ -247,7 +252,8 @@ def main(config_path_to_file=None):
         )
         save_training_times(train_hist, result_dir)
         aphin_vis.plot_train_history(train_hist, save_name=os.path.join(result_dir, "train_history"))
-        aphin_vis.plot_train_history(train_hist, validation=True, save_name=os.path.join(result_dir, "train_history"))
+        if "val_loss" in train_hist.history.keys():
+            aphin_vis.plot_train_history(train_hist, validation=True, save_name=os.path.join(result_dir, "train_history"))
         phin.load_weights(os.path.join(weight_dir, ".weights.h5"))
 
         # # phin.load_weights(data_path_weights_filename)
@@ -368,7 +374,7 @@ def main(config_path_to_file=None):
     # plt.close("all")
     es = []
     i_test = 1
-    for i_test in range(10):
+    for i_test in range(3):
         plt.figure()
         plt.plot(msd_data_id.TEST.Z_ph[i_test, :, 0], label="pred", color="red")
         plt.plot(msd_data_id.TEST.Z[i_test, :, 0], label="ref", color="red", linestyle="--")
@@ -414,7 +420,7 @@ def main(config_path_to_file=None):
 
     # plot chessboard visualisation
     test_ids = [0, 1, 3, 6, 7]  # test_ids = range(10) # range(6) test_ids = [0]
-    aphin_vis.chessboard_visualisation(test_ids, system_layer, msd_data, result_dir, error_limits=[0.022277599200606346, 0.01978847570717334, 0.04014775591542816, 0.023013601874971812])
+    # aphin_vis.chessboard_visualisation(test_ids, system_layer, msd_data, result_dir, error_limits=[0.022277599200606346, 0.01978847570717334, 0.04014775591542816, 0.023013601874971812])
 
     # avoid that the script stops and keep the plots open
     plt.show()
