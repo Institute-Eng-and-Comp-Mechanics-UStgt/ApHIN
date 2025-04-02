@@ -16,6 +16,7 @@ from aphin.utils.save_results import (
     write_to_experiment_overview,
     save_evaluation_times,
     save_training_times,
+    save_config_sweep_data,
 )
 from aphin.identification import APHIN
 from aphin.layers.phq_layer import PHQLayer, PHLayer
@@ -50,7 +51,7 @@ def main(
     #                         -result_folder_name     searches for a subfolder with result_folder_name under working dir that
     #                                                 includes a config.yml and .weights.h5
     #                                                 -> config for loading results
-    manual_results_folder = "db_large_heat_new_first_try"  # {None} if no results shall be loaded, else create str with folder name or path to results folder
+    manual_results_folder = None  # {None} if no results shall be loaded, else create str with folder name or path to results folder
 
     # write to config_info
     if config_path_to_file is not None:
@@ -75,6 +76,15 @@ def main(
         db_cfg["ph_layer"] = db_cfg["layer"]
     if not "ph_layer" in db_cfg.keys():
         db_cfg["ph_layer"] = "phq"
+    if not "only_save" in db_cfg.keys():
+        db_cfg["only_save"] = False
+
+    # save_config_sweep_data(
+    #     root_result_dir=os.path.dirname(result_dir),
+    #     common_folder_name="db_without_force_small_data_small_time_steps_multExp",
+    #     sweep_key="r",
+    #     domain_names=db_cfg["domain_names"],
+    # )
 
     aphin_vis.setup_matplotlib(db_cfg["setup_matplotlib"])
     # %% Data
@@ -250,8 +260,8 @@ def main(
     # ax.plot(t.ravel()[:10], x_dt_savgol[:10] - x_dt_savgol[0])
     # plt.show(block=True)
 
-    aphin_vis.compare_x_and_x_dt(disc_brake_data, use_train_data=True, idx_gen="rand")
-    aphin_vis.plot_u(disc_brake_data, use_train_data=True)
+    # aphin_vis.compare_x_and_x_dt(disc_brake_data, use_train_data=True, idx_gen="rand")
+    # aphin_vis.plot_u(disc_brake_data, use_train_data=True)
     # %% Create APHIN
     logging.info(
         "################################   2. Model      ################################"
@@ -357,7 +367,9 @@ def main(
         )
         save_training_times(train_hist, result_dir)
         aphin_vis.plot_train_history(
-            train_hist, save_path=result_dir, validation=validation
+            train_hist,
+            save_path=result_dir,
+            validation=validation,
         )
 
         # load best weights
@@ -509,23 +521,24 @@ def main(
         domain_names=db_cfg["domain_names"],
         save_to_csv=True,
         yscale="log",
+        only_save=db_cfg["only_save"],
     )
 
-    aphin_vis.single_parameter_space_error_plot(
-        disc_brake_data.TEST.state_error_list[0],
-        disc_brake_data.TEST.Mu,
-        disc_brake_data.TEST.Mu_input,
-        parameter_names=["conductivity", "density", "heat flux"],
-        save_name="",
-    )
+    # aphin_vis.single_parameter_space_error_plot(
+    #     disc_brake_data.TEST.state_error_list[0],
+    #     disc_brake_data.TEST.Mu,
+    #     disc_brake_data.TEST.Mu_input,
+    #     parameter_names=["conductivity", "density", "heat flux"],
+    #     save_name="",
+    # )
 
-    aphin_vis.single_parameter_space_error_plot(
-        disc_brake_data.TRAIN.state_error_list[0],
-        disc_brake_data.TRAIN.Mu,
-        disc_brake_data.TRAIN.Mu_input,
-        parameter_names=["conductivity", "density", "heat flux"],
-        save_name="",
-    )
+    # aphin_vis.single_parameter_space_error_plot(
+    #     disc_brake_data.TRAIN.state_error_list[0],
+    #     disc_brake_data.TRAIN.Mu,
+    #     disc_brake_data.TRAIN.Mu_input,
+    #     parameter_names=["conductivity", "density", "heat flux"],
+    #     save_name="",
+    # )
 
     # %% plot trajectories
     idx_gen = "rand"
@@ -535,6 +548,7 @@ def main(
         use_train_data=use_train_data,
         idx_gen=idx_gen,
         result_dir=result_dir,
+        only_save=db_cfg["only_save"],
     )
 
     # node = 1432
@@ -711,17 +725,18 @@ def main(
 # requires calc_various_experiments = True
 def create_variation_of_parameters():
     parameter_variation_dict = {
-        "l_dz": [1, 10, 0.1],
-        "l_dx": [0, 0.1, 0.000001],
-        "l_rec": [1, 10, 0.1],
-        "r": [8, 16],
+        # "lr": [0.0000025, 0.00000025],
+        # "l_dz": [10, 0.1],
+        # "l_dx": [0, 0.1, 0.000001],
+        # "l_rec": [10, 0.1],
+        "r": [16, 2, 4, 8, 12, 24],
         # "ph_layer": ["ph", "phq"],
     }
     return parameter_variation_dict
 
 
 if __name__ == "__main__":
-    calc_various_experiments = False
+    calc_various_experiments = True
     if calc_various_experiments:
         logging.info(f"Multiple simulation runs...")
         # Run multiple simulation runs defined by parameter_variavation_dict
