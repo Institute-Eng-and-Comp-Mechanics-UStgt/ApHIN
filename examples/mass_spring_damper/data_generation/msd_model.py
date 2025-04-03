@@ -192,7 +192,8 @@ class MSD:
             x_dt = np.empty((x.shape))
             for j in range(x.shape[0]):
                 x_dt_j = (
-                        system.A @ x[j, :, :].transpose() + system.B @ u_i[j, :, :].transpose()
+                    system.A @ x[j, :, :].transpose()
+                    + system.B @ u_i[j, :, :].transpose()
                 )  # dx_dt_i of size (n_f,n_t)
                 x_dt[j, :, :] = x_dt_j.transpose()  # of size (n_sim,n_t,n_f)
 
@@ -201,7 +202,7 @@ class MSD:
             n_t = len(t)
             # the reshape function is not made for this purpose so we switch n_n and n_dn and transpose those axis in the result
             X[i, :, :, :] = reshape_features_to_states(
-                x[:,:,:,np.newaxis], n_sim=1, n_t=n_t, n_n=2, n_dn=int(system.n / 2)
+                x[:, :, :, np.newaxis], n_sim=1, n_t=n_t, n_n=2, n_dn=int(system.n / 2)
             ).transpose((0, 1, 3, 2))
             X_dt[i, :, :, :] = reshape_features_to_states(
                 x_dt, n_sim=1, n_t=n_t, n_n=2, n_dn=int(system.n / 2)
@@ -694,12 +695,16 @@ class MSD:
                     # X = np.reshape(msd.X, (n_sim, msd.X.shape[1], n_mass * 2), "F")
                     for i_sim in range(n_sim):
                         x_i = reshape_states_to_features(
-                            msd.X[i_sim, :, :, :][np.newaxis, :]
+                            np.reshape(
+                                msd.X[i_sim, :, :, :][np.newaxis, :],
+                                (1, n_t, 2, 3),
+                                "F",
+                            ).transpose(0, 1, 3, 2)
                         )
                         x_i_T = np.transpose(msd.T_inv[:, :, i_sim] @ x_i.T)
                         X[i_sim, :, :, :] = reshape_features_to_states(
-                            x_i_T, n_sim=1, n_t=n_t, n_n=n_n, n_dn=n_dn
-                        )
+                            x_i_T, n_sim=1, n_t=n_t, n_n=2, n_dn=n_mass
+                        ).transpose(0, 1, 3, 2)
                 else:
                     X = msd.X
             elif msd.system_type == "ss":
