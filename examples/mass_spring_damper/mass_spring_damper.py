@@ -112,7 +112,7 @@ def main(config_path_to_file=None):
             for i_same_mu_scenario in idx_test
         ]
     ).flatten()
-    shift_to_train = 30 # 69
+    shift_to_train = 50 # 69
     train_idx = np.concatenate([train_idx, test_idx[:shift_to_train]])
     test_idx = test_idx[shift_to_train:]
 
@@ -176,7 +176,7 @@ def main(config_path_to_file=None):
     )
     if msd_cfg["validation"]:
         monitor = "val_loss"
-        n_train = int(0.8 * x.shape[0])
+        n_train = int(7/8 * x.shape[0])
     else:
         monitor = "loss"
         n_train = x.shape[0]
@@ -236,6 +236,7 @@ def main(config_path_to_file=None):
     phin.build(input_shape=([data_.shape for data_ in x_train], None))
     #
     # phin.load_weights(os.path.join(weight_dir, ".weights.h5"))
+    phin.load_weights("/Users/jonaskneifl/Develop/27_ApHIN_fork/examples/mass_spring_damper/results/ph_final/.weights.h5")
 
     if msd_cfg["load_network"]:
         logging.info(f"Loading NN weights.")
@@ -374,7 +375,7 @@ def main(config_path_to_file=None):
     # plt.close("all")
     es = []
     i_test = 1
-    for i_test in range(3):
+    for i_test in range(10):
         plt.figure()
         plt.plot(msd_data_id.TEST.Z_ph[i_test, :, 0], label="pred", color="red")
         plt.plot(msd_data_id.TEST.Z[i_test, :, 0], label="ref", color="red", linestyle="--")
