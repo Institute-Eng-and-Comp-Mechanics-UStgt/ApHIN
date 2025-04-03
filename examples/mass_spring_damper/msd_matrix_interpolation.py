@@ -66,12 +66,18 @@ def phin_learning(
         "################################   2. Model      ################################"
     )
 
+    validation = msd_cfg["validation"]
+    if validation:
+        monitor = "val_loss"
+    else:
+        monitor = "loss"
+
     # ph identification network (pHIN)
     callback = callbacks(
         weight_dir,
         tensorboard=msd_cfg["tensorboard"],
         log_dir=log_dir,
-        monitor="loss",
+        monitor=monitor,
         earlystopping=True,
         patience=500,
     )
@@ -123,24 +129,26 @@ def phin_learning(
         logging.info(f"Loading NN weights.")
         phin.load_weights(os.path.join(weight_dir, ".weights.h5"))
     else:
-        # n_train = int(0.8 * x.shape[0])
-        # x_train = [x[:n_train], dx_dt[:n_train], u[:n_train], mu[:n_train]]
-        # x_val = [x[n_train:], dx_dt[n_train:], u[n_train:], mu[n_train:]]
-        if mu is None:
-            x_train = [x, dx_dt, u]
+        if validation:
+            n_train = int(0.8 * x.shape[0])
+            x_train = [x[:n_train], dx_dt[:n_train], u[:n_train], mu[:n_train]]
+            x_val = [x[n_train:], dx_dt[n_train:], u[n_train:], mu[n_train:]]
         else:
             x_train = [x, dx_dt, u, mu]
+            x_val = None
         logging.info(f"Fitting NN weights.")
         train_hist = phin.fit(
             x=x_train,
-            # validation_data=(x_val, None),
+            validation_data=(x_val, None),
             epochs=msd_cfg["n_epochs"],
             batch_size=msd_cfg["batch_size"],
             verbose=2,
             callbacks=callback,
         )
         save_training_times(train_hist, result_dir)
-        aphin_vis.plot_train_history(train_hist, save_path=result_dir)
+        aphin_vis.plot_train_history(
+            train_hist, save_path=result_dir, validation=msd_cfg["validation"]
+        )
         phin.load_weights(os.path.join(weight_dir, ".weights.h5"))
 
     # write data to results directory
@@ -172,7 +180,7 @@ def main(config_path_to_file=None, only_usual_phin: bool = False):
     #                         -result_folder_name     searches for a subfolder with result_folder_name under working dir that
     #                                                 includes a config.yml and .weights.h5
     #                                                 -> config for loading results
-    manual_results_folder = None  # {None} if no results shall be loaded, else create str with folder name or path to results folder
+    manual_results_folder = "msd_interpolation_finished3"  # {None} if no results shall be loaded, else create str with folder name or path to results folder
 
     # write to config_info
     if manual_results_folder is not None:
@@ -194,7 +202,7 @@ def main(config_path_to_file=None, only_usual_phin: bool = False):
     data_dir, log_dir, weight_dir, result_dir = configuration.directories
 
     # set up matplotlib
-    # aphin_vis.setup_matplotlib(msd_cfg["setup_matplotlib"])
+    aphin_vis.setup_matplotlib(msd_cfg["setup_matplotlib"])
 
     # Reproducibility
     # tf.config.run_functions_eagerly(True)
@@ -265,7 +273,12 @@ def main(config_path_to_file=None, only_usual_phin: bool = False):
         os.mkdir(result_dir_usual_phin)
     use_train_data = False
     idx_gen = "rand"
-    msd_data.calculate_errors(msd_data_id)
+    msd_data.calculate_errors(
+        msd_data_id,
+        save_to_txt=True,
+        result_dir=result_dir_usual_phin,
+        domain_split_vals=[1, 1],
+    )
     aphin_vis.plot_time_trajectories_all(
         msd_data, msd_data_id, use_train_data, idx_gen, result_dir_usual_phin
     )
@@ -284,21 +297,21 @@ def main(config_path_to_file=None, only_usual_phin: bool = False):
 
     # 3d plot of initial conditions
     fig = plt.figure()
-    x0 = msd_data.TRAIN.X[:,0,:,0]
-    x0_test = msd_data.TEST.X[:,0,:,0]
-    plt.scatter(x0[:,0], x0[:,1])
-    plt.scatter(x0_test[:,0], x0_test[:,1])
+    x0 = msd_data.TRAIN.X[:, 0, :, 0]
+    x0_test = msd_data.TEST.X[:, 0, :, 0]
+    plt.scatter(x0[:, 0], x0[:, 1])
+    plt.scatter(x0_test[:, 0], x0_test[:, 1])
     plt.xlabel("position mass 1")
     plt.ylabel("position mass 2")
     # plt.view([90,0])
     # ax.set_zlim(-0.002, 0.002)
     plt.tight_layout()
     plt.show()
-    plt.savefig('initial_conditions')
+    plt.savefig("initial_conditions")
 
     # plot of parameters
     fig = plt.figure()
-    plt.plot(msd_data.TRAIN.Mu[:,0], msd_data.TRAIN.Mu[:,1], "o")
+    plt.plot(msd_data.TRAIN.Mu[:, 0], msd_data.TRAIN.Mu[:, 1], "o")
     plt.plot(msd_data.TEST.Mu[:, 0], msd_data.TEST.Mu[:, 1], "o")
     plt.xlabel("k")
     plt.ylabel("c")
@@ -337,7 +350,7 @@ def main(config_path_to_file=None, only_usual_phin: bool = False):
                     msd_cfg,
                     configuration.directories,
                     dir_extension=f"interp{i_same_mu_scenario}",
-                    layer=msd_cfg["layer"],
+                    layer=msd_cfg["ph_layer"],
                 )
             )
             scenario_list.append(
@@ -361,12 +374,12 @@ def main(config_path_to_file=None, only_usual_phin: bool = False):
             system_layer_interp = scenario_tuple[1]
             msd_data_id_interp_scenario = scenario_tuple[0]
             mu_orig = scenario_tuple[4]
-            if msd_cfg["layer"] == "ph_layer":
+            if msd_cfg["ph_layer"] == "ph_layer":
                 J, R, B = system_layer_interp.get_system_matrices(
                     None, msd_data_id_interp_scenario.TRAIN.n_t
                 )
                 Q = np.eye(J.shape[1])
-            elif msd_cfg["layer"] == "phq_layer":
+            elif msd_cfg["ph_layer"] == "phq_layer":
                 J, R, B, Q = system_layer_interp.get_system_matrices(
                     None, msd_data_id_interp_scenario.TRAIN.n_t
                 )
@@ -452,14 +465,14 @@ def main(config_path_to_file=None, only_usual_phin: bool = False):
                 A=A_interp[:, :, i_test], B=B_interp[:, :, i_test]
             )
         elif msd_cfg["matrix_type"] == "ph":
-            if msd_cfg["layer"] == "phq_layer":
+            if msd_cfg["ph_layer"] == "phq_layer":
                 system_lti_or_ph = PHSystem(
                     J_ph=J_interp[:, :, i_test],
                     R_ph=R_interp[:, :, i_test],
                     Q_ph=Q_interp[:, :, i_test],
                     B=B_interp[:, :, i_test],
                 )
-            if msd_cfg["layer"] == "ph_layer":
+            if msd_cfg["ph_layer"] == "ph_layer":
                 system_lti_or_ph = PHSystem(
                     J_ph=J_interp[:, :, i_test],
                     R_ph=R_interp[:, :, i_test],
@@ -571,13 +584,13 @@ def create_variation_of_parameters():
 if __name__ == "__main__":
     working_dir = os.path.dirname(__file__)
     calc_various_experiments = False
+    only_usual_phin = True
     if calc_various_experiments:
         logging.info(f"Multiple simulation runs...")
         # Run multiple simulation runs defined by parameter_variavation_dict
         configuration = Configuration(working_dir)
         _, log_dir, _, result_dir = configuration.directories
 
-        only_usual_phin = True
         run_various_experiments(
             experiment_main_script=main,  # main without parentheses
             parameter_variation_dict=create_variation_of_parameters(),
@@ -594,4 +607,4 @@ if __name__ == "__main__":
         config_file_path = os.path.join(
             working_dir, "config_msd_matrix_interpolation.yml"
         )
-        main(config_file_path, only_usual_phin=True)
+        main(config_file_path, only_usual_phin=only_usual_phin)

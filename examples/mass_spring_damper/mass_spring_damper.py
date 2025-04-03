@@ -3,10 +3,12 @@ import logging
 import os
 
 import numpy as np
+
 # third party packages
 import numpy as np
 import tensorflow as tf
 from scipy.spatial import ConvexHull
+
 # import matplotlib
 # matplotlib.use("TkAgg")  # Force interactive backend
 import matplotlib.pyplot as plt
@@ -26,6 +28,7 @@ from aphin.utils.save_results import (
 )
 from aphin.utils.visualizations import save_as_png
 from aphin.utils.print_matrices import print_matrices
+
 
 # tf.config.run_functions_eagerly(True)
 #
@@ -90,7 +93,6 @@ def main(config_path_to_file=None):
             f"File could not be found. If this is the first time you run this example, please execute the data generating script `./data_generation/mass_spring_damper_data_gen.py` first."
         )
 
-    import numpy as np
     _, idx = np.unique(msd_data.Mu, axis=0, return_index=True)
     mu_all = msd_data.Mu[np.sort(idx), :]
     hull_convex = ConvexHull(mu_all)
@@ -112,7 +114,7 @@ def main(config_path_to_file=None):
             for i_same_mu_scenario in idx_test
         ]
     ).flatten()
-    shift_to_train = 30 # 69
+    shift_to_train = 30  # 69
     train_idx = np.concatenate([train_idx, test_idx[:shift_to_train]])
     test_idx = test_idx[shift_to_train:]
 
@@ -121,10 +123,10 @@ def main(config_path_to_file=None):
 
     # 3d plot of initial conditions
     fig = plt.figure()
-    x0 = msd_data.TRAIN.X[:,0,:,0]
-    x0_test = msd_data.TEST.X[:,0,:,0]
-    plt.scatter(x0[:,0], x0[:,1])
-    plt.scatter(x0_test[:,0], x0_test[:,1])
+    x0 = msd_data.TRAIN.X[:, 0, :, 0]
+    x0_test = msd_data.TEST.X[:, 0, :, 0]
+    plt.scatter(x0[:, 0], x0[:, 1])
+    plt.scatter(x0_test[:, 0], x0_test[:, 1])
     plt.xlabel("position mass 1")
     plt.ylabel("position mass 2")
     plt.legend(["train", "test"])
@@ -132,11 +134,11 @@ def main(config_path_to_file=None):
     # ax.set_zlim(-0.002, 0.002)
     plt.tight_layout()
     plt.show()
-    plt.savefig('initial_conditions')
+    plt.savefig("initial_conditions")
 
     # plot of parameters
     fig = plt.figure()
-    plt.plot(msd_data.TRAIN.Mu[:,0], msd_data.TRAIN.Mu[:,1], "o")
+    plt.plot(msd_data.TRAIN.Mu[:, 0], msd_data.TRAIN.Mu[:, 1], "o")
     plt.plot(msd_data.TEST.Mu[:, 0], msd_data.TEST.Mu[:, 1], "o")
     plt.xlabel("k")
     plt.ylabel("c")
@@ -146,11 +148,12 @@ def main(config_path_to_file=None):
     # truncate time for training data
     # msd_data.truncate_time(trunc_time_ratio=msd_cfg["trunc_time_ratio"])
 
-
     # plot all input trajectories
     fig = plt.figure()
-    plt.plot(msd_data.TRAIN.t[:,0], msd_data.TRAIN.U[:,:,0].T, "darkgray", label="train")
-    plt.plot(msd_data.TEST.t[:,0], msd_data.TEST.U[:,:,0].T)
+    plt.plot(
+        msd_data.TRAIN.t[:, 0], msd_data.TRAIN.U[:, :, 0].T, "darkgray", label="train"
+    )
+    plt.plot(msd_data.TEST.t[:, 0], msd_data.TEST.U[:, :, 0].T)
     plt.ylabel("u")
     plt.legend(["train"])
     plt.xlabel("time in s")
@@ -226,13 +229,27 @@ def main(config_path_to_file=None):
         loss=tf.keras.losses.MSE,
     )
     n_th_sample = 1
-    import numpy as np
     if np.any(u):
-        x_train = [x[:n_train:n_th_sample], dx_dt[:n_train:n_th_sample], u[:n_train:n_th_sample], mu[:n_train:n_th_sample]]
+        x_train = [
+            x[:n_train:n_th_sample],
+            dx_dt[:n_train:n_th_sample],
+            u[:n_train:n_th_sample],
+            mu[:n_train:n_th_sample],
+        ]
         x_val = [x[n_train:], dx_dt[n_train:], u[n_train:], mu[n_train:]]
     else:
-        x_train = [x[:n_train:n_th_sample], dx_dt[:n_train:n_th_sample], np.empty((x[:n_train:n_th_sample].shape[0], 0)), mu[:n_train:n_th_sample]]
-        x_val = [x[n_train:], dx_dt[n_train:], np.empty((x[n_train:].shape[0], 0)), mu[n_train:]]
+        x_train = [
+            x[:n_train:n_th_sample],
+            dx_dt[:n_train:n_th_sample],
+            np.empty((x[:n_train:n_th_sample].shape[0], 0)),
+            mu[:n_train:n_th_sample],
+        ]
+        x_val = [
+            x[n_train:],
+            dx_dt[n_train:],
+            np.empty((x[n_train:].shape[0], 0)),
+            mu[n_train:],
+        ]
     phin.build(input_shape=([data_.shape for data_ in x_train], None))
     #
     # phin.load_weights(os.path.join(weight_dir, ".weights.h5"))
@@ -251,9 +268,15 @@ def main(config_path_to_file=None):
             callbacks=callback,
         )
         save_training_times(train_hist, result_dir)
-        aphin_vis.plot_train_history(train_hist, save_name=os.path.join(result_dir, "train_history"))
+        aphin_vis.plot_train_history(
+            train_hist, save_name=os.path.join(result_dir, "train_history")
+        )
         if "val_loss" in train_hist.history.keys():
-            aphin_vis.plot_train_history(train_hist, validation=True, save_name=os.path.join(result_dir, "train_history"))
+            aphin_vis.plot_train_history(
+                train_hist,
+                validation=True,
+                save_name=os.path.join(result_dir, "train_history"),
+            )
         phin.load_weights(os.path.join(weight_dir, ".weights.h5"))
 
         # # phin.load_weights(data_path_weights_filename)
@@ -309,10 +332,13 @@ def main(config_path_to_file=None):
     print_matrices(system_layer, mu=mu_test, n_t=n_t_test, data=msd_data)
     save_evaluation_times(msd_data_id, result_dir)
 
-
     msd_data.calculate_errors(msd_data_id, domain_split_vals=[1, 1])
-    logging.info(f"error z: {msd_data.TRAIN.latent_error_mean}/{msd_data.TEST.latent_error_mean}")
-    logging.info(f"error x: {msd_data.TRAIN.state_error_mean}/{msd_data.TEST.state_error_mean}")
+    logging.info(
+        f"error z: {msd_data.TRAIN.latent_error_mean}/{msd_data.TEST.latent_error_mean}"
+    )
+    logging.info(
+        f"error x: {msd_data.TRAIN.state_error_mean}/{msd_data.TEST.state_error_mean}"
+    )
 
     use_train_data = False
     aphin_vis.plot_errors(
@@ -327,11 +353,17 @@ def main(config_path_to_file=None):
     # reference data
     for dof in range(3):
         msd_data.TEST.save_state_traj_as_csv(
-            result_dir, second_oder=True, dof=dof, filename=f"state_{dof}_trajectories_reference"
+            result_dir,
+            second_oder=True,
+            dof=dof,
+            filename=f"state_{dof}_trajectories_reference",
         )
         # identified data
         msd_data_id.TEST.save_state_traj_as_csv(
-            result_dir, second_oder=True, dof=dof, filename=f"state_{dof}_trajectories_{msd_cfg["experiment"]}"
+            result_dir,
+            second_oder=True,
+            dof=dof,
+            filename=f"state_{dof}_trajectories_{msd_cfg['experiment']}",
         )
 
     # plot state values
@@ -340,10 +372,11 @@ def main(config_path_to_file=None):
         msd_data, msd_data_id, use_train_data, idx_gen, result_dir
     )
 
-
     # predicted matrices
     try:
-        J_pred, R_pred, B_pred, Q_pred = system_layer.get_system_matrices(mu_test, n_t=n_t_test)
+        J_pred, R_pred, B_pred, Q_pred = system_layer.get_system_matrices(
+            mu_test, n_t=n_t_test
+        )
         A_pred = (J_pred - R_pred) @ Q_pred
     except ValueError:
         J_pred, R_pred, B_pred = system_layer.get_system_matrices(mu_test, n_t=n_t_test)
@@ -353,22 +386,40 @@ def main(config_path_to_file=None):
     J_test_, R_test_, Q_test_, B_test_ = msd_data.ph_matrices_test
     A_test = (J_test_ - R_test_) @ Q_test_
 
-    error_A = np.linalg.norm(A_pred - A_test, axis=(1,2)) / np.linalg.norm(A_test, axis=(1,2))
+    error_A = np.linalg.norm(A_pred - A_test, axis=(1, 2)) / np.linalg.norm(
+        A_test, axis=(1, 2)
+    )
 
-    max_eigs_pred = np.array([np.real(np.linalg.eig(A_).eigenvalues).max() for A_ in A_pred])
-    max_eigs_ref = np.array([np.real(np.linalg.eig(A_).eigenvalues).max() for A_ in A_test])
+    max_eigs_pred = np.array(
+        [np.real(np.linalg.eig(A_).eigenvalues).max() for A_ in A_pred]
+    )
+    max_eigs_ref = np.array(
+        [np.real(np.linalg.eig(A_).eigenvalues).max() for A_ in A_test]
+    )
 
     # plot eigenvalues on imaginary axis
     eigs_pred = np.array([np.linalg.eig(A_).eigenvalues for A_ in A_pred])
     eigs_ref = np.array([np.linalg.eig(A_).eigenvalues for A_ in A_test])
 
     # save real and imaginary parts of eigenvalues to csv
-    header = "".join([f"sim{i}_eigs_real," for i in range(eigs_pred.shape[0])]) + "".join([f"sim{i}_eigs_imag," for i in range(eigs_pred.shape[0])])
-    np.savetxt(os.path.join(result_dir, "eigenvalues_ref.csv"),
-               np.concatenate([eigs_ref.real, eigs_ref.imag], axis=0).T, delimiter=",", header=header, comments="")
+    header = "".join(
+        [f"sim{i}_eigs_real," for i in range(eigs_pred.shape[0])]
+    ) + "".join([f"sim{i}_eigs_imag," for i in range(eigs_pred.shape[0])])
+    np.savetxt(
+        os.path.join(result_dir, "eigenvalues_ref.csv"),
+        np.concatenate([eigs_ref.real, eigs_ref.imag], axis=0).T,
+        delimiter=",",
+        header=header,
+        comments="",
+    )
 
-    np.savetxt(os.path.join(result_dir, "eigenvalues_pred.csv"),
-               np.concatenate([eigs_pred.real, eigs_pred.imag], axis=0).T, delimiter=",", header=header, comments="")
+    np.savetxt(
+        os.path.join(result_dir, "eigenvalues_pred.csv"),
+        np.concatenate([eigs_pred.real, eigs_pred.imag], axis=0).T,
+        delimiter=",",
+        header=header,
+        comments="",
+    )
 
     # close all figures
     # plt.close("all")
@@ -377,13 +428,21 @@ def main(config_path_to_file=None):
     for i_test in range(3):
         plt.figure()
         plt.plot(msd_data_id.TEST.Z_ph[i_test, :, 0], label="pred", color="red")
-        plt.plot(msd_data_id.TEST.Z[i_test, :, 0], label="ref", color="red", linestyle="--")
+        plt.plot(
+            msd_data_id.TEST.Z[i_test, :, 0], label="ref", color="red", linestyle="--"
+        )
         plt.plot(msd_data_id.TEST.Z_ph[i_test, :, 1], label="pred", color="blue")
-        plt.plot(msd_data_id.TEST.Z[i_test, :, 1], label="ref", color="blue", linestyle="--")
+        plt.plot(
+            msd_data_id.TEST.Z[i_test, :, 1], label="ref", color="blue", linestyle="--"
+        )
         plt.plot(msd_data_id.TEST.Z_ph[i_test, :, 2], label="pred", color="teal")
-        plt.plot(msd_data_id.TEST.Z[i_test, :, 2], label="ref", color="teal", linestyle="--")
+        plt.plot(
+            msd_data_id.TEST.Z[i_test, :, 2], label="ref", color="teal", linestyle="--"
+        )
         plt.legend()
-        e = np.linalg.norm(msd_data_id.TEST.Z_ph[i_test, :, 0] - msd_data_id.TEST.Z[i_test, :, 0]) / np.linalg.norm(msd_data_id.TEST.Z[i_test, :, 0])
+        e = np.linalg.norm(
+            msd_data_id.TEST.Z_ph[i_test, :, 0] - msd_data_id.TEST.Z[i_test, :, 0]
+        ) / np.linalg.norm(msd_data_id.TEST.Z[i_test, :, 0])
         es.append(e)
         print(e)
     es = np.array(es)
@@ -394,7 +453,6 @@ def main(config_path_to_file=None):
     plt.plot(error_A)
     plt.plot(es)
     plt.show()
-
 
     test_ids = [0, 1, 3, 6, 7]
     for i in test_ids:
@@ -424,7 +482,8 @@ def main(config_path_to_file=None):
 
     # avoid that the script stops and keep the plots open
     plt.show()
-    print('a')
+    print("a")
+
 
 if __name__ == "__main__":
     main()
