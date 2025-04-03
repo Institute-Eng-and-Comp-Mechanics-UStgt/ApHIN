@@ -79,12 +79,12 @@ def main(
     if not "only_save" in db_cfg.keys():
         db_cfg["only_save"] = False
 
-    # save_config_sweep_data(
-    #     root_result_dir=os.path.dirname(result_dir),
-    #     common_folder_name="db_without_force_small_data_small_time_steps_multExp",
-    #     sweep_key="r",
-    #     domain_names=db_cfg["domain_names"],
-    # )
+    save_config_sweep_data(
+        root_result_dir=os.path.dirname(result_dir),
+        common_folder_name="db_large_heat_larger_data_rsweep_multExp",
+        sweep_key="r",
+        domain_names=db_cfg["domain_names"],
+    )
 
     aphin_vis.setup_matplotlib(db_cfg["setup_matplotlib"])
     # %% Data
@@ -736,7 +736,7 @@ def create_variation_of_parameters():
 
 
 if __name__ == "__main__":
-    calc_various_experiments = True
+    calc_various_experiments = False
     if calc_various_experiments:
         logging.info(f"Multiple simulation runs...")
         # Run multiple simulation runs defined by parameter_variavation_dict

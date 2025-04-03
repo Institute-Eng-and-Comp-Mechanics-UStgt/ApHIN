@@ -5,6 +5,7 @@ import os
 import yaml
 
 import matplotlib.pyplot as plt
+
 # own packages
 import aphin.utils.visualizations as phdl_vis
 from parameter_input import ParameterInput
@@ -21,7 +22,7 @@ phdl_vis.setup_matplotlib(False)
 with open(os.path.join(os.path.dirname(__file__), "config_data_gen.yml"), "r") as file:
     msd_config = yaml.safe_load(file)
 
-system_types = ["ph"] #, "ss"]
+system_types = ["ph"]  # , "ss"]
 Q_ids = [True, False]
 msd_list = []
 for system_type in system_types:
@@ -62,4 +63,4 @@ for system_type in system_types:
 
 # compare different system formulations - after retransforming they should be the same
 msd.compare_msd_systems(msd_list)
-plt.show()
+plt.show(block=True)

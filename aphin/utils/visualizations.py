@@ -2248,12 +2248,13 @@ def chessboard_visualisation(
         J_pred, R_pred, B_pred = system_layer.get_system_matrices(mu_test, n_t=n_t_test)
         A_pred = J_pred - R_pred
     except ValueError:
-        J_pred, R_pred, B_pred, Q_pred = system_layer.get_system_matrices(mu_test, n_t=n_t_test)
+        J_pred, R_pred, B_pred, Q_pred = system_layer.get_system_matrices(
+            mu_test, n_t=n_t_test
+        )
         A_pred = (J_pred - R_pred) @ Q_pred
     # original test matrices
     J_test_, R_test_, Q_test_, B_test_ = data.ph_matrices_test
     A_test_ = (J_test_ - R_test_) @ Q_test_
-
 
     J_pred, R_pred, B_pred, A_pred = (
         J_pred[test_ids],
@@ -3269,3 +3270,7 @@ def extract_matrices_and_errors(data, system_layer, test_ids, returnJRBminmax=Tr
             e_R,
             e_B,
         )
+
+
+def sweep_config_boxplot(result_dir, csv_file_names: list[str] | str):
+    pass
