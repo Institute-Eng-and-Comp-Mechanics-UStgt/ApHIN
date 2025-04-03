@@ -199,12 +199,13 @@ class MSD:
             # use reshape function (attention be aware, that even though it its of size (n_sim,n_t,n_mass,n_dn)
             # the last entries are not displacement and velocities of each mass accordingly - "Fortran" reshaping would be needed)
             n_t = len(t)
+            # the reshape function is not made for this purpose so we switch n_n and n_dn and transpose those axis in the result
             X[i, :, :, :] = reshape_features_to_states(
-                x, n_sim=1, n_t=n_t, n_n=int(system.n / 2), n_dn=2
-            )
+                x[:,:,:,np.newaxis], n_sim=1, n_t=n_t, n_n=2, n_dn=int(system.n / 2)
+            ).transpose((0, 1, 3, 2))
             X_dt[i, :, :, :] = reshape_features_to_states(
-                x_dt, n_sim=1, n_t=n_t, n_n=int(system.n / 2), n_dn=2
-            )
+                x_dt, n_sim=1, n_t=n_t, n_n=2, n_dn=int(system.n / 2)
+            ).transpose((0, 1, 3, 2))
             # X[i, :, :, 0] = x[0, :, : int(system.n / 2)]
             # X[i, :, :, 1] = x[0, :, int(system.n / 2) :]
 
