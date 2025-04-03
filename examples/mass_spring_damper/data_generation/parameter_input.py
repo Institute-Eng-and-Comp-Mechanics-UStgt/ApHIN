@@ -82,7 +82,9 @@ class ParameterInput:
 
         # parameter with intervalls are sampled using Halton sequence
         param_config = config[config["parameter_method"]]
-        n_simulations_per_parameter_set = param_config["n_simulations_per_parameter_set"]
+        n_simulations_per_parameter_set = param_config[
+            "n_simulations_per_parameter_set"
+        ]
         mass_vals = param_config["mass_vals"]
         stiff_vals = param_config["stiff_vals"]
         damp_vals = param_config["damp_vals"]
@@ -93,22 +95,36 @@ class ParameterInput:
         lower_bounds = [limit[0] if isinstance(limit, list) else 0 for limit in params]
         upper_bounds = [limit[1] if isinstance(limit, list) else 10 for limit in params]
         random_samples = config["random_samples"]
-        n_param_sets = int(random_samples/n_simulations_per_parameter_set)
+        n_param_sets = int(random_samples / n_simulations_per_parameter_set)
         parameter_dimension = 5
         sampler_Halton = qmc.Halton(d=parameter_dimension, seed=seed)
         samples_Halton = sampler_Halton.random(n=random_samples)
         sampled_parameters = qmc.scale(samples_Halton, lower_bounds, upper_bounds)
 
         # repeat parameters n_simulations_per_parameter_set times
-        mass_vals = np.repeat(sampled_parameters[:n_param_sets, 0], n_simulations_per_parameter_set) \
-            if isinstance(mass_vals, list) else mass_vals
-        stiff_vals = np.repeat(sampled_parameters[:n_param_sets, 1], n_simulations_per_parameter_set) \
-            if isinstance(stiff_vals, list) else stiff_vals
-        damp_vals = np.repeat(sampled_parameters[:n_param_sets, 2], n_simulations_per_parameter_set) \
-            if isinstance(damp_vals, list) else damp_vals
+        mass_vals = (
+            np.repeat(
+                sampled_parameters[:n_param_sets, 0], n_simulations_per_parameter_set
+            )
+            if isinstance(mass_vals, list)
+            else mass_vals
+        )
+        stiff_vals = (
+            np.repeat(
+                sampled_parameters[:n_param_sets, 1], n_simulations_per_parameter_set
+            )
+            if isinstance(stiff_vals, list)
+            else stiff_vals
+        )
+        damp_vals = (
+            np.repeat(
+                sampled_parameters[:n_param_sets, 2], n_simulations_per_parameter_set
+            )
+            if isinstance(damp_vals, list)
+            else damp_vals
+        )
         omega = sampled_parameters[:, 3] if isinstance(omega, list) else omega
         delta = sampled_parameters[:, 4] if isinstance(delta, list) else delta
-
 
         Mu_input = np.concatenate(
             (np.expand_dims(omega, axis=1), np.expand_dims(delta, axis=1)), axis=1
@@ -131,7 +147,9 @@ class ParameterInput:
                 plot_input(u, config)
 
         # generate initial condition
-        x0 = cls.generate_initial_condition(config["random_initial_condition"], 2 * n_mass, n_sim, seed=1)
+        x0 = cls.generate_initial_condition(
+            config["random_initial_condition"], 2 * n_mass, n_sim, seed=seed
+        )
 
         return cls(
             n_mass,
@@ -164,7 +182,7 @@ class ParameterInput:
             # random initial conditions
             x0 = (rng.random((n, n_sim)) - 0.5) * 0.01
             # set velocities to zero
-            x0[3:] = x0[3:]*0
+            x0[3:] = x0[3:] * 0
         else:
             # zero initial condition if input is used
             x0 = np.zeros((n, n_sim))
