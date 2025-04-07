@@ -2512,10 +2512,12 @@ def custom_state_plot(
     subplot_title: list[str] = None,
     legend: list[str] = None,
     result_dir: str = "",
+    save_to_csv: bool = False,
+    save_name: str = "custom_state_plot",
 ):
     """
     indices list of tuples with size (n_sim,n_n,n_dn)
-    attributes list of str with [attribute of data, attribute of data_id], e.g. ["X","X_ph"]
+    attributes list of str with [attribute of data, attribute of data_id], e.g. ["X","X_rec"]
     legend list of entries for orig system
     """
     # get data
@@ -2539,16 +2541,23 @@ def custom_state_plot(
 
     plot_state = np.zeros((len(index_list), n_t))
     plot_state_id = np.zeros((len(index_list), n_t))
+    header_names = []
     for i_index, index in enumerate(index_list):
         n_sim = index[0]
         n_n = index[1]
         n_dn = index[2]
         plot_state[i_index] = state[n_sim, :n_t, n_n, n_dn]
         plot_state_id[i_index] = state_id[n_sim, :n_t, n_n, n_dn]
+        header_names.append(f"nsim{n_sim}_nn{n_n}_ndn{n_dn}")
+
+    if subplot_idx is None:
+        subplot_idx = np.arange(len(index_list))
 
     num_subplots = max(subplot_idx) + 1
     if legend is None:
-        legend = [[None]] * len(index_list)
+        legend = [""] * len(index_list)
+    if subplot_title is None:
+        subplot_title = [""] * num_subplots
 
     # plot data
     width = 6
@@ -2570,7 +2579,34 @@ def custom_state_plot(
             ax[subplot_idx[i_index]].legend()
             ax[subplot_idx[i_index]].title.set_text(subplot_title[subplot_idx[i_index]])
     plt.xlabel("Time in s")
-    plt.savefig(os.path.join(result_dir, "custom_state_plot.png"))
+    plt.savefig(os.path.join(result_dir, f"{save_name}.png"))
+
+    if save_to_csv:
+        # if there are too many data points, pgfplots will throw an error and be very slow
+        # limit data points to 100 for each trajectory
+        data_point_limit = 100
+        if t.shape[0] > data_point_limit:
+            data_point_stepping = int(t.shape[0] / data_point_limit)
+            t = t[::data_point_stepping]
+            plot_state = plot_state[:, ::data_point_stepping]
+            plot_state_id = plot_state_id[:, ::data_point_stepping]  # concatenate data
+
+        if t.ndim == 1:
+            t = t[:, np.newaxis]
+        data_array = np.concatenate(
+            (t, np.transpose(plot_state), np.transpose(plot_state_id)),
+            axis=1,
+        )
+        # create header
+        header_list = (
+            ["t"] + header_names + [f"id_{header_name}" for header_name in header_names]
+        )
+        data_pd = pd.DataFrame(data_array, columns=header_list)
+        data_pd.to_csv(
+            os.path.join(result_dir, f"{save_name}.csv"),
+            header=True,
+            index=False,
+        )
 
     print("debug in custom_state_plot")
 
