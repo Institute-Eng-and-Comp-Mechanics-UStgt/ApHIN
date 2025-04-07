@@ -51,7 +51,7 @@ def main(
     #                         -result_folder_name     searches for a subfolder with result_folder_name under working dir that
     #                                                 includes a config.yml and .weights.h5
     #                                                 -> config for loading results
-    manual_results_folder = None  # {None} if no results shall be loaded, else create str with folder name or path to results folder
+    manual_results_folder = "db_large_heat_larger_data_epoch6000_rsweep_multExp_r8"  # {None} if no results shall be loaded, else create str with folder name or path to results folder
 
     # write to config_info
     if config_path_to_file is not None:
@@ -79,12 +79,12 @@ def main(
     if not "only_save" in db_cfg.keys():
         db_cfg["only_save"] = False
 
-    save_config_sweep_data(
-        root_result_dir=os.path.dirname(result_dir),
-        common_folder_name="db_large_heat_larger_data_rsweep_multExp",
-        sweep_key="r",
-        domain_names=db_cfg["domain_names"],
-    )
+    # save_config_sweep_data(
+    #     root_result_dir=os.path.dirname(result_dir),
+    #     common_folder_name="db_large_heat_larger_data_epoch6000_rsweep_multExp",
+    #     sweep_key="r",
+    #     domain_names=db_cfg["domain_names"],
+    # )
 
     aphin_vis.setup_matplotlib(db_cfg["setup_matplotlib"])
     # %% Data
@@ -412,6 +412,62 @@ def main(
     if save_video_data:
         disc_brake_data.save_video_data(result_dir, data_name="video_data_ref")
         disc_brake_data_id.save_video_data(result_dir, data_name="video_data_pred")
+
+    create_costum_plot = True
+    if create_costum_plot:
+        rng = np.random.default_rng()
+        n_n_costum = 2082  # between heat node
+        n_n_heat_line_nodes = (
+            np.array([759, 1695, 1934, 2199, 2233]) - 1
+        )  # -1 for 0-indexing (node numbers from Abaqus)
+        n_sim_constant = rng.integers(disc_brake_data.TEST.n_sim)
+        n_sim_random = rng.integers(0, disc_brake_data.TEST.n_sim, (5,))
+        index_list_sim_temp = [
+            (n_sim_costum, n_n_costum, 0) for n_sim_costum in n_sim_random
+        ]
+        index_list_sim_dispz = [
+            (n_sim_costum, n_n_costum, 3) for n_sim_costum in n_sim_random
+        ]
+        index_list_sim = index_list_sim_temp + index_list_sim_dispz
+        index_list_nodes_temp = [
+            (n_sim_constant, n_n_heat, 0) for n_n_heat in n_n_heat_line_nodes
+        ]
+        index_list_nodes_dispz = [
+            (n_sim_constant, n_n_heat, 3) for n_n_heat in n_n_heat_line_nodes
+        ]
+        index_list_nodes = index_list_nodes_temp + index_list_nodes_dispz
+
+        subplot_idx = [0] * len(index_list_nodes_temp) + [1] * len(
+            index_list_nodes_dispz
+        )
+
+        subplot_title = ["temp", "disp-z"]
+
+        aphin_vis.custom_state_plot(
+            data=disc_brake_data,
+            data_id=disc_brake_data_id,
+            attributes=["X", "X"],
+            index_list=index_list_nodes,
+            train_or_test="test",
+            result_dir=result_dir,
+            subplot_idx=subplot_idx,
+            subplot_title=subplot_title,
+            save_to_csv=True,
+            save_name="db_custom_nodes",
+        )
+
+        # import plotly.graph_objects as go
+
+        # fig = go.Figure()
+        # for i_node in range(disc_brake_data.TEST.X.shape[2]):
+        #     fig.add_trace(
+        #         go.Scatter(
+        #             x=disc_brake_data.TEST.t.flatten(),
+        #             y=disc_brake_data.TEST.X[0, :, i_node, 0],
+        #             mode="lines",
+        #         )
+        #     )
+        # fig.show()
 
     # %% finer time discretization
     # if isinstance(system_layer, PHQLayer):

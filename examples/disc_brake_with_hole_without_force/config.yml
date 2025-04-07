@@ -3,11 +3,12 @@ setup_matplotlib: False  # Show plots and visualization
 
 
 # %% General identification framework settings
-experiment: db_large_heat_larger_data_rsweep_multExp #    name of the experiment
+experiment: db_large_heat_larger_data_epoch6000_rsweep_multExp_r24 
+#     name of the experiment
 load_network: False  # train the network or load the last pre-trained one
 sim_name: disc_brake_with_hole_without_force_large_heat #disc_brake_with_hole_very_small_with_vel  # sim_onlyHeat_1Point_smallHalton_d3_samp100
 file_url: https://darus.uni-stuttgart.de/api/access/datafile/:persistentId?persistentId=doi:10.18419/darus-4418/1
-ref_coords: disc_ref_coords.npy
+r: 24 
 faces:  disc_faces.npy
 t_end: Null # truncate when reading from .txt to reduce data memory
 num_time_steps_load: Null # {Null} - use only for loading once, define integer number of target time steps
@@ -52,7 +53,7 @@ n_mu: 2     # number of parameters (not varying inputs)
 ph_layer: phq   # ph | phq
 
 # %% identification settings
-r: 16 
+r: 24 
 #   reduced order
 use_pca: True 
 #  use PCA for the input
@@ -65,7 +66,7 @@ l_dz: 1 #  loss weight for the dz
 l_dx: 0.1 #  loss weight for the dx
 l1: 0.0000000001  # L1 regularization
 l2: 0  # L2 regularization
-n_epochs: 3000 
+n_epochs: 6000 
 #   number of epochs
 batch_size: 128  # batch size
 layer_sizes_ph: # layer sizes
