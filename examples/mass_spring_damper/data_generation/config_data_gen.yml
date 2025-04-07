@@ -62,14 +62,14 @@ matrix-interpolation:
     damp_vals: 0
     delta: [0.5, 5]
     omega: [0.125, 2]
-    n_simulations_per_parameter_set: 3
+    n_simulations_per_parameter_set: 1
 
 # 'Halton': parameter values specified according to:
 random_samples: 120         # None if non-parametric
 
 # input
 input_vals: 0 # null/None (autonomous) | 0 (first mass excitation - SISO)
-random_initial_condition: 1 #
+random_initial_condition: 0 #
 
 # time values for trajectories
 T_training: 20

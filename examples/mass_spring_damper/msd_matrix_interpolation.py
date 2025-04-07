@@ -16,7 +16,7 @@ import matplotlib.pyplot as plt
 # own packages
 import aphin.utils.visualizations as aphin_vis
 from aphin.identification import PHIN
-from aphin.layers import PHLayer, PHQLayer
+from aphin.layers import PHLayer, PHQLayer, LTILayer
 from aphin.utils.data import Dataset, PHIdentifiedDataset, PHIdentifiedData
 from aphin.utils.callbacks_tensorflow import callbacks
 from aphin.utils.configuration import Configuration
@@ -108,6 +108,16 @@ def phin_learning(
             layer_sizes=msd_cfg["layer_sizes_ph"],
             activation=msd_cfg["activation_ph"],
         )
+    elif layer == "lti_layer":
+        system_layer = LTILayer(
+            n_f,
+            n_u=n_u,
+            n_mu=n_mu,
+            regularizer=regularizer,
+            name="lti_layer",
+            layer_sizes=msd_cfg["layer_sizes_ph"],
+            activation=msd_cfg["activation_ph"],
+        )
     else:
         raise ValueError(f"Unknown layer {layer}.")
 
@@ -124,6 +134,7 @@ def phin_learning(
         input_shape = [x.shape, dx_dt.shape, u.shape, mu.shape]
     phin.build(input_shape=(input_shape, None))
 
+    # phin.load_weights(os.path.join(weight_dir, ".weights.h5"))
     # phin.load_weights(data_path_weights_filename)
     if msd_cfg["load_network"]:
         logging.info(f"Loading NN weights.")
@@ -243,19 +254,21 @@ def main(config_path_to_file=None, only_usual_phin: bool = False):
     )  # parameters inside the convex hull
     assert idx_test.shape[0] >= 3  # at least 3 test trajectories
 
-    train_idx = np.array(
-        [
-            (i_same_mu_scenario) * 3 + np.array([0, 1, 2])
-            for i_same_mu_scenario in idx_train
-        ]
-    ).flatten()
-    test_idx = np.array(
-        [
-            (i_same_mu_scenario) * 3 + np.array([0, 1, 2])
-            for i_same_mu_scenario in idx_test
-        ]
-    ).flatten()
-    shift_to_train = 30  # divisible by 3
+    # train_idx = np.array(
+    #     [
+    #         (i_same_mu_scenario) * 3 + np.array([0, 1, 2])
+    #         for i_same_mu_scenario in idx_train
+    #     ]
+    # ).flatten()
+    # test_idx = np.array(
+    #     [
+    #         (i_same_mu_scenario) * 3 + np.array([0, 1, 2])
+    #         for i_same_mu_scenario in idx_test
+    #     ]
+    # ).flatten()
+    train_idx = idx_train
+    test_idx = idx_test
+    shift_to_train = 45
     train_idx = np.concatenate([train_idx, test_idx[:shift_to_train]])
     test_idx = test_idx[shift_to_train:]
 
