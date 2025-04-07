@@ -3,6 +3,8 @@ Encapsulate data loading and data generation
 """
 
 from abc import ABC
+
+import matplotlib.pyplot as plt
 import numpy as np
 import logging
 import time
@@ -792,6 +794,14 @@ class Data(ABC):
             / np.linalg.norm(X_norm, axis=2).mean(axis=1)[:, np.newaxis]
         )
         return norm_rms_error
+
+        # for j in range(6):
+        #     plt.figure()
+        #     for i in range(6):
+        #         plt.plot(X_error[j, :,i], "gray")
+        #     X_error_mean = np.linalg.norm(X_error, axis=2)
+        #     plt.plot(X_error_mean[j, :])
+        #     plt.show()
 
     def remove_mu(self):
         """

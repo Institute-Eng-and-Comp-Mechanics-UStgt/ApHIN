@@ -112,7 +112,7 @@ def main(config_path_to_file=None):
             for i_same_mu_scenario in idx_test
         ]
     ).flatten()
-    shift_to_train = 50 # 69
+    shift_to_train = 30 # 69
     train_idx = np.concatenate([train_idx, test_idx[:shift_to_train]])
     test_idx = test_idx[shift_to_train:]
 
@@ -120,22 +120,34 @@ def main(config_path_to_file=None):
     msd_data.train_test_split_sim_idx(sim_idx_train=train_idx, sim_idx_test=test_idx)
 
     # 3d plot of initial conditions
-    fig = plt.figure()
-    x0 = msd_data.TRAIN.X[:,0,:,0]
-    x0_test = msd_data.TEST.X[:,0,:,0]
-    plt.scatter(x0[:,0], x0[:,1])
-    plt.scatter(x0_test[:,0], x0_test[:,1])
-    plt.xlabel("position mass 1")
-    plt.ylabel("position mass 2")
+    # 3d
+    ax = plt.figure().add_subplot(projection='3d')
+    ax.set_box_aspect([1, 1, 1])  # aspect ratio is 1:1:1
+    ax.set_title("Initial conditions")
+    ax.set_xlabel("$x_{0,1}$")
+    ax.set_ylabel("$x_{0,2}$")
+    ax.set_zlabel("$x_{0,3}$")
+    ax.view_init(30, 30)
+    ax.scatter(
+        msd_data.TRAIN.X[:, 0, 0, 0],
+        msd_data.TRAIN.X[:, 0, 1, 0],
+        msd_data.TRAIN.X[:, 0, 2, 0],
+        color="blue",
+    )
+    ax.scatter(
+        msd_data.TEST.X[:, 0, 0, 0],
+        msd_data.TEST.X[:, 0, 1, 0],
+        msd_data.TEST.X[:, 0, 2, 0],
+        color="black",
+    )
     plt.legend(["train", "test"])
-    # plt.view([90,0])
-    # ax.set_zlim(-0.002, 0.002)
     plt.tight_layout()
     plt.show()
-    plt.savefig('initial_conditions')
+
 
     # plot of parameters
     fig = plt.figure()
+    plt.title("parameters")
     plt.plot(msd_data.TRAIN.Mu[:,0], msd_data.TRAIN.Mu[:,1], "o")
     plt.plot(msd_data.TEST.Mu[:, 0], msd_data.TEST.Mu[:, 1], "o")
     plt.xlabel("k")
@@ -176,7 +188,7 @@ def main(config_path_to_file=None):
     )
     if msd_cfg["validation"]:
         monitor = "val_loss"
-        n_train = int(7/8 * x.shape[0])
+        n_train = int(75/90 * x.shape[0])
     else:
         monitor = "loss"
         n_train = x.shape[0]
@@ -236,7 +248,7 @@ def main(config_path_to_file=None):
     phin.build(input_shape=([data_.shape for data_ in x_train], None))
     #
     # phin.load_weights(os.path.join(weight_dir, ".weights.h5"))
-    phin.load_weights("/Users/jonaskneifl/Develop/27_ApHIN_fork/examples/mass_spring_damper/results/ph_final/.weights.h5")
+    # phin.load_weights("/Users/jonaskneifl/Develop/27_ApHIN_fork/examples/mass_spring_damper/results/ph_final/.weights.h5")
 
     if msd_cfg["load_network"]:
         logging.info(f"Loading NN weights.")
@@ -375,7 +387,7 @@ def main(config_path_to_file=None):
     # plt.close("all")
     es = []
     i_test = 1
-    for i_test in range(10):
+    for i_test in range(10, 15):
         plt.figure()
         plt.plot(msd_data_id.TEST.Z_ph[i_test, :, 0], label="pred", color="red")
         plt.plot(msd_data_id.TEST.Z[i_test, :, 0], label="ref", color="red", linestyle="--")
