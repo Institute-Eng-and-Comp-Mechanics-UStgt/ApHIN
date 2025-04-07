@@ -131,15 +131,25 @@ def phin_learning(
     else:
         if validation:
             n_train = int(0.8 * x.shape[0])
-            x_train = [x[:n_train], dx_dt[:n_train], u[:n_train], mu[:n_train]]
-            x_val = [x[n_train:], dx_dt[n_train:], u[n_train:], mu[n_train:]]
+            if mu is None:
+                x_train = [x[:n_train], dx_dt[:n_train], u[:n_train]]
+                x_val = ([x[n_train:], dx_dt[n_train:], u[n_train:]], None)
+            else:
+                x_train = [x[:n_train], dx_dt[:n_train], u[:n_train], mu[:n_train]]
+                x_val = (
+                    [x[n_train:], dx_dt[n_train:], u[n_train:], mu[n_train:]],
+                    None,
+                )
         else:
-            x_train = [x, dx_dt, u, mu]
+            if mu is None:
+                x_train = [x, dx_dt, u]
+            else:
+                x_train = [x, dx_dt, u, mu]
             x_val = None
         logging.info(f"Fitting NN weights.")
         train_hist = phin.fit(
             x=x_train,
-            validation_data=(x_val, None),
+            validation_data=x_val,
             epochs=msd_cfg["n_epochs"],
             batch_size=msd_cfg["batch_size"],
             verbose=2,
@@ -180,7 +190,7 @@ def main(config_path_to_file=None, only_usual_phin: bool = False):
     #                         -result_folder_name     searches for a subfolder with result_folder_name under working dir that
     #                                                 includes a config.yml and .weights.h5
     #                                                 -> config for loading results
-    manual_results_folder = "msd_interpolation_finished3"  # {None} if no results shall be loaded, else create str with folder name or path to results folder
+    manual_results_folder = "msd_interpolation__single_ic_finished3"  # {None} if no results shall be loaded, else create str with folder name or path to results folder
 
     # write to config_info
     if manual_results_folder is not None:
@@ -286,6 +296,7 @@ def main(config_path_to_file=None, only_usual_phin: bool = False):
         msd_data,
         use_train_data,
         save_name=os.path.join(result_dir_usual_phin, "rms_error"),
+        save_to_csv=True,
     )
     aphin_vis.single_parameter_space_error_plot(
         msd_data.TEST.state_error_list[0],
@@ -295,31 +306,61 @@ def main(config_path_to_file=None, only_usual_phin: bool = False):
         save_path=result_dir_usual_phin,
     )
 
-    # 3d plot of initial conditions
-    fig = plt.figure()
-    x0 = msd_data.TRAIN.X[:, 0, :, 0]
-    x0_test = msd_data.TEST.X[:, 0, :, 0]
-    plt.scatter(x0[:, 0], x0[:, 1])
-    plt.scatter(x0_test[:, 0], x0_test[:, 1])
-    plt.xlabel("position mass 1")
-    plt.ylabel("position mass 2")
-    # plt.view([90,0])
-    # ax.set_zlim(-0.002, 0.002)
-    plt.tight_layout()
-    plt.show()
-    plt.savefig("initial_conditions")
+    create_costum_plot = True
+    if create_costum_plot:
+        rng = np.random.default_rng()
+        n_n_array = np.arange(3)
+        # n_sim_constant = rng.integers(msd_data.TEST.n_sim)
+        n_dn = 0  # displacements
+        n_sim_random = rng.integers(0, msd_data.TEST.n_sim, (5,))
 
-    # plot of parameters
-    fig = plt.figure()
-    plt.plot(msd_data.TRAIN.Mu[:, 0], msd_data.TRAIN.Mu[:, 1], "o")
-    plt.plot(msd_data.TEST.Mu[:, 0], msd_data.TEST.Mu[:, 1], "o")
-    plt.xlabel("k")
-    plt.ylabel("c")
-    plt.tight_layout()
-    plt.show()
+        index_list_disps = []
+        subplot_idx = []
+        for i_sim, n_sim in enumerate(n_sim_random):
+            for n_n in n_n_array:
+                subplot_idx.append(i_sim)
+                index_list_disps.append((n_sim, n_n, n_dn))
 
-    if only_usual_phin:
-        return
+        subplot_title = [f"n_sim{sim_num}" for sim_num in n_sim_random]
+
+        aphin_vis.custom_state_plot(
+            data=msd_data,
+            data_id=msd_data_id,
+            attributes=["X", "X"],
+            index_list=index_list_disps,
+            train_or_test="test",
+            result_dir=result_dir_usual_phin,
+            subplot_idx=subplot_idx,
+            subplot_title=subplot_title,
+            save_to_csv=True,
+            save_name="msd_custom_nodes_usual_phin",
+        )
+
+    # # 3d plot of initial conditions
+    # fig = plt.figure()
+    # x0 = msd_data.TRAIN.X[:, 0, :, 0]
+    # x0_test = msd_data.TEST.X[:, 0, :, 0]
+    # plt.scatter(x0[:, 0], x0[:, 1])
+    # plt.scatter(x0_test[:, 0], x0_test[:, 1])
+    # plt.xlabel("position mass 1")
+    # plt.ylabel("position mass 2")
+    # # plt.view([90,0])
+    # # ax.set_zlim(-0.002, 0.002)
+    # plt.tight_layout()
+    # plt.show()
+    # plt.savefig("initial_conditions")
+
+    # # plot of parameters
+    # fig = plt.figure()
+    # plt.plot(msd_data.TRAIN.Mu[:, 0], msd_data.TRAIN.Mu[:, 1], "o")
+    # plt.plot(msd_data.TEST.Mu[:, 0], msd_data.TEST.Mu[:, 1], "o")
+    # plt.xlabel("k")
+    # plt.ylabel("c")
+    # plt.tight_layout()
+    # plt.show()
+
+    # if only_usual_phin:
+    #     return
 
     load_matrices = False
     if load_matrices:
@@ -525,7 +566,7 @@ def main(config_path_to_file=None, only_usual_phin: bool = False):
     idx_gen = "rand"
 
     # %% get results
-    result_dir_interp = f"{result_dir}_interp"
+    result_dir_interp = os.path.join(result_dir, "interp")
     if not os.path.isdir(result_dir_interp):
         os.mkdir(result_dir_interp)
     msd_data_orig.TEST.calculate_errors(msd_data_id_interp.TEST)
@@ -536,6 +577,20 @@ def main(config_path_to_file=None, only_usual_phin: bool = False):
         msd_data_orig,
         use_train_data,
         save_name=os.path.join(result_dir_interp, "rms_error"),
+        save_to_csv=True,
+    )
+
+    aphin_vis.custom_state_plot(
+        data=msd_data_orig,
+        data_id=msd_data_id_interp,
+        attributes=["X", "X"],
+        index_list=index_list_disps,
+        train_or_test="test",
+        result_dir=result_dir_interp,
+        subplot_idx=subplot_idx,
+        subplot_title=subplot_title,
+        save_to_csv=True,
+        save_name="msd_custom_nodes_interp",
     )
 
     # avoid that the script stops and keep the plots open
@@ -543,33 +598,33 @@ def main(config_path_to_file=None, only_usual_phin: bool = False):
 
     print("debug breakpoint")
 
-    msd_data_jonas = Dataset.from_data(
-        "/scratch/tmp/jrettberg/Projects/ApHIN_Review/ApHIN/examples/mass_spring_damper/data/MSD_Qeye_ph_input_siso.npz"
-    )
-    msd_data_jonas.train_test_split(test_size=0.06, seed=1)
-    msd_data_jonas.states_to_features()
+    # msd_data_jonas = Dataset.from_data(
+    #     "/scratch/tmp/jrettberg/Projects/ApHIN_Review/ApHIN/examples/mass_spring_damper/data/MSD_Qeye_ph_input_siso.npz"
+    # )
+    # msd_data_jonas.train_test_split(test_size=0.06, seed=1)
+    # msd_data_jonas.states_to_features()
 
-    import plotly.graph_objects as go
+    # import plotly.graph_objects as go
 
-    trajectory = 1
-    fig = go.Figure()
-    fig.add_trace(
-        go.Scatter(
-            x=np.arange(msd_data.TRAIN.x.shape[0]),
-            y=msd_data.TRAIN.x[:, trajectory],
-            mode="lines",
-            name="msd_interp",
-        )
-    )
-    fig.add_trace(
-        go.Scatter(
-            x=np.arange(msd_data_jonas.TRAIN.x.shape[0]),
-            y=msd_data_jonas.TRAIN.x[:, trajectory],
-            mode="lines",
-            name="msd_jonas",
-        )
-    )
-    fig.show()
+    # trajectory = 1
+    # fig = go.Figure()
+    # fig.add_trace(
+    #     go.Scatter(
+    #         x=np.arange(msd_data.TRAIN.x.shape[0]),
+    #         y=msd_data.TRAIN.x[:, trajectory],
+    #         mode="lines",
+    #         name="msd_interp",
+    #     )
+    # )
+    # fig.add_trace(
+    #     go.Scatter(
+    #         x=np.arange(msd_data_jonas.TRAIN.x.shape[0]),
+    #         y=msd_data_jonas.TRAIN.x[:, trajectory],
+    #         mode="lines",
+    #         name="msd_jonas",
+    #     )
+    # )
+    # fig.show()
 
 
 def create_variation_of_parameters():
@@ -584,7 +639,7 @@ def create_variation_of_parameters():
 if __name__ == "__main__":
     working_dir = os.path.dirname(__file__)
     calc_various_experiments = False
-    only_usual_phin = True
+    only_usual_phin = False
     if calc_various_experiments:
         logging.info(f"Multiple simulation runs...")
         # Run multiple simulation runs defined by parameter_variavation_dict

@@ -1,7 +1,7 @@
 model_name: msd
 
-experiment: msd_interpolation_finished3_with_val # name of the experiment
-sim_name: MSD_Qeye_random_ic.npz # name of data  msd_state_ICrand_Qeye_autonomous_n3_m4.npz
+experiment: msd_interpolation__single_ic_finished3 # name of the experiment
+sim_name: MSD_Qeye_ph_single_ic.npz # name of data  msd_state_ICrand_Qeye_autonomous_n3_m4.npz
 load_network: False  # train the network or load the last pre-trained one
 
 seed: 1  # For reproducibility
@@ -20,7 +20,7 @@ desired_bounds: [0, 1]  # desired bounds after scaling for u and mu
 
 # time extrapolation
 trunc_time_ratio: 1  # ratio of time steps to be truncated for time extrapolation
-validation: True  # ratio of data to be used for validation
+validation: False  # ratio of data to be used for validation
 
 # %% identification settings
 l1: 0.00000000001  # L1 regularization

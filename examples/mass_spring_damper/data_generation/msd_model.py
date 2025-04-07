@@ -711,15 +711,19 @@ class MSD:
                 for i_sim in range(n_sim):
                     # convert to momentum
                     x_i = reshape_states_to_features(
-                        msd.X[i_sim, :, :, :][np.newaxis, :]
+                        np.reshape(
+                            msd.X[i_sim, :, :, :][np.newaxis, :],
+                            (1, n_t, 2, 3),
+                            "F",
+                        ).transpose(0, 1, 3, 2)
                     )
                     x_i_T = np.transpose(
                         linalg.block_diag(np.eye(msd.M.shape[0]), msd.M[:, :, i_sim])
                         @ x_i.T
                     )
                     X[i_sim, :, :, :] = reshape_features_to_states(
-                        x_i_T, n_sim=1, n_t=n_t, n_n=n_n, n_dn=n_dn
-                    )
+                        x_i_T, n_sim=1, n_t=n_t, n_n=2, n_dn=n_mass
+                    ).transpose(0, 1, 3, 2)
             else:
                 raise NotImplementedError
 
