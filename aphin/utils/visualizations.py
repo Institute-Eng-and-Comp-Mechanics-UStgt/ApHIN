@@ -2182,6 +2182,13 @@ def chessboard_visualisation(test_ids, system_layer, data, result_dir, limits=No
     J_test_, R_test_, Q_test_, B_test_ = data.ph_matrices_test
     A_test_ = (J_test_ - R_test_) @ Q_test_
 
+    # resort identified matrices to test ids
+    perm = [0, 3, 1, 4, 2, 5]
+    A_test_ = A_test_[:, perm, :][:, :, perm]
+    J_test_ = J_test_[:, perm, :][:, :, perm]
+    R_test_ = R_test_[:, perm, :][:, :, perm]
+    B_test_ = B_test_[:, perm, :]
+
 
     J_pred, R_pred, B_pred, A_pred = (
         J_pred[test_ids],
