@@ -22,7 +22,13 @@ from aphin.utils.transformations import (
 )
 from aphin.systems import PHSystem, DescrPHSystem
 from aphin.identification import PHIN, APHIN
-from aphin.layers import PHLayer, PHQLayer, LTILayer, DescriptorPHLayer, DescriptorPHQLayer
+from aphin.layers import (
+    PHLayer,
+    PHQLayer,
+    LTILayer,
+    DescriptorPHLayer,
+    DescriptorPHQLayer,
+)
 
 
 class Data(ABC):
@@ -224,6 +230,25 @@ class Data(ABC):
             - n_mu: number of parameters
         """
         return self.n_sim, self.n_t, self.n_n, self.n_dn, self.n_u, self.n_mu
+
+    def permute_matrices(self, permutation_idx: list[int] | slice):
+        """
+        Permute the pH matrices according to the required permutations index.
+
+        """
+        if isinstance(permutation_idx, list):
+            assert len(permutation_idx) == self.J.shape[1]
+            self.J = self.J[:, permutation_idx, :][:, :, permutation_idx]
+            self.R = self.R[:, permutation_idx, :][:, :, permutation_idx]
+            self.Q = self.Q[:, permutation_idx, :][:, :, permutation_idx]
+            self.B = self.B[:, permutation_idx, :]
+        elif isinstance(permutation_idx, slice):
+            self.J = self.J[:, permutation_idx, permutation_idx]
+            self.R = self.R[:, permutation_idx, permutation_idx]
+            self.Q = self.Q[:, permutation_idx, permutation_idx]
+            self.B = self.B[:, permutation_idx, permutation_idx]
+        else:
+            raise ValueError(f"Unknown permutation index.")
 
     def get_initial_conditions(self):
         """
@@ -1919,7 +1944,6 @@ class PHIdentifiedData(Data):
                 np.expand_dims(Z_dt_ph[i_sim], axis=0),
             )
 
-
             # z_ref = ph_network.encode(data.x[i_sim*1001:(i_sim+1)*1001]).numpy()
             # import matplotlib.pyplot as plt
             # i_state = 6
@@ -1927,7 +1951,6 @@ class PHIdentifiedData(Data):
             # plt.plot(Z_ph[i_sim, :, i_state])
             # plt.plot(z_ref[:, i_state])
             # plt.show()
-
 
             # DECODING
             if isinstance(ph_network, APHIN):

@@ -194,6 +194,10 @@ class Dataset(Data):
         """
         return self.TEST.shape
 
+    def permute_matrices(self, permutation_idx: list[int] | slice):
+        self.TRAIN.permute_matrices(permutation_idx=permutation_idx)
+        self.TEST.permute_matrices(permutation_idx=permutation_idx)
+
     def train_test_split(self, test_size, seed):
         """
         Split the data into training and testing sets.
