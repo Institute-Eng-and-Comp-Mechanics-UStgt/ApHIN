@@ -201,7 +201,7 @@ def main(config_path_to_file=None, only_usual_phin: bool = False):
     #                         -result_folder_name     searches for a subfolder with result_folder_name under working dir that
     #                                                 includes a config.yml and .weights.h5
     #                                                 -> config for loading results
-    manual_results_folder = "msd_interpolation__single_ic_finished3"  # {None} if no results shall be loaded, else create str with folder name or path to results folder
+    manual_results_folder = "ph_finished_random_ic_ph_epoch2500"  # {None} if no results shall be loaded, else create str with folder name or path to results folder
 
     # write to config_info
     if manual_results_folder is not None:
@@ -279,11 +279,14 @@ def main(config_path_to_file=None, only_usual_phin: bool = False):
     msd_data.train_test_split_sim_idx(sim_idx_train=train_idx, sim_idx_test=test_idx)
     # scale data
     msd_data.scale_Mu(desired_bounds=msd_cfg["desired_bounds"])
+    if msd_cfg["scale_x"]:
+        msd_data.scale_X(domain_split_vals=msd_cfg["domain_split_vals"])
+        msd_data.scale_U(desired_bounds=[-1, 1])
     msd_data.states_to_features()
 
     # usual PHIN framework with mu DNN
     dir_extension = "usual_phin "
-    msd_data_id, system_layer_interp, phin_interp = phin_learning(
+    msd_data_id, system_layer_usual_phin, phin_usual_phin = phin_learning(
         msd_data,
         msd_cfg,
         configuration.directories,
@@ -317,6 +320,16 @@ def main(config_path_to_file=None, only_usual_phin: bool = False):
         msd_data.TEST.Mu_input,
         parameter_names=["mass", "stiff", "omega", "delta"],
         save_path=result_dir_usual_phin,
+    )
+
+    perm = [0, 3, 1, 4, 2, 5]
+    msd_data.permute_matrices(permutation_idx=perm)
+    test_ids = [0, 1, 3, 6, 7]  # test_ids = range(10) # range(6) test_ids = [0]
+    aphin_vis.chessboard_visualisation(
+        test_ids,
+        msd_data,
+        system_layer=system_layer_usual_phin,
+        result_dir=result_dir_usual_phin,
     )
 
     create_costum_plot = True
@@ -387,14 +400,18 @@ def main(config_path_to_file=None, only_usual_phin: bool = False):
 
     else:
         # fit matrices
-        num_train_scenarios_with_same_mu = train_idx.shape[0] // 3
+        num_train_scenarios_with_same_mu = (
+            train_idx.shape[0] // msd_cfg["n_simulations_per_parameter_set"]
+        )
         msd_data_orig = copy.deepcopy(msd_data)
         scenario_list = []
         for i_same_mu_scenario in range(num_train_scenarios_with_same_mu):
 
             msd_data = copy.deepcopy(msd_data_orig)
             # there are always 3 scenarios with the same mu but different inputs
-            sim_idx = (i_same_mu_scenario) * 3 + np.array([0, 1, 2])
+            sim_idx = (i_same_mu_scenario) * msd_cfg[
+                "n_simulations_per_parameter_set"
+            ] + np.arange(msd_cfg["n_simulations_per_parameter_set"])
             msd_data.decrease_num_simulations(sim_idx=sim_idx)
             mu_orig = msd_data.TRAIN.Mu[0, :]
             msd_data.remove_mu()
@@ -494,7 +511,7 @@ def main(config_path_to_file=None, only_usual_phin: bool = False):
     weighting_array = get_weighting_function_values(
         parameter_array, parameter_test, ansatz=msd_cfg["ansatz"]
     )
-    # TODO: compare PH vs LTI
+    # evaluate matrices
     if msd_cfg["matrix_type"] == "lti":
         A_interp = evaluate_matrices(A_all, weighting_array)
         B_interp = evaluate_matrices(B_all, weighting_array)
@@ -508,12 +525,14 @@ def main(config_path_to_file=None, only_usual_phin: bool = False):
     latent_shape = (
         msd_data_orig.TEST.n_sim,
         msd_data_orig.TEST.n_t,
-        system_layer_interp.r,
+        system_layer_usual_phin.r,
     )
     Z_ph = np.zeros(latent_shape)
     Z_dt_ph = np.zeros(latent_shape)
     for i_test in range(weighting_array.shape[1]):
-        sim_indices = (i_test) * 3 + np.array([0, 1, 2])
+        sim_indices = (i_test) * msd_cfg["n_simulations_per_parameter_set"] + np.arange(
+            msd_cfg["n_simulations_per_parameter_set"]
+        )
         if msd_cfg["matrix_type"] == "lti":
             system_lti_or_ph = LTISystem(
                 A=A_interp[:, :, i_test], B=B_interp[:, :, i_test]
@@ -553,14 +572,17 @@ def main(config_path_to_file=None, only_usual_phin: bool = False):
     )
     z = msd_data_orig.TEST.x
     Z = reshape_features_to_states(
-        z, msd_data_orig.TEST.n_sim, msd_data_orig.TEST.n_t, n_f=system_layer_interp.r
+        z,
+        msd_data_orig.TEST.n_sim,
+        msd_data_orig.TEST.n_t,
+        n_f=system_layer_usual_phin.r,
     )
     z_dt = msd_data_orig.TEST.dx_dt
     Z_dt = reshape_features_to_states(
         z_dt,
         msd_data_orig.TEST.n_sim,
         msd_data_orig.TEST.n_t,
-        n_f=system_layer_interp.r,
+        n_f=system_layer_usual_phin.r,
     )
     msd_data_id_interp = PHIdentifiedDataset()
     msd_data_id_interp.TEST = PHIdentifiedData(
@@ -582,7 +604,23 @@ def main(config_path_to_file=None, only_usual_phin: bool = False):
     result_dir_interp = os.path.join(result_dir, "interp")
     if not os.path.isdir(result_dir_interp):
         os.mkdir(result_dir_interp)
-    msd_data_orig.TEST.calculate_errors(msd_data_id_interp.TEST)
+    msd_data_orig.TEST.calculate_errors(
+        msd_data_id_interp.TEST,
+        # save_to_txt=True,
+        # result_dir=result_dir_interp,
+        domain_split_vals=[1, 1],
+    )
+    with open(
+        os.path.join(result_dir_interp, "mean_error_measures.txt"), "w"
+    ) as text_file:
+        print(
+            f"TEST state error mean: {msd_data_orig.TEST.state_error_mean}",
+            file=text_file,
+        )
+        print(
+            f"TEST latent error mean: {msd_data_orig.TEST.latent_error_mean}",
+            file=text_file,
+        )
     aphin_vis.plot_time_trajectories_all(
         msd_data_orig, msd_data_id_interp, use_train_data, idx_gen, result_dir_interp
     )
@@ -605,6 +643,72 @@ def main(config_path_to_file=None, only_usual_phin: bool = False):
         save_to_csv=True,
         save_name="msd_custom_nodes_interp",
     )
+    J_pred = np.transpose(J_interp, (2, 0, 1))
+    R_pred = np.transpose(R_interp, (2, 0, 1))
+    B_pred = np.transpose(B_interp, (2, 0, 1))
+    if msd_cfg["ph_layer"] == "ph_layer":
+        A_pred = J_pred - R_pred
+    else:
+        raise NotImplementedError("Add PHQ layer.")
+
+    # original test matrices
+
+    J_test_, R_test_, Q_test_, B_test_ = msd_data_orig.ph_matrices_test
+    A_test = (J_test_ - R_test_) @ Q_test_
+
+    aphin_vis.chessboard_visualisation(
+        test_ids,
+        msd_data_orig,
+        matrices_pred=(J_pred, R_pred, B_pred),
+        result_dir=result_dir_interp,
+        error_limits=[1.2838462733641165, 0.4338057144578681, 0.05, 0.05],
+    )
+
+    error_A = np.linalg.norm(A_pred - A_test, axis=(1, 2)) / np.linalg.norm(
+        A_test, axis=(1, 2)
+    )
+
+    max_eigs_pred = np.array(
+        [np.real(np.linalg.eig(A_).eigenvalues).max() for A_ in A_pred]
+    )
+    max_eigs_ref = np.array(
+        [np.real(np.linalg.eig(A_).eigenvalues).max() for A_ in A_test]
+    )
+
+    # plot eigenvalues on imaginary axis
+    eigs_pred = np.array([np.linalg.eig(A_).eigenvalues for A_ in A_pred])
+    eigs_ref = np.array([np.linalg.eig(A_).eigenvalues for A_ in A_test])
+
+    # save real and imaginary parts of eigenvalues to csv
+    header = "".join(
+        [f"sim{i}_eigs_real," for i in range(eigs_pred.shape[0])]
+    ) + "".join([f"sim{i}_eigs_imag," for i in range(eigs_pred.shape[0])])
+    np.savetxt(
+        os.path.join(result_dir_interp, "eigenvalues_ref_interp.csv"),
+        np.concatenate([eigs_ref.real, eigs_ref.imag], axis=0).T,
+        delimiter=",",
+        header=header,
+        comments="",
+    )
+
+    np.savetxt(
+        os.path.join(result_dir_interp, "eigenvalues_pred_interp.csv"),
+        np.concatenate([eigs_pred.real, eigs_pred.imag], axis=0).T,
+        delimiter=",",
+        header=header,
+        comments="",
+    )
+
+    test_ids = [0, 1, 3, 6, 7]
+    for i in test_ids:
+        plt.figure()
+        plt.plot(eigs_pred[i].real, eigs_pred[i].imag, "x", label="pred")
+        plt.plot(eigs_ref[i].real, eigs_ref[i].imag, "o", label="ref")
+        plt.xlabel("real")
+        plt.ylabel("imag")
+        plt.legend()
+        plt.show(block=False)
+        aphin_vis.save_as_png(os.path.join(result_dir_interp, f"eigenvalues_{i}"))
 
     # avoid that the script stops and keep the plots open
     plt.show()
