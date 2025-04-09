@@ -2213,7 +2213,13 @@ def plot_time_trajectories_all(
 
 
 def chessboard_visualisation(
-    test_ids, system_layer, data, result_dir, limits=None, error_limits=None
+    test_ids,
+    data,
+    system_layer=None,
+    matrices_pred: tuple[np.ndarray] | None = None,
+    result_dir="",
+    limits=None,
+    error_limits=None,
 ):
     """
     Visualizes and compares predicted and test matrices by generating various plots.
@@ -2228,7 +2234,10 @@ def chessboard_visualisation(
         List of indices for the test samples to visualize and compare.
 
     system_layer : object
-        The system layer object that provides methods to get predicted system matrices.
+        The system layer object that provides methods to get predicted system matrices. Or use matrices_pred.
+
+    matrices_pred: tuple(np.ndarrays)
+        Tuple that contains (J,R,B) or (J,R,B,Q) matrices. Or use system_layer
 
     data : object
         The dataset containing test data and matrices. This object should have attributes such as `test_data` and `ph_matrices_test`.
@@ -2241,17 +2250,33 @@ def chessboard_visualisation(
     None
         The function generates and saves various plots and files related to matrix visualizations and comparisons.
     """
+
     mu_test = data.test_data[-1]
     n_sim_test, n_t_test, _, _, _, _ = data.shape_test
     # predicted matrices
-    try:
-        J_pred, R_pred, B_pred = system_layer.get_system_matrices(mu_test, n_t=n_t_test)
-        A_pred = J_pred - R_pred
-    except ValueError:
-        J_pred, R_pred, B_pred, Q_pred = system_layer.get_system_matrices(
-            mu_test, n_t=n_t_test
-        )
-        A_pred = (J_pred - R_pred) @ Q_pred
+    if system_layer is not None:
+        try:
+            J_pred, R_pred, B_pred = system_layer.get_system_matrices(
+                mu_test, n_t=n_t_test
+            )
+            A_pred = J_pred - R_pred
+        except ValueError:
+            J_pred, R_pred, B_pred, Q_pred = system_layer.get_system_matrices(
+                mu_test, n_t=n_t_test
+            )
+            A_pred = (J_pred - R_pred) @ Q_pred
+    elif matrices_pred is not None:
+        if len(matrices_pred) == 3:
+            J_pred, R_pred, B_pred = matrices_pred
+            A_pred = J_pred - R_pred
+        elif len(matrices_pred) == 4:
+            J_pred, R_pred, B_pred, Q_pred = matrices_pred
+            A_pred = (J_pred - R_pred) @ Q_pred
+        else:
+            raise ValueError(f"Unknown format of matrices_pred.")
+    else:
+        raise ValueError(f"Either system_layer or matrices_pred must be given.")
+
     # original test matrices
     J_test_, R_test_, Q_test_, B_test_ = data.ph_matrices_test
     A_test_ = (J_test_ - R_test_) @ Q_test_
@@ -2297,6 +2322,10 @@ def chessboard_visualisation(
         e_A_max = e_A.max()
     else:
         e_J_max, e_R_max, e_B_max, e_A_max = error_limits
+
+    print(
+        f"Error limits are: \n e_J_max={e_J_max}\ne_R_max={e_R_max}\ne_B_max={e_B_max}\ne_A_max={e_A_max}"
+    )
 
     np.linalg.matrix_rank(B_test_[0])
 
