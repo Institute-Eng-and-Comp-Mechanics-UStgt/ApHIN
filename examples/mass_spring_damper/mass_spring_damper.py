@@ -102,19 +102,21 @@ def main(config_path_to_file=None):
     )  # parameters inside the convex hull
     assert idx_test.shape[0] >= 3  # at least 3 test trajectories
 
-    train_idx = np.array(
-        [
-            (i_same_mu_scenario) * 3 + np.array([0, 1, 2])
-            for i_same_mu_scenario in idx_train
-        ]
-    ).flatten()
-    test_idx = np.array(
-        [
-            (i_same_mu_scenario) * 3 + np.array([0, 1, 2])
-            for i_same_mu_scenario in idx_test
-        ]
-    ).flatten()
-    shift_to_train = 30 # 69
+    # train_idx = np.array(
+    #     [
+    #         (i_same_mu_scenario) * 3 + np.array([0, 1, 2])
+    #         for i_same_mu_scenario in idx_train
+    #     ]
+    # ).flatten()
+    # test_idx = np.array(
+    #     [
+    #         (i_same_mu_scenario) * 3 + np.array([0, 1, 2])
+    #         for i_same_mu_scenario in idx_test
+    #     ]
+    # ).flatten()
+    train_idx = idx_train
+    test_idx = idx_test
+    shift_to_train = 45 # 69
     train_idx = np.concatenate([train_idx, test_idx[:shift_to_train]])
     test_idx = test_idx[shift_to_train:]
 
@@ -212,7 +214,17 @@ def main(config_path_to_file=None):
 
     regularizer = tf.keras.regularizers.L1L2(l1=msd_cfg["l1"], l2=msd_cfg["l2"])
 
-    if "ph" in msd_cfg["experiment"]:
+    if "phq" in msd_cfg["experiment"]:
+        system_layer = PHQLayer(
+            n_f,
+            n_u=n_u,
+            n_mu=n_mu,
+            regularizer=regularizer,
+            name="ph_layer",
+            layer_sizes=msd_cfg["layer_sizes_ph"],
+            activation=msd_cfg["activation_ph"],
+        )
+    elif "ph" in msd_cfg["experiment"]:
         system_layer = PHLayer(
             n_f,
             n_u=n_u,
@@ -490,13 +502,35 @@ def main(config_path_to_file=None):
     save_as_png(os.path.join(result_dir, "maximum_eigenvalues"))
 
     # plot chessboard visualisation
-    test_ids = [0, 1, 3, 6, 7]  # test_ids = range(10) # range(6) test_ids = [0]
-    # aphin_vis.chessboard_visualisation(test_ids, system_layer, msd_data, result_dir, error_limits=[0.022277599200606346, 0.01978847570717334, 0.04014775591542816, 0.023013601874971812])
+    # test_ids = [0, 1, 3, 6, 7]  # test_ids = range(10) # range(6) test_ids = [0]
+    rng = np.random.default_rng(seed=msd_cfg["seed"])
+    test_ids = rng.integers(0, msd_data.TEST.n_sim, size=(5,))
+    aphin_vis.chessboard_visualisation(test_ids, system_layer, msd_data,
+                                       result_dir,
+                                       limits=msd_cfg["matrix_color_limits"],
+                                       error_limits=msd_cfg["matrix_error_limits"]
+                                       )
 
     # avoid that the script stops and keep the plots open
     plt.show()
     print("a")
 
+
+    for i_test in range(10, 15):
+        plt.figure()
+        plt.plot(msd_data.TEST.X[i_test, :, 0, 0], label="ref", color="red", linestyle="--")
+        plt.plot(msd_data.TEST.X[i_test, :, 1, 0], label="ref", color="blue", linestyle="--")
+        plt.plot(msd_data.TEST.X[i_test, :, 2, 0], label="ref", color="teal", linestyle="--")
+        plt.legend()
+    plt.show()
+
+    for i_test in range(10, 15):
+        plt.figure()
+        plt.plot(msd_data.TEST.X[i_test, :, 0, 1], label="ref", color="red", linestyle="--")
+        plt.plot(msd_data.TEST.X[i_test, :, 1, 1], label="ref", color="blue", linestyle="--")
+        plt.plot(msd_data.TEST.X[i_test, :, 2, 1], label="ref", color="teal", linestyle="--")
+        plt.legend()
+    plt.show()
 
 if __name__ == "__main__":
     main()

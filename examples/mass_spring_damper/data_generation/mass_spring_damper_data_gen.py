@@ -22,8 +22,8 @@ phdl_vis.setup_matplotlib(False)
 with open(os.path.join(os.path.dirname(__file__), "config_data_gen.yml"), "r") as file:
     msd_config = yaml.safe_load(file)
 
-system_types = ["ph"]  # , "ss"]
-Q_ids = [False]
+system_types = ["ph", "ss"]
+Q_ids = [True, False]
 msd_list = []
 for system_type in system_types:
     for Q_id in Q_ids:

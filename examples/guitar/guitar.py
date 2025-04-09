@@ -193,7 +193,7 @@ def main(
         patience=500,
     )
 
-    system_layer = PHQLayer(
+    system_layer = PHLayer(
         r,
         n_u=n_u,
         n_mu=n_mu,

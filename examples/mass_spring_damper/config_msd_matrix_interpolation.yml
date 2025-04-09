@@ -8,7 +8,7 @@ seed: 1  # For reproducibility
 
 setup_matplotlib: True
 
-ph_layer: "ph_layer" # ph_layer | phq_layer | lti_layer
+ph_layer: "phq_layer" # ph_layer | phq_layer | lti_layer
 
 # train-test split
 # test_size: 0.25
