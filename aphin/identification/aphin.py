@@ -945,11 +945,17 @@ class APHIN(PHBasemodel):
             t1.watch(z)
             # linear projection of input to intermediate latent space
             v_rec = self.nonlinear_decoder(z)
+        # For debug: Patches should be diagonal
+        # j = t1.jacobian(v_rec[:10], z[:10])
+        # self.plot_as_patches(j)
         jac_z = t1.batch_jacobian(v_rec, z)
         with tf.GradientTape() as t2:
             t2.watch(v_rec)
             # nonlinear mapping of intermediate latent space to latent space
             z_rec = self.nonlinear_encoder(v_rec)
+        # For debug: Patches should be diagonal
+        # j = t2.jacobian(z_rec[:10], v_rec[:10])
+        # self.plot_as_patches(j)
         jac_x = t2.batch_jacobian(z_rec, v_rec)
 
         # calculate to which extent the autoencoder meets the projection properties
@@ -968,3 +974,20 @@ class APHIN(PHBasemodel):
         )
 
         return projection_error, jacobian_error
+
+    @staticmethod
+    def plot_as_patches(j):
+        # Reorder axes so the diagonals will each form a contiguous patch.
+        j = tf.transpose(j, [1, 0, 3, 2])
+        # Pad in between each patch.
+        lim = tf.reduce_max(abs(j))
+        j = tf.pad(j, [[0, 0], [1, 1], [0, 0], [1, 1]], constant_values=-lim)
+        # Reshape to form a single image.
+        s = j.shape
+        j = tf.reshape(j, [s[0] * s[1], s[2] * s[3]])
+        APHIN.imshow_zero_center(j, extent=[-0.5, s[2] - 0.5, s[0] - 0.5, -0.5])
+
+    def imshow_zero_center(image, **kwargs):
+        lim = tf.reduce_max(abs(image))
+        plt.imshow(image, vmin=-lim, vmax=lim, cmap="seismic", **kwargs)
+        plt.colorbar()
