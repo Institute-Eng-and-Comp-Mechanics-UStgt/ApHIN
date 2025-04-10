@@ -201,7 +201,7 @@ def main(config_path_to_file=None, only_usual_phin: bool = False):
     #                         -result_folder_name     searches for a subfolder with result_folder_name under working dir that
     #                                                 includes a config.yml and .weights.h5
     #                                                 -> config for loading results
-    manual_results_folder = "ph_finished_random_ic_ph_epoch2500"  # {None} if no results shall be loaded, else create str with folder name or path to results folder
+    manual_results_folder = "ph_finished_random_ic_ph_epoch2500_newl1"  # {None} if no results shall be loaded, else create str with folder name or path to results folder
 
     # write to config_info
     if manual_results_folder is not None:
@@ -322,14 +322,28 @@ def main(config_path_to_file=None, only_usual_phin: bool = False):
         save_path=result_dir_usual_phin,
     )
 
+    msd_data_id.TEST.add_system_matrices_from_system_layer(
+        system_layer=system_layer_usual_phin
+    )
+
+    eig_vals_usual_phin = msd_data_id.TEST.calculate_eigenvalues(
+        result_dir=result_dir_usual_phin,
+        save_to_csv=True,
+        save_name="eigenvalues_usual_phin",
+    )
+
     perm = [0, 3, 1, 4, 2, 5]
     msd_data.permute_matrices(permutation_idx=perm)
-    test_ids = [0, 1, 3, 6, 7]  # test_ids = range(10) # range(6) test_ids = [0]
+    # test_ids = [0, 1, 3, 6, 7]  # test_ids = range(10) # range(6) test_ids = [0]
+    rng = np.random.default_rng(seed=msd_cfg["seed"])
+    test_ids = rng.integers(0, msd_data.TEST.n_sim, size=(5,))
     aphin_vis.chessboard_visualisation(
         test_ids,
         msd_data,
         system_layer=system_layer_usual_phin,
         result_dir=result_dir_usual_phin,
+        limits=msd_cfg["matrix_color_limits"],
+        error_limits=msd_cfg["matrix_error_limits"],
     )
 
     create_costum_plot = True
@@ -651,64 +665,51 @@ def main(config_path_to_file=None, only_usual_phin: bool = False):
     else:
         raise NotImplementedError("Add PHQ layer.")
 
-    # original test matrices
-
-    J_test_, R_test_, Q_test_, B_test_ = msd_data_orig.ph_matrices_test
-    A_test = (J_test_ - R_test_) @ Q_test_
+    msd_data_id_interp.TEST.add_ph_matrices(J=J_pred, R=R_pred, B=B_pred)
 
     aphin_vis.chessboard_visualisation(
         test_ids,
         msd_data_orig,
         matrices_pred=(J_pred, R_pred, B_pred),
         result_dir=result_dir_interp,
-        error_limits=[1.2838462733641165, 0.4338057144578681, 0.05, 0.05],
+        limits=msd_cfg["matrix_color_limits"],
+        error_limits=msd_cfg["matrix_error_limits"],
     )
 
-    error_A = np.linalg.norm(A_pred - A_test, axis=(1, 2)) / np.linalg.norm(
-        A_test, axis=(1, 2)
+    eig_vals_interp = msd_data_id_interp.TEST.calculate_eigenvalues(
+        result_dir=result_dir_interp, save_to_csv=True, save_name="eigenvalues_pred_mi"
     )
-
-    max_eigs_pred = np.array(
-        [np.real(np.linalg.eig(A_).eigenvalues).max() for A_ in A_pred]
-    )
-    max_eigs_ref = np.array(
-        [np.real(np.linalg.eig(A_).eigenvalues).max() for A_ in A_test]
-    )
-
-    # plot eigenvalues on imaginary axis
-    eigs_pred = np.array([np.linalg.eig(A_).eigenvalues for A_ in A_pred])
-    eigs_ref = np.array([np.linalg.eig(A_).eigenvalues for A_ in A_test])
-
-    # save real and imaginary parts of eigenvalues to csv
-    header = "".join(
-        [f"sim{i}_eigs_real," for i in range(eigs_pred.shape[0])]
-    ) + "".join([f"sim{i}_eigs_imag," for i in range(eigs_pred.shape[0])])
-    np.savetxt(
-        os.path.join(result_dir_interp, "eigenvalues_ref_interp.csv"),
-        np.concatenate([eigs_ref.real, eigs_ref.imag], axis=0).T,
-        delimiter=",",
-        header=header,
-        comments="",
-    )
-
-    np.savetxt(
-        os.path.join(result_dir_interp, "eigenvalues_pred_interp.csv"),
-        np.concatenate([eigs_pred.real, eigs_pred.imag], axis=0).T,
-        delimiter=",",
-        header=header,
-        comments="",
+    eig_vals_ref = msd_data_orig.TEST.calculate_eigenvalues(
+        result_dir=result_dir, save_to_csv=True, save_name="eigenvalues_ref"
     )
 
     test_ids = [0, 1, 3, 6, 7]
     for i in test_ids:
         plt.figure()
-        plt.plot(eigs_pred[i].real, eigs_pred[i].imag, "x", label="pred")
-        plt.plot(eigs_ref[i].real, eigs_ref[i].imag, "o", label="ref")
+        plt.plot(eig_vals_interp[i].real, eig_vals_interp[i].imag, "x", label="interp")
+        plt.plot(eig_vals_ref[i].real, eig_vals_ref[i].imag, "o", label="ref")
+        plt.plot(
+            eig_vals_usual_phin[i].real,
+            eig_vals_usual_phin[i].imag,
+            "*",
+            label="usual_phin",
+        )
         plt.xlabel("real")
         plt.ylabel("imag")
         plt.legend()
         plt.show(block=False)
         aphin_vis.save_as_png(os.path.join(result_dir_interp, f"eigenvalues_{i}"))
+
+    # state data
+    # reference data
+    for dof in range(3):
+        # identified data
+        msd_data_id_interp.TEST.save_state_traj_as_csv(
+            result_dir_interp,
+            second_oder=True,
+            dof=dof,
+            filename=f"state_{dof}_trajectories_mi",
+        )
 
     # avoid that the script stops and keep the plots open
     plt.show()

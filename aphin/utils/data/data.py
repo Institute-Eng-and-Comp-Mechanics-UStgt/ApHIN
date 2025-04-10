@@ -136,19 +136,7 @@ class Data(ABC):
                     "number of scenarios in mu and in states X does not match"
                 )
 
-        # add matrices to Data if known
-        ph_matrices = [J, R, Q, B]
-        for i, ph_matrix in enumerate(ph_matrices):
-            if ph_matrix is not None and ph_matrix.ndim == 2:
-                ph_matrices[i] = np.repeat(
-                    ph_matrix[np.newaxis, :, :], self.n_sim, axis=0
-                )
-            assert ph_matrices[i] is None or (
-                ph_matrices[i].shape[0] == self.n_sim
-                and ph_matrices[i].shape[1] == self.n_n * self.n_dn
-                and ph_matrices[i].ndim == 3
-            )
-        self.J, self.R, self.Q, self.B = ph_matrices
+        self.add_ph_matrices(J, R, B=B, Q=Q)
 
         self.Mu_input = Mu_input
 
@@ -249,6 +237,50 @@ class Data(ABC):
             self.B = self.B[:, permutation_idx, permutation_idx]
         else:
             raise ValueError(f"Unknown permutation index.")
+
+    def add_ph_matrices(self, J, R, B=None, Q=None):
+        # add matrices to Data if known
+        ph_matrices = [J, R, Q, B]
+        for i, ph_matrix in enumerate(ph_matrices):
+            if ph_matrix is not None and ph_matrix.ndim == 2:
+                ph_matrices[i] = np.repeat(
+                    ph_matrix[np.newaxis, :, :], self.n_sim, axis=0
+                )
+            assert ph_matrices[i] is None or (
+                ph_matrices[i].shape[0] == self.n_sim
+                and ph_matrices[i].shape[1] == self.n_n * self.n_dn
+                and ph_matrices[i].ndim == 3
+            )
+        self.J, self.R, self.Q, self.B = ph_matrices
+
+    def add_system_matrices_from_system_layer(self, system_layer):
+        if self.Mu is not None and self.mu is None:
+            self.states_to_features()
+
+        J_ph, R_ph, B_ph, Q_ph, E_ph = self.get_system_matrices_from_system_layer(
+            system_layer, mu=self.mu, n_t=self.n_t
+        )
+        self.add_ph_matrices(J=J_ph, R=R_ph, B=B_ph, Q=Q_ph)
+
+    @staticmethod
+    def get_system_matrices_from_system_layer(system_layer, mu, n_t):
+
+        if isinstance(system_layer, DescriptorPHQLayer):
+            J_ph, R_ph, B_ph, Q_ph, E_ph = system_layer.get_system_matrices(mu, n_t=n_t)
+        elif isinstance(system_layer, DescriptorPHLayer):
+            J_ph, R_ph, B_ph, E_ph = system_layer.get_system_matrices(mu, n_t=n_t)
+            Q_ph = None
+        elif isinstance(system_layer, PHQLayer):
+            J_ph, R_ph, B_ph, Q_ph = system_layer.get_system_matrices(mu, n_t=n_t)
+            E_ph = None
+        elif isinstance(system_layer, PHLayer) or isinstance(system_layer, LTILayer):
+            J_ph, R_ph, B_ph = system_layer.get_system_matrices(mu, n_t=n_t)
+            Q_ph = None
+            E_ph = None
+        else:
+            raise NotImplementedError(f"The layer {type(system_layer)} is unknown.")
+
+        return J_ph, R_ph, B_ph, Q_ph, E_ph
 
     def get_initial_conditions(self):
         """
@@ -680,6 +712,39 @@ class Data(ABC):
             X_dom_list.append(self.X[:, :, :, n_dom : n_dom + domain_split_vals[i_dom]])
             n_dom += domain_split_vals[i_dom]
         return X_dom_list
+
+    def calculate_eigenvalues(
+        self, result_dir: str, save_to_csv: bool = False, save_name: str = "eigenvalues"
+    ):
+
+        if self.Q is None:
+            A = self.J - self.R
+        else:
+            A = (self.J - self.R) @ self.Q
+        eig_vals = np.array([np.linalg.eig(A_).eigenvalues for A_ in A])
+        max_eigs = np.array(np.real(eig_vals).max(axis=1))
+
+        print(f"The maximum eigenvalues of A for all scenarios are:\n {max_eigs}")
+        # max_eigs_pred = np.array(
+        #     [np.real(np.linalg.eig(A_).eigenvalues).max() for A_ in A_pred]
+        # )
+
+        # # plot eigenvalues on imaginary axis
+        # eigs_pred = np.array([np.linalg.eig(A_).eigenvalues for A_ in A_pred])
+
+        # save real and imaginary parts of eigenvalues to csv
+        if save_to_csv:
+            header = "".join(
+                [f"sim{i}_eigs_real," for i in range(eig_vals.shape[0])]
+            ) + "".join([f"sim{i}_eigs_imag," for i in range(eig_vals.shape[0])])
+            np.savetxt(
+                os.path.join(result_dir, f"{save_name}.csv"),
+                np.concatenate([eig_vals.real, eig_vals.imag], axis=0).T,
+                delimiter=",",
+                header=header,
+                comments="",
+            )
+        return eig_vals
 
     def calculate_errors(self, ph_identified_data_instance, domain_split_vals=None):
         """
@@ -2092,26 +2157,9 @@ class PHIdentifiedData(Data):
             data.get_initial_conditions()
 
         # get system matrices
-        if isinstance(system_layer, DescriptorPHQLayer):
-            J_ph, R_ph, B_ph, Q_ph, E_ph = system_layer.get_system_matrices(
-                data.mu, n_t=data.n_t
-            )
-        elif isinstance(system_layer, DescriptorPHLayer):
-            J_ph, R_ph, B_ph, E_ph = system_layer.get_system_matrices(
-                data.mu, n_t=data.n_t
-            )
-            Q_ph = None
-        elif isinstance(system_layer, PHQLayer):
-            J_ph, R_ph, B_ph, Q_ph = system_layer.get_system_matrices(
-                data.mu, n_t=data.n_t
-            )
-            E_ph = None
-        elif isinstance(system_layer, PHLayer) or isinstance(system_layer, LTILayer):
-            J_ph, R_ph, B_ph = system_layer.get_system_matrices(data.mu, n_t=data.n_t)
-            Q_ph = None
-            E_ph = None
-        else:
-            raise NotImplementedError(f"The layer {type(system_layer)} is unknown.")
+        J_ph, R_ph, B_ph, Q_ph, E_ph = Data.get_system_matrices_from_system_layer(
+            system_layer=system_layer, mu=data.mu, n_t=data.n_t
+        )
 
         if calc_u_midpoints:
             logging.info(f"Calculating midpoints from given input U.")
