@@ -1778,7 +1778,7 @@ def plot_x(
             label=label_list,
         )
         plt.xlabel("features")
-        plt.legend()
+        plt.legend(loc="upper right")
         plt.title(f"{save_name}")
         plt.show(block=False)
         save_as_png(os.path.join(save_path, f"bar_error_{save_name}"))
