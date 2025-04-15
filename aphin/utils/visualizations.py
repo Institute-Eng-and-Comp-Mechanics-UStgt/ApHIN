@@ -2535,7 +2535,7 @@ def custom_state_plot(
     data_id,
     attributes: list[str],
     index_list: list[tuple],
-    train_or_test: str = "test",
+    use_train_data: bool = False,
     cut_time_idx: int | None = None,
     subplot_idx: list[int] = None,
     subplot_title: list[str] = None,
@@ -2550,11 +2550,10 @@ def custom_state_plot(
     legend list of entries for orig system
     """
     # get data
-    if train_or_test.lower() == "train":
+    if use_train_data:
         data_train_or_test = data.TRAIN
         data_id_train_or_test = data_id.TRAIN
-
-    elif train_or_test.lower() == "test":
+    else:
         data_train_or_test = data.TEST
         data_id_train_or_test = data_id.TEST
     # get attribute

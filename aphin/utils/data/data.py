@@ -2226,6 +2226,88 @@ class PHIdentifiedData(Data):
             **kwargs,
         )
 
+    @classmethod
+    def from_system_list(cls, system_list: list, data: Data):
+        """
+        TODO: add header
+        """
+        logging.info(
+            f"PHIdentifiedData.from_system_list has only been implemented for the PHIN case."
+        )
+
+        n_f = system_list[0].n
+        latent_shape = (
+            data.n_sim,
+            data.n_t,
+            n_f,
+        )
+        assert len(system_list) == data.n_sim
+
+        # initialize solution arrays
+        Z_ph = np.zeros(latent_shape)
+        Z_dt_ph = np.zeros(latent_shape)
+
+        # initialize matrices
+        J = np.zeros((data.n_sim, n_f, n_f))
+        R = np.zeros((data.n_sim, n_f, n_f))
+        Q = np.zeros((data.n_sim, n_f, n_f))
+        B = np.zeros((data.n_sim, n_f, data.n_u))
+
+        data.get_initial_conditions()
+        for i_sim in range(data.n_sim):
+            u = data.U[i_sim]
+            x_init = np.expand_dims(data.x_init[i_sim, :], axis=0).T
+            Z_ph[i_sim], Z_dt_ph[i_sim] = system_list[i_sim].solve_dt(
+                data.t,
+                x_init,
+                u,
+            )
+            J[i_sim], R[i_sim], B[i_sim], Q[i_sim] = system_list[
+                i_sim
+            ].get_system_matrix()
+
+        z_ph, dz_dt_ph = reshape_states_to_features(Z_ph, Z_dt_ph)
+        x_ph, dx_dt_ph = z_ph, dz_dt_ph
+        X_ph, X_dt_ph = reshape_features_to_states(
+            x_ph,
+            data.n_sim,
+            data.n_t,
+            x_dt=dx_dt_ph,
+            n_n=data.n_n,
+            n_dn=data.n_dn,
+        )
+        z = data.x
+        Z = reshape_features_to_states(
+            z,
+            data.n_sim,
+            data.n_t,
+            n_f=n_f,
+        )
+        z_dt = data.dx_dt
+        Z_dt = reshape_features_to_states(
+            z_dt,
+            data.n_sim,
+            data.n_t,
+            n_f=n_f,
+        )
+
+        ph_identified_data_instance = cls(
+            t=data.t,
+            X=X_ph,
+            X_dt=X_dt_ph,
+            Z=Z,
+            Z_dt=Z_dt,
+            Z_ph=Z_ph,
+            Z_dt_ph=Z_dt_ph,
+            Mu=data.Mu,
+            J=J,
+            R=R,
+            B=B,
+            Q=Q,
+        )
+        ph_identified_data_instance.states_to_features()
+        return ph_identified_data_instance
+
     def save_latent_traj_as_csv(self, path, filename="latent_trajectories"):
         """
         Save latent trajectories to a CSV file with the following format:

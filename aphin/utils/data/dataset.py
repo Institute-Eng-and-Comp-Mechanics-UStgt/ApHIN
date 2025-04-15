@@ -11,6 +11,9 @@ from natsort import natsorted
 from sklearn.model_selection import train_test_split
 from tqdm import tqdm
 import scipy
+from scipy.spatial import ConvexHull
+from matplotlib import pyplot as plt
+
 
 # own package
 from aphin.utils.data import Data, PHIdentifiedData
@@ -382,10 +385,86 @@ class Dataset(Data):
             Mu_input=Mu_input_test,
         )
 
+        # save indices as attributes
+        self.TRAIN.sim_idx = sim_idx_train
+        self.TEST.sim_idx = sim_idx_test
+
         # reset data from Dataset level to omit confusion
         self.t, self.X, self.U, self.X_dt, self.Mu, self.J, self.R, self.Q, self.B = [
             None
         ] * 9
+
+    def train_test_split_convex_hull(
+        self,
+        desired_min_num_train: int = 1,
+        n_simulations_per_parameter_set: int = 1,
+        plot_convex_hull: bool = False,
+    ):
+        _, idx = np.unique(self.Mu, axis=0, return_index=True)
+        Mu_all = self.Mu[np.sort(idx), :]
+        hull_convex = ConvexHull(Mu_all)
+        idx_train = hull_convex.vertices  # parameters that define the convex hull
+        idx_test = np.setdiff1d(
+            np.arange(Mu_all.shape[0]), idx_train
+        )  # parameters inside the convex hull
+
+        train_idx = np.array(
+            [
+                (i_same_mu_scenario) * n_simulations_per_parameter_set
+                + np.arange(n_simulations_per_parameter_set)
+                for i_same_mu_scenario in idx_train
+            ]
+        ).flatten()
+        test_idx = np.array(
+            [
+                (i_same_mu_scenario) * n_simulations_per_parameter_set
+                + np.arange(n_simulations_per_parameter_set)
+                for i_same_mu_scenario in idx_test
+            ]
+        ).flatten()
+        # shift values to training set based on desired_min_num_train
+        if len(train_idx) < desired_min_num_train:
+            shift_to_train = desired_min_num_train - len(train_idx)
+            if shift_to_train >= len(test_idx):
+                raise ValueError(
+                    f"There are not enough parameter points in mu_test to shift to the training set."
+                )
+            if np.mod(shift_to_train, n_simulations_per_parameter_set) != 0:
+                shift_to_train = (
+                    np.ceil(shift_to_train / n_simulations_per_parameter_set)
+                    * n_simulations_per_parameter_set
+                )
+                logging.info(
+                    f"Desired number of training data can't be achieved, use {shift_to_train + len(train_idx)}"
+                )
+            train_idx = np.concatenate([train_idx, test_idx[:shift_to_train]])
+            test_idx = test_idx[shift_to_train:]
+        # train and test split
+        self.train_test_split_sim_idx(sim_idx_train=train_idx, sim_idx_test=test_idx)
+
+        if plot_convex_hull:
+            if Mu_all.shape[1] != 3:
+                raise NotImplementedError(
+                    f"Convex hull plot currently only implemented for the 3D case, i.e. n_mu=3."
+                )
+            fig = plt.figure(figsize=(12, 12))
+            ax = fig.add_subplot(projection="3d")
+            ax.scatter(Mu_all[:, 0], Mu_all[:, 1], Mu_all[:, 2], "b")
+            ax.scatter(
+                Mu_all[:, 0],
+                Mu_all[:, 1],
+                Mu_all[:, 2],
+                "r",
+            )
+            for s in hull_convex.simplices:
+                s = np.append(s, s[0])  # Here we cycle back to the first coordinate
+                ax.plot(
+                    Mu_all[s, 0],
+                    Mu_all[s, 1],
+                    Mu_all[s, 2],
+                    "r-",
+                )
+            plt.show()
 
     def truncate_time(self, trunc_time_ratio):
         """
@@ -932,6 +1011,18 @@ class PHIdentifiedDataset(Dataset):
             decomp_option,
             calc_u_midpoints,
             **kwargs,
+        )
+        return cls
+
+    def from_system_list(cls, system_list_train, system_list_test, data):
+        cls = PHIdentifiedDataset()
+        cls.TRAIN = PHIdentifiedData.from_system_list(
+            system_list=system_list_train,
+            data=data.TRAIN,
+        )
+        cls.TEST = PHIdentifiedData.from_system_list(
+            system_list=system_list_test,
+            data=data.TEST,
         )
         return cls
 
