@@ -78,6 +78,8 @@ def main(
         db_cfg["ph_layer"] = "phq"
     if not "only_save" in db_cfg.keys():
         db_cfg["only_save"] = False
+    if not "ref_coords" in db_cfg.keys():
+        db_cfg["ref_coords"] = "disc_nodes.npy"
 
     # save_config_sweep_data(
     #     root_result_dir=os.path.dirname(result_dir),
@@ -407,11 +409,131 @@ def main(
     )
     save_evaluation_times(disc_brake_data_id, result_dir)
 
-    # save states for 3d visualisation
-    save_video_data = False
-    if save_video_data:
-        disc_brake_data.save_video_data(result_dir, data_name="video_data_ref")
-        disc_brake_data_id.save_video_data(result_dir, data_name="video_data_pred")
+    # # %% 3D plots
+    create_3d_vis = True
+    if create_3d_vis:
+        # save each test parameter set as csv
+        for i, mu_ in enumerate(disc_brake_data.TEST.Mu):
+            # save header without leading # to avoid problems with np.loadtxt
+            np.savetxt(
+                os.path.join(result_dir, f"test_parameter_set_{i}.csv"),
+                np.array(
+                    [
+                        np.arange(n_mu + n_u),
+                        np.concatenate([mu_, disc_brake_data.TEST.U[i, 0]]),
+                    ]
+                ).T,
+                delimiter=",",
+                header="idx,mu",
+                comments="",
+            )
+
+        faces_path = os.path.join(data_dir, db_cfg["faces"])
+        ref_coords_path = os.path.join(data_dir, db_cfg["ref_coords"])
+        faces = np.load(faces_path)
+        ref_coords = np.load(ref_coords_path)
+        vis = Visualizer(background_color=(1, 1, 1, 0))
+
+        disc_brake_data.rescale_X()
+        disc_brake_data_id.rescale_X()
+        # linear expansion coefficient 1e-6 to large - correct physical values manually
+        disc_brake_data.scale_X(
+            scaling_values=[1, 1e6, 1e6], domain_split_vals=db_cfg["domain_split_vals"]
+        )
+        disc_brake_data_id.scale_X(
+            scaling_values=[1, 1e6, 1e6], domain_split_vals=db_cfg["domain_split_vals"]
+        )
+
+        disps_ref = disc_brake_data.TEST.X[:, :, :, 1:4]
+        disps_pred = disc_brake_data_id.TEST.X[:, :, :, 1:4]
+        e_disp = np.linalg.norm(disps_ref - disps_pred, axis=-1)
+        vels_ref = np.linalg.norm(disc_brake_data.TEST.X[:, :, :, 4:], axis=-1)
+        vels_pred = np.linalg.norm(disc_brake_data_id.TEST.X[:, :, :, 4:], axis=-1)
+        e_vel = np.abs(vels_ref - vels_pred)
+        temp_ref = disc_brake_data.TEST.X[:, :, :, 0]
+        temp_pred = disc_brake_data_id.TEST.X[:, :, :, 0]
+        e_temp = np.abs(temp_ref - temp_pred)
+
+        # anim settings
+        camera_distance = 1
+        view = [80, -60]
+        temp_max = 2000  # np.max(disc_brake_data.TEST.X[:, :, :, 0])
+        video_dir = os.path.join(result_dir, "videos")
+        if not os.path.exists(video_dir):
+            os.makedirs(video_dir)
+
+        ampl = 20
+        time_ids = np.arange(n_t_test - 1, n_t_test, 1)
+
+        e_temp_max = e_temp.max()  # e_temp.mean() + 3 * e_temp.std()
+        e_disp_max = e_disp.max()  # e_disp.mean() + 3 * e_disp.std()
+        e_vel_max = e_vel.max()  # e_vel.mean() + 3 * e_vel.std()
+
+        videos = dict(
+            ref=dict(
+                disps=disps_ref,
+                color=temp_ref,
+                color_scale_limits=[0, temp_max],
+                colormap="plasma",
+            ),
+            pred=dict(
+                disps=disps_pred,
+                color=temp_pred,
+                color_scale_limits=[0, temp_max],
+                colormap="plasma",
+            ),
+            e_disp=dict(
+                disps=disps_pred,
+                color=e_disp,
+                color_scale_limits=[0, e_disp_max],
+                colormap="viridis",
+            ),
+            e_vel=dict(
+                disps=disps_pred,
+                color=e_vel,
+                color_scale_limits=[0, e_vel_max],
+                colormap="viridis",
+            ),
+            e_temp=dict(
+                disps=disps_pred,
+                color=e_temp,
+                color_scale_limits=[0, e_temp_max],
+                colormap="viridis",
+            ),
+        )
+
+        # save colorbar limits
+        np.savetxt(
+            os.path.join(result_dir, f"colorbar_limits.csv"),
+            np.array(
+                [
+                    e_temp_max,
+                    e_disp_max,
+                    e_vel_max,
+                ]
+            ),
+            delimiter=",",
+            header="temp,disp,vel",
+            comments="",
+        )
+
+        for sim_id in range(n_sim_test):
+            for key, video_setting in videos.items():
+                print(f"{sim_id}_{key}")
+                vis.animate(
+                    ampl * video_setting["disps"][sim_id, time_ids] + ref_coords[:, :],
+                    faces=faces,
+                    color=video_setting["color"][sim_id, time_ids],
+                    camera_distance=camera_distance,
+                    colormap=video_setting["colormap"],
+                    color_scale_limits=video_setting["color_scale_limits"],
+                    view=view,
+                    save_single_frames=True,
+                    save_animation=True,
+                    animation_name=os.path.join(video_dir, f"{key}_sim_{sim_id}"),
+                    close_on_end=True,
+                    play_at_start=True,
+                )
 
         # import plotly.graph_objects as go
 
@@ -617,7 +739,7 @@ def main(
             data_id=disc_brake_data_id,
             attributes=["X", "X"],
             index_list=index_list_nodes,
-            train_or_test="test",
+            use_train_data="test",
             result_dir=result_dir,
             subplot_idx=subplot_idx,
             subplot_title=subplot_title,
@@ -670,129 +792,6 @@ def main(
     # plt.legend(["dzdt numerically", "dzdt chain rule"])
     # plt.show()
     # plt.savefig("test_z_dt_numeric_vs_chain.png")
-
-    # # %% 3D plots
-    # # save each test parameter set as csv
-    # for i, mu_ in enumerate(disc_brake_data.TEST.Mu):
-    #     # save header without leading # to avoid problems with np.loadtxt
-    #     np.savetxt(
-    #         os.path.join(result_dir, f"test_parameter_set_{i}.csv"),
-    #         np.array(
-    #             [
-    #                 np.arange(n_mu + n_u),
-    #                 np.concatenate([mu_, disc_brake_data.TEST.U[i, 0]]),
-    #             ]
-    #         ).T,
-    #         delimiter=",",
-    #         header="idx,mu",
-    #         comments="",
-    #     )
-
-    faces_path = os.path.join(data_dir, db_cfg["faces"])
-    ref_coords_path = os.path.join(data_dir, db_cfg["ref_coords"])
-    faces = np.load(faces_path)
-    ref_coords = np.load(ref_coords_path)
-    vis = Visualizer(background_color=(1, 1, 1, 0))
-
-    # rescale data
-    disc_brake_data.rescale_X()
-    disc_brake_data_id.is_scaled = True
-    disc_brake_data_id.TRAIN.is_scaled = True
-    disc_brake_data_id.TEST.is_scaled = True
-    disc_brake_data_id.scaling_values = disc_brake_data.TRAIN.scaling_values
-    disc_brake_data_id.TRAIN.scaling_values = disc_brake_data.TRAIN.scaling_values
-    disc_brake_data_id.TEST.scaling_values = disc_brake_data.TRAIN.scaling_values
-    disc_brake_data_id.rescale_X()
-
-    disps_ref = disc_brake_data.TEST.X[:, :, :, 1:4]
-    disps_pred = disc_brake_data_id.TEST.X[:, :, :, 1:4]
-    e_disp = np.linalg.norm(disps_ref - disps_pred, axis=-1)
-    vels_ref = np.linalg.norm(disc_brake_data.TEST.X[:, :, :, 4:], axis=-1)
-    vels_pred = np.linalg.norm(disc_brake_data_id.TEST.X[:, :, :, 4:], axis=-1)
-    e_vel = np.abs(vels_ref - vels_pred)
-    temp_ref = disc_brake_data.TEST.X[:, :, :, 0]
-    temp_pred = disc_brake_data_id.TEST.X[:, :, :, 0]
-    e_temp = np.abs(temp_ref - temp_pred)
-
-    # anim settings
-    camera_distance = 0.2
-    view = [45, 0]
-    temp_max = 1500
-    video_dir = os.path.join(result_dir, "videos")
-    if not os.path.exists(video_dir):
-        os.makedirs(video_dir)
-
-    ampl = 400
-    time_ids = np.arange(n_t_test - 1, n_t_test, 1)
-
-    e_temp_max = e_temp.max()  # e_temp.mean() + 3 * e_temp.std()
-    e_disp_max = e_disp.max()  # e_disp.mean() + 3 * e_disp.std()
-    e_vel_max = e_vel.max()  # e_vel.mean() + 3 * e_vel.std()
-
-    videos = dict(
-        ref=dict(
-            disps=disps_ref,
-            color=temp_ref,
-            color_scale_limits=[0, temp_max],
-            colormap="plasma",
-        ),
-        pred=dict(
-            disps=disps_pred,
-            color=temp_pred,
-            color_scale_limits=[0, temp_max],
-            colormap="plasma",
-        ),
-        e_disp=dict(
-            disps=disps_pred,
-            color=e_disp,
-            color_scale_limits=[0, e_disp_max],
-            colormap="viridis",
-        ),
-        e_vel=dict(
-            disps=disps_pred,
-            color=e_vel,
-            color_scale_limits=[0, e_vel_max],
-            colormap="viridis",
-        ),
-        e_temp=dict(
-            disps=disps_pred,
-            color=e_temp,
-            color_scale_limits=[0, e_temp_max],
-            colormap="viridis",
-        ),
-    )
-
-    # save colorbar limits
-    np.savetxt(
-        os.path.join(result_dir, f"colorbar_limits.csv"),
-        np.array(
-            [
-                e_temp_max,
-                e_disp_max,
-                e_vel_max,
-            ]
-        ),
-        delimiter=",",
-        header="temp,disp,vel",
-        comments="",
-    )
-
-    for sim_id in range(n_sim_test):
-        for key, video_setting in videos.items():
-            print(key)
-            vis.animate(
-                ampl * disps_ref[sim_id, time_ids] + ref_coords[:, 1:],
-                faces=faces,
-                color=video_setting["color"][sim_id, time_ids],
-                camera_distance=camera_distance,
-                colormap=video_setting["colormap"],
-                color_scale_limits=video_setting["color_scale_limits"],
-                view=view,
-                save_single_frames=True,
-                save_animation=True,
-                animation_name=os.path.join(video_dir, f"{key}_sim_{sim_id}"),
-                close_on_end=True,
-            )
 
 
 # parameter variation for multiple experiment runs

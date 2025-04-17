@@ -10,6 +10,7 @@ sim_name: disc_brake_with_hole_without_force_large_heat #disc_brake_with_hole_ve
 file_url: https://darus.uni-stuttgart.de/api/access/datafile/:persistentId?persistentId=doi:10.18419/darus-4418/1
 r: 24 
 faces:  disc_faces.npy
+ref_coords: disc_ref_coords.npy
 t_end: Null # truncate when reading from .txt to reduce data memory
 num_time_steps_load: Null # {Null} - use only for loading once, define integer number of target time steps
 

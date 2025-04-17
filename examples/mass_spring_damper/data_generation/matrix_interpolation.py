@@ -183,25 +183,25 @@ def get_weighting_function_values(
 
 def evaluate_matrices(matrices_training: np.ndarray, weighting_array: np.ndarray):
     """
-    matrices_training (n0,n1,n_system): matrices gained from training parameter samples parameter_samples_train
+    matrices_training (n_system,n0,n1): matrices gained from training parameter samples parameter_samples_train
     weighting_array (n_system,n_eval_points): usually calculated with get_weighting_function_values
     Returns:
-    requested_matrices of size (n0,n1,n_eval_points)
+    requested_matrices of size (n_eval_points,n0,n1)
     """
-    assert matrices_training.shape[2] == weighting_array.shape[0]
+    assert matrices_training.shape[0] == weighting_array.shape[0]
 
-    n0 = matrices_training.shape[0]
-    n1 = matrices_training.shape[1]
-    n_system = matrices_training.shape[2]
+    n0 = matrices_training.shape[1]
+    n1 = matrices_training.shape[2]
+    n_system = matrices_training.shape[0]
     n_eval_points = weighting_array.shape[1]
 
-    requested_matrices = np.zeros((n0, n1, n_eval_points))
+    requested_matrices = np.zeros((n_eval_points, n0, n1))
     for i_eval_point in range(n_eval_points):
         for i_system in range(n_system):
-            requested_matrices[:, :, i_eval_point] = (
-                requested_matrices[:, :, i_eval_point]
+            requested_matrices[i_eval_point, :, :] = (
+                requested_matrices[i_eval_point, :, :]
                 + weighting_array[i_system, i_eval_point]
-                * matrices_training[:, :, i_system]
+                * matrices_training[i_system, :, :]
             )
     return requested_matrices
 

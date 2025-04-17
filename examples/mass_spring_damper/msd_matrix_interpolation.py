@@ -55,7 +55,7 @@ def phin_learning(
     result_dir = os.path.join(result_dir, dir_extension)
     for dir in [log_dir, weight_dir, result_dir]:
         if not os.path.isdir(dir):
-            os.mkdir(dir)
+            os.makedirs(dir)
 
     t, x, dx_dt, u, mu = msd_data.data
     n_sim, n_t, n_n, n_dn, n_u, n_mu = msd_data.shape
@@ -124,8 +124,9 @@ def phin_learning(
     phin = PHIN(n_f, x=x, u=u, mu=mu, system_layer=system_layer, name="phin")
 
     #  create model with several inputs
+    # TODO: Move back to ADAM if not working
     phin.compile(
-        optimizer=tf.keras.optimizers.Adam(learning_rate=msd_cfg["lr"]),
+        optimizer=tf.keras.optimizers.AdamW(learning_rate=msd_cfg["lr"]),
         loss=tf.keras.losses.MSE,
     )
     if mu is None:
@@ -512,7 +513,9 @@ def main(config_path_to_file=None, only_phin: bool = False):
                 msd_data,
                 msd_cfg,
                 configuration.directories,
-                dir_extension=f"mi{i_same_mu_scenario}",
+                dir_extension=os.path.join(
+                    "mi", "const_mu_runs", f"mi{i_same_mu_scenario}"
+                ),
                 layer=msd_cfg["ph_layer"],
             )
             if msd_cfg["ph_layer"] == "ph_layer":
@@ -764,11 +767,17 @@ def main(config_path_to_file=None, only_phin: bool = False):
                 "*",
                 label="phin",
             )
+            plt.plot(
+                eig_vals_lti[i].real,
+                eig_vals_lti[i].imag,
+                "^",
+                label="lti",
+            )
             plt.xlabel("real")
             plt.ylabel("imag")
             plt.legend()
             plt.show(block=False)
-            aphin_vis.save_as_png(os.path.join(result_dir_mi, f"eigenvalues_{i}"))
+            aphin_vis.save_as_png(os.path.join(result_dir, f"eigenvalues_{i}"))
 
         # state data
         # reference data
@@ -782,11 +791,12 @@ def main(config_path_to_file=None, only_phin: bool = False):
             )
 
         if TEST_or_TRAIN == "TEST":
+            J_pred, R_pred, Q_pred, B_pred = msd_data_id_mi.TEST.ph_matrices
             # only implemented for test case
             aphin_vis.chessboard_visualisation(
                 test_ids,
                 msd_data_orig,
-                matrices_pred=msd_data_id_mi.TEST.get_system_matrix(),
+                matrices_pred=(J_pred, R_pred, B_pred, Q_pred),
                 result_dir=result_dir_mi,
                 limits=msd_cfg["matrix_color_limits"],
                 error_limits=msd_cfg["matrix_error_limits"],
