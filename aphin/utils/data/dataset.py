@@ -1014,6 +1014,7 @@ class PHIdentifiedDataset(Dataset):
         )
         return cls
 
+    @classmethod
     def from_system_list(cls, system_list_train, system_list_test, data):
         cls = PHIdentifiedDataset()
         cls.TRAIN = PHIdentifiedData.from_system_list(
