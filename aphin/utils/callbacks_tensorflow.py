@@ -42,6 +42,10 @@ def callbacks(
         Number of epochs with no improvement after which training will be stopped if early stopping is enabled.
         Default is `100`.
 
+    save_many_weights : bool, optional
+        If True, adds a custom callback (`WeightBeforeEpochCallback`) that saves model weights at regular
+        intervals (e.g., every 5 epochs). These are saved separately from the best model checkpoint.
+        Default is False.
 
     Returns:
     --------
@@ -88,6 +92,28 @@ def callbacks(
 
 
 class WeightBeforeEpochCallback(tf.keras.callbacks.ModelCheckpoint):
+    """
+    A custom TensorFlow Keras callback for saving model weights at the beginning of specific epochs.
+
+    This callback extends the `ModelCheckpoint` class and overwrites the `on_epoch_begin`
+    method to allow saving the model at the start of every 5th epoch (or at a frequency specified by
+    `save_freq`). The callback saves the model weights before each epoch begins, ensuring that
+    intermediate model states can be captured during training.
+
+    The `on_epoch_end` method updates the current epoch but does not perform additional actions by default.
+
+    Notes
+    -----
+    - The model is saved when `epoch % 5 == 0` by default, but this can be adjusted if needed.
+    - This callback overrides `on_epoch_begin` and `on_epoch_end` methods from `ModelCheckpoint`.
+
+    Parameters
+    ----------
+    save_freq : str or int, optional
+        Frequency to save the model. Default is "epoch", meaning the model will be saved every epoch.
+        A custom frequency (e.g., every 5th epoch) can be specified by modifying `on_epoch_begin`.
+    """
+
     # overwrite epoch_on_begin
     def on_epoch_begin(self, epoch, logs=None):
         if self.save_freq == "epoch":

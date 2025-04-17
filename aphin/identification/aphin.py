@@ -433,15 +433,32 @@ class APHIN(PHBasemodel):
         Parameters
         ----------
         x : array-like
-            Full state with shape (n_samples, n_features).
+            Input state with shape (n_samples, n_features). Represents the full observed state
+            of the system at different time points.
+
         dx_dt : array-like
-            Time derivative of state with shape (n_samples, n_features).
+            Time derivative of the input state, with shape (n_samples, n_features). Represents
+            the rate of change of `x` with respect to time.
+
+        return_dz_dxr : bool, optional (default=False)
+            If True, return the Jacobian of the latent variables with respect to the PCA-encoded
+            input instead of the latent variables and their derivatives.
 
         Returns
         -------
-        tuple
-            Tuple containing latent variables and their time derivatives.
+        z : np.ndarray
+            Latent variables computed from input `x`, with shape (n_samples, latent_dim). Only
+            returned if `return_dz_dxr` is False.
+
+        dz_dt : np.ndarray
+            Time derivatives of the latent variables, with shape (n_samples, latent_dim). Only
+            returned if `return_dz_dxr` is False.
+
+        dz_dxr : tf.Tensor
+            Jacobian of the latent variables with respect to the PCA-reduced input. Only returned
+            if `return_dz_dxr` is True.
         """
+
         x = tf.cast(x, self.dtype_)
         dx_dt = tf.expand_dims(tf.cast(dx_dt, dtype=self.dtype_), axis=-1)
 
@@ -977,6 +994,30 @@ class APHIN(PHBasemodel):
 
     @staticmethod
     def plot_as_patches(j):
+        """
+        Visualize a 4D tensor as a grid of image patches with zero-centered color scale.
+
+        This function rearranges and pads a 4D tensor so that each diagonal of the
+        original layout becomes a contiguous patch. It then reshapes the result into a
+        single 2D image for visualization.
+
+        This method is taken from the Tensorflow documentation.
+
+        Parameters
+        ----------
+        j : tf.Tensor
+            A 4D tensor with shape (n, m, h, w), where:
+                - n is the number of rows of patches,
+                - m is the number of columns of patches,
+                - h and w are the height and width of each patch.
+
+        Notes
+        -----
+        - The tensor is transposed so that diagonal elements become contiguous blocks.
+        - Padding is applied between patches for visual separation.
+        - The final image is plotted using `APHIN.imshow_zero_center`, with a diverging
+        colormap centered at zero.
+        """
         # Reorder axes so the diagonals will each form a contiguous patch.
         j = tf.transpose(j, [1, 0, 3, 2])
         # Pad in between each patch.

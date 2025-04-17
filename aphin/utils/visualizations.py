@@ -215,7 +215,17 @@ def plot_X_comparison(
     use_train_data : bool, optional
         If `True`, use training data for plotting. If `False`, use test data. Defaults to `False`.
     idx_gen : str, optional
-        Method for generating indices. Options are `"rand"` for random indices or `"first"` for sequential indices. Defaults to `"rand"`.
+        Method for generating indices. Options:
+        - "rand": random indices
+        - "first": first `num_plots_max` indices
+        - "custom": use explicitly passed `idx_custom_tuple`
+        Default is "rand".
+    idx_custom_tuple : list[tuple], optional
+        Used if `idx_gen` is "custom". A list of tuples specifying:
+        (idx_n_n, idx_n_dn, idx_n_f)
+        where idx_n_n, idx_n_dn are taking for data_type "X"
+        and idx_n_f for data_type "Z"
+        Each tuple must be within the respective valid index ranges.
     save_path : str, optional
         Directory path to save the plot image. If empty, the plot will not be saved. Defaults to `""`.
 
@@ -284,13 +294,24 @@ def plot_x_comparison(
         Default is False.
 
     idx_gen : str, optional
-        Method for generating indices of features to plot. Options are:
-        - "rand": Randomly selects indices.
-        - "first": Selects the first few indices.
+        Method for generating indices. Options:
+        - "rand": random indices
+        - "first": first `num_plots_max` indices
+        - "custom": use explicitly passed `idx_custom_tuple`
         Default is "rand".
+
+    idx_custom_tuple : list[tuple], optional
+        Used if `idx_gen` is "custom". A list of tuples specifying:
+        (idx_n_n, idx_n_dn, idx_n_f)
+        where idx_n_n, idx_n_dn are taking for data_type "X"
+        and idx_n_f for data_type "Z"
+        Each tuple must be within the respective valid index ranges.
 
     save_path : str, optional
         The directory path where the plot will be saved. If not provided, the plot will not be saved.
+
+    only_save : bool, optional
+        If True, suppresses display of the plot and saves the figure only. Defaults to False.
 
     Returns:
     --------
@@ -349,9 +370,24 @@ def plot_X_dt_comparison(
     use_train_data : bool, optional
         If `True`, use training data for plotting. If `False`, use test data. Defaults to `False`.
     idx_gen : str, optional
-        Method for generating indices. Options are `"rand"` for random indices or `"first"` for sequential indices. Defaults to `"rand"`.
+        Method for generating indices. Options:
+        - "rand": random indices
+        - "first": first `num_plots_max` indices
+        - "custom": use explicitly passed `idx_custom_tuple`
+        Default is "rand".
+
+    idx_custom_tuple : list[tuple], optional
+        Used if `idx_gen` is "custom". A list of tuples specifying:
+        (idx_n_n, idx_n_dn, idx_n_f)
+        where idx_n_n, idx_n_dn are taking for data_type "X"
+        and idx_n_f for data_type "Z"
+        Each tuple must be within the respective valid index ranges.
+
     save_path : str, optional
         Directory path to save the plot image. If empty, the plot will not be saved. Defaults to `""`.
+
+    only_save : bool, optional
+        If True, suppresses display of the plot and saves the figure only. Defaults to False.
 
     Returns:
     -----------
@@ -417,10 +453,24 @@ def plot_x_reconstruction(
         If True, use the training data from `original_data` and `identified_data`; otherwise, use the test data. Default is False.
 
     idx_gen : str, optional
-        Method for generating indices for the features to plot. Options are "rand" (random) or "first" (first N features). Default is "rand".
+        Method for generating indices. Options:
+        - "rand": random indices
+        - "first": first `num_plots_max` indices
+        - "custom": use explicitly passed `idx_custom_tuple`
+        Default is "rand".
+
+    idx_custom_tuple : list[tuple], optional
+        Used if `idx_gen` is "custom". A list of tuples specifying:
+        (idx_n_n, idx_n_dn, idx_n_f)
+        where idx_n_n, idx_n_dn are taking for data_type "X"
+        and idx_n_f for data_type "Z"
+        Each tuple must be within the respective valid index ranges.
 
     save_path : str, optional
         Directory where the plot will be saved. If not provided, the plot will be saved in the current working directory.
+
+    only_save : bool, optional
+        If True, suppresses display of the plot and saves the figure only. Defaults to False.
 
     Returns:
     --------
@@ -481,10 +531,24 @@ def plot_x_dt_reconstruction(
         If True, use the training data from `original_data` and `identified_data`; otherwise, use the test data. Default is False.
 
     idx_gen : str, optional
-        Method for generating indices for the features to plot. Options are "rand" (random) or "first" (first N features). Default is "rand".
+        Method for generating indices. Options:
+        - "rand": random indices
+        - "first": first `num_plots_max` indices
+        - "custom": use explicitly passed `idx_custom_tuple`
+        Default is "rand".
+
+    idx_custom_tuple : list[tuple], optional
+        Used if `idx_gen` is "custom". A list of tuples specifying:
+        (idx_n_n, idx_n_dn, idx_n_f)
+        where idx_n_n, idx_n_dn are taking for data_type "X"
+        and idx_n_f for data_type "Z"
+        Each tuple must be within the respective valid index ranges.
 
     save_path : str, optional
         Directory where the plot will be saved. If not provided, the plot will be saved in the current working directory.
+
+    only_save : bool, optional
+        If True, suppresses display of the plot and saves the figure only. Defaults to False.
 
     Returns:
     --------
@@ -541,7 +605,17 @@ def plot_X_reconstruction(
     use_train_data : bool, optional
         If `True`, use training data for plotting. If `False`, use test data. Defaults to `False`.
     idx_gen : str, optional
-        Method for generating indices. Options are `"rand"` for random indices or `"first"` for sequential indices. Defaults to `"rand"`.
+        Method for generating indices. Options:
+        - "rand": random indices
+        - "first": first `num_plots_max` indices
+        - "custom": use explicitly passed `idx_custom_tuple`
+        Default is "rand".
+    idx_custom_tuple : list[tuple], optional
+        Used if `idx_gen` is "custom". A list of tuples specifying:
+        (idx_n_n, idx_n_dn, idx_n_f)
+        where idx_n_n, idx_n_dn are taking for data_type "X"
+        and idx_n_f for data_type "Z"
+        Each tuple must be within the respective valid index ranges.
     save_path : str, optional
         Directory path to save the plot image. If empty, the plot will not be saved. Defaults to `""`.
 
@@ -604,9 +678,21 @@ def plot_X_dt_reconstruction(
     use_train_data : bool, optional
         If `True`, use training data for plotting. If `False`, use test data. Defaults to `False`.
     idx_gen : str, optional
-        Method for generating indices. Options are `"rand"` for random indices or `"first"` for sequential indices. Defaults to `"rand"`.
+        Method for generating indices. Options:
+        - "rand": random indices
+        - "first": first `num_plots_max` indices
+        - "custom": use explicitly passed `idx_custom_tuple`
+        Default is "rand".
+    idx_custom_tuple : list[tuple], optional
+        Used if `idx_gen` is "custom". A list of tuples specifying:
+        (idx_n_n, idx_n_dn, idx_n_f)
+        where idx_n_n, idx_n_dn are taking for data_type "X"
+        and idx_n_f for data_type "Z"
+        Each tuple must be within the respective valid index ranges.
     save_path : str, optional
         Directory path to save the plot image. If empty, the plot will not be saved. Defaults to `""`.
+    only_save : bool, optional
+        If True, suppresses display of the plot and saves the figure only. Defaults to False.
 
     Returns:
     -----------
@@ -670,13 +756,24 @@ def plot_Z_ph(
         Default is False.
 
     idx_gen : str, optional
-        Method for generating indices of features to plot. Options are:
-        - "rand": Randomly selects indices.
-        - "first": Selects the first few indices.
+        Method for generating indices. Options:
+        - "rand": random indices
+        - "first": first `num_plots_max` indices
+        - "custom": use explicitly passed `idx_custom_tuple`
         Default is "rand".
+
+    idx_custom_tuple : list[tuple], optional
+        Used if `idx_gen` is "custom". A list of tuples specifying:
+        (idx_n_n, idx_n_dn, idx_n_f)
+        where idx_n_n, idx_n_dn are taking for data_type "X"
+        and idx_n_f for data_type "Z"
+        Each tuple must be within the respective valid index ranges.
 
     save_path : str, optional
         The directory path where the plot will be saved. If not provided, the plot will not be saved.
+
+    only_save : bool, optional
+        If True, suppresses display of the plot and saves the figure only. Defaults to False.
 
     Returns:
     --------
@@ -739,13 +836,24 @@ def plot_z_ph(
         Default is False.
 
     idx_gen : str, optional
-        Method for generating indices of features to plot. Options are:
-        - "rand": Randomly selects indices.
-        - "first": Selects the first few indices.
+        Method for generating indices. Options:
+        - "rand": random indices
+        - "first": first `num_plots_max` indices
+        - "custom": use explicitly passed `idx_custom_tuple`
         Default is "rand".
+
+    idx_custom_tuple : list[tuple], optional
+        Used if `idx_gen` is "custom". A list of tuples specifying:
+        (idx_n_n, idx_n_dn, idx_n_f)
+        where idx_n_n, idx_n_dn are taking for data_type "X"
+        and idx_n_f for data_type "Z"
+        Each tuple must be within the respective valid index ranges.
 
     save_path : str, optional
         The directory path where the plot will be saved. If not provided, the plot will not be saved.
+
+    only_save : bool, optional
+        If True, suppresses display of the plot and saves the figure only. Defaults to False.
 
     Returns:
     --------
@@ -805,13 +913,24 @@ def plot_Z_dt_ph_map(
         Default is False.
 
     idx_gen : str, optional
-        Method for generating indices of features to plot. Options are:
-        - "rand": Randomly selects indices.
-        - "first": Selects the first few indices.
+        Method for generating indices. Options:
+        - "rand": random indices
+        - "first": first `num_plots_max` indices
+        - "custom": use explicitly passed `idx_custom_tuple`
         Default is "rand".
+
+    idx_custom_tuple : list[tuple], optional
+        Used if `idx_gen` is "custom". A list of tuples specifying:
+        (idx_n_n, idx_n_dn, idx_n_f)
+        where idx_n_n, idx_n_dn are taking for data_type "X"
+        and idx_n_f for data_type "Z"
+        Each tuple must be within the respective valid index ranges.
 
     save_path : str, optional
         The directory path where the plot will be saved. If not provided, the plot will not be saved.
+
+    only_save : bool, optional
+        If True, suppresses display of the plot and saves the figure only. Defaults to False.
 
     Returns:
     --------
@@ -879,13 +998,24 @@ def plot_z_dt_ph_map(
         Default is False.
 
     idx_gen : str, optional
-        Method for generating indices of features to plot. Options are:
-        - "rand": Randomly selects indices.
-        - "first": Selects the first few indices.
+        Method for generating indices. Options:
+        - "rand": random indices
+        - "first": first `num_plots_max` indices
+        - "custom": use explicitly passed `idx_custom_tuple`
         Default is "rand".
+
+    idx_custom_tuple : list[tuple], optional
+        Used if `idx_gen` is "custom". A list of tuples specifying:
+        (idx_n_n, idx_n_dn, idx_n_f)
+        where idx_n_n, idx_n_dn are taking for data_type "X"
+        and idx_n_f for data_type "Z"
+        Each tuple must be within the respective valid index ranges.
 
     save_path : str, optional
         The directory path where the plot will be saved. If not provided, the plot will not be saved.
+
+    only_save : bool, optional
+        If True, suppresses display of the plot and saves the figure only. Defaults to False.
 
     Returns:
     --------
@@ -946,13 +1076,24 @@ def plot_Z_dt_ph(
         Default is False.
 
     idx_gen : str, optional
-        Method for generating indices of features to plot. Options are:
-        - "rand": Randomly selects indices.
-        - "first": Selects the first few indices.
+        Method for generating indices. Options:
+        - "rand": random indices
+        - "first": first `num_plots_max` indices
+        - "custom": use explicitly passed `idx_custom_tuple`
         Default is "rand".
+
+    idx_custom_tuple : list[tuple], optional
+        Used if `idx_gen` is "custom". A list of tuples specifying:
+        (idx_n_n, idx_n_dn, idx_n_f)
+        where idx_n_n, idx_n_dn are taking for data_type "X"
+        and idx_n_f for data_type "Z"
+        Each tuple must be within the respective valid index ranges.
 
     save_path : str, optional
         The directory path where the plot will be saved. If not provided, the plot will not be saved.
+
+    only_save : bool, optional
+        If True, suppresses display of the plot and saves the figure only. Defaults to False.
 
     Returns:
     --------
@@ -1013,13 +1154,24 @@ def plot_z_dt_ph(
         Default is False.
 
     idx_gen : str, optional
-        Method for generating indices of features to plot. Options are:
-        - "rand": Randomly selects indices.
-        - "first": Selects the first few indices.
+        Method for generating indices. Options:
+        - "rand": random indices
+        - "first": first `num_plots_max` indices
+        - "custom": use explicitly passed `idx_custom_tuple`
         Default is "rand".
+
+    idx_custom_tuple : list[tuple], optional
+        Used if `idx_gen` is "custom". A list of tuples specifying:
+        (idx_n_n, idx_n_dn, idx_n_f)
+        where idx_n_n, idx_n_dn are taking for data_type "X"
+        and idx_n_f for data_type "Z"
+        Each tuple must be within the respective valid index ranges.
 
     save_path : str, optional
         The directory path where the plot will be saved. If not provided, the plot will not be saved.
+
+    only_save : bool, optional
+        If True, suppresses display of the plot and saves the figure only. Defaults to False.
 
     Returns:
     --------
@@ -1083,8 +1235,18 @@ def get_quantities_of_interest(
         The type of data being analyzed, such as "X" for state variables or "Z" for latent variables. Default is "X".
 
     idx_gen : str, optional
-        Method for generating indices for selecting nodes, degrees of freedom, or features. Options are "rand" (random selection)
-        or "first" (select the first N features). Default is "rand".
+        Method for generating indices. Options:
+        - "rand": random indices
+        - "first": first `num_plots_max` indices
+        - "custom": use explicitly passed `idx_custom_tuple`
+        Default is "rand".
+
+    idx_custom_tuple : list[tuple], optional
+        Used if `idx_gen` is "custom". A list of tuples specifying:
+        (idx_n_n, idx_n_dn, idx_n_f)
+        where idx_n_n, idx_n_dn are taking for data_type "X"
+        and idx_n_f for data_type "Z"
+        Each tuple must be within the respective valid index ranges.
 
     Returns:
     --------
@@ -1159,7 +1321,17 @@ def get_quantity_of_interest(
     data_type : str, optional
         Specifies the type of data to be retrieved. Defaults to "X".
     idx_gen : str, optional
-        Method for generating indices. Defaults to "rand" for random indices.
+        Method for generating indices. Options:
+        - "rand": random indices
+        - "first": first `num_plots_max` indices
+        - "custom": use explicitly passed `idx_custom_tuple`
+        Default is "rand".
+    idx_custom_tuple : list[tuple], optional
+        Used if `idx_gen` is "custom". A list of tuples specifying:
+        (idx_n_n, idx_n_dn, idx_n_f)
+        where idx_n_n, idx_n_dn are taking for data_type "X"
+        and idx_n_f for data_type "Z"
+        Each tuple must be within the respective valid index ranges.
 
     Returns:
     -----------
@@ -1215,6 +1387,62 @@ def plot_u(
     use_train_data=False,
     num_plots_max=6,
 ):
+    """
+    Plots the time series of input signals from a dataset.
+
+    This function visualizes up to `num_plots_max` input signals (u) over time from either the training
+    or test set of a given dataset. Each input is plotted in a separate subplot with proper labeling and grid.
+
+    Parameters:
+    -----------
+    data : object
+        The dataset object containing the training and test data, with attributes `TRAIN`, `TEST`, `t`, and `u`.
+
+    use_train_data : bool, optional
+        If True, the function uses the training data (`data.TRAIN`); otherwise, it uses the test data (`data.TEST`).
+        Default is False.
+
+    num_plots_max : int, optional
+        Maximum number of input signals (u) to plot. If the number of inputs exceeds this value, only the first
+        `num_plots_max` inputs are plotted. Default is 6.
+
+    Returns:
+    --------
+    None
+        The function creates and displays the plot, but does not return any values.
+    """
+    if use_train_data:
+        data = data.TRAIN
+    else:
+        data = data.TEST
+    t = data.t
+    num_plots = data.n_u
+    u = data.u
+
+    if num_plots > num_plots_max:
+        num_plots = num_plots_max
+
+    fig, ax = new_fig(num_plots, window_title="Input u")
+    if num_plots == 1:
+        ax = [ax]
+    ax[0].set_title("Inputs")
+    for i_u in range(num_plots):
+        ax[i_u].plot(u[:, i_u], label=rf"$u_{i_u}$")
+        ax[i_u].set_ylabel(
+            rf"$u_{i_u}$",
+            rotation="horizontal",
+            ha="center",
+            va="center",
+        )
+        ax[i_u].grid(linestyle=":", linewidth=1)
+        ax[i_u].legend()
+    # plt.xlabel("time t [s]")
+    fig.align_ylabels(ax[:])
+    # plt.legend(bbox_to_anchor=(1.04, 0.0), loc="lower left", borderaxespad=0.0)
+    # fig.legend(loc='outside center right', bbox_to_anchor=(1.3, 0.6))
+    plt.tight_layout()
+    plt.show(block=False)
+    # save_as_png(os.path.join(save_path, save_name))
     if use_train_data:
         data = data.TRAIN
     else:
@@ -1295,6 +1523,12 @@ def plot_errors(
     yscale : str, optional
         The scale of the y-axis for the plots. Options are "linear" or "log". Default is "linear".
 
+    only_save : bool, optional
+        If True, suppresses display of the plot and saves the figure only. Defaults to False.
+
+    create_train_test_subfolder : bool, optional
+        If True, creates a "train/" or "test/" subfolder under `result_dir` and saves plots there. Default is False.
+
     Returns:
     --------
     None
@@ -1358,6 +1592,41 @@ def single_parameter_space_error_plot(
     parameter_names: list[str] = None,
     save_path: str = None,
 ):
+    """
+    Creates a 2D or 3D scatter plot showing RMS error distribution in parameter space.
+
+    This function visualizes how the maximum RMS error (over time) varies across different parameter configurations.
+    Each sample in the parameter space is plotted as a point, with the size of the point proportional to its RMS error.
+    Supports up to 4 dimensions, where the fourth parameter (if present) is used for coloring the scatter plot.
+
+    Parameters:
+    -----------
+    norm_rms_error : np.ndarray
+        Array of normalized RMS errors with shape (n_samples, n_time_steps). The maximum error across time is used for plotting.
+
+    Mu : np.ndarray
+        Parameter space matrix with shape (n_samples, n_params), representing the main set of parameter values.
+
+    Mu_input : np.ndarray, optional
+        Additional input parameter values to concatenate with `Mu`, shape (n_samples, n_additional_params). Default is None.
+
+    parameter_names : list of str, optional
+        A list of parameter names corresponding to the columns of `Mu` and `Mu_input` combined. Must match total number of parameters.
+        Used for labeling the plot axes and colorbar. Default is None.
+
+    save_path : str, optional
+        Path to the directory where the plot image will be saved as "param_space_error.png". If None, the plot is not saved.
+
+    Raises:
+    -------
+    NotImplementedError
+        If the number of parameters exceeds 4 (visualization beyond 4D is not supported/possible).
+
+    Returns:
+    --------
+    None
+        Displays the scatter plot and optionally saves it as a PNG file.
+    """
     if Mu_input is not None:
         Mu_with_input = np.concatenate((Mu, Mu_input), axis=1)
     else:
@@ -1447,6 +1716,9 @@ def single_error_plot(
     save_name : str, optional
         The name of the file (without extension) to which the plot will be saved as a PNG. Default is "rms_error".
 
+    only_save : bool, optional
+        If True, suppresses display of the plot and saves the figure only. Defaults to False.
+
     save_to_csv : bool, optional
         If True, the RMS error data along with the mean error will be saved to a CSV file. Default is False.
 
@@ -1513,36 +1785,60 @@ def get_sim_idx(
     idx_custom_tuple: list[tuple] | None = None,
 ):
     """
-    Generates indices for plotting based on the type of data and the number of plots desired.
-
-    This function determines which indices to use for plotting the results based on the data type
-    (`"X"` for state results or `"Z"` for latent results), the maximum number of plots, and the
-    method for index generation. It provides indices for states or latent variables, as well as a
-    random simulation index.
+    Selects indices for plotting data from a dataset instance, either from state-space data ("X")
+    or latent space data ("Z"). It determines which node and degree-of-freedom (DOF) combinations
+    to visualize, as well as a simulation index.
 
     Parameters:
     -----------
     data_instance : object
-        The instance of the data containing the results and necessary attributes for indexing.
+        An object containing simulation data with attributes:
+        - n_n: number of nodes
+        - n_dn: number of degrees of freedom per node
+        - n_red: number of latent dimensions
+        - n_sim: number of simulation runs
+
     data_type : str, optional
-        The type of data to be indexed. Can be `"X"` for state results or `"Z"` for latent results. Defaults to `"X"`.
+        Type of data to index. Can be:
+        - "X": state-space data (nodes × DOFs)
+        - "Z": latent space data (reduced coordinates)
+        Default is "X".
+
     num_plots_max : int, optional
-        The maximum number of plots to be generated. Defaults to 6.
+        Maximum number of plots to select. Defaults to 6.
+
     idx_gen : str, optional
-        Method for generating indices. Options are `"rand"` for random indices or `"first"` for sequential indices. Defaults to `"rand"`.
+        Method for generating indices. Options:
+        - "rand": random indices
+        - "first": first `num_plots_max` indices
+        - "custom": use explicitly passed `idx_custom_tuple`
+        Default is "rand".
+
+    idx_custom_tuple : list[tuple], optional
+        Used if `idx_gen` is "custom". A list of tuples specifying:
+        (idx_n_n, idx_n_dn, idx_n_f)
+        where idx_n_n, idx_n_dn are taking for data_type "X"
+        and idx_n_f for data_type "Z"
+        Each tuple must be within the respective valid index ranges.
 
     Returns:
-    -----------
-    idx_n_n : np.ndarray
-        Indices for the state variables (nodes).
-    idx_n_dn : np.ndarray
-        Indices for the state variables (degrees of freedom).
+    --------
+    idx_n_n : np.ndarray or None
+        Indices of selected nodes (only for data_type "X"). None if not applicable.
+
+    idx_n_dn : np.ndarray or None
+        Indices of selected degrees of freedom per node (only for data_type "X"). None if not applicable.
+
     idx_sim : int
-        Random index for simulation selection.
+        Selected simulation index (randomly chosen).
+
     idx_n_f : np.ndarray
-        Indices for the feature variables (states or latent variables).
+        Flattened feature indices for plotting:
+        - For "X": list of `node_idx * n_dn + dof_idx`
+        - For "Z": list of latent indices
+
     num_plots : int
-        The actual number of plots to be generated.
+        Actual number of features selected for plotting, which may be less than or equal to `num_plots_max`.
     """
     # initialize return values
     idx_n_n, idx_n_dn, idx_sim, idx_n_f, num_plots = [None] * 5
@@ -1670,6 +1966,7 @@ def plot_x(
     save_name=None,
     save_path="",
     only_save=False,
+    plot_bar_all_features: bool = True,
 ):
     """
     Plots and compares multiple time series data from the state in the feature shape.
@@ -1677,7 +1974,8 @@ def plot_x(
 
     This function creates a series of subplots to compare the provided time series data (`x`) with identified data (`x_id`)
     for multiple features. Each subplot shows the data for one feature, with the original data plotted as a solid line and
-    the identified data plotted as a dashed line. The function allows for saving the resulting figure as a PNG file.
+    the identified data plotted as a dashed line. The function allows for saving the resulting figure as a PNG file. It also computes and optionally displays a bar plot
+    of relative errors across all features.
 
     Parameters:
     -----------
@@ -1701,6 +1999,14 @@ def plot_x(
 
     save_path : str, optional
         Directory where the plot will be saved. If not provided, the plot will be saved in the current working directory.
+
+    only_save : bool, optional
+        If True, suppresses display of the plot and saves the figure only. Defaults to False.
+
+    plot_bar_all_features : bool, optional
+        If True, generates an additional bar plot showing relative reconstruction error per feature.
+        Errors are normalized using the L2 norm of each original feature. Default is True.
+
 
     Returns:
     --------
@@ -1729,8 +2035,7 @@ def plot_x(
         plt.show(block=False)
     save_as_png(os.path.join(save_path, save_name))
 
-    bar_plot_all_features = True
-    if bar_plot_all_features:
+    if plot_bar_all_features:
         fig, ax = new_fig(1, window_title=save_name)
         # use norm
         normalization_value = np.linalg.norm(x, axis=0).clip(
@@ -1827,6 +2132,8 @@ def plot_X(
         The name of the file to save the plot as. If `None`, uses the first variable name from `variable_names`.
     save_path : str, optional
         The directory path where the plot image will be saved if `save_name` is provided. Defaults to the current directory.
+    only_save : bool, optional
+        If True, suppresses display of the plot and saves the figure only. Defaults to False.
     """
 
     if save_name == None:
@@ -1913,6 +2220,10 @@ def plot_Z(
     save_path : str, optional
         The directory path where the plot image will be saved. Default is an empty string (current directory).
 
+    only_save : bool, optional
+        If True, suppresses display of the plot and saves the figure only. Defaults to False.
+
+
     Returns:
     --------
     None
@@ -1990,6 +2301,9 @@ def plot_z(
     save_path : str, optional
         The directory path where the plot image will be saved. Default is an empty string (current directory).
 
+    only_save : bool, optional
+        If True, suppresses display of the plot and saves the figure only. Defaults to False.
+
     Returns:
     --------
     None
@@ -2023,24 +2337,28 @@ def plot_z(
 
 def new_fig(num_plots, window_title: str | None = None):
     """
-    Creates a new figure with subplots for plotting.
+    Creates a new matplotlib figure with vertically stacked subplots and an optional window title.
 
-    This function generates a figure and a set of subplots that can be used for plotting multiple variables or features
-    in a vertically stacked layout.
+    This function initializes a figure and subplots arranged in a single column. If `window_title` is provided,
+    it attempts to set the window title for supported backends (e.g., TkAgg). Useful for organizing figures during
+    interactive plotting.
 
     Parameters:
     -----------
     num_plots : int
-        The number of subplots to create. Each subplot will be arranged vertically in a single column.
+        The number of subplots to create. Subplots will be stacked vertically.
+
+    window_title : str or None, optional
+        Title to set on the figure window (if supported by the active backend). Default is None.
 
     Returns:
     --------
     fig : matplotlib.figure.Figure
-        The created figure object containing the subplots.
+        The generated figure object.
 
-    ax : numpy.ndarray or matplotlib.axes.Axes
-        An array of Axes objects for the subplots. If `num_plots` is 1, `ax` will be a single Axes object;
-        otherwise, it will be an array of Axes objects.
+    ax : matplotlib.axes.Axes or np.ndarray
+        Axes object(s) corresponding to the subplots. Returns a single Axes instance if `num_plots` is 1,
+        or a 1D numpy array of Axes objects otherwise.
     """
     fig, ax = plt.subplots(num_plots, 1, figsize=(5.701, 3.5), dpi=300, sharex="all")
     if window_title is not None:
@@ -2158,6 +2476,15 @@ def plot_time_trajectories_all(
 
     result_dir : str, optional
         The directory path where the plots will be saved. If not provided, the plots will not be saved. Default is an empty string.
+
+    idx_custom_tuple : list of tuple or None, optional
+        Custom indices for selecting specific features to plot. This is used in place of random or first feature selection. Default is None.
+
+    create_train_test_subfolder : bool, optional
+        If True, it will create subdirectories for storing the results of train and test data separately. Default is False.
+
+    only_save : bool, optional
+        If True, the function will only save the plots and will not display them. Default is False.
 
     Returns:
     --------
@@ -2485,22 +2812,28 @@ def plot_train_history(train_hist, save_path: str = "", validation=False):
     """
     Plots the training history of a machine learning model.
 
-    This function generates a plot of the training history for different loss metrics,
-    including the overall loss, derivative losses, reconstruction loss, and regularization loss.
-    The losses are plotted on a logarithmic scale to better visualize the convergence and performance
-    of the training process.
+    This function generates a plot that visualizes the training history, including various loss metrics,
+    such as overall loss, derivative losses, reconstruction loss, and regularization loss. The losses are
+    plotted on a logarithmic scale to better highlight the convergence and performance during the training process.
 
     Parameters:
     -----------
     train_hist : object
-        An object containing the training history. This object should have a `history` attribute,
-        which is a dictionary with keys corresponding to different loss metrics (e.g., "loss", "dz_loss",
-        "dx_loss", "rec_loss", "reg_loss") and values as lists or arrays of loss values recorded during training.
+        An object containing the training history. The object should have a `history` attribute, which is a dictionary
+        with keys corresponding to different loss metrics (e.g., "loss", "dz_loss", "dx_loss", "rec_loss", "reg_loss").
+        The values should be lists or arrays of the respective loss values recorded during the training process.
+
+    save_path : str, optional
+        Directory where the plot will be saved. If not provided, the plot will not be saved. Default is an empty string.
+
+    validation : bool, optional
+        If True, validation loss metrics (e.g., "val_loss", "val_dz_loss", etc.) will be plotted in addition to training losses.
+        If False, only the training loss metrics will be plotted. Default is False.
 
     Returns:
     --------
     None
-        The function does not return any value. It generates and displays a plot of the training history.
+        The function does not return any value. It generates and displays a plot of the training history and optionally saves it.
     """
 
     if validation:
@@ -2545,9 +2878,59 @@ def custom_state_plot(
     save_name: str = "custom_state_plot",
 ):
     """
-    indices list of tuples with size (n_sim,n_n,n_dn)
-    attributes list of str with [attribute of data, attribute of data_id], e.g. ["X","X_rec"]
-    legend list of entries for orig system
+    Generates and saves a plot of the state and reconstructed state of a system over time.
+
+    This function allows for comparing the original state and reconstructed state by plotting their trajectories
+    for specific state indices (given by `index_list`) over a given time interval. It supports plotting multiple
+    subplots, including legends and titles, and can save the resulting plot as a PNG image. Optionally, the data can
+    also be saved to a CSV file.
+
+    Parameters:
+    -----------
+    data : object
+        The dataset containing the original state information. This object should have a `TRAIN` and `TEST` attribute,
+        which hold the respective training and testing datasets.
+
+    data_id : object
+        The dataset containing the reconstructed or identified state information. This object should also have `TRAIN`
+        and `TEST` attributes, similar to `data`.
+
+    attributes : list of str
+        A list of two strings, each corresponding to the attribute of the data to plot. For example, `["X", "X_rec"]`
+        where "X" is the original state and "X_rec" is the reconstructed state.
+
+    index_list : list of tuples
+        A list of tuples where each tuple contains three integers: (n_sim, n_n, n_dn). These represent the indices of
+        the system's state (simulation index, node index, and data point index) to be plotted.
+
+    use_train_data : bool, optional
+        If True, the function will use the training data for plotting. If False, the test data will be used. Default is False.
+
+    cut_time_idx : int or None, optional
+        If provided, the data will be truncated at this index in the time series. If None, the entire time series will be used.
+
+    subplot_idx : list of int, optional
+        A list specifying the subplot indices for each state to be plotted. If None, each state is plotted in separate subplots.
+
+    subplot_title : list of str, optional
+        A list of titles for each subplot. If None, the subplots will not have titles.
+
+    legend : list of str, optional
+        A list of labels for the original system states. If None, empty labels will be used.
+
+    result_dir : str, optional
+        The directory where the plot and CSV file will be saved. Default is an empty string (no file saving).
+
+    save_to_csv : bool, optional
+        If True, the data will be saved to a CSV file. Default is False.
+
+    save_name : str, optional
+        The name to use for saving the plot and CSV file. Default is "custom_state_plot".
+
+    Returns:
+    --------
+    None
+        The function does not return any value. It generates and saves a plot, and optionally saves the data to a CSV file.
     """
     # get data
     if use_train_data:
@@ -2636,8 +3019,6 @@ def custom_state_plot(
             index=False,
         )
 
-    print("debug in custom_state_plot")
-
 
 def compare_x_and_x_dt(
     data,
@@ -2646,7 +3027,25 @@ def compare_x_and_x_dt(
     idx_custom_tuple=None,
     only_save=False,
 ):
+    """
+    idx_gen : str, optional
+        Method for generating indices. Options:
+        - "rand": random indices
+        - "first": first `num_plots_max` indices
+        - "custom": use explicitly passed `idx_custom_tuple`
+        Default is "rand".
 
+    idx_custom_tuple : list[tuple], optional
+        Used if `idx_gen` is "custom". A list of tuples specifying:
+        (idx_n_n, idx_n_dn, idx_n_f)
+        where idx_n_n, idx_n_dn are taking for data_type "X"
+        and idx_n_f for data_type "Z"
+        Each tuple must be within the respective valid index ranges.
+
+    only_save : bool, optional
+        If True, suppresses display of the plot and saves the figure only. Defaults to False.
+
+    """
     t, x, dx_dt, _, _, _, idx_n_f, num_plots = get_quantities_of_interest(
         data,
         "x",
@@ -2686,7 +3085,54 @@ def get_weight_files(
     weight_indices=None,
 ):
     """
-    Typically requires the fit to run with `save_many_weights=True` callback.
+    Retrieves a list of weight files from a specified directory, typically generated by a model training process.
+    The function requires the model to have been trained with a `save_many_weights=True` callback, which saves
+    weights at multiple epochs. The function filters and selects the weight files based on specific criteria, such
+    as selecting every nth epoch or specific indices of the weight files.
+
+    Parameters:
+    -----------
+    phin_or_aphin : object
+        The model object, which should have a system layer of type `PHLayer`. The function checks that the system layer
+        is of the correct type to proceed.
+
+    weight_dir : str
+        The directory where the weight files are stored. The function walks through this directory to find files matching
+        the specified naming pattern.
+
+    weight_name_pre_weights : str
+        The prefix used to identify the weight files. The function looks for files that start with this prefix, followed by
+        an epoch number, and ending with `.weights.h5`.
+
+    every_n_epoch : int or None, optional
+        If specified, the function will select every nth weight file. If not provided, the function defaults to selecting
+        every 5th epoch.
+
+    weight_indices : list or slice, optional
+        If specified, the function will select the weight files based on the provided indices (either as a list or slice).
+        This overrides the `every_n_epoch` argument if both are provided.
+
+    Returns:
+    --------
+    weight_files : list of str
+        A list of file paths to the weight files matching the specified criteria.
+
+    epoch_numbers : numpy.ndarray
+        A numpy array of the epoch numbers corresponding to the selected weight files.
+
+    weight_indices : slice
+        The slice object representing the indices of the selected weight files. This is returned as the final selection
+        criteria for indexing the weight files.
+
+    Raises:
+    -------
+    ValueError : If neither `every_n_epoch` nor `weight_indices` is provided, or if no weight files are found in the directory.
+    TypeError : If the system layer of the provided model object is not a `PHLayer`.
+
+    Notes:
+    ------
+    - The function uses a regular expression to match weight files based on the specified prefix and epoch number.
+    - The weight files are sorted alphabetically, and the corresponding epoch numbers are sorted in ascending order.
     """
     if every_n_epoch is not None and weight_indices is not None:
         raise ValueError(f"Specifiy either `every_n_epoch` or `weight_indices`")
@@ -2752,7 +3198,69 @@ def plot_weight_coefficient_evolution(
     save_name="coefficient_evolution",
     use_train_data=False,
 ):
+    """
+    Plots the evolution of weight coefficients (J, R, B, Q) over training epochs.
 
+    This function generates plots showing how the weight coefficients of the system change over different training epochs,
+    based on the saved weights in the provided directory. The coefficients (J, R, B, Q) are extracted from the model
+    after loading each weight file, and the evolution of these coefficients is visualized for a specific simulation index.
+
+    Parameters:
+    -----------
+    phin_or_aphin : object
+        The model object that contains the system layer. This object should be able to load weights and access parameters
+        related to the weight coefficients (J, R, B, Q).
+
+    data : object
+        The data object containing the training or test data. The function will use either the training or test data
+        depending on the `use_train_data` flag.
+
+    result_dir : str
+        The directory where the resulting coefficient evolution plots will be saved.
+
+    weight_dir : str
+        The directory where the weight files are stored. The function will search this directory for weight files
+        matching the specified naming pattern.
+
+    weight_name_pre_weights : str
+        The prefix for the weight files. The function will look for weight files starting with this prefix followed by
+        the epoch number.
+
+    every_n_epoch : int or None, optional
+        If specified, the function will plot the coefficients for every nth weight file. Default is None.
+
+    weight_indices : list or slice, optional
+        If specified, the function will plot the coefficients for the weight files corresponding to these indices.
+        Default is None.
+
+    sim_idx : int, optional
+        The index of the simulation for which the coefficient evolution is plotted. Default is 0.
+
+    save_name : str, optional
+        The base name for the saved coefficient evolution plot files. Default is "coefficient_evolution".
+
+    use_train_data : bool, optional
+        If True, the function will use the training data; if False, it will use the test data. Default is False.
+
+    Returns:
+    --------
+    None
+        The function does not return any value. It generates and saves plots showing the evolution of weight coefficients
+        over the training epochs.
+
+    Raises:
+    -------
+    NotImplementedError : If the model does not support a non-parametric version of weight extraction (i.e., `mu` is None).
+
+    Notes:
+    ------
+    - The weight coefficients (J, R, B, Q) are extracted after loading each weight file. These coefficients are reshaped
+      and stored in arrays for plotting.
+    - The function creates a separate plot for each coefficient (J, R, B, Q) and saves it as a PNG file in the specified
+      `result_dir`.
+    - The plots are generated for the specified simulation index (`sim_idx`), which is useful for comparing the evolution
+      of coefficients across different simulations.
+    """
     weight_files, epoch_numbers, weight_indices = get_weight_files(
         phin_or_aphin,
         weight_dir,
@@ -2838,6 +3346,91 @@ def create_gif(
     loop=0,
     dpi=600,
 ):
+    """
+    Creates a GIF showing the evolution of the system's matrices (J, R, B) and their errors across training epochs.
+
+    This function generates and saves a GIF that illustrates how the predicted values (J, R, B) and their corresponding
+    errors evolve over time as the model progresses through different training epochs. It captures the predictions,
+    the ground truth, and the error between them for each epoch, and compiles them into an animated GIF.
+
+    Parameters:
+    -----------
+    phin_or_aphin : object
+        The model object that contains the system layer. This object should be capable of loading weights for each epoch
+        and providing necessary parameters for matrix computation.
+
+    data : object
+        The data object containing the training or test data. The function will use the test data as specified by the
+        `test_idx` argument.
+
+    result_dir : str
+        The directory where the resulting GIF and intermediate PNG files will be saved.
+
+    weight_dir : str
+        The directory where the weight files are stored. The function will load the weight files from this directory
+        for each epoch.
+
+    weight_name_pre_weights : str
+        The prefix for the weight files. The function will search for weight files starting with this prefix and match
+        them to the epochs.
+
+    test_idx : int
+        The index of the test data instance for which the evolution of matrices (J, R, B) and their errors will be
+        visualized.
+
+    every_n_epoch : int or None, optional
+        If specified, the function will generate frames for every nth epoch. Default is None.
+
+    weight_indices : list or slice, optional
+        If specified, the function will generate frames for the weight files corresponding to these indices.
+        Default is None.
+
+    duration : int, optional
+        The duration (in milliseconds) between frames in the GIF. Default is 1.
+
+    loop : int, optional
+        The number of loops for the GIF animation. Default is 0, meaning it will loop indefinitely.
+
+    dpi : int, optional
+        The resolution of the output images (in dots per inch). Default is 600.
+
+    Returns:
+    --------
+    None
+        The function does not return any value. It generates a GIF showing the evolution of matrices (J, R, B) and their
+        errors over time, saving the GIF to the specified `result_dir`.
+
+    Raises:
+    -------
+    AssertionError : If the `test_idx` parameter is not an integer.
+
+    Notes:
+    ------
+    - The function generates PNG images for each epoch, visualizing the predicted matrices (J, R, B), the test data
+      matrices, and their corresponding errors.
+    - These images are then compiled into a GIF, which is saved to the `result_dir`.
+    - The colormap "inferno" is used to visualize error values, and color scaling is applied to the matrices for better
+      visualization.
+    - The GIF is saved with a custom frame duration and looping options.
+    - The error range for the GIF frames is calculated and set based on the minimum and maximum error values encountered
+      during the training epochs.
+
+    Example:
+    --------
+    create_gif(
+        phin_or_aphin=phin,
+        data=data,
+        result_dir="path/to/results",
+        weight_dir="path/to/weights",
+        weight_name_pre_weights="epoch_",
+        test_idx=0,
+        every_n_epoch=5,
+        weight_indices=slice(0, 100, 5),
+        duration=100,
+        loop=0,
+        dpi=300
+    )
+    """
     assert isinstance(test_idx, int)
 
     weight_files, epoch_numbers, weight_indices = get_weight_files(
@@ -3228,6 +3821,35 @@ def create_gif(
 
 
 def normalize_to_range(arr, min_val=-1, max_val=1):
+    """
+    Normalizes an input array to a specified range.
+
+    This function rescales the values of the input array `arr` to a specified range defined by `min_val` and `max_val`.
+    The values are first normalized to the range [0, 1] based on the original minimum and maximum values of the array,
+    and then scaled to the target range.
+
+    Parameters:
+    -----------
+    arr : numpy.ndarray
+        The input array to be normalized. This can be a 1D or 2D numpy array containing numerical values.
+
+    min_val : float, optional
+        The minimum value of the target range. Default is -1.
+
+    max_val : float, optional
+        The maximum value of the target range. Default is 1.
+
+    Returns:
+    --------
+    normalized_arr : numpy.ndarray
+        The input array normalized and scaled to the target range [min_val, max_val].
+
+    original_min : float
+        The original minimum value of the input array before normalization.
+
+    original_max : float
+        The original maximum value of the input array before normalization.
+    """
     original_min = np.min(arr)
     original_max = np.max(arr)
 
@@ -3243,6 +3865,47 @@ def normalize_to_range(arr, min_val=-1, max_val=1):
 def scale_array_with_orig_values(
     arr, original_min, original_max, min_val=-1, max_val=1
 ):
+    """
+    Scales an input array based on its original minimum and maximum values to a specified range.
+
+    This function rescales the values of the input array `arr` based on its original minimum and maximum values to
+    a specified range defined by `min_val` and `max_val`. The array is first normalized to the range [0, 1] based on
+    the original minimum and maximum values, and then scaled to the target range.
+
+    Parameters:
+    -----------
+    arr : numpy.ndarray
+        The input array to be scaled. This can be a 1D or 2D numpy array containing numerical values.
+
+    original_min : float
+        The original minimum value of the array before scaling.
+
+    original_max : float
+        The original maximum value of the array before scaling.
+
+    min_val : float, optional
+        The minimum value of the target range. Default is -1.
+
+    max_val : float, optional
+        The maximum value of the target range. Default is 1.
+
+    Returns:
+    --------
+    scaled_arr : numpy.ndarray
+        The input array scaled to the target range [min_val, max_val], based on its original minimum and maximum values.
+
+    Raises:
+    -------
+    ValueError : If `original_min` equals `original_max` (to avoid division by zero).
+
+    Notes:
+    ------
+    - The input array is normalized by subtracting the original minimum value and dividing by the range
+      (original_max - original_min).
+    - Afterward, the normalized values are scaled to the desired range [min_val, max_val].
+    - This function is particularly useful for rescaling data that needs to be mapped to a consistent range
+      for further analysis or input into machine learning models.
+    """
     # Normalize the array to [0, 1] using original min and max
     scaled_arr = (arr - original_min) / (original_max - original_min)
 
@@ -3253,6 +3916,36 @@ def scale_array_with_orig_values(
 
 
 def truncate_colormap(cmap, minval=0.0, maxval=1.0, n=100):
+    """
+    Truncates a colormap to a specified range.
+
+    This function takes an existing colormap and creates a new colormap that spans only the specified portion of
+    the original colormap, as defined by the `minval` and `maxval` parameters. The truncated colormap is returned
+    as a new colormap object.
+
+    Parameters:
+    -----------
+    cmap : matplotlib.colors.Colormap
+        The original colormap to be truncated. This can be any colormap object supported by Matplotlib.
+
+    minval : float, optional
+        The starting point of the truncated colormap, specified as a value between 0.0 and 1.0. Default is 0.0 (beginning of the colormap).
+
+    maxval : float, optional
+        The ending point of the truncated colormap, specified as a value between 0.0 and 1.0. Default is 1.0 (end of the colormap).
+
+    n : int, optional
+        The number of discrete colors to generate in the truncated colormap. Default is 100.
+
+    Returns:
+    --------
+    new_cmap : matplotlib.colors.Colormap
+        A new colormap that spans only the specified range of the original colormap.
+
+    Raises:
+    -------
+    ValueError : If `minval` or `maxval` are not within the range [0.0, 1.0].
+    """
     new_cmap = matplotlib.colors.LinearSegmentedColormap.from_list(
         "trunc({n},{a:.2f},{b:.2f})".format(n=cmap.name, a=minval, b=maxval),
         cmap(np.linspace(minval, maxval, n)),
@@ -3261,6 +3954,39 @@ def truncate_colormap(cmap, minval=0.0, maxval=1.0, n=100):
 
 
 def extract_matrices_and_errors(data, system_layer, test_ids, returnJRBminmax=True):
+    """
+    Extracts predicted and test matrices and computes their corresponding errors.
+
+    This function extracts the predicted matrices (J, R, and B) and the corresponding test matrices from the
+    provided data, and computes the errors for each matrix. It also calculates the minimum and maximum values
+    for the predicted matrices, test matrices, and error matrices.
+
+    Parameters:
+    -----------
+    data : object
+        The dataset containing test data and matrices for comparison.
+
+    system_layer : object
+        The system layer that holds the method `get_system_matrices` to compute the predicted matrices.
+
+    test_ids : array-like
+        The indices corresponding to the specific test data to be used.
+
+    returnJRBminmax : bool, optional
+        If True, the function returns the min and max values of the matrices for J, R, and B. Default is True.
+
+    Returns:
+    --------
+    tuple
+        A tuple containing the predicted matrices (J_pred, R_pred, B_pred), test matrices (J_test_, R_test_, B_test_),
+        error matrices (e_J, e_R, e_B), and optionally the min and max values of the predicted and test matrices
+        (J_min, J_max, R_min, R_max, B_min, B_max, pred_min, pred_max, test_min, test_max, error_min, error_max).
+
+    Notes:
+    ------
+    The error matrices (e_J, e_R, e_B) are computed as the absolute difference between the predicted and test matrices.
+    If `returnJRBminmax` is set to False, the function returns the range (min and max) of the predicted, test, and error matrices.
+    """
     mu_test = data.test_data[-1]
     n_sim_test, n_t_test, _, _, _, _ = data.shape_test
     # predicted matrices
@@ -3334,7 +4060,3 @@ def extract_matrices_and_errors(data, system_layer, test_ids, returnJRBminmax=Tr
             e_R,
             e_B,
         )
-
-
-def sweep_config_boxplot(result_dir, csv_file_names: list[str] | str):
-    pass

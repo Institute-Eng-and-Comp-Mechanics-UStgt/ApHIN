@@ -164,7 +164,40 @@ def save_config_sweep_data(
     metric_over_t: str = "mean",
     domain_names: list[str] | str = "",
 ):
-    """ """
+    """
+    Aggregates RMS error data from multiple result folders (from a hyperparameter/config sweep),
+    extracts a specified metric over time (mean or max), and saves the results as CSV files.
+
+    This function assumes each result directory contains a configuration file (`config.yml`)
+    and RMS error CSV files for different domains. It verifies consistency in configuration
+    across directories except for the sweep key, and collects the specified metric over time.
+
+    Parameters:
+    -----------
+    root_result_dir : str
+        Path to the root directory where all result folders from the sweep are stored.
+
+    common_folder_name : str
+        Common substring used to identify result folders within `root_result_dir`.
+
+    sweep_key : str
+        The key in the config file that was varied in the sweep. Must be present and
+        different between config files.
+
+    metric_over_t : str, optional
+        Specifies the metric to compute over time from the RMS error data. Options are:
+        - "mean" (default): Mean value over time.
+        - "max": Maximum value over time.
+
+    domain_names : list[str] or str, optional
+        List of domain names or a single domain name as a string, used to identify which
+        RMS error files to load. If empty, no domain filtering is applied.
+
+    Outputs:
+    --------
+    Writes a CSV file per domain in a common result directory summarizing the selected
+    metric over time for each sweep configuration.
+    """
     # Find all subfolder in which the results are stored
     sweep_dirs = []
     for dirpath, dirnames, _ in os.walk(root_result_dir):

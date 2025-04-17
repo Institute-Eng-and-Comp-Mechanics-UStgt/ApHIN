@@ -31,6 +31,8 @@ class DescriptorPHLayer(PHLayer):
             Number of latent variables.
         n_u : int, optional
             Number of inputs, by default None.
+        n_mu : int, optional
+            Number of parameters, by default None.
         regularizer : tf.keras.regularizers.Regularizer, optional
             Regularizer object for trainable variables of the class, by default None.
         **kwargs : dict
@@ -66,7 +68,7 @@ class DescriptorPHLayer(PHLayer):
         Returns
         -------
         tuple
-            Tuple containing matrices J, R, B, and Q.
+            Tuple containing matrices J, R, B, and E.
         """
         J, R, B = super().get_system_matrices(mu, n_t)
         if mu is not None:
@@ -157,6 +159,8 @@ class DescriptorPHQLayer(PHQLayer):
             Number of latent variables.
         n_u : int, optional
             Number of inputs, by default None.
+        n_mu : int, optional
+            Number of parameters, by default None.
         regularizer : tf.keras.regularizers.Regularizer, optional
             Regularizer object for trainable variables of the class, by default None.
         **kwargs : dict
@@ -236,7 +240,7 @@ class DescriptorPHQLayer(PHQLayer):
         Returns
         -------
         tuple
-            Tuple containing matrices J, R, B, and Q.
+            Tuple containing matrices J, R, B, Q, and E.
         """
         J, R, B, Q = super().get_system_matrices(mu, n_t)
         if mu is not None:

@@ -74,6 +74,8 @@ class Data(ABC):
             pH energy matrix with shape (n_n * n_dn, n_n * n_dn). Default is None.
         B : ndarray, optional
             pH input matrix with shape (n_n * n_dn, n_u). Default is None.
+        Mu_input : ndarray, optional
+            Input parameters used to generate U, if applicable. Default is None.
 
         Notes:
         ------
@@ -221,8 +223,27 @@ class Data(ABC):
 
     def permute_matrices(self, permutation_idx: list[int] | slice):
         """
-        Permute the pH matrices according to the required permutations index.
+        Permute the dimensions of the port-Hamiltonian (pH) matrices (J, R, Q, B)
+        according to a given permutation index.
 
+        This method modifies the order of states and corresponding matrix entries
+        based on the supplied permutation index. It supports both list-based index
+        permutations and slicing. Permutations are applied along the last two axes
+        for square matrices and along the second axis for the input matrix B.
+
+        Parameters
+        ----------
+        permutation_idx : list[int] or slice
+            Either a list specifying the new order of indices or a slice object to select
+            a contiguous range of indices.
+
+        Raises
+        ------
+        AssertionError
+            If the length of the permutation list does not match the expected matrix dimension.
+
+        ValueError
+            If the provided permutation index is neither a list nor a slice.
         """
         if isinstance(permutation_idx, list):
             assert len(permutation_idx) == self.J.shape[1]
@@ -239,7 +260,36 @@ class Data(ABC):
             raise ValueError(f"Unknown permutation index.")
 
     def add_ph_matrices(self, J, R, B=None, Q=None):
-        # add matrices to Data if known
+        """
+        Add port-Hamiltonian (pH) matrices to the Data object.
+
+        This method assigns the provided pH matrices (interconnection J, dissipation R,
+        input B, and energy Q) to the internal attributes of the Data object. If a
+        matrix is provided as a 2D array, it is broadcasted across all simulations
+        by repeating it along a new first dimension. All matrices must be of shape
+        (n_sim, n_n * n_dn, n_n * n_dn), except for B which should be of shape
+        (n_sim, n_n * n_dn, n_u) when applicable.
+
+        Parameters
+        ----------
+        J : ndarray
+            Interconnection matrix of shape (n_n * n_dn, n_n * n_dn) or
+            (n_sim, n_n * n_dn, n_n * n_dn).
+        R : ndarray
+            Dissipation matrix of shape (n_n * n_dn, n_n * n_dn) or
+            (n_sim, n_n * n_dn, n_n * n_dn).
+        B : ndarray, optional
+            Input matrix of shape (n_n * n_dn, n_u) or
+            (n_sim, n_n * n_dn, n_u). Default is None.
+        Q : ndarray, optional
+            Energy matrix of shape (n_n * n_dn, n_n * n_dn) or
+            (n_sim, n_n * n_dn, n_n * n_dn). Default is None.
+
+        Raises
+        ------
+        AssertionError
+            If any provided matrix does not match the expected dimensionality or number of simulations.
+        """
         ph_matrices = [J, R, Q, B]
         for i, ph_matrix in enumerate(ph_matrices):
             if ph_matrix is not None and ph_matrix.ndim == 2:
@@ -254,6 +304,28 @@ class Data(ABC):
         self.J, self.R, self.Q, self.B = ph_matrices
 
     def add_system_matrices_from_system_layer(self, system_layer):
+        """
+        Extract and add port-Hamiltonian system matrices from a given system layer to the Data instance.
+
+        This method retrieves the system matrices (J, R, B, Q, E) from a specified system layer
+        using the `get_system_matrices_from_system_layer` method, and integrates them into the
+        Data container using `add_ph_matrices`.
+
+        If parameter features (`mu`) are not yet computed but are available as `Mu`, it calls
+        `states_to_features()` to generate them.
+
+        Parameters
+        ----------
+        system_layer : tf.keras.layers.Layer
+            The system layer (e.g., DescriptorPHLayer, PHLayer, etc.) from which to extract
+            the port-Hamiltonian system matrices.
+
+        Notes
+        -----
+        - Only the J, R, B, and Q matrices are added to the Data instance. The E matrix is extracted
+        but not stored.
+        - This method ensures compatibility between learned model parameters and the stored data.
+        """
         if self.Mu is not None and self.mu is None:
             self.states_to_features()
 
@@ -264,7 +336,33 @@ class Data(ABC):
 
     @staticmethod
     def get_system_matrices_from_system_layer(system_layer, mu, n_t):
+        """
+        Retrieve system matrices from a given system layer based on its class type.
 
+        This static method extracts the port-Hamiltonian (pH) system matrices from the provided
+        `system_layer`, depending on the type of the layer. It supports several types of system layers:
+        DescriptorPHQLayer, DescriptorPHLayer, PHQLayer, PHLayer, and LTILayer. Based on the layer,
+        it returns the appropriate subset of system matrices (J, R, B, Q, E), with missing matrices
+        filled as None if not defined by the layer.
+
+        Parameters
+        ----------
+        system_layer : tf.keras.layers.Layer
+            A system layer from which the pH system matrices will be extracted. Must be an instance of
+            DescriptorPHQLayer, DescriptorPHLayer, PHQLayer, PHLayer, or LTILayer.
+
+        mu : tf.Tensor or np.ndarray
+            Input parameters to the system layer used for generating the matrices. Typically of shape (n_sim, n_mu).
+
+        n_t : int
+            Number of time steps or time points the system layer should be evaluated on.
+
+        Returns
+        -------
+        tuple
+            A tuple containing the system matrices:
+            (J, R, B, Q, E), where matrices not available from the given layer are returned as None.
+        """
         if isinstance(system_layer, DescriptorPHQLayer):
             J_ph, R_ph, B_ph, Q_ph, E_ph = system_layer.get_system_matrices(mu, n_t=n_t)
         elif isinstance(system_layer, DescriptorPHLayer):
@@ -344,8 +442,23 @@ class Data(ABC):
 
     def cut_time_start_and_end(self, num_cut_idx=5):
         """
-        Cut first and last `num_cut_idx` entries from the data.
-        Sometimes some numerical time derivative abnormalities happened at the start and end of X_dt
+        Trim the time series data at the beginning and end to remove potential numerical artifacts.
+
+        This method removes `num_cut_idx` time steps from both the start and end of the dataset.
+        This is useful when numerical instabilities or artifacts appear in the time derivatives
+        (e.g., `X_dt`) near the boundaries of the simulation time range.
+
+        Parameters
+        ----------
+        num_cut_idx : int, optional
+            Number of time steps to remove from both the beginning and end. Default is 5.
+
+        Notes
+        -----
+        - It is recommended to apply this method before any scaling or normalization of the data.
+        - The internal attributes `t`, `X`, `X_dt`, and optionally `U` are modified in place.
+        - The number of time steps `n_t` is updated accordingly.
+        - Feature representations are recomputed via `states_to_features()`.
         """
         logging.info(
             f"If the data is cut due to X_dt abnormalities. Use this before scaling the data."
@@ -365,18 +478,33 @@ class Data(ABC):
         sim_idx: list[int] | np.ndarray | None = None,
     ):
         """
-        Reduces the number of simulations to speed up training by selecting a random subset.
+        Reduce the number of simulations to accelerate training or analysis.
 
-        This method randomly selects a specified number of simulations from the available data,
-        which can be useful for speeding up computations or experiments.
+        This method decreases the number of simulations in the dataset by either selecting a specific
+        subset (`sim_idx`) or randomly sampling `num_sim` simulations. Useful for debugging, testing,
+        or speeding up model training on smaller datasets.
 
-        Parameters:
-        -----------
-        num_sim : int
-            The target number of simulations to retain. The data is reduced to this number of simulations.
+        Parameters
+        ----------
+        num_sim : int, optional
+            Number of simulations to retain. If `sim_idx` is not provided, a random subset of this
+            size is chosen. Required if `sim_idx` is not specified.
 
         seed : int, optional
-            Random seed for reproducibility. If provided, it initializes the random number generator.
+            Seed for the random number generator to ensure reproducibility when selecting simulations
+            randomly. Ignored if `sim_idx` is provided.
+
+        sim_idx : list[int] or np.ndarray, optional
+            Explicit list or array of simulation indices to retain. If provided, `num_sim` and `seed`
+            are ignored.
+
+        Notes
+        -----
+        - Modifies the dataset in-place by slicing all internal data attributes (`X`, `X_dt`, `U`, `Mu`,
+        `J`, `R`, `Q`, `B`, `Mu_input`) along the simulation axis.
+        - Updates `self.n_sim` to reflect the reduced number of simulations.
+        - Recomputes features via `self.states_to_features()`.
+        - Raises an error if `num_sim` is not provided when `sim_idx` is None.
         """
         if sim_idx is not None:
             if isinstance(sim_idx, np.ndarray):
@@ -443,7 +571,42 @@ class Data(ABC):
         U: np.ndarray | None = None,
         n_t: int | None = None,
     ):
-        """Reduce number of time steps through 1D interpolation."""
+        """
+        Reduce the number of time steps in time-series data via 1D interpolation.
+
+        This static method interpolates time-series data to a specified number of time steps,
+        which can be useful for downsampling or matching temporal resolution across datasets.
+
+        Parameters
+        ----------
+        num_time_steps : int
+            The desired number of time steps after interpolation.
+
+        t : np.ndarray
+            Original time array of shape (n_t,) or (n_t, 1).
+
+        X : np.ndarray, optional
+            State array of shape (n_sim, n_t, n_n, n_dn). Interpolated along the time axis if provided.
+
+        X_dt : np.ndarray, optional
+            Time derivative of the state array, same shape as X. Interpolated if provided.
+
+        U : np.ndarray, optional
+            Input array of shape (n_sim, n_t, n_u). Interpolated if provided.
+
+        n_t : int, optional
+            Original number of time steps. If not provided, inferred from X.
+
+        Returns
+        -------
+        tuple
+            A tuple (X, X_dt, U, t, n_t) containing the interpolated arrays and new time information.
+
+        Notes
+        -----
+        - All interpolation is linear along the time axis.
+        - If `X`, `X_dt`, or `U` is not provided, it will be returned as `None`.
+        """
         if n_t is None:
             n_t = X.shape[1]
         assert num_time_steps <= n_t  # interpolate
@@ -483,6 +646,9 @@ class Data(ABC):
             Array of system inputs with shape (n_sim, n_t, n_u).
         Mu : ndarray, optional
             Array of parameters with shape (n_sim, n_mu). Default is None. If provided, it will be saved along with the other data.
+        Mu_input : ndarray, optional
+            Array of parameters that were used to define the input U. Default is None. If provided, it
+            will be saved along with the other data.
 
         Returns:
         --------
@@ -543,6 +709,10 @@ class Data(ABC):
         data_path : str
             Path to the .npz file or the directory containing the .npz file. If a directory
             is provided, the method searches for the first .npz file in the directory.
+
+        num_time_steps : int, optional
+            The number of time steps to retain. If provided, the data will be truncated to this number
+            of time steps. Default is `None`.
 
         Returns:
         --------
@@ -716,7 +886,44 @@ class Data(ABC):
     def calculate_eigenvalues(
         self, result_dir: str, save_to_csv: bool = False, save_name: str = "eigenvalues"
     ):
+        """
+        Calculate the eigenvalues of the system matrix A and optionally save them to a CSV file.
 
+        This method computes the eigenvalues of the matrix A, where A is defined as (J - R) or (J - R) @ Q,
+        depending on whether the energy matrix Q is provided. The maximum eigenvalues for each scenario are
+        printed to the console, and optionally, both the real and imaginary parts of the eigenvalues are saved
+        to a CSV file for further analysis.
+
+        Parameters:
+        -----------
+        result_dir : str
+            The directory where the eigenvalues will be saved if `save_to_csv` is `True`.
+
+        save_to_csv : bool, optional
+            If `True`, the eigenvalues will be saved to a CSV file. Default is `False`.
+
+        save_name : str, optional
+            The name of the CSV file to which the eigenvalues will be saved (if `save_to_csv` is `True`).
+            Default is "eigenvalues".
+
+        Returns:
+        --------
+        eig_vals : ndarray
+            A 2D array of eigenvalues, with shape (n_sim, n_eigenvalues), where `n_sim` is the number of simulations
+            and `n_eigenvalues` is the number of eigenvalues per simulation.
+
+        Notes:
+        ------
+        - If the energy matrix Q is not provided, the matrix A is calculated as (J - R).
+        - If Q is provided, the matrix A is calculated as (J - R) @ Q.
+        - The maximum eigenvalue for each simulation is printed to the console.
+        - The eigenvalues are saved in a CSV file with the real and imaginary parts as separate columns if `save_to_csv` is `True`.
+
+        Raises:
+        -------
+        ValueError
+            If the system matrices J or R are not defined.
+        """
         if self.Q is None:
             A = self.J - self.R
         else:
@@ -895,7 +1102,24 @@ class Data(ABC):
 
     def remove_mu(self):
         """
-        removes mu
+        Removes the parameters `mu` and `Mu` from the data.
+
+        This method resets the `mu` and `Mu` attributes to `None` and sets `n_mu` to 0, effectively
+        removing the parameters from the data. This can be useful when you no longer need the parameters
+        for further computations or if you want to prepare the data for a different set of parameters.
+
+        Parameters:
+        -----------
+        None
+
+        Returns:
+        --------
+        None
+
+        Notes:
+        ------
+        - After calling this method, the `mu`, `Mu`, and `n_mu` attributes will be reset, and any future computations
+        depending on these parameters will need to handle the absence of `mu` and `Mu`.
         """
         self.mu = None
         self.Mu = None
@@ -911,10 +1135,46 @@ class Data(ABC):
         mu_desired_bounds=[-1, 1],
     ):
         """
-        Scales states X, inputs and parameters
-        :param scaling_values: see scale_X
-        :param domain_split_vals: see scale_X
+        Scales the states (X), inputs (U), and parameters (Mu) of the system.
 
+        This method provides a unified way to scale the state array (`X`), input array (`U`), and parameter array (`Mu`)
+        based on the provided scaling values and bounds. It first scales the state data using the `scale_X` method and
+        then scales the inputs and parameters (if available) using their respective scaling methods.
+
+        Parameters:
+        -----------
+        scaling_values : list of float, optional
+            Scalar values used to scale each domain in the state array, as described in `scale_X`. If `None`, the scaling
+            is performed using the maximum value of each domain.
+
+        domain_split_vals : list of int, optional
+            List of integers specifying the degrees of freedom (DOFs) for each domain in the state array, as described in
+            `scale_X`. If `None`, the state array is treated as a single domain.
+
+        u_train_bounds : list of float, optional
+            Training bounds for the input array (`U`). If `None`, no scaling is applied to `U`.
+
+        u_desired_bounds : list of float, optional
+            Desired bounds for the input array (`U`). Default is [-1, 1].
+
+        mu_train_bounds : list of float, optional
+            Training bounds for the parameter array (`Mu`). If `None`, no scaling is applied to `Mu`.
+
+        mu_desired_bounds : list of float, optional
+            Desired bounds for the parameter array (`Mu`). Default is [-1, 1].
+
+        Returns:
+        --------
+        None
+            The method updates the internal state to reflect the scaled data, including the state (`X`), inputs (`U`),
+            and parameters (`Mu`). It also sets `self.is_scaled` to True.
+
+        Notes:
+        ------
+        - This method scales all three components (states, inputs, and parameters) in a single call.
+        - If `scaling_values` and `domain_split_vals` are provided, the scaling is done according to the specified values.
+        - The method assumes that the scaling operations for each component are handled by the respective methods (`scale_X`,
+        `scale_U`, and `scale_Mu`).
         """
         self.scale_X(scaling_values=scaling_values, domain_split_vals=domain_split_vals)
         if self.U is not None:
@@ -1047,8 +1307,6 @@ class Data(ABC):
         self,
         u_train_bounds=None,
         desired_bounds=[-1, 1],
-        input_scaling_values: float | list[float] | None = None,
-        input_split_vals: list[int] | None = None,
     ):
         """
         Scale input values to a specified range.
@@ -1402,6 +1660,53 @@ class Data(ABC):
         pick_entry: None | list[int] | int | np.ndarray = None,
         seed: None | int = None,
     ):
+        """
+        Reprojects the state and its derivatives onto a new basis defined by the provided matrices `V`.
+
+        This method applies a projection of the state `x`, its time derivatives `dx_dt`, and optional reconstructed states
+        onto a basis formed from the matrices in `V`. It can handle multiple basis matrices and adjust the basis size
+        based on the provided slices (`idx`) or the picking method (`pick_method`). The projection is done for the
+        states and their time derivatives, with the option to project reconstructed states as well.
+
+        Parameters:
+        -----------
+        V : np.ndarray or list of np.ndarray
+            A matrix or list of matrices defining the basis for the projection. Each matrix corresponds to a basis
+            that will be applied to the state and its time derivatives.
+
+        idx : slice or list of slice, optional
+            A slice or list of slices that defines the range of the matrices from `V` to use for projection. If not provided,
+            it defaults to the entire range.
+
+        pick_method : str, optional
+            The method used for selecting which entries of `V` to pick. Options are:
+            - "all" to pick all entries.
+            - "rand" to randomly select entries.
+            - "idx" to use specific indices from `pick_entry`.
+
+        pick_entry : None, list[int], int, or np.ndarray, optional
+            A list of indices or a single integer specifying which entries of `V` to pick. This is used when `pick_method`
+            is set to "rand" or "idx". If `None`, it will default to picking all entries.
+
+        seed : None or int, optional
+            A random seed for reproducibility. Used when `pick_method` is "rand" to ensure the same indices are chosen
+            across different runs.
+
+        Returns:
+        --------
+        None
+            This method does not return any value. It updates the internal state with the reprojected states (`x`),
+            derivatives (`dx_dt`), and optionally reconstructed states (`x_rec`, `x_rec_dt`).
+
+        Notes:
+        ------
+        - The projection is applied to the state `x`, its time derivatives `dx_dt`, and any reconstructed states (`x_rec`,
+        `x_rec_dt`) if they exist.
+        - The new basis for the state vector `x` and its derivatives is constructed from the provided matrices `V` and selected
+        entries from `pick_list`.
+        - The `features_to_states()` method is called at the end to convert the reprojected feature representation back to state
+        space.
+        """
         if self.x is None:
             self.states_to_features()
         if idx is None:
@@ -1438,6 +1743,44 @@ class Data(ABC):
         pick_entry: None | list[int] | int | np.ndarray = None,
         seed: None | int = None,
     ):
+        """
+        Select entries from the input array(s) based on the specified picking method.
+
+        This method allows for selecting specific entries from a given array or list of arrays (`V`) using one of three
+        picking methods: selecting all entries, randomly selecting entries, or using specified indices.
+
+        Parameters:
+        -----------
+        V : np.ndarray or list of np.ndarray
+            The input array or list of arrays from which entries will be selected. Each array is expected to have at least
+            one dimension.
+
+        pick_method : str, optional
+            The method to use for selecting entries. It can be one of the following:
+            - 'all': Selects all entries from each array in `V` (default).
+            - 'rand': Selects a random subset of entries, with the number specified by `pick_entry`.
+            - 'idx': Selects entries based on specific indices provided in `pick_entry`.
+
+        pick_entry : int, list of int, np.ndarray, optional
+            The number of entries to randomly select (`pick_method='rand'`), or the specific indices to select (`pick_method='idx'`).
+            If `pick_method='rand'`, this should be an integer specifying the number of random entries to pick.
+            If `pick_method='idx'`, this should be a list, numpy array, or integer specifying the indices to select.
+
+        seed : int, optional
+            A random seed to ensure reproducibility when using the 'rand' method for picking random entries. If not provided,
+            the selection may vary each time.
+
+        Returns:
+        --------
+        list of np.ndarray
+            A list of arrays where each array contains the indices of the selected entries for each array in `V`.
+
+        Notes:
+        ------
+        - If `V` is a list of arrays, each array is treated separately, and entries are selected from each array individually.
+        - If `pick_method='rand'` and no seed is provided, a warning is logged indicating that the results may not be reproducible.
+        - The selected entries are returned as a list of arrays corresponding to each input array in `V`.
+        """
         assert pick_method in ["all", "rand", "idx"]
         if pick_method == "rand" and seed is None and isinstance(V, list):
             logging.warning(
@@ -1476,7 +1819,48 @@ class Data(ABC):
         idx: slice | list[slice] | None = None,
         pick_list: np.ndarray | list[np.ndarray] | None = None,
     ):
-        "pick_list: list of picking indices for each V (needed if V.shape[0] is too large for full calculation)"
+        """
+        Reprojects the state vector `x` onto a new basis constructed from the provided matrices `V`.
+
+        This method constructs an overall basis by combining identity matrices and the selected submatrices from `V`,
+        then reprojects the state vector `x` onto this new basis. This projection is useful in various machine learning
+        and optimization tasks where a lower-dimensional representation of the data is required.
+
+        Parameters:
+        -----------
+        V : np.ndarray or list of np.ndarray
+            The set of basis matrices to use for the projection. If multiple matrices are provided, they are used in
+            combination to form the overall basis.
+
+        x : np.ndarray
+            The state vector that will be reprojected. It should have the shape (n_t, n_f), where `n_t` is the number of
+            time steps and `n_f` is the number of features.
+
+        idx : slice or list of slice, optional
+            A slice or list of slices that define the specific submatrices of `V` to use in constructing the overall basis.
+            If `V` is a list of matrices, `idx` should also be a list of slices, corresponding to each matrix in `V`.
+
+        pick_list : np.ndarray or list of np.ndarray, optional
+            A list of indices specifying which entries to pick from each matrix in `V`. This is used when the size of `V`
+            is too large for a full calculation, allowing for selective picking of rows.
+
+        Returns:
+        --------
+        xT : np.ndarray
+            The reprojected state vector, with the same shape as `x`.
+
+        V_overall : np.ndarray
+            The overall basis matrix that was used to reproject `x`. This matrix is the block diagonal matrix formed
+            by combining identity matrices and the selected submatrices from `V`.
+
+        Notes:
+        ------
+        - The `pick_list` is only necessary when `V.shape[0]` is too large for a full calculation and needs to be sampled.
+        - If `idx` and `V` are lists, each slice in `idx` corresponds to a submatrix in `V`, and the corresponding picking
+        indices from `pick_list` will be used for each submatrix.
+        - The `block_diag` function is used to form the overall basis matrix by creating a block diagonal matrix from the
+        individual identity matrices and submatrices selected from `V`.
+        """
         n_f = x.shape[1]
 
         if isinstance(V, list):
@@ -1640,6 +2024,15 @@ class PHIdentifiedData(Data):
 
         Q : np.ndarray, optional
             Matrix Q with shape (n_sim, n_t, ...). Default is None.
+
+        solving_times : np.ndarray, optional
+            Times associated with solving the system, with shape (n_t,). Default is None.
+
+        is_scaled : bool, optional
+            A flag indicating whether the data has been scaled. Default is False.
+
+        scaling_values : np.ndarray, optional
+            Scaling factors to be applied to the data, used when `is_scaled` is True. Default is None.
 
         **kwargs : additional keyword arguments
             Additional parameters passed to the parent class `Data`.
@@ -1903,10 +2296,15 @@ class PHIdentifiedData(Data):
             System matrix B for the pH system, by default None.
         Q_ph : numpy.ndarray, optional
             System matrix Q for the pH system, by default None.
+        E_ph : numpy.ndarray, optional
+            System matrix E for the pH system, by default None.
         integrator_type : str
             Type of integrator used for solving the pH system.
         decomp_option : str
             Decomposition option for solving the pH system.
+        calc_u_midpoints : bool, optional
+            If True, calculates the midpoints of the input data (U) for numerical integration.
+            If False, uses the input data as is. Default is False.
 
         Returns
         -------
@@ -2110,6 +2508,8 @@ class PHIdentifiedData(Data):
             The type of integrator used for simulation (default is "IMR").
         decomp_option : str, optional
             The decomposition option for solving the system (default is "lu").
+        calc_u_midpoints : bool, optional
+            If `True`, calculates the midpoints of the input data (`U`) for numerical integration. If `False`, uses the input data as is. Default is `False`.
         **kwargs : dict
             Additional keyword arguments to pass to the PHIdentifiedData class constructor.
 
@@ -2229,7 +2629,30 @@ class PHIdentifiedData(Data):
     @classmethod
     def from_system_list(cls, system_list: list, data: Data):
         """
-        TODO: add header
+        Create an instance of PHIdentifiedData from a list of identified systems.
+
+        This method generates a PHIdentifiedData instance using a list of identified systems and a dataset.
+        It processes the given system list and computes the relevant state variables and system matrices, including
+        latent states, time derivatives, and the system matrices (J, R, B, Q). The method assumes that the system list
+        is compatible with the PHIN case.
+
+        Parameters
+        ----------
+        cls : type
+            The class to instantiate.
+        system_list : list
+            A list of identified pH systems, where each system corresponds to a simulation.
+        data : Data
+            The dataset object containing the initial conditions, system input, and other data.
+
+        Returns
+        -------
+        PHIdentifiedData
+            An instance of the PHIdentifiedData class populated with computed states and matrices from the system list.
+
+        Notes
+        -----
+        This method is currently implemented for the PHIN case only.
         """
         logging.info(
             f"PHIdentifiedData.from_system_list has only been implemented for the PHIN case."

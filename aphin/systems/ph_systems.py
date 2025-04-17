@@ -130,17 +130,17 @@ class PHSystem(LTISystem, CheckPHProperties):
         Q_ph : array-like, shape (n, n), optional
             The Q matrix associated with the port-Hamiltonian system. If not provided, the identity matrix is used.
         """
-        if J_ph.shape[0]==1:
+        if J_ph.shape[0] == 1:
             J_ph = np.squeeze(J_ph, axis=0)
         self.J_ph = J_ph
-        if R_ph.shape[0]==1:
+        if R_ph.shape[0] == 1:
             R_ph = np.squeeze(R_ph, axis=0)
         self.R_ph = R_ph
         if Q_ph is None:
             self.Q_ph = np.eye(*self.J_ph.shape)
             self.Q_is_identity = True
         else:
-            if Q_ph.shape[0]==1:
+            if Q_ph.shape[0] == 1:
                 Q_ph = np.squeeze(Q_ph, axis=0)
             self.Q_ph = Q_ph
             self.Q_is_identity = False
@@ -254,7 +254,7 @@ class DescrPHSystem(DescrLTISystem, CheckPHProperties):
             Port-Hamiltonian J matrix. Must be skew-symmetric.
         R_ph : ndarray, shape (n, n)
             Port-Hamiltonian R matrix. Must be symmetric positive semi-definite.
-        E : ndarray, shape (n, n)
+        E_ph : ndarray, shape (n, n)
             Descriptor matrix.
         B : ndarray, shape (n, n_u), optional
             Input matrix. Defaults to None if not provided.

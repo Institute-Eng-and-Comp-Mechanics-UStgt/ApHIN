@@ -44,6 +44,8 @@ class Dataset(Data):
         pH energy matrix with shape (r, r, n_sim). Default is None.
     B : ndarray, optional
         pH input matrix with shape (r, n_u, n_sim). Default is None.
+    Mu_input : ndarray, optional
+        Parameters that where defined for the creation of the input array U. Default is None.
 
     Attributes:
     -----------
@@ -198,6 +200,24 @@ class Dataset(Data):
         return self.TEST.shape
 
     def permute_matrices(self, permutation_idx: list[int] | slice):
+        """
+        Permute the matrices of the training and testing datasets using the given permutation indices.
+
+        This method applies the given permutation to the matrices in both the training and testing datasets.
+        It modifies the states, time derivatives, inputs, and other relevant matrices based on the provided
+        permutation indices or slice.
+
+        Parameters
+        ----------
+        permutation_idx : list[int] | slice
+            The indices or slice used for permuting the matrices. This could be a list of integers representing
+            specific indices or a slice object to permute the matrices.
+
+        Notes
+        -----
+        - This method operates on both the `TRAIN` and `TEST` datasets, which are instances of the `Dataset` class.
+        - It calls the `permute_matrices` method on both the `TRAIN` and `TEST` datasets individually.
+        """
         self.TRAIN.permute_matrices(permutation_idx=permutation_idx)
         self.TEST.permute_matrices(permutation_idx=permutation_idx)
 
@@ -400,6 +420,40 @@ class Dataset(Data):
         n_simulations_per_parameter_set: int = 1,
         plot_convex_hull: bool = False,
     ):
+        """
+        Split the dataset into training and testing sets based on the convex hull of the parameter space.
+
+        This method divides the dataset into training and testing subsets by first identifying the convex hull
+        of the parameter space (`Mu`). The training set is defined by the vertices of the convex hull, and
+        the testing set consists of the remaining points. The number of training samples is adjusted to meet
+        the `desired_min_num_train`, by shifting some of the testing set data into the training set if necessary.
+        Optionally, the convex hull can be visualized in a 3D plot.
+
+        Parameters
+        ----------
+        desired_min_num_train : int, optional
+            The desired minimum number of training samples. If the training set has fewer samples than this value,
+            samples from the testing set are moved to the training set. Default is 1.
+        n_simulations_per_parameter_set : int, optional
+            The number of simulations per parameter set. This is used to adjust the training and testing sets.
+            Default is 1.
+        plot_convex_hull : bool, optional
+            If True, a 3D plot of the convex hull will be displayed. Default is False.
+
+        Raises
+        ------
+        ValueError
+            If there are not enough parameter points in the test set to shift to the training set, a ValueError
+            is raised.
+        NotImplementedError
+            If `Mu` has more than 3 dimensions, a NotImplementedError is raised when trying to plot the convex hull.
+
+        Notes
+        -----
+        - The training and testing sets are created by performing a convex hull operation on the `Mu` parameters.
+        - The `train_test_split_sim_idx` method is called to split the simulations into training and testing datasets.
+        - A 3D plot of the convex hull is generated if `plot_convex_hull` is set to `True` and `Mu` has 3 dimensions.
+        """
         _, idx = np.unique(self.Mu, axis=0, return_index=True)
         Mu_all = self.Mu[np.sort(idx), :]
         hull_convex = ConvexHull(Mu_all)
@@ -492,12 +546,39 @@ class Dataset(Data):
         self.TRAIN.truncate_time(trunc_time_ratio)
 
     def cut_time_start_and_end(self, num_cut_idx=5):
+        """
+        Cut the start and end of the time series for both the training and testing datasets.
+
+        This method removes a specified number of time steps from the beginning and end of the time series
+        in both the training and testing datasets. The number of time steps to be removed is controlled by
+        the `num_cut_idx` parameter.
+
+        Parameters
+        ----------
+        num_cut_idx : int, optional
+            The number of time steps to be removed from the start and end of the time series. Default is 5.
+
+        Notes
+        -----
+        - This method applies the same cut to both the training and testing datasets.
+        - The method is designed to adjust the time series for better alignment or to remove irrelevant portions
+        of the data at the start and end of the time series.
+        """
         self.TRAIN.cut_time_start_and_end(num_cut_idx=num_cut_idx)
         self.TEST.cut_time_start_and_end(num_cut_idx=num_cut_idx)
 
     def remove_mu(self):
         """
-        Removes mu
+        Removes the 'mu' parameter from both the training and testing datasets.
+
+        This method removes the 'mu' parameter from the training and testing datasets,
+        effectively discarding any parameter-dependent data associated with 'mu'.
+
+        Notes
+        -----
+        - This operation is applied to both the training and testing datasets.
+        - Use this method when 'mu' is no longer needed for the subsequent processing or analysis.
+
         """
         self.TRAIN.remove_mu()
         self.TEST.remove_mu()
@@ -509,18 +590,23 @@ class Dataset(Data):
         sim_idx: list[int] | np.ndarray | None = None,
     ):
         """
-        Reduce the number of training simulations to a specified target number by randomly selecting a subset.
+        Reduce the number of training simulations to a specified target number by randomly selecting a subset or defining specified indices.
+        The method modifies the `TRAIN` dataset only, leaving the `TEST` dataset unaffected.
 
         Parameters
         ----------
         num_sim : int
-            The target number of simulations to retain.
+            The target number of simulations to retain. If `None`, the number of simulations is not altered.
         seed : int, optional
             Random seed for reproducibility of the selection process. If not provided, a random seed is used.
+        sim_idx : list of int, np.ndarray, or None, optional
+            The indices of simulations to retain. If `None`, simulations are selected randomly.
 
         Notes
         -----
         - This method only affects the training dataset (`TRAIN`), not the test dataset (`TEST`).
+        - The parameter `sim_idx` can be used to specify which simulations to retain, overriding the random selection.
+        - The random seed ensures that the subset selection is reproducible.
         """
         # if self.X_test is not None:
         logging.info(
@@ -601,8 +687,6 @@ class Dataset(Data):
         self,
         scaling_values=None,
         domain_split_vals=None,
-        input_scaling_values: float | list[float] | None = None,
-        input_split_vals: list[int] | None = None,
         u_train_bounds=None,
         u_desired_bounds=[-1, 1],
         mu_train_bounds=None,
@@ -763,8 +847,6 @@ class Dataset(Data):
         self,
         u_train_bounds=None,
         desired_bounds=[-1, 1],
-        input_scaling_values: float | list[float] | None = None,
-        input_split_vals: list[int] | None = None,
     ):
         """
         Scale input values to a specified range.
@@ -803,6 +885,29 @@ class Dataset(Data):
             self.TEST.scale_U(u_train_bounds, desired_bounds)
 
     def reshape_inputs_to_features(self):
+        """
+        Reshapes the input arrays `U` from the training and testing datasets into feature arrays `u`.
+
+        This method converts the input arrays `U` from both the training and testing datasets into feature arrays
+        required for the identification process. The transformation reshapes the input arrays from a 3D shape
+        (n_sim, n_t, n_u) into a 2D feature array (n_s, n_u), where n_s is the total number of samples
+        (n_sim * n_t), and n_u is the number of input features.
+
+        Parameters:
+        -----------
+        None
+
+        Returns:
+        --------
+        None
+            The method updates the `u` attribute of both the `TRAIN` and `TEST` datasets by reshaping
+            their respective input arrays `U`.
+
+        Notes:
+        ------
+        - This method relies on the `reshape_inputs_to_features` function to perform the reshaping.
+        - The reshaping is only performed if the input array `U` is not `None` in both the training and testing datasets.
+        """
         if self.TRAIN.U is not None:
             self.TRAIN.u = reshape_inputs_to_features(self.TRAIN.U)
             self.TEST.u = reshape_inputs_to_features(self.TEST.U)
@@ -844,6 +949,44 @@ class Dataset(Data):
         pick_entry: None | list[int] | int | np.ndarray = None,
         seed: None | int = None,
     ):
+        """
+        Reprojects the training and testing datasets onto a given basis.
+
+        This method projects both the training and testing datasets onto a specified basis `V`. The projection
+        can be applied to selected indices, based on various selection methods, and can also include randomization
+        via a seed for reproducibility.
+
+        Parameters:
+        -----------
+        V : ndarray or list of ndarray
+            The basis onto which the data is to be projected. This can be a single array or a list of arrays
+            representing different basis for projection.
+
+        idx : slice or list of slice, optional
+            Specifies the indices or slices of the data to project. If `None`, the entire dataset is projected.
+
+        pick_method : str, optional
+            The method for selecting the data entries to project. Default is 'all', which selects all data.
+            Other methods might involve more specific or random selections (e.g., "random").
+
+        pick_entry : None, list of int, int, or ndarray, optional
+            Specifies the particular entries to pick for projection. If `None`, the selection is based on `pick_method`.
+            This can be a specific index, a list of indices, or an array of indices to select.
+
+        seed : int, optional
+            Random seed for reproducibility of the selection process when `pick_method` involves random selection.
+            If `None`, no seed is set, and the randomization will vary.
+
+        Returns:
+        --------
+        None
+            The method updates the training and testing datasets by projecting them onto the given basis `V`.
+
+        Notes:
+        ------
+        - This method performs the re-projection on both the training (`TRAIN`) and testing (`TEST`) datasets.
+        - The projection is based on the provided basis `V`, and selection criteria are determined by `pick_method` and `pick_entry`.
+        """
         self.TRAIN.reproject_with_basis(
             V,
             idx=idx,
@@ -866,6 +1009,44 @@ class Dataset(Data):
         save_to_txt=False,
         result_dir=None,
     ):
+        """
+        Calculates and stores errors (RMS and latent) for both training and testing datasets.
+
+        This method calculates the Root Mean Square (RMS) errors for both the states and latent variables
+        between the true and predicted states, separately for the training and testing datasets.
+        It also provides an option to save the computed error values to a text file.
+
+        Parameters:
+        -----------
+        ph_identified_data_instance : Data
+            An instance of the `Data` class containing the predicted state variables and latent variables
+            (if applicable). This instance is used to compute errors against the true states stored in
+            the current instance.
+
+        domain_split_vals : list of int, optional
+            List specifying the number of degrees of freedom (DOFs) for each domain. If provided, it splits
+            the states into domains for more granular error analysis.
+
+        save_to_txt : bool, optional
+            If `True`, the computed error values will be saved to a text file. Default is `False`.
+
+        result_dir : str, optional
+            The directory where the error file will be saved. This is required if `save_to_txt` is `True`.
+
+        Returns:
+        --------
+        None
+            The method updates internal attributes to store the computed state errors and latent errors
+            (if latent variables are present). If `save_to_txt` is `True`, the errors are saved to a text file.
+
+        Notes:
+        ------
+        - The method computes the RMS errors for states and latent variables separately for the training and
+        testing datasets (`TRAIN` and `TEST`).
+        - If latent variables (`Z`) are present in the `ph_identified_data_instance`, latent errors are computed
+        and stored.
+        - The computed error values are optionally saved to a text file in the specified `result_dir`.
+        """
         self.TRAIN.calculate_errors(
             ph_identified_data_instance.TRAIN, domain_split_vals=domain_split_vals
         )
@@ -898,7 +1079,32 @@ class Dataset(Data):
 
     def save_data_conc(self, data_dir, save_name):
         """
-        Save train and test data
+        Saves concatenated training and testing data to a compressed file.
+
+        This method combines the training and testing datasets (`TRAIN` and `TEST`), including states (`X`),
+        state derivatives (`X_dt`), inputs (`U`), parameters (`Mu`), and input parameters (`Mu_input`),
+        and saves them as a compressed `.npz` file at the specified location.
+
+        Parameters:
+        -----------
+        data_dir : str
+            The directory where the data file will be saved.
+
+        save_name : str
+            The name to be used for the saved file (without file extension). The data will be saved with this name
+            as a `.npz` file.
+
+        Returns:
+        --------
+        None
+            The method saves the concatenated data into a `.npz` compressed file at the specified location.
+
+        Notes:
+        ------
+        - The training (`TRAIN`) and testing (`TEST`) data are concatenated along the first axis (simulation axis).
+        - The resulting `.npz` file contains the time vector `t`, concatenated states `X`, state derivatives `X_dt`,
+        inputs `U`, parameters `Mu`, and input parameters `Mu_input`.
+        - The data is saved in a compressed format for efficient storage.
         """
         X = np.concatenate((self.TRAIN.X, self.TEST.X), axis=0)
         X_dt = np.concatenate((self.TRAIN.X_dt, self.TEST.X_dt), axis=0)
@@ -912,7 +1118,32 @@ class Dataset(Data):
         np.savez_compressed(data_path, t=t, X=X, U=U, Mu=Mu, Mu_input=Mu_input)
 
     def save_video_data(self, data_dir, data_name: str = "video_data"):
-        """TODO: write header"""
+        """
+        Saves the state data for training and testing datasets to create a video.
+
+        This method saves the state data of both the training and testing datasets, optionally rescaling the data
+        if it has been scaled. The saved data can then be used for creating a video representation of the states.
+
+        Parameters:
+        -----------
+        data_dir : str
+            Directory where the video data will be saved.
+
+        data_name : str, optional
+            The name of the saved data file. Default is "video_data". The file will be saved as `data_name.npz`.
+
+        Returns:
+        --------
+        None
+            The method saves the state data for both the training and testing datasets to a compressed `.npz` file
+            in the specified directory.
+
+        Notes:
+        ------
+        - If the data has been scaled (i.e., `is_scaled` is `True`), the data is rescaled before saving.
+        - The saved `.npz` file contains the state data for both the training (`X_train`) and testing (`X_test`) datasets.
+        - This method is useful for visualizing the state data in a video format.
+        """
         # rescale data
         if self.TRAIN.is_scaled:
             self.TRAIN.rescale_X()
@@ -977,6 +1208,10 @@ class PHIdentifiedDataset(Dataset):
         decomp_option : str, optional
             The decomposition option for the pH matrices (default is "lu").
 
+        calc_u_midpoints : bool, optional
+            Flag indicating whether to calculate midpoints of the input `U`. If `True`, it computes the midpoints for `U`,
+            potentially useful for certain system identification tasks.
+
         **kwargs : dict, optional
             Additional parameters to pass to the identification process.
 
@@ -1016,6 +1251,34 @@ class PHIdentifiedDataset(Dataset):
 
     @classmethod
     def from_system_list(cls, system_list_train, system_list_test, data):
+        """
+        Creates an instance of `PHIdentifiedDataset` from a list of systems, processing both training and test datasets.
+
+        This class method generates both the training and testing datasets by using lists of systems for the training and
+        testing data. It utilizes the `PHIdentifiedData.from_system_list` method to process the provided system lists along
+        with the corresponding data for training and testing.
+
+        Parameters:
+        -----------
+        system_list_train : list
+            A list of systems used for the training data.
+
+        system_list_test : list
+            A list of systems used for the testing data.
+
+        data : Dataset
+            The dataset containing the raw data for training and testing.
+
+        Returns:
+        --------
+        PHIdentifiedDataset
+            An instance of `PHIdentifiedDataset` containing the training and testing datasets processed with the provided system lists.
+
+        Notes:
+        ------
+        - This method calls `PHIdentifiedData.from_system_list` for both the training and testing datasets separately.
+        - The method assumes the provided `system_list_train` and `system_list_test` are appropriate for the corresponding datasets.
+        """
         cls = PHIdentifiedDataset()
         cls.TRAIN = PHIdentifiedData.from_system_list(
             system_list=system_list_train,
@@ -1071,6 +1334,10 @@ class DiscBrakeDataset(Dataset):
             by including the time derivatives of specific state variables. This will
             result in an increased number of degrees of freedom per node (`n_dn`).
             Default is False.
+
+        use_savgol : bool, optional
+            If `True`, the time derivatives of the states are computed using the Savitzky-Golay filter
+            (a smoothing and differentiation technique). Default is `False`.
 
         **kwargs : dict, optional
             Additional arguments to pass to the parent `Dataset` class.
@@ -1130,6 +1397,17 @@ class DiscBrakeDataset(Dataset):
             Path to the .npz file or the directory containing the .npz file. If a directory
             is provided, the method searches for the first .npz file in the directory.
 
+        use_velocities : bool, optional
+            If `True`, the state array will be augmented with velocity information by including
+            the time derivatives of specific state variables. Default is `False`.
+
+        use_savgol : bool, optional
+            If `True`, the time derivatives of the states are computed using the Savitzky-Golay filter
+            (a smoothing and differentiation technique). Default is `False`.
+
+        num_time_steps : int, optional
+            Number of time steps to load from the data. If `None`, all available time steps are loaded.
+
         Returns:
         --------
         dict
@@ -1168,14 +1446,13 @@ class DiscBrakeDataset(Dataset):
 
         This method reads temperature and displacement values for all nodes from a specified directory containing
         .txt files obtained from the Abaqus field outputs. The method handles the parsing and processing of these files,
-        including optional downsampling of time steps and extraction of parameters that influence the system. The order
-        of the trajectories and parameters `Mu` may not match the sample numbers from the data files obtained after the
-        postprocessing with Abaqus-Python.
+        including optional downsampling of time steps, extraction of parameters that influence the system, and inclusion
+        of additional input data such as force values.
 
         Parameters:
         -----------
         txt_path : str
-            Path to the folder containing the .txt files.
+            Path to the folder containing the .txt files generated by Abaqus.
 
         idx_mu : array-like, optional
             Index numbers of the columns corresponding to parameters (not inputs) that influence the system.
@@ -1186,6 +1463,9 @@ class DiscBrakeDataset(Dataset):
 
         t_start : float, optional
             The starting time for the data. Data before this time is discarded. Default is `0.0`.
+
+        t_end : float, optional
+            The ending time for the data. Data after this time is discarded. If `None`, no limit is set. Default is `None`.
 
         save_cache : bool, optional
             If `True`, the processed dataset will be saved to a cache file at `cache_path`. Default is `False`.
@@ -1203,6 +1483,14 @@ class DiscBrakeDataset(Dataset):
         --------
         DiscBrakeDataset
             An instance of the `DiscBrakeDataset` class containing the loaded and processed data.
+
+        Notes:
+        ------
+        - This method handles reading `.txt` files that represent temperature and displacement data from a disc brake model,
+          typically generated by Abaqus and processed using Abaqus-Python.
+        - The method checks for the presence of `force` input files and incorporates them if available.
+        - The dataset includes time steps `t`, states `X`, input `U`, and parameter information `Mu` (if available).
+        - The processed data may be saved to a cache file to speed up future access.
         """
         t, X, Mu = None, None, None
 
@@ -1407,6 +1695,38 @@ class SynRMDataset(Dataset):
     def __init__(
         self, t, X, X_dt=None, U=None, Mu=None, J=None, R=None, Q=None, B=None
     ):
+        """
+        Initialize the SynRMDataset object.
+
+        Parameters:
+        -----------
+        t : np.ndarray
+            Time values for the dataset.
+
+        X : np.ndarray
+            The state matrix containing the states at each time step.
+
+        X_dt : np.ndarray, optional
+            The time derivative of the states, by default None.
+
+        U : np.ndarray, optional
+            Input forces or excitations, by default None.
+
+        Mu : np.ndarray, optional
+            System parameters influencing the state, by default None.
+
+        J : np.ndarray, optional
+            Interconnection matrix, by default None.
+
+        R : np.ndarray, optional
+            Dissipation matrix, by default None.
+
+        Q : np.ndarray, optional
+            Energy matrix, by default None.
+
+        B : np.ndarray, optional
+            Matrix for external input/output, by default None.
+        """
         super().__init__(t, X, X_dt, U, Mu, J, R, Q, B)
 
     @classmethod
@@ -1418,7 +1738,35 @@ class SynRMDataset(Dataset):
         exclude_states: str | None = None,
         scale_modes_individually: bool = False,
     ):
+        """
+        Load the dataset from a .mat file.
 
+        Parameters:
+        -----------
+        data_path : str
+            Path to the .mat file containing the data.
+
+        return_V : bool, optional
+            If True, returns the V matrix from the .mat file, by default False.
+
+        return_B : bool, optional
+            If True, returns the B matrix from the corresponding 'B.mat' file, by default False.
+
+        exclude_states : str or None, optional
+            Specifies which states to exclude from the dataset. Options are:
+            - "no_phi"
+            - "no_rigid"
+            - "no_velocities"
+            - "only_elastic", by default None.
+
+        scale_modes_individually : bool, optional
+            If True, scales the modes (specified slice ranges) individually, by default False.
+
+        Returns:
+        --------
+        SynRMDataset
+            An instance of the SynRMDataset class containing the loaded and processed data.
+        """
         if not os.path.isfile(data_path):
             raise ValueError(f"The given path does not lead to a file.")
         if not data_path.endswith(".mat"):
