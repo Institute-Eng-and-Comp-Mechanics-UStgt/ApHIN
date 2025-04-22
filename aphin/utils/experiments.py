@@ -116,7 +116,7 @@ def create_modified_config_files(
                     # loop over keys
                     for key, value in experiment.items():
                         # check for keyword in config file
-                        if line.startswith(key):
+                        if line.startswith(f"{key}:"):
                             keyword_found_list.append(key)
                             split_comment = line.split(
                                 "#"
