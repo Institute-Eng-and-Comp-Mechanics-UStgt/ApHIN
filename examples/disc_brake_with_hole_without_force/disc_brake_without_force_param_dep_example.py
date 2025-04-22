@@ -206,25 +206,26 @@ def main(
             mu_train_bounds=None, desired_bounds=db_cfg["desired_bounds"]
         )
 
+    disc_brake_data.scale_U_domain_wise()
     # scale u manually
-    u_domains = [1]
-    start_idx = 0
-    input_scaling_values = []
-    for u_domain in u_domains:
-        scaling_value = np.max(
-            np.abs(disc_brake_data.TRAIN.U[:, :, start_idx : start_idx + u_domain])
-        )
-        disc_brake_data.TRAIN.U[:, :, start_idx : start_idx + u_domain] = (
-            disc_brake_data.TRAIN.U[:, :, start_idx : start_idx + u_domain]
-            / scaling_value
-        )
-        disc_brake_data.TEST.U[:, :, start_idx : start_idx + u_domain] = (
-            disc_brake_data.TEST.U[:, :, start_idx : start_idx + u_domain]
-            / scaling_value
-        )
-        input_scaling_values.append(scaling_value)
-        start_idx += u_domain
-    disc_brake_data.reshape_inputs_to_features()
+    # u_domains = [1]
+    # start_idx = 0
+    # input_scaling_values = []
+    # for u_domain in u_domains:
+    #     scaling_value = np.max(
+    #         np.abs(disc_brake_data.TRAIN.U[:, :, start_idx : start_idx + u_domain])
+    #     )
+    #     disc_brake_data.TRAIN.U[:, :, start_idx : start_idx + u_domain] = (
+    #         disc_brake_data.TRAIN.U[:, :, start_idx : start_idx + u_domain]
+    #         / scaling_value
+    #     )
+    #     disc_brake_data.TEST.U[:, :, start_idx : start_idx + u_domain] = (
+    #         disc_brake_data.TEST.U[:, :, start_idx : start_idx + u_domain]
+    #         / scaling_value
+    #     )
+    #     input_scaling_values.append(scaling_value)
+    #     start_idx += u_domain
+    # disc_brake_data.reshape_inputs_to_features()
 
     # transform to feature form that is used by the deep learning
     disc_brake_data.states_to_features()
@@ -410,7 +411,7 @@ def main(
     save_evaluation_times(disc_brake_data_id, result_dir)
 
     # # %% 3D plots
-    create_3d_vis = True
+    create_3d_vis = False
     if create_3d_vis:
         # save each test parameter set as csv
         for i, mu_ in enumerate(disc_brake_data.TEST.Mu):
@@ -700,19 +701,19 @@ def main(
         )
 
         rng = np.random.default_rng(seed=db_cfg["seed"])
-        n_n_costum = 2082  # between heat node
+        # n_n_costum = 2082  # between heat node
         n_n_heat_line_nodes = (
             np.array([759, 1695, 1934, 2199, 2233]) - 1
         )  # -1 for 0-indexing (node numbers from Abaqus)
         n_sim_constant = rng.integers(disc_brake_data.TEST.n_sim)
-        n_sim_random = rng.integers(0, disc_brake_data.TEST.n_sim, (5,))
-        index_list_sim_temp = [
-            (n_sim_costum, n_n_costum, 0) for n_sim_costum in n_sim_random
-        ]
-        index_list_sim_dispz = [
-            (n_sim_costum, n_n_costum, 3) for n_sim_costum in n_sim_random
-        ]
-        index_list_sim = index_list_sim_temp + index_list_sim_dispz
+        # n_sim_random = rng.integers(0, disc_brake_data.TEST.n_sim, (5,))
+        # index_list_sim_temp = [
+        #     (n_sim_costum, n_n_costum, 0) for n_sim_costum in n_sim_random
+        # ]
+        # index_list_sim_dispz = [
+        #     (n_sim_costum, n_n_costum, 3) for n_sim_costum in n_sim_random
+        # ]
+        # index_list_sim = index_list_sim_temp + index_list_sim_dispz
         index_list_nodes_temp = [
             (n_sim_constant, n_n_heat, 0) for n_n_heat in n_n_heat_line_nodes
         ]
@@ -798,12 +799,7 @@ def main(
 # requires calc_various_experiments = True
 def create_variation_of_parameters():
     parameter_variation_dict = {
-        # "lr": [0.0000025, 0.00000025],
-        # "l_dz": [10, 0.1],
-        # "l_dx": [0, 0.1, 0.000001],
-        # "l_rec": [10, 0.1],
-        "r": [16, 2, 4, 8, 12, 24],
-        # "ph_layer": ["ph", "phq"],
+        "r": [2, 4, 8, 12, 16, 24],
     }
     return parameter_variation_dict
 

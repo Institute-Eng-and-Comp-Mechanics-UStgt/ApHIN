@@ -362,7 +362,7 @@ def main(config_path_to_file=None, only_phin: bool = False):
     # %%%%%%                        LTI                                             %%%%%%%
     # %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     dir_extension = "lti"
-    msd_data_id_lti, system_layer_lti, phin_lti = phin_learning(
+    msd_data_id_lti, system_layer_lti, _ = phin_learning(
         msd_data,
         msd_cfg,
         configuration.directories,
@@ -416,29 +416,6 @@ def main(config_path_to_file=None, only_phin: bool = False):
         limits=msd_cfg["matrix_color_limits"],
         error_limits=msd_cfg["matrix_error_limits"],
     )
-
-    # # 3d plot of initial conditions
-    # fig = plt.figure()
-    # x0 = msd_data.TRAIN.X[:, 0, :, 0]
-    # x0_test = msd_data.TEST.X[:, 0, :, 0]
-    # plt.scatter(x0[:, 0], x0[:, 1])
-    # plt.scatter(x0_test[:, 0], x0_test[:, 1])
-    # plt.xlabel("position mass 1")
-    # plt.ylabel("position mass 2")
-    # # plt.view([90,0])
-    # # ax.set_zlim(-0.002, 0.002)
-    # plt.tight_layout()
-    # plt.show()
-    # plt.savefig("initial_conditions")
-
-    # # plot of parameters
-    # fig = plt.figure()
-    # plt.plot(msd_data.TRAIN.Mu[:, 0], msd_data.TRAIN.Mu[:, 1], "o")
-    # plt.plot(msd_data.TEST.Mu[:, 0], msd_data.TEST.Mu[:, 1], "o")
-    # plt.xlabel("k")
-    # plt.ylabel("c")
-    # plt.tight_layout()
-    # plt.show()
 
     # %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     # %%%%%%                        Matrix interpolation (MI)                       %%%%%%%
@@ -557,7 +534,7 @@ def main(config_path_to_file=None, only_phin: bool = False):
         matrices_eval = evaluate_matrices(A_all, weighting_array)
         print(np.allclose(A_all, matrices_eval))  # should be True
 
-    for TEST_or_TRAIN in ["TRAIN", "TEST"]:  # ["TEST", "TRAIN"]
+    for TEST_or_TRAIN in ["TRAIN", "TEST"]:
         _, idx = np.unique(
             getattr(msd_data_orig, TEST_or_TRAIN).Mu, axis=0, return_index=True
         )
@@ -578,18 +555,8 @@ def main(config_path_to_file=None, only_phin: bool = False):
             B_mi = evaluate_matrices(B_all, weighting_array)
 
         # %% Create data file
-        # latent_shape = (
-        #     getattr(msd_data_orig, TEST_or_TRAIN).n_sim,
-        #     getattr(msd_data_orig, TEST_or_TRAIN).n_t,
-        #     system_layer_phin.r,
-        # )
-        # Z_ph = np.zeros(latent_shape)
-        # Z_dt_ph = np.zeros(latent_shape)
         system_lti_or_ph = []
         for i_test in range(weighting_array.shape[1]):
-            # sim_indices = (i_test) * msd_cfg[
-            # "n_simulations_per_parameter_set"
-            # ] + np.arange(msd_cfg["n_simulations_per_parameter_set"])
             if msd_cfg["matrix_type"] == "lti":
                 system_lti_or_ph.append(
                     LTISystem(A=A_mi[i_test, :, :], B=B_mi[i_test, :, :])
@@ -622,57 +589,7 @@ def main(config_path_to_file=None, only_phin: bool = False):
         system_list_test=system_list_test,
         data=msd_data_orig,
     )
-    #     for i_sim in sim_indices:
-    #         u = getattr(msd_data_orig, TEST_or_TRAIN).U[i_sim]
-    #         getattr(msd_data_orig, TEST_or_TRAIN).get_initial_conditions()
-    #         x_init = np.expand_dims(
-    #             getattr(msd_data_orig, TEST_or_TRAIN).x_init[i_sim, :], axis=0
-    #         ).T
-    #         Z_ph[i_sim], Z_dt_ph[i_sim] = system_lti_or_ph.solve_dt(
-    #             getattr(msd_data_orig, TEST_or_TRAIN).t,
-    #             x_init,
-    #             u,
-    #         )
-    # z_ph, dz_dt_ph = reshape_states_to_features(Z_ph, Z_dt_ph)
-    # x_ph, dx_dt_ph = z_ph, dz_dt_ph
-    # X_ph, X_dt_ph = reshape_features_to_states(
-    #     x_ph,
-    #     getattr(msd_data_orig, TEST_or_TRAIN).n_sim,
-    #     getattr(msd_data_orig, TEST_or_TRAIN).n_t,
-    #     x_dt=dx_dt_ph,
-    #     n_n=getattr(msd_data_orig, TEST_or_TRAIN).n_n,
-    #     n_dn=getattr(msd_data_orig, TEST_or_TRAIN).n_dn,
-    # )
-    # z = getattr(msd_data_orig, TEST_or_TRAIN).x
-    # Z = reshape_features_to_states(
-    #     z,
-    #     getattr(msd_data_orig, TEST_or_TRAIN).n_sim,
-    #     getattr(msd_data_orig, TEST_or_TRAIN).n_t,
-    #     n_f=system_layer_phin.r,
-    # )
-    # z_dt = getattr(msd_data_orig, TEST_or_TRAIN).dx_dt
-    # Z_dt = reshape_features_to_states(
-    #     z_dt,
-    #     getattr(msd_data_orig, TEST_or_TRAIN).n_sim,
-    #     getattr(msd_data_orig, TEST_or_TRAIN).n_t,
-    #     n_f=system_layer_phin.r,
-    # )
-    # msd_data_id_mi = PHIdentifiedDataset()
-    # setattr(
-    #     msd_data_id_mi,
-    #     TEST_or_TRAIN,
-    #     PHIdentifiedData(
-    #         t=getattr(msd_data_orig, TEST_or_TRAIN).t,
-    #         X=X_ph,
-    #         X_dt=X_dt_ph,
-    #         Z=Z,
-    #         Z_dt=Z_dt,
-    #         Z_ph=Z_ph,
-    #         Z_dt_ph=Z_dt_ph,
-    #         Mu=getattr(msd_data_orig, TEST_or_TRAIN).Mu,
-    #     ),
-    # )
-    # getattr(msd_data_id_mi, TEST_or_TRAIN).states_to_features()
+
     for TEST_or_TRAIN in ["TRAIN", "TEST"]:  # ["TEST", "TRAIN"]
         idx_gen = "rand"
 
@@ -693,23 +610,7 @@ def main(config_path_to_file=None, only_phin: bool = False):
             save_to_txt=True,
             result_dir=result_dir_mi,
         )
-        # getattr(msd_data_orig, TEST_or_TRAIN).calculate_errors(
-        #     getattr(msd_data_id_mi, TEST_or_TRAIN),
-        #     # save_to_txt=True,
-        #     # result_dir=result_dir_mi,
-        #     domain_split_vals=[1, 1],
-        # )
-        # with open(
-        #     os.path.join(result_dir_mi, "mean_error_measures.txt"), "w"
-        # ) as text_file:
-        #     print(
-        #         f"{TEST_or_TRAIN} state error mean: {getattr(msd_data_orig,TEST_or_TRAIN).state_error_mean}",
-        #         file=text_file,
-        #     )
-        #     print(
-        #         f"{TEST_or_TRAIN} latent error mean: {getattr(msd_data_orig,TEST_or_TRAIN).latent_error_mean}",
-        #         file=text_file,
-        #     )
+
         aphin_vis.plot_time_trajectories_all(
             msd_data_orig,
             msd_data_id_mi,
@@ -736,17 +637,6 @@ def main(config_path_to_file=None, only_phin: bool = False):
             save_to_csv=True,
             save_name="msd_custom_nodes_mi",
         )
-        # J_pred = np.transpose(J_mi, (2, 0, 1))
-        # R_pred = np.transpose(R_mi, (2, 0, 1))
-        # B_pred = np.transpose(B_mi, (2, 0, 1))
-        # if msd_cfg["ph_layer"] == "ph_layer":
-        #     A_pred = J_pred - R_pred
-        # else:
-        #     raise NotImplementedError("Add PHQ layer.")
-
-        # getattr(msd_data_id_mi, TEST_or_TRAIN).add_ph_matrices(
-        #     J=J_pred, R=R_pred, B=B_pred
-        # )
 
         eig_vals_mi = getattr(msd_data_id_mi, TEST_or_TRAIN).calculate_eigenvalues(
             result_dir=result_dir_mi,
@@ -806,34 +696,6 @@ def main(config_path_to_file=None, only_phin: bool = False):
     plt.show()
 
     print("debug breakpoint")
-
-    # msd_data_jonas = Dataset.from_data(
-    #     "/scratch/tmp/jrettberg/Projects/ApHIN_Review/ApHIN/examples/mass_spring_damper/data/MSD_Qeye_ph_input_siso.npz"
-    # )
-    # msd_data_jonas.train_test_split(test_size=0.06, seed=1)
-    # msd_data_jonas.states_to_features()
-
-    # import plotly.graph_objects as go
-
-    # trajectory = 1
-    # fig = go.Figure()
-    # fig.add_trace(
-    #     go.Scatter(
-    #         x=np.arange(msd_data.TRAIN.x.shape[0]),
-    #         y=msd_data.TRAIN.x[:, trajectory],
-    #         mode="lines",
-    #         name="msd_mi",
-    #     )
-    # )
-    # fig.add_trace(
-    #     go.Scatter(
-    #         x=np.arange(msd_data_jonas.TRAIN.x.shape[0]),
-    #         y=msd_data_jonas.TRAIN.x[:, trajectory],
-    #         mode="lines",
-    #         name="msd_jonas",
-    #     )
-    # )
-    # fig.show()
 
 
 def create_variation_of_parameters():
