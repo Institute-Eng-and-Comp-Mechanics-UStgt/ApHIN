@@ -883,6 +883,24 @@ class Data(ABC):
             n_dom += domain_split_vals[i_dom]
         return X_dom_list
 
+    def split_input_into_domains(self, input_domain_split_vals=None):
+        """
+        TODO: write header
+        """
+        if input_domain_split_vals is None:
+            input_domain_split_vals = [self.n_u]
+
+        assert sum(input_domain_split_vals) == self.n_u
+
+        U_dom_list = []
+        n_dom = 0
+        for i_dom in range(len(input_domain_split_vals)):
+            U_dom_list.append(
+                self.U[..., n_dom : n_dom + input_domain_split_vals[i_dom]]
+            )
+            n_dom += input_domain_split_vals[i_dom]
+        return U_dom_list
+
     def calculate_eigenvalues(
         self, result_dir: str, save_to_csv: bool = False, save_name: str = "eigenvalues"
     ):
@@ -1343,6 +1361,59 @@ class Data(ABC):
         self.u = reshape_inputs_to_features(self.U)
 
         return self.U, self.u_train_bounds
+
+    def scale_U_domain_wise(
+        self,
+        input_domain_split_vals: list[int] = None,
+        input_scaling_values: list[float] = None,
+    ):
+        if input_domain_split_vals is None:
+            # use just one domain as default
+            input_domain_split_vals = [self.n_u]
+        assert sum(input_domain_split_vals) == self.n_u
+
+        if input_scaling_values is None:
+            logging.warning(
+                "No scaling values are given. Scaling with maximum value. Only define the scale values for the training data set. "
+                "Don't call this function without scaling_values for test data."
+            )
+            # split data into domains
+            U_dom_list = self.split_input_into_domains(
+                input_domain_split_vals=input_domain_split_vals
+            )
+            current_idx = 0
+            scaling_values_list = []
+            for i, U in enumerate(U_dom_list):
+                scaling_values_list.append(np.max(np.abs(U)))
+        else:
+            scaling_values_list = input_scaling_values
+
+            # reformulate scaling values into array format
+        if len(scaling_values_list) == len(input_domain_split_vals):
+            # repeat scaling values for all domain entries
+            current_idx = 0
+            input_scaling_values = np.zeros((self.n_u, 1))
+            for i in range(len(input_domain_split_vals)):
+                input_scaling_values[
+                    current_idx : current_idx + input_domain_split_vals[i], :
+                ] = scaling_values_list[i] * np.ones((input_domain_split_vals[i], 1))
+                current_idx += input_domain_split_vals[i]
+        elif len(scaling_values_list) == self.n_u:
+            # transform to numpy array
+            input_scaling_values = np.array(input_scaling_values)
+        else:
+            raise ValueError(f"Scaling values are not given in the right format.")
+
+        self.input_scaling_values = input_scaling_values
+        self.input_is_scaled = True
+
+        # scale states
+        for i_n_u in range(self.n_u):
+            self.U[..., i_n_u] = self.U[..., i_n_u] / self.input_scaling_values[i_n_u]
+
+        self.u = reshape_inputs_to_features(self.U)
+
+        return self.U, self.input_scaling_values
 
     def scale_Mu(self, mu_train_bounds=None, desired_bounds=[-1, 1]):
         """

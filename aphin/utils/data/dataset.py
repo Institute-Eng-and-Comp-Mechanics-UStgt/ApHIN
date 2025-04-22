@@ -884,6 +884,23 @@ class Dataset(Data):
                 desired_bounds = self.TRAIN.desired_bounds_u
             self.TEST.scale_U(u_train_bounds, desired_bounds)
 
+    def scale_U_domain_wise(
+        self,
+        input_domain_split_vals: list[int] = None,
+        input_scaling_values: list[float] = None,
+    ):
+        if self.TRAIN.U is not None:
+            self.TRAIN.scale_U_domain_wise(
+                input_domain_split_vals=input_domain_split_vals,
+                input_scaling_values=input_scaling_values,
+            )
+            if input_scaling_values is None:
+                input_scaling_values = self.TRAIN.input_scaling_values
+            self.TEST.scale_U_domain_wise(
+                input_domain_split_vals=input_domain_split_vals,
+                input_scaling_values=input_scaling_values,
+            )
+
     def reshape_inputs_to_features(self):
         """
         Reshapes the input arrays `U` from the training and testing datasets into feature arrays `u`.
