@@ -48,13 +48,14 @@ def read_abaqus_data_from_txt_files(disc_brake_txt_path):
         t_end=db_cfg["t_end"],
     )
 
-    n_sim, n_t, n_n, n_dn, n_u, n_mu = disc_brake_data.shape
     logging.info(
-        f"The data was successfully read from the txt files. The data consists of {n_sim} simulations, {n_t} time steps per simulation, {n_n} nodes, {n_dn} DOFs per node, {n_u} inputs and {n_mu} parameters."
+        f"The data was successfully read from the txt files. The data consists of {disc_brake_data.n_sim} simulations, {disc_brake_data.n_t} time steps per simulation, {disc_brake_data.n_n} nodes, {disc_brake_data.n_dn} DOFs per node, {disc_brake_data.n_u} inputs and {disc_brake_data.n_mu} parameters."
     )
 
 
 if __name__ == "__main__":
     disc_brake_txt_path = "/path/to/txt/folder/"
-    disc_brake_txt_path = "/scratch/tmp/jrettberg/Projects/ApHIN_Review/disc_brake_with_hole/abaqus_data_generation/data/job_disc_brake_with_hole/txt_files/"  # TODO: remove later
+    # disc_brake_txt_path = "/scratch/tmp/jrettberg/Projects/ApHIN_Review/disc_brake_with_hole/abaqus_data_generation/data/job_disc_brake_with_hole_without_force/txt_files/" t_end: 0.2 # TODO: remove later
+    # disc_brake_txt_path = "/scratch/tmp/jrettberg/Projects/ApHIN_Review/disc_brake_with_hole/abaqus_data_generation/data/test_folder/txt_files/" # t_end: 0.2 # TODO: remove later
+    disc_brake_txt_path = "/scratch/tmp/jrettberg/Projects/ApHIN_Review/disc_brake_with_hole/abaqus_data_generation/data/job_disc_brake_with_hole_without_force_large_heat_alu_10s/txt_files/"  # t_end: Null # TODO: remove later
     read_abaqus_data_from_txt_files(disc_brake_txt_path)
