@@ -889,6 +889,29 @@ class Dataset(Data):
         input_domain_split_vals: list[int] = None,
         input_scaling_values: list[float] = None,
     ):
+        """
+        Scales the input data `U` domain-wise using either provided or computed scaling values.
+
+        This method divides the input dimension into specified domains and applies domain-wise scaling.
+        If no scaling values are provided, it automatically computes the scaling values as the maximum absolute
+        value in each domain.
+
+        Parameters:
+        -----------
+        input_domain_split_vals : list[int], optional
+            A list of integers indicating how the input dimensions (n_u) are split across different domains.
+            The sum of this list must equal `self.n_u`. If None, all inputs are treated as a single domain.
+
+        input_scaling_values : list[float], optional
+            A list of scaling values corresponding to each domain or each input dimension. If not provided,
+            the function will compute the scaling values from the current data (intended for training only).
+
+        Returns:
+        --------
+        tuple:
+            - self.U (np.ndarray): The scaled input tensor.
+            - self.input_scaling_values (np.ndarray): The array of scaling values used.
+        """
         if self.TRAIN.U is not None:
             self.TRAIN.scale_U_domain_wise(
                 input_domain_split_vals=input_domain_split_vals,
