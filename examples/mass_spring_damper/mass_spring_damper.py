@@ -217,7 +217,7 @@ def main(config_path_to_file=None, only_phin: bool = False):
     data_dir, log_dir, weight_dir, result_dir = configuration.directories
 
     # set up matplotlib
-    aphin_vis.setup_matplotlib(msd_cfg["setup_matplotlib"])
+    aphin_vis.setup_matplotlib(save_plots=msd_cfg["save_plots"])
 
     # Reproducibility
     # tf.config.run_functions_eagerly(True)

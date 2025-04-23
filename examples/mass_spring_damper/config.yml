@@ -6,7 +6,7 @@ load_network: False  # train the network or load the last pre-trained one
 
 seed: 1  # For reproducibility
 
-setup_matplotlib: True
+save_plots: True
 
 ph_layer: "ph_layer" # ph_layer | phq_layer | lti_layer
 

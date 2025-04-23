@@ -1,5 +1,5 @@
 # %% General settings
-setup_matplotlib: False  # Show plots and visualization
+save_plots: False  # Show plots and visualization
 
 
 # %% General identification framework settings

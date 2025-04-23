@@ -75,7 +75,7 @@ def main(
             domain_names=db_cfg["domain_names"],
         )
 
-    aphin_vis.setup_matplotlib(db_cfg["setup_matplotlib"])
+    aphin_vis.setup_matplotlib(save_plots=db_cfg["save_plots"])
     # %% Data
     logging.info(
         "################################   1. Data ################################"

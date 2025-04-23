@@ -61,7 +61,7 @@ def main(config_path_to_file=None):
     data_dir, log_dir, weight_dir, result_dir = configuration.directories
 
     # set up matplotlib
-    aphin_vis.setup_matplotlib(pd_cfg["setup_matplotlib"])
+    aphin_vis.setup_matplotlib(save_plots=pd_cfg["save_plots"])
 
     # Reproducibility
     tf.keras.utils.set_random_seed(pd_cfg["seed"])
@@ -189,7 +189,6 @@ def main(config_path_to_file=None):
 
     aphin_vis.plot_errors(
         pendulum_data,
-        t=pendulum_data.t_test,
         save_name=os.path.join(result_dir, "rms_error"),
         domain_names=["disp", "vel"],
         save_to_csv=True,
