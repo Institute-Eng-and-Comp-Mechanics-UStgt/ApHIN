@@ -134,7 +134,13 @@ class Configuration:
 
             # check if weights exist if network is loaded
             if self.cfg_dict["load_network"]:
-                assert os.path.isfile(os.path.join(self.weight_dir, ".weights.h5"))
+                # check if .weights.h5 file is in weight_dir or subfolders
+                assert os.path.isfile(
+                    os.path.join(self.weight_dir, ".weights.h5")
+                ) or any(
+                    os.path.isfile(os.path.join(self.weight_dir, i, ".weights.h5"))
+                    for i in os.listdir(self.weight_dir)
+                )
 
         elif os.path.isdir(config_info):
             # %% path to result folder in which results are stored
@@ -154,7 +160,14 @@ class Configuration:
                     self.path_to_config = os.path.join(path_to_config_dir, "config.yml")
                     self.cfg_dict = yaml.safe_load(open(self.path_to_config))
                     path_to_weights = os.path.join(path_to_config_dir, ".weights.h5")
-                    assert os.path.isfile(path_to_weights)
+                    assert os.path.isfile(
+                        os.path.join(path_to_config_dir, ".weights.h5")
+                    ) or any(
+                        os.path.isfile(
+                            os.path.join(path_to_config_dir, folder, ".weights.h5")
+                        )
+                        for folder in os.listdir(path_to_config_dir)
+                    )  # check if weights exist in folder or subfolders
                     self.weight_dir = path_to_config_dir
                     # set load_network to true, since it is loaded
                     self.cfg_dict["load_network"] = True

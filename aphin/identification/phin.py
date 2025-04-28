@@ -10,7 +10,7 @@ logging.basicConfig()
 logging.getLogger().setLevel(logging.INFO)
 
 
-class PHIN(PHBasemodel, ABC):
+class PHIN(PHBasemodel):
     """
     port-Hamiltonian identification network (phin).
     Model to discover the dynamics of a system using a layer for identification of other dynamical systems
@@ -168,8 +168,7 @@ class PHIN(PHBasemodel, ABC):
             "reg_loss": reg_loss,
         }
 
-    @tf.function
-    def get_loss(self, x, dx_dt, u, mu=None):
+    def get_loss(self, x, dx_dt, u=None, mu=None):
         """
         Calculate loss.
 
@@ -196,6 +195,8 @@ class PHIN(PHBasemodel, ABC):
         # system_network approximation of the time derivative of the latent variable
         if mu is None:
             mu = tf.zeros([tf.shape(x)[0], 0])
+        if u is None:
+            u = tf.zeros([tf.shape(x)[0], 0])
         dx_dt_system = self.system_network([x, u, mu])
 
         dz_loss = self.compute_loss(None, dx_dt_lhs, dx_dt_system)

@@ -121,7 +121,7 @@ class LTILayer(SystemLayer):
         tuple
             Tuple containing the split of degrees of freedom.
         """
-        return self.n_skew, self.n_sym, self.r * self.n_u, 0
+        return self.n_skew, self.n_sym, self.r * self.n_u, 0, 0
 
     def init_parameter_dependent_weights(self):
         """
@@ -169,7 +169,7 @@ class LTILayer(SystemLayer):
         dofs = self.parameter_dependent_weight_model(mu)
 
         # split into J, R, B (and Q just implemented for PHQ Layer)
-        dof_J, dof_R, dof_B, dof_Q = tf.split(dofs, self.dof_split, axis=1)
+        dof_J, dof_R, dof_B, dof_Q, dof_E = tf.split(dofs, self.dof_split, axis=1)
         # split matrices into correct shape
         dof_J = tf.reshape(
             dof_J,
@@ -188,7 +188,9 @@ class LTILayer(SystemLayer):
         dof_B = tf.reshape(dof_B, (-1, self.r, self.n_u))
         if dof_Q.shape[1] != 0:
             dof_Q = tf.reshape(dof_Q, (-1, self.n_sym))
-        return dof_J, dof_R, dof_B, dof_Q
+        if dof_E.shape[1] != 0:
+            dof_E = tf.reshape(dof_E, (-1, self.n_sym))
+        return dof_J, dof_R, dof_B, dof_Q, dof_E
 
     def get_system_matrices(self, mu=None, n_t=None):
         """
@@ -207,19 +209,16 @@ class LTILayer(SystemLayer):
             Tuple containing matrices J, R, and B.
         """
         if mu is not None:
-            self.dof_J, self.dof_R, self.dof_B, _ = (
+            self.dof_J, self.dof_R, self.dof_B, _, _ = (
                 self.get_parameter_dependent_weights(mu)
             )
             # convert to matrices
             if n_t is None:
                 raise ValueError("n_t is required in the parameter-dependent case.")
-            J = np.reshape(self.J.to_dense().numpy(), (-1, n_t, self.r, self.r))
-            R = np.reshape(self.R.to_dense().numpy(), (-1, n_t, self.r, self.r))
-            B = np.reshape(self.B.to_dense().numpy(), (-1, n_t, self.r, self.n_u))
             # since all matrices are the same over n_t, remove n_t and transform to shape (n_sim,r,r)
-            J = J[:, 0, :, :]
-            R = R[:, 0, :, :]
-            B = B[:, 0, :, :]
+            J = np.reshape(self.J.to_dense().numpy(), (-1, n_t, self.r, self.r))[:, 0, :, :]
+            R = np.reshape(self.R.to_dense().numpy(), (-1, n_t, self.r, self.r))[:, 0, :, :]
+            B = np.reshape(self.B.to_dense().numpy(), (-1, n_t, self.r, self.n_u))[:, 0, :, :] if self.n_u > 0 else None
         else:
             # convert to matrices
             J = np.expand_dims(self.J.to_dense().numpy(), axis=0)
@@ -231,7 +230,7 @@ class LTILayer(SystemLayer):
 
         return J, R, B
 
-    #  @tf.function
+    @tf.function
     def call(self, z, u=None, mu=None, training=False):
         """
         Evaluate right-hand side of the ODE system z'(t) = f(z, u, mu) for inputs (z, u, mu).
@@ -255,7 +254,7 @@ class LTILayer(SystemLayer):
 
         # update matrices for given parameters
         if self.n_mu > 0:
-            self.dof_J, self.dof_R, self.dof_B, _ = (
+            self.dof_J, self.dof_R, self.dof_B, _, _ = (
                 self.get_parameter_dependent_weights(mu)
             )
         # evaluate PH approximation of the time derivative of the latent variable
@@ -293,7 +292,7 @@ class LTILayer(SystemLayer):
             Symmetric matrix R.
         """
 
-        if not hasattr(self, "dof_J"):
+        if not hasattr(self, "dof_R"):
             return tf.zeros([self.r, self.r])
         if self.n_sym == 0:
             return LinearOperatorSym(tf.zeros([self.r, self.r]))

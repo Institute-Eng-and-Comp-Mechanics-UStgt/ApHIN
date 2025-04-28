@@ -14,7 +14,7 @@ description = "Autoencoder-based port-Hamiltonian Identification Networks (ApHIN
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
-    "matplotlib>=3.7",
+    "matplotlib==3.9",
     "numpy>=1.21.4",
     "scikit_learn>=1.2",
     "scikit_optimize>=0.10",

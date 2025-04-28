@@ -70,7 +70,9 @@ class LinearOperatorSymPosDef(tf.linalg.LinearOperatorFullMatrix):
             self._chol = tfp.math.fill_triangular(self._dof, upper=False)
             self._chol_t = _transpose_last2d(self._chol)
             # add regularization for Q to become pos. def instead of only semi-def.
-            reg_matrix = epsilon * tf.eye(self._chol.shape[-1])
+            reg_matrix = tf.cast(
+                epsilon * tf.eye(self._chol.shape[-1]), dtype=self._dof.dtype
+            )
             self._matrix = tf.matmul(self._chol, self._chol_t) + reg_matrix
             # Check and auto-set hints.
             if is_square is False:
@@ -90,3 +92,68 @@ class LinearOperatorSymPosDef(tf.linalg.LinearOperatorFullMatrix):
                 is_square=is_square,
                 name=name,
             )
+
+
+class LinearOperatorSymPosSemiDef(LinearOperatorSymPosDef):
+    """
+    `LinearOperator` representing a [batch] square symmetric **positive semi-definite** matrix.
+
+    This class extends `LinearOperatorSymPosDef` but removes the regularization term, allowing
+    the matrix to be only semi-definite rather than strictly positive definite.
+
+    It is useful when modeling systems where the matrix may be rank-deficient or where
+    exact positive definiteness is not guaranteed or required.
+
+    Inherits all behavior from `LinearOperatorSymPosDef` but sets the regularization
+    parameter `epsilon = 0` during matrix construction.
+
+    Notes
+    -----
+    - The matrix is constructed as `A = L @ L.T`, where `L` is the lower-triangular Cholesky
+      factor built from the degrees of freedom (DOF).
+    - No additional stabilization is applied (i.e., no diagonal regularization with εI).
+    - This operator may be singular and is not guaranteed to be invertible.
+    """
+
+    def __init__(
+        self,
+        dof,
+        is_non_singular=None,
+        is_self_adjoint=None,
+        is_positive_definite=None,
+        is_square=None,
+        name="LinearOperatorSymPosSemiDef",
+    ):
+        """
+        Initialize a `LinearOperatorSymPosSemiDef`.
+
+        This constructor initializes the operator as a symmetric semi-definite matrix, where
+        regularization for positive definiteness is disabled by setting `epsilon = 0`.
+
+        Inherited behavior from `LinearOperatorSymPosDef` ensures that the matrix is symmetric
+        and (potentially) positive semi-definite but does not enforce positive definiteness.
+
+        Parameters
+        ----------
+        dof : array-like
+            Degrees of freedom representing the lower-triangular Cholesky factor.
+        is_non_singular : bool, optional
+            Whether the matrix is guaranteed to be non-singular.
+        is_self_adjoint : bool, optional
+            Whether the matrix is self-adjoint (should be True for symmetric matrices).
+        is_positive_definite : bool, optional
+            Whether the matrix is positive definite.
+        is_square : bool, optional
+            Whether the matrix is square (must be True).
+        name : str, optional
+            Name of the operator. Default is "LinearOperatorSymPosSemiDef".
+        """
+        super().__init__(
+            dof,
+            is_non_singular,
+            is_self_adjoint,
+            is_positive_definite,
+            is_square,
+            name,
+            epsilon=0,
+        )

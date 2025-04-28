@@ -41,7 +41,7 @@ class SystemLayer(tf.keras.layers.Layer):
         **kwargs : dict
             Additional arguments for the tf.keras.layers.Layer base class.
         """
-        super(SystemLayer, self).__init__(**kwargs)
+        super(SystemLayer, self).__init__(dtype=dtype, **kwargs)
         self.dtype_ = dtype
         self.r = r
         self.n_u = 0 if n_u is None else n_u
@@ -72,7 +72,6 @@ class SystemLayer(tf.keras.layers.Layer):
         """
         pass
 
-    @tf.function
     def lhs(self, dz_dt):
         """
         Evaluate left-hand side of the system ODE given z'(t) as dz_dt.

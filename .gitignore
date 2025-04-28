@@ -778,3 +778,9 @@ TSWLatexianTemp*
 
 .vs
 
+
+.vscode/
+
+*.mat
+
+initial_conditions.pdf
