@@ -21,27 +21,59 @@
 # lower_bounds: lower values of the parameters for the Halton algorithm (should be of size (random_samples,))
 # upper_bounds: upper values of the parameters for the Halton algorithm (should be of size (random_samples,))
 
-seed: 3823
+seed: 1
 n_mass: 3 # number of masses
-parameter_method: 'Halton' # 'default', 'Halton', 'manual', 'mass_loop' 
+n_sim: 201 # number of sims if no random_samples
+parameter_method: 'matrix-interpolation' # 'default', 'Halton', 'manual', 'marginal-stability', 'matrix-interpolation'
+
 # 'default': parameter values according to [MorandinNicodemusUnger22]
 # 'manual':  parameter values specified below:
-mass_vals: 4    
-stiff_vals: 4  
-damp_vals: 1 
-delta: 0.5
-omega: 1
+default:
+    mass_vals: 4
+    stiff_vals: 4
+    damp_vals: 1
+    delta: 0.5
+    omega: 1
+    n_simulations_per_parameter_set: 1
+Halton:
+    mass_vals: [0.1, 100]
+    stiff_vals: [0.1, 100]
+    damp_vals: [0.1, 10]
+    delta: [0.5, 5]
+    omega: [0.125, 2]
+    n_simulations_per_parameter_set: 1
+manual:
+    mass_vals: 4
+    stiff_vals: 4
+    damp_vals: 1
+    delta: 0.5
+    omega: 1
+    n_simulations_per_parameter_set: 1
+marginal-stability:
+    mass_vals: [0.1, 100]
+    stiff_vals: [0.1, 100]
+    damp_vals: 0
+    delta: [0.5, 5]
+    omega: [0.125, 2]
+    n_simulations_per_parameter_set: 1
+matrix-interpolation:
+    mass_vals: [1, 100]
+    stiff_vals: [1, 100]
+    damp_vals: 0
+    delta: [0.5, 5]
+    omega: [0.125, 2]
+    n_simulations_per_parameter_set: 1
+
 # 'Halton': parameter values specified according to:
 random_samples: 120         # None if non-parametric
-lower_bounds: [0.1, 0.1, 0.1, .5, 0.125]            # None if non-parametric
-upper_bounds: [100, 100, 10, 5, 2]            # None if non-parametric
+
 # input
 input_vals: 0 # null/None (autonomous) | 0 (first mass excitation - SISO)
-n_sim: 4 # only required for autonomous/manual case system
+random_initial_condition: 1 #
 
 # time values for trajectories
-T_training: 4
-time_steps_training: 400
+T_training: 20
+time_steps_training: 2000
 
 # debugging
 debug: True

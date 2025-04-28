@@ -14,6 +14,7 @@ def run_various_experiments(
     result_dir,
     log_dir,
     force_calculation=False,
+    **kwargs,
 ):
     """
     Runs multiple experiments by creating several config files.
@@ -34,6 +35,14 @@ def run_various_experiments(
 
     """
 
+    # Ask for user input to continue
+    user_input = (
+        input("Do you want to run various experiments? (y/n): ").strip().lower()
+    )
+    if user_input not in ["yes", "y"]:
+        print("Exiting the function.")
+        return
+
     yaml_paths_list = create_modified_config_files(
         parameter_variation_dict, basis_config_yml_path, result_dir
     )
@@ -41,9 +50,10 @@ def run_various_experiments(
     run_all_yaml_files(
         experiment_main_script,
         yaml_paths_list,
-        result_dir,
+        # result_dir,
         log_dir,
-        force_calculation=force_calculation,
+        # force_calculation=force_calculation,
+        **kwargs,
     )
 
 
@@ -90,6 +100,7 @@ def create_modified_config_files(
                 save_name += f"{key}{value_str}_"
             else:
                 save_name += f"{key}{value}_"
+        save_name = save_name.replace(".", "_")
         save_name = save_name.strip("_")
         # rename experiment to make it unique
         experiment["experiment"] = save_name
@@ -105,7 +116,7 @@ def create_modified_config_files(
                     # loop over keys
                     for key, value in experiment.items():
                         # check for keyword in config file
-                        if line.startswith(key):
+                        if line.startswith(f"{key}:"):
                             keyword_found_list.append(key)
                             split_comment = line.split(
                                 "#"
@@ -114,7 +125,7 @@ def create_modified_config_files(
                                 # omit scientific notation
                                 # strip '.' at the end if value has no decimals
                                 value = np.format_float_positional(value).strip(".")
-                            line = f"{key}: {value} "
+                            line = f"{key}: {value} \n"
                             if len(split_comment) > 1:
                                 line += f"# {split_comment[-1]}"  # add comment
                     adapted_config_file.write(line)
@@ -155,6 +166,7 @@ def run_all_yaml_files(
     experiment_main_script,
     yaml_paths_list,
     log_dir,
+    **kwargs,
 ):
     """
     Execute a main experiment script for each YAML configuration file and log the results.
@@ -199,7 +211,7 @@ def run_all_yaml_files(
         logger.addHandler(file_handler)
 
         try:
-            experiment_main_script(config_path_to_file=yaml_file_path)
+            experiment_main_script(config_path_to_file=yaml_file_path, **kwargs)
         except Exception as e:
             logger.error(f"Run ended with error {e}")
 

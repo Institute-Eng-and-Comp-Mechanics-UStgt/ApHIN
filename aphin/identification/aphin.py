@@ -14,7 +14,7 @@ logging.basicConfig()
 logging.getLogger().setLevel(logging.INFO)
 
 
-class APHIN(PHBasemodel, ABC):
+class APHIN(PHBasemodel):
     """
     Autoencoder-based port-Hamiltonian Identification Network (ApHIN)
     """
@@ -37,7 +37,7 @@ class APHIN(PHBasemodel, ABC):
         l_dx: float = 1,
         l1=0,
         l2=0,
-        dtype="float32",
+        dtype=tf.float32,
         **kwargs,
     ):
         """
@@ -85,7 +85,7 @@ class APHIN(PHBasemodel, ABC):
         """
         # tf.keras.backend.set_floatx(dtype)
         self.dtype_ = dtype
-        super(APHIN, self).__init__(**kwargs)
+        super(APHIN, self).__init__(dtype=dtype, **kwargs)
 
         # general parameters
         self.system_optimizer = None
@@ -105,6 +105,10 @@ class APHIN(PHBasemodel, ABC):
         self.pca_only = pca_only
         if self.pca_only:
             self.use_pca = True
+            if pca_order is not None:
+                logging.info(
+                    f"pca_only is chosen. Setting pca_order to reduced_order of size {self.reduced_order}."
+                )
             self.pca_order = self.reduced_order
             self.layer_sizes = []
         if system_layer is None:
@@ -184,7 +188,7 @@ class APHIN(PHBasemodel, ABC):
 
         # System inputs
         if u is not None:
-            u_input = tf.keras.Input(shape=(u.shape[1],))
+            u_input = tf.keras.Input(shape=(u.shape[1],), dtype=u.dtype)
         else:
             u_input = tf.keras.Input(shape=(0,))
 
@@ -230,7 +234,7 @@ class APHIN(PHBasemodel, ABC):
         tuple
             Tuple containing inputs and outputs of the autoencoder.
         """
-        x_input = tf.keras.Input(shape=(x.shape[1],))
+        x_input = tf.keras.Input(shape=(x.shape[1],), dtype=self.dtype_)
         # first part of the encoder may consist of a linear projection based on PCA
         z_pca = self.build_pca_encoder(x, x_input)
         # second part of the encoder and first part of the decoder is a nonlinear part
@@ -260,12 +264,16 @@ class APHIN(PHBasemodel, ABC):
         if self.use_pca:
             # calculate the PCA
             pca = TruncatedSVD(n_components=self.pca_order)
-            x = pca.fit_transform(x)
+            pca.fit(x)
             # use the projection matrix as linear encoder
             self.down = tf.cast(pca.components_, dtype=self.dtype_)
             self.up = tf.cast(pca.components_.T, dtype=self.dtype_)
             self.singular_values = pca.singular_values_
             z_pca = x_input @ tf.transpose(self.down)
+            # compute relative reconstruction error
+            x_rec = pca.inverse_transform(pca.transform(x))
+            x_rel = np.linalg.norm(x - x_rec) / np.linalg.norm(x)
+            logging.info(f"Relative reconstruction error of PCA: {x_rel:.4g}")
         # in case no PCA is used, the encoder is just the identity
         else:
             z_pca = x_input * 1
@@ -279,7 +287,7 @@ class APHIN(PHBasemodel, ABC):
                 )
             else:
                 # scale every feature by its maximum value to avoid numerical issues
-                self.scale_factor = 1 / tf.sqrt(tf.reduce_max(tf.abs(x), axis=0))
+                self.scale_factor = 1 / tf.reduce_max(tf.abs(x), axis=0)
         # if no individual scaling is used, scale the whole data set by its maximum value
         else:
             self.scale_factor = 1 / tf.reduce_max(tf.abs(x))
@@ -340,14 +348,21 @@ class APHIN(PHBasemodel, ABC):
                 n_neurons,
                 activation=self.activation,
                 activity_regularizer=self.regularizer,
+                dtype=self.dtype_,
             )(z)
-        z = tf.keras.layers.Dense(self.reduced_order, activation="linear")(z)
+        z = tf.keras.layers.Dense(
+            self.reduced_order, activation="linear", dtype=self.dtype_
+        )(z)
 
         # new decoder
         x_ = z
         for n_neurons in reversed(self.layer_sizes):
-            x_ = tf.keras.layers.Dense(n_neurons, activation=self.activation)(x_)
-        z_dec = tf.keras.layers.Dense(self.pca_order, activation="linear")(x_)
+            x_ = tf.keras.layers.Dense(
+                n_neurons, activation=self.activation, dtype=self.dtype_
+            )(x_)
+        z_dec = tf.keras.layers.Dense(
+            self.pca_order, activation="linear", dtype=self.dtype_
+        )(x_)
         return z, z_dec
 
     @tf.function
@@ -411,22 +426,39 @@ class APHIN(PHBasemodel, ABC):
             "reg_loss": reg_loss,
         }
 
-    def calc_latent_time_derivatives(self, x, dx_dt):
+    def calc_latent_time_derivatives(self, x, dx_dt, return_dz_dxr=False):
         """
         Calculate time derivatives of latent variables given the time derivatives of the input variables.
 
         Parameters
         ----------
         x : array-like
-            Full state with shape (n_samples, n_features).
+            Input state with shape (n_samples, n_features). Represents the full observed state
+            of the system at different time points.
+
         dx_dt : array-like
-            Time derivative of state with shape (n_samples, n_features).
+            Time derivative of the input state, with shape (n_samples, n_features). Represents
+            the rate of change of `x` with respect to time.
+
+        return_dz_dxr : bool, optional (default=False)
+            If True, return the Jacobian of the latent variables with respect to the PCA-encoded
+            input instead of the latent variables and their derivatives.
 
         Returns
         -------
-        tuple
-            Tuple containing latent variables and their time derivatives.
+        z : np.ndarray
+            Latent variables computed from input `x`, with shape (n_samples, latent_dim). Only
+            returned if `return_dz_dxr` is False.
+
+        dz_dt : np.ndarray
+            Time derivatives of the latent variables, with shape (n_samples, latent_dim). Only
+            returned if `return_dz_dxr` is False.
+
+        dz_dxr : tf.Tensor
+            Jacobian of the latent variables with respect to the PCA-reduced input. Only returned
+            if `return_dz_dxr` is True.
         """
+
         x = tf.cast(x, self.dtype_)
         dx_dt = tf.expand_dims(tf.cast(dx_dt, dtype=self.dtype_), axis=-1)
 
@@ -450,6 +482,8 @@ class APHIN(PHBasemodel, ABC):
             dz_dt = dz_dxr @ dx_dt
         dz_dt = tf.squeeze(dz_dt, axis=2)
 
+        if return_dz_dxr:
+            return dz_dxr
         return z.numpy(), dz_dt.numpy()
 
     def calc_pca_time_derivatives(self, x, dx_dt):
@@ -517,7 +551,6 @@ class APHIN(PHBasemodel, ABC):
 
         return x.numpy(), dx_dt.numpy()
 
-    @tf.function
     def _get_loss_rec(self, x, dx_dt, u, mu):
         """
         Calculate reconstruction loss of autoencoder.
@@ -555,7 +588,6 @@ class APHIN(PHBasemodel, ABC):
 
         return rec_loss, dz_loss, dx_loss, reg_loss, total_loss
 
-    @tf.function
     def _get_loss(self, x, dx_dt, u, mu):
         """
         Calculate loss.
@@ -577,9 +609,10 @@ class APHIN(PHBasemodel, ABC):
             Tuple containing individual losses and total loss.
         """
         # time derivative of intermediate latent space
-        dxr_dt = tf.expand_dims(
-            self.pca_encoder(tf.cast(dx_dt, dtype=self.dtype_)), axis=-1
-        )
+        # dxr_dt = tf.expand_dims(
+        #     self.pca_encoder(tf.cast(dx_dt, dtype=self.dtype_)), axis=-1
+        # )
+        dxr_dt = self.pca_encoder(tf.cast(dx_dt, dtype=self.dtype_))
 
         # forward pass of encoder and time derivative of latent variable
         with tf.GradientTape() as t12:
@@ -633,11 +666,12 @@ class APHIN(PHBasemodel, ABC):
         # calculate first time derivative of the latent variable by application of the chain rule
         #   dz_ddt  = dz_dx @ dx_dt
         #           = dz_dxr @ (V^T @ dx_dt)
-        dz_dt = dz_dxr @ dxr_dt
+        dz_dt = dz_dxr @ tf.expand_dims(dxr_dt, axis=-1)
 
         # calculate left hand side of ODE system (relevant for descriptor systems)
-        dxr_dt_lhs = self.system_layer.lhs(dxr_dt)
-        dz_dt_lhs = self.system_layer.lhs(dz_dt)
+        # dxr_dt_lhs = self.system_layer.lhs(dxr_dt)
+        dxr_dt_lhs = tf.identity(dxr_dt)
+        dz_dt_lhs = self.system_layer.lhs(dz_dt[..., 0])
 
         # system_network approximation of the time derivative of the latent variable
         system_pred = self.system_network([z, u, mu])
@@ -665,6 +699,12 @@ class APHIN(PHBasemodel, ABC):
             / tf.reduce_mean(tf.abs(dz_dt_lhs))
         )
         return rec_loss, dz_loss, dx_loss
+
+    # def compute_loss(self, x, y, y_pred):
+    #     """
+    #     custom loss function
+    #     """
+    #     return tf.reduce_mean(self.loss(y, y_pred))
 
     def reshape_dxr_dz(self, dxr_dz):
         """
@@ -752,7 +792,6 @@ class APHIN(PHBasemodel, ABC):
         fig.tight_layout()
         plt.show(block=block)
 
-    # @tf.function
     def encode(self, x):
         """
         Encode full state.
@@ -770,7 +809,6 @@ class APHIN(PHBasemodel, ABC):
         z = self.encoder(x)
         return z
 
-    # @tf.function
     def decode(self, z):
         """
         Decode latent variable.
@@ -788,7 +826,6 @@ class APHIN(PHBasemodel, ABC):
         x_rec = self.decoder(z)
         return x_rec
 
-    # @tf.function
     def reconstruct(self, x, _=None):
         """
         Reconstruct full state.
@@ -925,11 +962,17 @@ class APHIN(PHBasemodel, ABC):
             t1.watch(z)
             # linear projection of input to intermediate latent space
             v_rec = self.nonlinear_decoder(z)
+        # For debug: Patches should be diagonal
+        # j = t1.jacobian(v_rec[:10], z[:10])
+        # self.plot_as_patches(j)
         jac_z = t1.batch_jacobian(v_rec, z)
         with tf.GradientTape() as t2:
             t2.watch(v_rec)
             # nonlinear mapping of intermediate latent space to latent space
             z_rec = self.nonlinear_encoder(v_rec)
+        # For debug: Patches should be diagonal
+        # j = t2.jacobian(z_rec[:10], v_rec[:10])
+        # self.plot_as_patches(j)
         jac_x = t2.batch_jacobian(z_rec, v_rec)
 
         # calculate to which extent the autoencoder meets the projection properties
@@ -948,3 +991,44 @@ class APHIN(PHBasemodel, ABC):
         )
 
         return projection_error, jacobian_error
+
+    @staticmethod
+    def plot_as_patches(j):
+        """
+        Visualize a 4D tensor as a grid of image patches with zero-centered color scale.
+
+        This function rearranges and pads a 4D tensor so that each diagonal of the
+        original layout becomes a contiguous patch. It then reshapes the result into a
+        single 2D image for visualization.
+
+        This method is taken from the Tensorflow documentation.
+
+        Parameters
+        ----------
+        j : tf.Tensor
+            A 4D tensor with shape (n, m, h, w), where:
+                - n is the number of rows of patches,
+                - m is the number of columns of patches,
+                - h and w are the height and width of each patch.
+
+        Notes
+        -----
+        - The tensor is transposed so that diagonal elements become contiguous blocks.
+        - Padding is applied between patches for visual separation.
+        - The final image is plotted using `APHIN.imshow_zero_center`, with a diverging
+        colormap centered at zero.
+        """
+        # Reorder axes so the diagonals will each form a contiguous patch.
+        j = tf.transpose(j, [1, 0, 3, 2])
+        # Pad in between each patch.
+        lim = tf.reduce_max(abs(j))
+        j = tf.pad(j, [[0, 0], [1, 1], [0, 0], [1, 1]], constant_values=-lim)
+        # Reshape to form a single image.
+        s = j.shape
+        j = tf.reshape(j, [s[0] * s[1], s[2] * s[3]])
+        APHIN.imshow_zero_center(j, extent=[-0.5, s[2] - 0.5, s[0] - 0.5, -0.5])
+
+    def imshow_zero_center(image, **kwargs):
+        lim = tf.reduce_max(abs(image))
+        plt.imshow(image, vmin=-lim, vmax=lim, cmap="seismic", **kwargs)
+        plt.colorbar()

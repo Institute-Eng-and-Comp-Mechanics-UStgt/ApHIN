@@ -21,6 +21,7 @@ class ParameterInput:
         u,
         x0,
         parameter_information,
+        Mu_input: np.ndarray = None,
     ) -> None:
         """
         Initialize a ParameterInput object with the given parameters.
@@ -62,6 +63,7 @@ class ParameterInput:
         # input parameters
         self.input_vals = input_vals
         self.u = u
+        self.Mu_input = Mu_input
         # initial condition
         self.x0 = x0
 
@@ -77,56 +79,64 @@ class ParameterInput:
         parameter_method = config["parameter_method"]
         n_mass = config["n_mass"]
         parameter_information = "parameter_space = [mass stiffness damping omega delta]"
-        if parameter_method == "default":
-            # use values from [MorandinNicodemusUnger22]
-            mass_vals = 4
-            stiff_vals = 4
-            damp_vals = 1
-            # input training
-            delta = 0.5
-            omega = 1
-            # input test - sawtooth
-            # n_sim = 2
 
-        elif parameter_method == "manual":
-            # use parameters from config
-            mass_vals = config["mass_vals"]
-            stiff_vals = config["stiff_vals"]
-            damp_vals = config["damp_vals"]
-            delta = config["delta"]
-            omega = config["omega"]
+        # parameter with intervalls are sampled using Halton sequence
+        param_config = config[config["parameter_method"]]
+        n_simulations_per_parameter_set = param_config[
+            "n_simulations_per_parameter_set"
+        ]
+        mass_vals = param_config["mass_vals"]
+        stiff_vals = param_config["stiff_vals"]
+        damp_vals = param_config["damp_vals"]
+        delta = param_config["delta"]
+        omega = param_config["omega"]
 
-        elif parameter_method == "Halton":
-            # create random variables with Halton sequence
-            random_samples = config["random_samples"]
-            lower_bounds = config["lower_bounds"]
-            upper_bounds = config["upper_bounds"]
-            # we use parameter dimension of 5 [mass stiffness damping omega delta]
+        params = [mass_vals, stiff_vals, damp_vals, omega, delta]
+        lower_bounds = [limit[0] if isinstance(limit, list) else 0 for limit in params]
+        upper_bounds = [limit[1] if isinstance(limit, list) else 10 for limit in params]
+        random_samples = config["random_samples"]
+        n_param_sets = int(random_samples / n_simulations_per_parameter_set)
+        parameter_dimension = 5
+        sampler_Halton = qmc.Halton(d=parameter_dimension, seed=seed)
+        samples_Halton = sampler_Halton.random(n=random_samples)
+        sampled_parameters = qmc.scale(samples_Halton, lower_bounds, upper_bounds)
 
-            parameter_dimension = 5
-            sampler_Halton = qmc.Halton(d=parameter_dimension, seed=seed)
-            samples_Halton = sampler_Halton.random(n=random_samples)
-            sampled_parameters = qmc.scale(samples_Halton, lower_bounds, upper_bounds)
-            num_parameter_runs = random_samples
+        # repeat parameters n_simulations_per_parameter_set times
+        mass_vals = (
+            np.repeat(
+                sampled_parameters[:n_param_sets, 0], n_simulations_per_parameter_set
+            )
+            if isinstance(mass_vals, list)
+            else mass_vals
+        )
+        stiff_vals = (
+            np.repeat(
+                sampled_parameters[:n_param_sets, 1], n_simulations_per_parameter_set
+            )
+            if isinstance(stiff_vals, list)
+            else stiff_vals
+        )
+        damp_vals = (
+            np.repeat(
+                sampled_parameters[:n_param_sets, 2], n_simulations_per_parameter_set
+            )
+            if isinstance(damp_vals, list)
+            else damp_vals
+        )
+        omega = sampled_parameters[:, 3] if isinstance(omega, list) else omega
+        delta = sampled_parameters[:, 4] if isinstance(delta, list) else delta
 
-            mass_vals = sampled_parameters[:, 0]
-            stiff_vals = sampled_parameters[:, 1]
-            damp_vals = sampled_parameters[:, 2]
-            omega = sampled_parameters[:, 3]
-            delta = sampled_parameters[:, 4]
+        Mu_input = np.concatenate(
+            (np.expand_dims(omega, axis=1), np.expand_dims(delta, axis=1)), axis=1
+        )
 
-            # n_sim =
-
-        # # create input
-        # if config["input_vals"] is not None:
-        #     create_input(omega, delta, siso, config, debug)
         input_vals = config["input_vals"]
         u, n_sim = cls.process_config_input_parameters(
             delta,
             omega,
             input_vals,
+            n_sim=config["n_mass"],
             parameter_method=parameter_method,
-            n_sim=config["n_sim"],
         )
         mass_vals = cls.process_config_system_parameters(mass_vals, n_mass, n_sim)
         stiff_vals = cls.process_config_system_parameters(stiff_vals, n_mass, n_sim)
@@ -137,7 +147,9 @@ class ParameterInput:
                 plot_input(u, config)
 
         # generate initial condition
-        x0 = cls.generate_initial_condition(input_vals, 2 * n_mass, n_sim, seed=1)
+        x0 = cls.generate_initial_condition(
+            config["random_initial_condition"], 2 * n_mass, n_sim, seed=seed
+        )
 
         return cls(
             n_mass,
@@ -148,9 +160,11 @@ class ParameterInput:
             u,
             x0,
             parameter_information,
+            Mu_input,
         )
 
-    def generate_initial_condition(input_vals, n, n_sim, seed=1):
+    @staticmethod
+    def generate_initial_condition(random, n, n_sim, seed=1):
         """
         Generate initial conditions for the system.
 
@@ -164,9 +178,11 @@ class ParameterInput:
         - np.ndarray: Array of initial conditions with shape (n, n_sim).
         """
         rng = np.random.default_rng(seed=seed)
-        if input_vals is None:
+        if random:
             # random initial conditions
-            x0 = rng.random((n, n_sim))
+            x0 = (rng.random((n, n_sim)) - 0.5) * 0.01
+            # set velocities to zero
+            x0[3:] = x0[3:] * 0
         else:
             # zero initial condition if input is used
             x0 = np.zeros((n, n_sim))
@@ -184,7 +200,7 @@ class ParameterInput:
         Returns:
         - np.ndarray: Array of system parameters with shape (n_mass, n_sim).
         """
-        if isinstance(config_parameter, int):
+        if isinstance(config_parameter, int) or isinstance(config_parameter, float):
             # (int) use same value for masses
             config_vals = np.ones((n_mass, n_sim)) * config_parameter
         elif isinstance(config_parameter, list):
@@ -275,7 +291,7 @@ class ParameterInput:
                     u_list = []
                     for i in range(len(omega)):
                         u_list.append(
-                            lambda t: np.ones(
+                            lambda t, i=i: np.ones(
                                 n_u,
                             )
                             * standard_u(t, delta[i], omega[i])
@@ -289,7 +305,7 @@ class ParameterInput:
                         u_list = []
                         for i in range(omega.shape[0]):
                             u_list.append(
-                                lambda t: np.ones(
+                                lambda t, i=i: np.ones(
                                     n_u,
                                 )
                                 * standard_u(t, delta[i], omega[i])
@@ -326,7 +342,7 @@ class ParameterInput:
     #     plot_input(u, u_test, config)
 
 
-def plot_input(u, config):
+def plot_input(u, config, num_plot_max: int = 6):
     mpl.rcParams.update(mpl.rcParamsDefault)
     # default debug save location
     work_dir = os.path.dirname(__file__)
@@ -343,13 +359,14 @@ def plot_input(u, config):
     # t_test = np.linspace(0, T_test, time_steps_test)
 
     n_u = u.shape[0]
+    if n_u > num_plot_max:
+        logging.info(f"More than {num_plot_max} inputs. Not plotting all of them.")
+        n_u = num_plot_max
     fig, ax = plt.subplots(n_u)
     for i in range(n_u):
         u_i = u[i]
-        if n_u == 1:
-            ax.plot(t_training, u_i(t_training))
-        else:
-            ax[i].plot(t_training, u_i(t_training))
+        plt.plot(t_training, u_i(t_training))
+
     plt.title("input")
     plt.xlabel("time [s]")
     plt.show(block=False)
