@@ -81,9 +81,9 @@ def main(
         "################################   1. Data ################################"
     )
     # save/load data path
-    # sim_name = db_cfg["sim_name"]
     data_name = db_cfg["data_name"]
     if not ("data_dir" not in db_cfg or db_cfg["data_dir"] is None):
+        # overwrite default data_dir
         data_dir = db_cfg["data_dir"]
     cache_path = os.path.join(data_dir, f"{data_name}")  # path to .npz file
 
