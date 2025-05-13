@@ -36,15 +36,18 @@ FROM tensorflow/tensorflow:2.18.0
 # Define variables
 ENV WORKSPACE_DIR="/home"
 ENV PROJECT_DIR="${WORKSPACE_DIR}/aphin"
-ENV GIT_REPO="https://github.com/Institute-Eng-and-Comp-Mechanics-UStgt/ApHIN.git"
+ENV GITHUB_ORG="Institute-Eng-and-Comp-Mechanics-UStgt"
+ENV GITHUB_REPO="ApHIN"
+ENV GITHUB_BRANCH="main"
 
 # Install dependencies
 RUN apt update && \
     apt install -y git python3-tk dvipng texlive-latex-extra texlive-fonts-recommended cm-super qt6-base-dev libxcb-cursor0
 
 # Clone demonstrator from GitHub and install dependencies
+ADD https://api.github.com/repos/${GITHUB_ORG}/${GITHUB_REPO}/git/refs/heads/main version.json
 RUN cd ${WORKSPACE_DIR} && \
-    git clone ${GIT_REPO} ${PROJECT_DIR} && \
+    git clone -b ${GITHUB_BRANCH} "https://github.com/${GITHUB_ORG}/${GITHUB_REPO}.git" ${PROJECT_DIR} && \
     cd ${PROJECT_DIR} && \
     pip install -e .
 
