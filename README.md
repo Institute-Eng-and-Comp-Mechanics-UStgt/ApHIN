@@ -63,6 +63,38 @@ pip install -e .
 
 > :warning: **Please note that you need pip version 24.0 to install the repository in editable mode. Either upgrade pip to the latest version or install it without the ```-e``` argument**
 
+### Docker
+You can use `docker` and `docker compose` to run the ApHIN package with all dependencies in a containerized environment.
+
+#### Build image:
+```bash
+docker build -t aphin .
+```
+ 
+#### Run container without GUI support:
+```bash
+docker run -it aphin
+```
+
+#### Run container with GUI support (assuming that the host OS is Linux):
+```bash
+xhost +local:root
+docker run -it --env="DISPLAY" --volume="/tmp/.X11-unix:/tmp/.X11-unix:rw" aphin
+xhost -local:root
+```
+
+See <https://wiki.ros.org/docker/Tutorials/GUI> for alternative solutions.
+Similar solutions are available for Windows or macOS as host OS.
+
+#### Alternatively, start the container using docker compose:
+```bash
+xhost +local:root
+docker compose run aphin
+xhost -local:root
+```
+
+Terminate the container with `exit`.
+
 ## References
 
 [1] Johannes Rettberg, Jonas Kneifl, Julius Herb, Patrick Buchfink, Jörg Fehr, and Bernard Haasdonk. Data-driven identification of latent port-Hamiltonian systems. Arxiv, 2024.

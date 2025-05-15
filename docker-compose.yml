@@ -1,0 +1,19 @@
+# The following docker compose configuration is equivalent to running the container via:
+# $ docker run -it --env="DISPLAY" --volume="/tmp/.X11-unix:/tmp/.X11-unix:rw" aphin
+#
+# Start the container using docker compose:
+# $ xhost +local:root
+# $ docker compose run aphin
+# $ xhost -local:root
+services:
+  aphin:
+    build: .
+    image: aphin
+    container_name: aphin
+    stdin_open: true  # docker run -i
+    tty: true  # docker run -t
+    entrypoint: /bin/bash
+    environment:
+        - DISPLAY
+    volumes:
+        - /tmp/.X11-unix:/tmp/.X11-unix:rw
