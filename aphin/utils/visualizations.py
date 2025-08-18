@@ -2656,51 +2656,35 @@ def chessboard_visualisation(
 
     np.linalg.matrix_rank(B_test_[0])
 
-    fig, axs = plt.subplots(12, max(len(test_ids), 2))
+    fig, axs = plt.subplots(max(len(test_ids), 2), 4)
     color_factor = 1
     for i, test_id in enumerate(test_ids):
-        axs[0, i].imshow(
-            J_pred[i], vmin=color_factor * J_min, vmax=color_factor * J_max
+        im0 = axs[i, 0].imshow(
+            A_test_[i], vmin=color_factor * A_min, vmax=color_factor * A_max
         )
-        axs[1, i].imshow(
-            J_test_[i], vmin=color_factor * J_min, vmax=color_factor * J_max
-        )
-        axs[2, i].imshow(e_J[i], vmin=0, vmax=e_J_max)
-        axs[3, i].imshow(
-            R_pred[i], vmin=color_factor * R_min, vmax=color_factor * R_max
-        )
-        axs[4, i].imshow(
-            R_test_[i], vmin=color_factor * R_min, vmax=color_factor * R_max
-        )
-        axs[5, i].imshow(e_R[i], vmin=0, vmax=e_R_max)
-        axs[6, i].imshow(
-            B_pred[i], vmin=color_factor * B_min, vmax=color_factor * B_max
-        )
-        axs[7, i].imshow(
+        im1 = axs[i, 1].imshow(e_A[i], vmin=0, vmax=e_A_max)
+
+        im2 = axs[i, 2].imshow(
             B_test_[i], vmin=color_factor * B_min, vmax=color_factor * B_max
         )
-        axs[8, i].imshow(e_B[i], vmin=0, vmax=e_B_max)
-        axs[9, i].imshow(
-            A_pred[i], vmin=color_factor * A_min, vmax=color_factor * A_max
-        )
-        axs[10, i].imshow(
-            A_pred[i], vmin=color_factor * A_min, vmax=color_factor * A_max
-        )
-        axs[11, i].imshow(e_A[i], vmin=0, vmax=e_A_max)
-        if i == 0:
-            axs[0, i].set_ylabel("J_pred")
-            axs[1, i].set_ylabel("J_test")
-            axs[2, i].set_ylabel("e_J")
-            axs[3, i].set_ylabel("R_pred")
-            axs[4, i].set_ylabel("R_test")
-            axs[5, i].set_ylabel("e_R")
-            axs[6, i].set_ylabel("B_pred")
-            axs[7, i].set_ylabel("B_test")
-            axs[8, i].set_ylabel("e_B")
-            axs[9, i].set_ylabel("A_pred")
-            axs[10, i].set_ylabel("A_test")
-            axs[11, i].set_ylabel("e_A")
+        im3 = axs[i, 3].imshow(e_B[i], vmin=0, vmax=e_B_max)
 
+        # Add colorbars
+        fig.colorbar(im0, ax=axs[i, 0], orientation="vertical", fraction=0.1, pad=0.04)
+        fig.colorbar(im1, ax=axs[i, 1], orientation="vertical", fraction=0.1, pad=0.04)
+        fig.colorbar(im2, ax=axs[i, 2], orientation="vertical", fraction=0.1, pad=0.04)
+        fig.colorbar(im3, ax=axs[i, 3], orientation="vertical", fraction=0.1, pad=0.04)
+
+        # Remove tick labels and ticks
+        for j in range(4):
+            axs[i, j].set_xticks([])
+            axs[i, j].set_yticks([])
+        if i == 0:
+            axs[i, 0].set_title("A")
+            axs[i, 1].set_title("$|A-A_{pred}|$")
+            axs[i, 2].set_title("B")
+            axs[i, 3].set_title("$|B-B_{pred}|$")
+    plt.tight_layout()
     plt.savefig(
         os.path.join(result_dir, f"compare_matrices.png"),
         bbox_inches="tight",
