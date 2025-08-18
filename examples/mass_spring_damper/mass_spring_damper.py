@@ -300,7 +300,7 @@ def main(config_path_to_file=None, only_phin: bool = False):
     eig_vals_phin = msd_data_id_phin.TEST.calculate_eigenvalues(
         result_dir=result_dir_phin,
         save_to_csv=True,
-        save_name="eigenvalues_phin",
+        save_name="eigenvalues",
     )
     # permute matrices to fit the publication
     perm = [0, 3, 1, 4, 2, 5]
@@ -350,6 +350,20 @@ def main(config_path_to_file=None, only_phin: bool = False):
     if only_phin:
         return
 
+    ref_dir = os.path.join(result_dir, "reference")
+    os.mkdir(ref_dir) if not os.path.isdir(ref_dir) else None
+    for dof in range(3):
+        # save reference data
+        msd_data.TEST.save_state_traj_as_csv(
+            ref_dir,
+            second_oder=True,
+            dof=dof,
+            filename=f"state_{dof}_trajectories",
+        )
+    eig_vals_ref = msd_data.TEST.calculate_eigenvalues(
+        result_dir=ref_dir, save_to_csv=True, save_name="eigenvalues"
+    )
+
     # %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     # %%%%%%                        LTI                                             %%%%%%%
     # %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -397,7 +411,7 @@ def main(config_path_to_file=None, only_phin: bool = False):
     eig_vals_lti = msd_data_id_lti.TEST.calculate_eigenvalues(
         result_dir=result_dir_lti,
         save_to_csv=True,
-        save_name="eigenvalues_lti",
+        save_name="eigenvalues",
     )
 
     aphin_vis.chessboard_visualisation(
@@ -609,7 +623,7 @@ def main(config_path_to_file=None, only_phin: bool = False):
         eig_vals_mi = getattr(msd_data_id_mi, TEST_or_TRAIN).calculate_eigenvalues(
             result_dir=result_dir_mi,
             save_to_csv=True,
-            save_name="eigenvalues_pred_mi",
+            save_name="eigenvalues_pred",
         )
         eig_vals_ref = getattr(msd_data_orig, TEST_or_TRAIN).calculate_eigenvalues(
             result_dir=result_dir, save_to_csv=True, save_name="eigenvalues_ref"
@@ -640,12 +654,19 @@ def main(config_path_to_file=None, only_phin: bool = False):
         # state data
         # reference data
         for dof in range(3):
-            # identified data
-            getattr(msd_data_id_mi, TEST_or_TRAIN).save_state_traj_as_csv(
-                result_dir_mi,
+            for data_, dir_ in zip([msd_data_id_lti, msd_data_id_mi, msd_data_id_phin], [result_dir_lti, result_dir_mi, result_dir_phin]):
+                getattr(data_, TEST_or_TRAIN).save_state_traj_as_csv(
+                    dir_,
+                    second_oder=True,
+                    dof=dof,
+                    filename=f"state_{dof}_trajectories",
+                )
+            # save reference data
+            getattr(data_, TEST_or_TRAIN).save_state_traj_as_csv(
+                msd_data,
                 second_oder=True,
                 dof=dof,
-                filename=f"state_{dof}_trajectories_mi",
+                filename=f"state_{dof}_trajectories",
             )
 
         if TEST_or_TRAIN == "TEST":
@@ -671,7 +692,7 @@ def create_variation_of_parameters():
 
 if __name__ == "__main__":
     working_dir = os.path.dirname(__file__)
-    calc_various_experiments = True
+    calc_various_experiments = False
     only_phin = False
     if calc_various_experiments:
         logging.info(f"Multiple simulation runs...")
