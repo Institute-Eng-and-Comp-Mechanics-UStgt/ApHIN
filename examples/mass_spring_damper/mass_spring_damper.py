@@ -671,7 +671,7 @@ def create_variation_of_parameters():
 
 if __name__ == "__main__":
     working_dir = os.path.dirname(__file__)
-    calc_various_experiments = False
+    calc_various_experiments = True
     only_phin = False
     if calc_various_experiments:
         logging.info(f"Multiple simulation runs...")
@@ -685,7 +685,6 @@ if __name__ == "__main__":
             basis_config_yml_path=os.path.join(os.path.dirname(__file__), "config.yml"),
             result_dir=result_dir,
             log_dir=log_dir,
-            force_calculation=False,
             only_phin=only_phin,
         )
     else:
