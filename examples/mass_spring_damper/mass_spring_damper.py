@@ -269,6 +269,7 @@ def main(config_path_to_file=None, only_phin: bool = False):
     if not os.path.isdir(result_dir_phin):
         os.mkdir(result_dir_phin)
     use_train_data = False
+    TEST_or_TRAIN = "TEST" if use_train_data is False else "TRAIN"
     idx_gen = "rand"
     msd_data.calculate_errors(
         msd_data_id_phin,
@@ -297,26 +298,12 @@ def main(config_path_to_file=None, only_phin: bool = False):
         system_layer=system_layer_phin
     )
 
-    eig_vals_phin = msd_data_id_phin.TEST.calculate_eigenvalues(
-        result_dir=result_dir_phin,
-        save_to_csv=True,
-        save_name="eigenvalues",
-    )
     # permute matrices to fit the publication
     perm = [0, 3, 1, 4, 2, 5]
     msd_data.permute_matrices(permutation_idx=perm)
     # test_ids = [0, 1, 3, 6, 7]  # test_ids = range(10) # range(6) test_ids = [0]
     rng = np.random.default_rng(seed=msd_cfg["seed"])
     test_ids = rng.integers(0, msd_data.TEST.n_sim, size=(5,))
-    # phin
-    aphin_vis.chessboard_visualisation(
-        test_ids,
-        msd_data,
-        system_layer=system_layer_phin,
-        result_dir=result_dir_phin,
-        limits=msd_cfg["matrix_color_limits"],
-        error_limits=msd_cfg["matrix_error_limits"],
-    )
 
     create_costum_plot = True
     if create_costum_plot:
@@ -343,26 +330,12 @@ def main(config_path_to_file=None, only_phin: bool = False):
             result_dir=result_dir_phin,
             subplot_idx=subplot_idx,
             subplot_title=subplot_title,
-            save_to_csv=True,
+            save_to_csv=False,
             save_name="msd_custom_nodes_phin",
         )
 
     if only_phin:
         return
-
-    ref_dir = os.path.join(result_dir, "reference")
-    os.mkdir(ref_dir) if not os.path.isdir(ref_dir) else None
-    for dof in range(3):
-        # save reference data
-        msd_data.TEST.save_state_traj_as_csv(
-            ref_dir,
-            second_oder=True,
-            dof=dof,
-            filename=f"state_{dof}_trajectories",
-        )
-    eig_vals_ref = msd_data.TEST.calculate_eigenvalues(
-        result_dir=ref_dir, save_to_csv=True, save_name="eigenvalues"
-    )
 
     # %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     # %%%%%%                        LTI                                             %%%%%%%
@@ -406,21 +379,6 @@ def main(config_path_to_file=None, only_phin: bool = False):
 
     msd_data_id_lti.TEST.add_system_matrices_from_system_layer(
         system_layer=system_layer_lti
-    )
-
-    eig_vals_lti = msd_data_id_lti.TEST.calculate_eigenvalues(
-        result_dir=result_dir_lti,
-        save_to_csv=True,
-        save_name="eigenvalues",
-    )
-
-    aphin_vis.chessboard_visualisation(
-        test_ids,
-        msd_data,
-        system_layer=system_layer_lti,
-        result_dir=result_dir_lti,
-        limits=msd_cfg["matrix_color_limits"],
-        error_limits=msd_cfg["matrix_error_limits"],
     )
 
     # %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -572,114 +530,84 @@ def main(config_path_to_file=None, only_phin: bool = False):
         data=msd_data_orig,
     )
 
-    for TEST_or_TRAIN in ["TRAIN", "TEST"]:  # ["TEST", "TRAIN"]
-        idx_gen = "rand"
 
-        # %% get results
-        if TEST_or_TRAIN == "TEST":
-            result_dir_mi = os.path.join(result_dir, "mi", "test")
-            use_train_data = False
-        else:
-            result_dir_mi = os.path.join(result_dir, "mi", "train")
-            use_train_data = True
+    result_dir_mi = os.path.join(result_dir, "mi", "test")
+    use_train_data = False
 
-        if not os.path.isdir(result_dir_mi):
-            os.makedirs(result_dir_mi)
+    os.makedirs(result_dir_mi, exist_ok=True)
 
-        msd_data_orig.calculate_errors(
-            msd_data_id_mi,
-            domain_split_vals=[1, 1],
-            save_to_txt=True,
-            result_dir=result_dir_mi,
-        )
+    msd_data_orig.calculate_errors(
+        msd_data_id_mi,
+        domain_split_vals=[1, 1],
+        save_to_txt=True,
+        result_dir=result_dir_mi,
+    )
 
-        aphin_vis.plot_time_trajectories_all(
-            msd_data_orig,
-            msd_data_id_mi,
-            use_train_data,
-            idx_gen,
-            result_dir_mi,
-        )
-        aphin_vis.plot_errors(
-            msd_data_orig,
-            use_train_data,
-            save_name=os.path.join(result_dir_mi, "rms_error"),
+    aphin_vis.plot_time_trajectories_all(
+        msd_data_orig,
+        msd_data_id_mi,
+        use_train_data,
+        idx_gen,
+        result_dir_mi,
+    )
+    aphin_vis.plot_errors(
+        msd_data_orig,
+        use_train_data,
+        save_name=os.path.join(result_dir_mi, "rms_error"),
+        save_to_csv=True,
+    )
+
+    aphin_vis.custom_state_plot(
+        data=msd_data_orig,
+        data_id=msd_data_id_mi,
+        attributes=["X", "X"],
+        index_list=index_list_disps,
+        use_train_data=use_train_data,
+        result_dir=result_dir_mi,
+        subplot_idx=subplot_idx,
+        subplot_title=subplot_title,
+        save_to_csv=True,
+        save_name="msd_custom_nodes_mi",
+    )
+
+
+
+    # %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    # %%%%%%                        Save data for paper figures                     %%%%%%%
+    # %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+    ref_dir = os.path.join(result_dir, "reference")
+    os.makedirs(ref_dir, exist_ok=True)
+
+    # state data
+    for data_, dir_ in zip([msd_data, msd_data_id_lti, msd_data_id_mi, msd_data_id_phin],
+                           [ref_dir, result_dir_lti, result_dir_mi, result_dir_phin]):
+
+        getattr(data_, TEST_or_TRAIN).calculate_eigenvalues(
+            result_dir=dir_,
             save_to_csv=True,
+            save_name="eigenvalues",
         )
 
-        aphin_vis.custom_state_plot(
-            data=msd_data_orig,
-            data_id=msd_data_id_mi,
-            attributes=["X", "X"],
-            index_list=index_list_disps,
-            use_train_data=use_train_data,
-            result_dir=result_dir_mi,
-            subplot_idx=subplot_idx,
-            subplot_title=subplot_title,
-            save_to_csv=True,
-            save_name="msd_custom_nodes_mi",
-        )
-
-        eig_vals_mi = getattr(msd_data_id_mi, TEST_or_TRAIN).calculate_eigenvalues(
-            result_dir=result_dir_mi,
-            save_to_csv=True,
-            save_name="eigenvalues_pred",
-        )
-        eig_vals_ref = getattr(msd_data_orig, TEST_or_TRAIN).calculate_eigenvalues(
-            result_dir=result_dir, save_to_csv=True, save_name="eigenvalues_ref"
-        )
-
-        for i in test_ids:
-            plt.figure()
-            plt.plot(eig_vals_mi[i].real, eig_vals_mi[i].imag, "x", label="mi")
-            plt.plot(eig_vals_ref[i].real, eig_vals_ref[i].imag, "o", label="ref")
-            plt.plot(
-                eig_vals_phin[i].real,
-                eig_vals_phin[i].imag,
-                "*",
-                label="phin",
-            )
-            plt.plot(
-                eig_vals_lti[i].real,
-                eig_vals_lti[i].imag,
-                "^",
-                label="lti",
-            )
-            plt.xlabel("real")
-            plt.ylabel("imag")
-            plt.legend()
-            plt.show(block=False)
-            aphin_vis.save_as_png(os.path.join(result_dir, f"eigenvalues_{i}"))
-
-        # state data
-        # reference data
         for dof in range(3):
-            for data_, dir_ in zip([msd_data_id_lti, msd_data_id_mi, msd_data_id_phin], [result_dir_lti, result_dir_mi, result_dir_phin]):
-                getattr(data_, TEST_or_TRAIN).save_state_traj_as_csv(
-                    dir_,
-                    second_oder=True,
-                    dof=dof,
-                    filename=f"state_{dof}_trajectories",
-                )
-            # save reference data
             getattr(data_, TEST_or_TRAIN).save_state_traj_as_csv(
-                msd_data,
+                dir_,
                 second_oder=True,
                 dof=dof,
                 filename=f"state_{dof}_trajectories",
             )
 
-        if TEST_or_TRAIN == "TEST":
-            J_pred, R_pred, Q_pred, B_pred = msd_data_id_mi.TEST.ph_matrices
-            # only implemented for test case
-            aphin_vis.chessboard_visualisation(
-                test_ids,
-                msd_data_orig,
-                matrices_pred=(J_pred, R_pred, B_pred, Q_pred),
-                result_dir=result_dir_mi,
-                limits=msd_cfg["matrix_color_limits"],
-                error_limits=msd_cfg["matrix_error_limits"],
-            )
+        # chessboard visualisation
+        J_pred, R_pred, Q_pred, B_pred = getattr(data_, TEST_or_TRAIN).ph_matrices
+        # only implemented for test case
+        aphin_vis.chessboard_visualisation(
+            test_ids,
+            msd_data_orig,
+            matrices_pred=(J_pred, R_pred, B_pred, Q_pred) if Q_pred else (J_pred, R_pred, B_pred),
+            result_dir=dir_,
+            limits=msd_cfg["matrix_color_limits"],
+            error_limits=msd_cfg["matrix_error_limits"],
+        )
 
     # avoid that the script stops and keep the plots open
     plt.show()
