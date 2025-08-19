@@ -5,6 +5,8 @@ from collections import namedtuple
 from aphin.utils.configuration import Configuration
 import aphin.utils.visualizations as aphin_vis
 from matplotlib.lines import Line2D
+import matplotlib as mpl
+from matplotlib.colors import to_rgba
 
 # Constants
 N_STATES = 5
@@ -48,15 +50,16 @@ def load_experiment_results(result_dir, experiments):
                            temp=temp, disp=displacement, vel=velocity)
     return results
 
-def plot_trajectories(results, experiments):
+def plot_trajectories(results):
     """Plot state, velocity, and acceleration trajectories."""
-    # %% state trajectory plot
+    colors = ["magenta", "cyan", "purple"]
+    # state trajectory plot
     data = results["r12"]
     fig, axs = plt.subplots(3, 2, figsize=(6, 7), sharex=True)
-    for i, (quantity, c) in enumerate(zip(["vel", "disp", "temp"], ["purple", "cyan", "magenta"])):
+    for i, (quantity, c) in enumerate(zip(["temp", "disp", "vel"], colors)):
         for j in range(N_STATES):
-            axs[i,0].plot(data["t"], data[f"ref_{quantity}"][:,j], linestyle="solid", color="black", label="Reference")
-            axs[i,0].plot(data["t"], data[f"{quantity}"][:,j], linestyle="dashed", color=c, label="Experiment r12")
+            axs[i,0].plot(data["t"], data[f"ref_{quantity}"][:,j], linestyle="dashed", color="black", label="Reference", zorder=5)
+            axs[i,0].plot(data["t"], data[f"{quantity}"][:,j], linestyle="solid", color=c, label="Experiment r12")
         # for j in range(N_TRAJECTORIES):
         axs[i,1].semilogy(data["t"], data[f"rms_{quantity}"].mean(axis=0),
                     color=c, zorder=10)
@@ -64,54 +67,79 @@ def plot_trajectories(results, experiments):
                     color="gray")
         axs[i, 1].set_ylabel(rf"rel RMS error")
 
-    axs[0,0].set_title(r"$\dot{\bm{q}}_z$")
-    axs[0,0].set_ylabel(r"vel in m/s")
+    axs[0,0].set_title(r"$\bm{\vartheta}$")
+    axs[0,0].set_ylabel(r"temp. in °C")
     axs[1,0].set_title(r"$\bm{q}_z$")
     axs[1,0].set_ylabel(r"disp. in m")
-    axs[2,0].set_title(r"$\bm{\theta}$")
+    axs[2,0].set_title(r"$\dot{\bm{q}}_z$")
+    axs[2,0].set_ylabel(r"vel in m/s")
     axs[2,0].set_xlabel("time in s")
-    axs[2,0].set_ylabel(r"temp. in °C")
-    axs[0,1].set_title(r"$\bm{q}$")
+    axs[0,1].set_title(r"$\bm{\vartheta}$")
+    axs[1,1].set_title(r"$\bm{q}$")
+    axs[2,1].set_title(r"$\dot{\bm{q}}$")
 
     plt.tight_layout()
     plt.subplots_adjust(bottom=0.15)
     axs[2,0].legend(["reference", "identified"], loc='lower center', bbox_to_anchor=(0.5, -0.65), ncol=1)
-    axs[2,1].legend(["all test scenarios", "mean"], loc='lower center', bbox_to_anchor=(0.5, -0.65), ncol=1)
+    axs[2,1].legend(["mean", "all test scenarios"], loc='lower center', bbox_to_anchor=(0.5, -0.65), ncol=1)
+
+
+    # boxplot
+    error_vel = [r["rms_vel"].mean(axis=1) for r in results.values()]
+    error_disp = [r["rms_disp"].mean(axis=1) for r in results.values()]
+    error_temp = [r["rms_temp"].mean(axis=1) for r in results.values()]
+    r_levels = np.array([2, 4, 8, 12, 16, 24])
+
+    fig = plt.figure(figsize=(2.5, 6.5), dpi=200)  # tall & narrow like the sample
+    ax = fig.add_subplot(111)
+
+    series_names = [r"$\vartheta$", "q",  r"$\dot{q}$"]
+    series_data = [error_temp, error_disp, error_vel]
+
+    # group/box positions
+    x_centers = np.arange(1, len(r_levels) + 1)  # 1..6
+    group_width = 0.9
+    box_w = group_width / 3.5
+    offsets = np.array([-box_w * 1.1, 0.0, box_w * 1.1])
+
+    # Draw subtle vertical guides per group (like your plot)
+    for xc in x_centers:
+        ax.axvline(xc+0.5, color="#dddddd", lw=0.6, zorder=0)
+
+    # Plot each series
+    for k, (name, data) in enumerate(zip(series_names, series_data)):
+        xs = x_centers + offsets[k]
+
+        ax.boxplot(
+            data,
+            positions=xs,
+            widths=box_w,
+            patch_artist=True,
+            showfliers=True,  # keep small outliers
+            boxprops=dict(linewidth=0.8, facecolor=to_rgba(colors[k], alpha=0.15), edgecolor=colors[k]),
+            medianprops=dict(color=colors[k], linewidth=1.0),
+            whiskerprops=dict(color=colors[k], linewidth=0.8),
+            capprops=dict(color=colors[k], linewidth=0.8),
+            flierprops=dict(marker="o", markersize=2.5, markerfacecolor=colors[k],
+                            markeredgecolor="none", alpha=0.8),
+            label= name
+        )
+
+
+    # Axes labels/ticks to match style
+    ax.set_xticks(x_centers)
+    ax.set_xticklabels([str(r) for r in r_levels])
+    ax.set_xlabel(r"reduced order $r$", fontsize=12)
+    ax.set_ylabel("error", fontsize=12)
+
+    # Legend
+    ax.legend(loc="upper center", bbox_to_anchor=(0.52, 0.93),
+              frameon=True, framealpha=0.95, edgecolor="#aaaaaa")
+
+    fig.tight_layout()
     plt.show()
 
-        # ax[0].plot(results["reference"]["t"], results["reference"][f"rms_{quantity}"].mean(axis=0), linestyle="solid", color="black", label="Reference")
-        # experiment = experiments[key]
-        # # Eigenvalue plot
-        # eigenvalues = result["eigenvalues"]
-        # axs[0].scatter(eigenvalues[TRAJECTORY_INDEX, :, 0], eigenvalues[TRAJECTORY_INDEX, :, 1], color=experiment.color, marker=experiment.marker, label=key)
-        # # state trajectory plot
-        # axs[1].plot(result["t"], result["x"][TRAJECTORY_INDEX, :, :], linestyle=experiment.linestyle, color=experiment.color, label=key)
-        # # error plot
-        # if result["t_error"] is not None:
-        #     for i in range(N_TRAJECTORIES):
-        #         axs[2].plot(result["t_error"], result["state_error"][i, :], linestyle=experiment.linestyle,  alpha=0.03, color=experiment.color, label='_nolegend_')
-        #     axs[2].plot(result["t_error"], result["state_error"].mean(axis=0), linestyle=experiment.linestyle, color=experiment.color, label='_nolegend_', zorder=10)
 
-    axs[0].set_xlabel("$Re(\lambda)$")
-    axs[0].set_ylabel("$Im(\lambda)$")
-    axs[1].set_xlabel("time in s")
-    axs[1].set_ylabel(r"$\bm{q}$")
-    axs[2].set_xlabel("time in s")
-    axs[2].set_ylabel("rel RMS error")
-
-    # Create custom legend
-    custom_lines = [
-        Line2D([0], [0], color=experiments["reference"].color, linestyle=experiments["reference"].linestyle, label="Reference"),
-        Line2D([0], [0], color=experiments["lti"].color, linestyle=experiments["lti"].linestyle, label="LTI"),
-        Line2D([0], [0], color=experiments["phin"].color, linestyle=experiments["phin"].linestyle, label="PHIN"),
-        Line2D([0], [0], color=experiments["mi"].color, linestyle=experiments["mi"].linestyle, label="MI"),
-    ]
-    fig.legend(handles=custom_lines, loc='upper center', bbox_to_anchor=(0.5, 1), ncol=4)
-
-    plt.show()
-    plt.tight_layout()
-    plt.subplots_adjust(top=0.85)
-    plt.show()
 
 def main():
     aphin_vis.setup_matplotlib(save_plots=False)
@@ -125,7 +153,7 @@ def main():
     }
 
     results = load_experiment_results(result_dir, experiments)
-    plot_trajectories(results, experiments)
+    plot_trajectories(results)
 
 if __name__ == "__main__":
     main()
