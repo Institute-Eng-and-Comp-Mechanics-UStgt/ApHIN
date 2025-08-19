@@ -2,9 +2,14 @@
 import numpy as np
 import logging
 import os
+import sys
 import yaml
-
 import matplotlib.pyplot as plt
+
+# Add the current script's directory to sys.path
+current_dir = os.path.dirname(os.path.abspath(__file__))
+if current_dir not in sys.path:
+    sys.path.append(current_dir)
 
 # own packages
 import aphin.utils.visualizations as phdl_vis
@@ -19,7 +24,10 @@ logging.getLogger().setLevel(logging.INFO)
 phdl_vis.setup_matplotlib(False)
 
 # %% enter configuration here:
-with open(os.path.join(os.path.dirname(__file__), "config_data_gen.yml"), "r") as file:
+with open(
+    os.path.join(os.path.dirname(__file__), "config_data_gen.yml"),
+    "r",
+) as file:
     msd_config = yaml.safe_load(file)
 
 system_types = ["ph", "ss"]

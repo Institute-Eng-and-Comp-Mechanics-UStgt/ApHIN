@@ -67,7 +67,7 @@ l_dz: 1 #  loss weight for the dz
 l_dx: 0.1 #  loss weight for the dx
 l1: 0.0000000001  # L1 regularization
 l2: 0  # L2 regularization
-n_epochs: 6 
+n_epochs: 6000
 #   number of epochs
 batch_size: 128  # batch size
 layer_sizes_ph: # layer sizes

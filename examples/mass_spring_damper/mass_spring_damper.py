@@ -3,14 +3,10 @@ import logging
 import os
 import numpy as np
 import copy
-from scipy.spatial import ConvexHull
-
+import sys
 
 # third party packages
 import tensorflow as tf
-
-# import matplotlib
-# matplotlib.use("TkAgg")  # Force interactive backend
 import matplotlib.pyplot as plt
 
 # own packages
@@ -27,7 +23,10 @@ from aphin.utils.save_results import (
     save_training_times,
 )
 
-from aphin.utils.print_matrices import print_matrices
+# Add the system directory to sys.path
+system_dir = os.path.dirname(os.path.abspath(__file__))
+if system_dir not in sys.path:
+    sys.path.append(system_dir)
 from data_generation.matrix_interpolation import (
     get_weighting_function_values,
     evaluate_matrices,
@@ -530,7 +529,6 @@ def main(config_path_to_file=None, only_phin: bool = False):
         data=msd_data_orig,
     )
 
-
     result_dir_mi = os.path.join(result_dir, "mi", "test")
     use_train_data = False
 
@@ -570,8 +568,6 @@ def main(config_path_to_file=None, only_phin: bool = False):
         save_name="msd_custom_nodes_mi",
     )
 
-
-
     # %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     # %%%%%%                        Save data for paper figures                     %%%%%%%
     # %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -580,8 +576,10 @@ def main(config_path_to_file=None, only_phin: bool = False):
     os.makedirs(ref_dir, exist_ok=True)
 
     # state data
-    for data_, dir_ in zip([msd_data, msd_data_id_lti, msd_data_id_mi, msd_data_id_phin],
-                           [ref_dir, result_dir_lti, result_dir_mi, result_dir_phin]):
+    for data_, dir_ in zip(
+        [msd_data, msd_data_id_lti, msd_data_id_mi, msd_data_id_phin],
+        [ref_dir, result_dir_lti, result_dir_mi, result_dir_phin],
+    ):
 
         getattr(data_, TEST_or_TRAIN).calculate_eigenvalues(
             result_dir=dir_,
@@ -603,7 +601,9 @@ def main(config_path_to_file=None, only_phin: bool = False):
         aphin_vis.chessboard_visualisation(
             test_ids,
             msd_data_orig,
-            matrices_pred=(J_pred, R_pred, B_pred, Q_pred) if Q_pred else (J_pred, R_pred, B_pred),
+            matrices_pred=(
+                (J_pred, R_pred, B_pred, Q_pred) if Q_pred else (J_pred, R_pred, B_pred)
+            ),
             result_dir=dir_,
             limits=msd_cfg["matrix_color_limits"],
             error_limits=msd_cfg["matrix_error_limits"],

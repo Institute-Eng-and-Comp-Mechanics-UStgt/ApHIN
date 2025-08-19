@@ -30,7 +30,7 @@ domain_split_vals: [1,1]
 # %% identification settings
 l1: 0.0000000001  # L1 regularizationl2: 0  # L2 regularization
 l2: 0
-n_epochs: 1 #2500 # number of epochs
+n_epochs: 2000 #2500 # number of epochs
 batch_size: 64  # batch size
 layer_sizes_ph: # layer sizes
   - 16  # first layer
