@@ -44,26 +44,39 @@ def load_experiment_results(result_dir, experiments):
             temp, displacement, velocity = None, None, None
 
         results[key] = dict(t=t, rms_disp=rms_disp, rms_temp=rms_temp, rms_vel=rms_vel,
-                            ref_temp=ref_temp, ref_displacement=ref_displacement, ref_velocity=ref_vel,
-                           temp=temp, displacement=displacement, velocity=velocity)
+                            ref_temp=ref_temp, ref_disp=ref_displacement, ref_vel=ref_vel,
+                           temp=temp, disp=displacement, vel=velocity)
     return results
 
 def plot_trajectories(results, experiments):
     """Plot state, velocity, and acceleration trajectories."""
     # %% state trajectory plot
     data = results["r12"]
-    fig, axs = plt.subplots(3, 1, figsize=(3, 8), sharex=True)
-    for i, quantity in enumerate(["velocity", "displacement", "temp"]):
+    fig, axs = plt.subplots(3, 2, figsize=(6, 7), sharex=True)
+    for i, (quantity, c) in enumerate(zip(["vel", "disp", "temp"], ["purple", "cyan", "magenta"])):
         for j in range(N_STATES):
-            axs[i].plot(data["t"], data[f"ref_{quantity}"][:,j], linestyle="solid", color="black", label="Reference")
-            axs[i].plot(data["t"], data[f"{quantity}"][:,j], linestyle="dashed", color="cyan", label="Experiment r12")
-    axs[0].set_title(r"$\dot{\bm{q}}$")
-    axs[1].set_title(r"$\bm{q}$")
-    axs[2].set_title(r"$\bm{\theta}$")
-    axs[2].set_xlabel("time in s")
+            axs[i,0].plot(data["t"], data[f"ref_{quantity}"][:,j], linestyle="solid", color="black", label="Reference")
+            axs[i,0].plot(data["t"], data[f"{quantity}"][:,j], linestyle="dashed", color=c, label="Experiment r12")
+        # for j in range(N_TRAJECTORIES):
+        axs[i,1].semilogy(data["t"], data[f"rms_{quantity}"].mean(axis=0),
+                    color=c, zorder=10)
+        axs[i,1].semilogy(data["t"], data[f"rms_{quantity}"].transpose(),
+                    color="gray")
+        axs[i, 1].set_ylabel(rf"rel RMS error")
+
+    axs[0,0].set_title(r"$\dot{\bm{q}}_z$")
+    axs[0,0].set_ylabel(r"vel in m/s")
+    axs[1,0].set_title(r"$\bm{q}_z$")
+    axs[1,0].set_ylabel(r"disp. in m")
+    axs[2,0].set_title(r"$\bm{\theta}$")
+    axs[2,0].set_xlabel("time in s")
+    axs[2,0].set_ylabel(r"temp. in °C")
+    axs[0,1].set_title(r"$\bm{q}$")
+
     plt.tight_layout()
-    plt.subplots_adjust(top=0.9)
-    fig.legend(["ref", "r12"], loc='upper center', bbox_to_anchor=(0.5, 1), ncol=4)
+    plt.subplots_adjust(bottom=0.15)
+    axs[2,0].legend(["reference", "identified"], loc='lower center', bbox_to_anchor=(0.5, -0.65), ncol=1)
+    axs[2,1].legend(["all test scenarios", "mean"], loc='lower center', bbox_to_anchor=(0.5, -0.65), ncol=1)
     plt.show()
 
         # ax[0].plot(results["reference"]["t"], results["reference"][f"rms_{quantity}"].mean(axis=0), linestyle="solid", color="black", label="Reference")
