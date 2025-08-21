@@ -1,6 +1,7 @@
 import os
 import importlib.util
 
+
 def create_paper_figures(base_dir):
     for root, _, files in os.walk(base_dir):
         for file in files:
@@ -18,6 +19,7 @@ def create_paper_figures(base_dir):
                     print(f"Calling main() in {script_path}")
                     module.main()
 
+
 if __name__ == "__main__":
-    base_directory = os.path.dirname(__file__)  # Adjust as needed
+    base_directory = os.path.dirname(__file__)
     create_paper_figures(base_directory)

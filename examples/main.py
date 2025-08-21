@@ -2,7 +2,7 @@ import os
 import importlib.util
 
 
-def run_script(script_path, function_name="main"):
+def run_script(script_path, function_name="main", arguments=None):
     """Dynamically load and execute a function from a script."""
     if os.path.exists(script_path):
         module_name = os.path.splitext(os.path.basename(script_path))[0]
@@ -11,7 +11,11 @@ def run_script(script_path, function_name="main"):
         spec.loader.exec_module(module)
         if hasattr(module, function_name):
             print(f"Executing {function_name}() in {script_path}")
-            getattr(module, function_name)()
+            (
+                getattr(module, function_name)(arguments)
+                if arguments
+                else getattr(module, function_name)()
+            )
         else:
             print(f"No {function_name}() function found in {script_path}")
     else:
@@ -43,8 +47,12 @@ def main():
         run_script(example_main_path)
 
     # Run paper_figures.py
-    paper_figures_path = os.path.join(base_dir, "examples", "paper_figures.py")
-    run_script(paper_figures_path, function_name="create_paper_figures")
+    paper_figures_path = os.path.join(base_dir, "paper_figures.py")
+    run_script(
+        paper_figures_path,
+        function_name="create_paper_figures",
+        arguments=base_dir,
+    )
 
 
 if __name__ == "__main__":
