@@ -22,28 +22,29 @@ def main():
     base_dir = os.path.dirname(__file__)
 
     # Define paths for each script
-    examples = dict(
-        mass_spring_damper=dict(
-            data_gen="data_generation/mass_spring_damper_data_generation.py",
-            main="mass_spring_damper.py",
-        ),
-        pendulum=dict(data_gen="pendulum_data_generation.py", main="pendulum.py"),
-        disc_brake_with_hole=dict(data_gen="-", main="disc_brake_with_hole.py"),
-    )
+    # examples = dict(
+    #     # mass_spring_damper=dict(
+    #     #     data_gen="data_generation/mass_spring_damper_data_generation.py",
+    #     #     main="mass_spring_damper.py",
+    #     # ),
+    #     # pendulum=dict(data_gen="pendulum_data_generation.py", main="pendulum.py"),
+    #     # disc_brake_with_hole=dict(data_gen="-", main="disc_brake_with_hole.py"),
+    # )
 
-    for example, files in examples.items():
-        example_dir = os.path.join(base_dir, example)
+    # for example, files in examples.items():
+    #     example_dir = os.path.join(base_dir, example)
 
-        # Run data_generation.py if it exists
-        data_gen_path = os.path.join(example_dir, files["data_gen"])
-        run_script(data_gen_path)
+    #     # Run data_generation.py if it exists
+    #     data_gen_path = os.path.join(example_dir, files["data_gen"])
+    #     run_script(data_gen_path)
 
-        # Run the main file of the example
-        example_main_path = os.path.join(example_dir, files["main"])
-        run_script(example_main_path)
+    #     # Run the main file of the example
+    #     example_main_path = os.path.join(example_dir, files["main"])
+    #     run_script(example_main_path)
 
     # Run paper_figures.py
-    paper_figures_path = os.path.join(base_dir, "examples", "paper_figures.py")
+    paper_figures_path = os.path.join(base_dir, "paper_figures.py")
+    # run_script(paper_figures_path, function_name="main")
     run_script(paper_figures_path, function_name="create_paper_figures")
 
 

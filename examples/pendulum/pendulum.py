@@ -220,7 +220,7 @@ def main(config_path_to_file=None):
         pendulum_data_id.TEST.save_latent_traj_as_csv(result_dir)
 
     # avoid that the script stops and keep the plots open
-    plt.show()
+    # plt.show()
 
 
 def create_variation_of_parameters():
@@ -229,6 +229,7 @@ def create_variation_of_parameters():
     """
     parameter_variation_dict = {"model": ["phin", "aphin_linear", "aphin_nonlinear"]}
     return parameter_variation_dict
+
 
 if __name__ == "__main__":
     working_dir = os.path.dirname(__file__)

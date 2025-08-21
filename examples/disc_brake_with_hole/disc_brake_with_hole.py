@@ -51,7 +51,7 @@ def main(
     #                         -result_folder_name     searches for a subfolder with result_folder_name under working dir that
     #                                                 includes a config.yml and .weights.h5
     #                                                 -> config for loading results
-    manual_results_folder = None  # {None} if no results shall be loaded, else create str with folder name or path to results folder
+    manual_results_folder = "db_with_hole_rsweep_testrun"  # {None} if no results shall be loaded, else create str with folder name or path to results folder
 
     # write to config_info
     if config_path_to_file is not None:
@@ -88,14 +88,14 @@ def main(
     cache_path = os.path.join(data_dir, f"{data_name}")  # path to .npz file
 
     # check if data already exists on local machine
-    # if not os.path.isfile(cache_path):
-    #     # download file if it is missing
-    #     file_url = db_cfg["file_url"]
-    #     logging.info(f"download data from {file_url} and save it to {cache_path}.")
-    #     urllib.request.urlretrieve(
-    #         file_url,
-    #         cache_path,
-    #     )
+    if not os.path.isfile(cache_path):
+        # download file if it is missing
+        file_url = db_cfg["file_url"]
+        logging.info(f"download data from {file_url} and save it to {cache_path}.")
+        urllib.request.urlretrieve(
+            file_url,
+            cache_path,
+        )
 
     # reduced size
     r = db_cfg["r"]
@@ -143,10 +143,10 @@ def main(
         scaling_values=db_cfg["scaling_values"],
         domain_split_vals=db_cfg["domain_split_vals"],
     )
-    if not db_cfg["sim_name"] == "test_data":
-        disc_brake_data.scale_Mu(
-            mu_train_bounds=None, desired_bounds=db_cfg["desired_bounds"]
-        )
+
+    disc_brake_data.scale_Mu(
+        mu_train_bounds=None, desired_bounds=db_cfg["desired_bounds"]
+    )
 
     disc_brake_data.scale_U_domain_wise()
 
