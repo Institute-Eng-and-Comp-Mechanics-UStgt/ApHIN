@@ -8,7 +8,7 @@ seed: 1  # For reproducibility
 
 save_plots: True
 
-ph_layer: "phq_layer" # ph_layer | phq_layer | lti_layer
+ph_layer: "ph_layer" # ph_layer | phq_layer | lti_layer
 
 # train-test split
 # test_size: 0.25
