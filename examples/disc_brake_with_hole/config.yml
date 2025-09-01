@@ -3,7 +3,7 @@ save_plots: False  # Show plots and visualization
 
 
 # %% General identification framework settings
-experiment: db_with_hole_rsweep_testrun 
+experiment: db_large_heat_larger_data_epoch6000_rsweep_multExp 
 #     name of the experiment
 load_network: False  # train the network or load the last pre-trained one
 file_url: https://darus.uni-stuttgart.de/api/access/datafile/:persistentId?persistentId=doi:10.18419/darus-4418/1
@@ -94,7 +94,7 @@ sweep_key: r
 common_folder_name: db_with_hole_rsweep # usually the same as the experiment name
 
 # create 3D visualisation - requires Visualizer
-create_3d_vis: True
+create_3d_vis: False
 
 # create custom state plot - trajectory plots
 create_costum_plot: True
