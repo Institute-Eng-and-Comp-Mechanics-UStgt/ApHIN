@@ -231,21 +231,25 @@ def create_variation_of_parameters():
     return parameter_variation_dict
 
 
-if __name__ == "__main__":
+def main_various_experiments():
+    logging.info(f"Multiple simulation runs...")
+    # Run multiple simulation runs defined by parameter_variavation_dict
     working_dir = os.path.dirname(__file__)
+    configuration = Configuration(working_dir)
+    _, log_dir, _, result_dir = configuration.directories
+
+    run_various_experiments(
+        experiment_main_script=main,  # main without parentheses
+        parameter_variation_dict=create_variation_of_parameters(),
+        basis_config_yml_path=os.path.join(os.path.dirname(__file__), "config.yml"),
+        result_dir=result_dir,
+        log_dir=log_dir,
+    )
+
+
+if __name__ == "__main__":
     calc_various_experiments = True
     if calc_various_experiments:
-        logging.info(f"Multiple simulation runs...")
-        # Run multiple simulation runs defined by parameter_variavation_dict
-        configuration = Configuration(working_dir)
-        _, log_dir, _, result_dir = configuration.directories
-
-        run_various_experiments(
-            experiment_main_script=main,  # main without parentheses
-            parameter_variation_dict=create_variation_of_parameters(),
-            basis_config_yml_path=os.path.join(os.path.dirname(__file__), "config.yml"),
-            result_dir=result_dir,
-            log_dir=log_dir,
-        )
+        main_various_experiments()
     else:
         main()
