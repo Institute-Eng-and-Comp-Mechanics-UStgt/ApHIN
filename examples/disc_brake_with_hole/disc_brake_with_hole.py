@@ -34,7 +34,7 @@ import copy
 
 # %% Configuration
 def main(
-    config_path_to_file=None,
+    config_path_to_file=None, force_calculation=True
 ):  # {None} if no config file shall be loaded, else create str with path to config file
     logging.info(f"Loading configuration")
     # Priority 1: config_path_to_file (input of main function)
@@ -51,7 +51,7 @@ def main(
     #                         -result_folder_name     searches for a subfolder with result_folder_name under working dir that
     #                                                 includes a config.yml and .weights.h5
     #                                                 -> config for loading results
-    manual_results_folder = "db_with_hole_rsweep_testrun"  # {None} if no results shall be loaded, else create str with folder name or path to results folder
+    manual_results_folder = None  # {None} if no results shall be loaded, else create str with folder name or path to results folder
 
     # write to config_info
     if config_path_to_file is not None:
@@ -506,22 +506,27 @@ def create_variation_of_parameters():
     return parameter_variation_dict
 
 
+def main_various_experiments():
+
+    logging.info(f"Multiple simulation runs...")
+    # Run multiple simulation runs defined by parameter_variavation_dict
+    working_dir = os.path.dirname(__file__)
+    configuration = Configuration(working_dir, various_exp=True)
+    _, log_dir, _, result_dir = configuration.directories
+    run_various_experiments(
+        experiment_main_script=main,  # main without parentheses
+        parameter_variation_dict=create_variation_of_parameters(),
+        basis_config_yml_path=os.path.join(os.path.dirname(__file__), "config.yml"),
+        result_dir=result_dir,
+        log_dir=log_dir,
+        force_calculation=False,
+    )
+
+
 if __name__ == "__main__":
-    calc_various_experiments = False
+    calc_various_experiments = True
     if calc_various_experiments:
-        logging.info(f"Multiple simulation runs...")
-        # Run multiple simulation runs defined by parameter_variavation_dict
-        working_dir = os.path.dirname(__file__)
-        configuration = Configuration(working_dir)
-        _, log_dir, _, result_dir = configuration.directories
-        run_various_experiments(
-            experiment_main_script=main,  # main without parentheses
-            parameter_variation_dict=create_variation_of_parameters(),
-            basis_config_yml_path=os.path.join(os.path.dirname(__file__), "config.yml"),
-            result_dir=result_dir,
-            log_dir=log_dir,
-            force_calculation=False,
-        )
+        main_various_experiments()
     else:
         # use standard config file - single run
         main()
