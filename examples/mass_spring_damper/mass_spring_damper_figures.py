@@ -90,6 +90,7 @@ def plot_trajectories(results, experiments):
             ax.axis("off")
             plt.tight_layout()
             plt.show()
+            plt.savefig(f"msd_traj_{key}.png")
 
     # %% Eigenvalue plot
     fig, axs = plt.subplots(1, 3, figsize=(13, 4))
@@ -178,6 +179,7 @@ def plot_trajectories(results, experiments):
     plt.tight_layout()
     plt.subplots_adjust(top=0.85)
     plt.show()
+    plt.savefig(f"msd_eigval.png")
 
 
 def main():
@@ -196,7 +198,7 @@ def main():
             file_path="phin", linestyle="solid", color="orange", marker="d"
         ),
         "mi": Experiment(
-            file_path="mi", linestyle="solid", color="magenta", marker="s"
+            file_path="mi/test", linestyle="solid", color="magenta", marker="s"
         ),
     }
 
