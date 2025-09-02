@@ -88,14 +88,14 @@ def main(
     cache_path = os.path.join(data_dir, f"{data_name}")  # path to .npz file
 
     # check if data already exists on local machine
-    # if not os.path.isfile(cache_path):
-    #     # download file if it is missing
-    #     file_url = db_cfg["file_url"]
-    #     logging.info(f"download data from {file_url} and save it to {cache_path}.")
-    #     urllib.request.urlretrieve(
-    #         file_url,
-    #         cache_path,
-    #     )
+    if not os.path.isfile(cache_path):
+        # download file if it is missing
+        file_url = db_cfg["file_url"]
+        logging.info(f"download data from {file_url} and save it to {cache_path}")
+        urllib.request.urlretrieve(
+            file_url,
+            cache_path,
+        )
 
     # reduced size
     r = db_cfg["r"]

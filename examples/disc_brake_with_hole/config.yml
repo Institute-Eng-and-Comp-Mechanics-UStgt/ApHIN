@@ -6,7 +6,7 @@ save_plots: False  # Show plots and visualization
 experiment: db_with_hole_rsweep_testrun 
 #     name of the experiment
 load_network: False  # train the network or load the last pre-trained one
-file_url: https://darus.uni-stuttgart.de/api/access/datafile/:persistentId?persistentId=doi:10.18419/darus-4418/1
+file_url: https://darus.uni-stuttgart.de/api/access/datafile/380780
 data_dir: Null # set custom data directory of desired
 data_name: disc_brake_with_hole.npz
 faces: disc_faces.npy
