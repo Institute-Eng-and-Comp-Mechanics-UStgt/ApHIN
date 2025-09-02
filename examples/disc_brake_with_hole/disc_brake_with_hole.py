@@ -91,7 +91,7 @@ def main(
     if not os.path.isfile(cache_path):
         # download file if it is missing
         file_url = db_cfg["file_url"]
-        logging.info(f"download data from {file_url} and save it to {cache_path}.")
+        logging.info(f"download data from {file_url} and save it to {cache_path}")
         urllib.request.urlretrieve(
             file_url,
             cache_path,
