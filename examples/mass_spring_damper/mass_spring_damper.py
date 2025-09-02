@@ -612,7 +612,7 @@ def main(config_path_to_file=None, only_phin: bool = False):
         )
 
     # avoid that the script stops and keep the plots open
-    plt.show()
+    # plt.show()
 
 
 def create_variation_of_parameters():
