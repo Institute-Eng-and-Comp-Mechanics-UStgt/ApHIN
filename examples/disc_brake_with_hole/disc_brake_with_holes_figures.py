@@ -81,6 +81,8 @@ def load_experiment_results(result_dir, experiments):
 
 def plot_trajectories(results):
     """Plot state, velocity, and acceleration trajectories."""
+    db_dir = os.path.dirname(__file__)
+
     colors = ["magenta", "cyan", "purple"]
     # state trajectory plot
     data = results["r12"]
@@ -134,6 +136,8 @@ def plot_trajectories(results):
         bbox_to_anchor=(0.5, -0.65),
         ncol=1,
     )
+
+    plt.savefig(os.path.join(db_dir, f"disc_brake_traj_and_error.png"))
 
     # boxplot
     error_vel = [r["rms_vel"].mean(axis=1) for r in results.values()]
@@ -201,8 +205,8 @@ def plot_trajectories(results):
     )
 
     fig.tight_layout()
-    plt.show()
-    plt.savefig(f"db_traj.png")
+    plt.show(block=False)
+    plt.savefig(os.path.join(db_dir, f"disc_brake_error_box.png"))
 
 
 def main():
