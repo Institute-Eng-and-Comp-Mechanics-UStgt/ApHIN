@@ -1966,7 +1966,7 @@ def plot_x(
     save_name=None,
     save_path="",
     only_save=False,
-    plot_bar_all_features: bool = True,
+    plot_bar_all_features: bool = False,
 ):
     """
     Plots and compares multiple time series data from the state in the feature shape.
