@@ -198,7 +198,6 @@ def main(config_path_to_file=None):
 
     use_train_data = False
     idx_gen = "first"
-    plt.show()
     aphin_vis.plot_time_trajectories_all(
         pendulum_data,
         pendulum_data_id,
