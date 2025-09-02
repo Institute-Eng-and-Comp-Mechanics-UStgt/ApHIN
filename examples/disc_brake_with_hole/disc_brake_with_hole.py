@@ -431,15 +431,15 @@ def main(
     )
 
     # %% plot trajectories
-    idx_gen = "rand"
-    aphin_vis.plot_time_trajectories_all(
-        disc_brake_data,
-        disc_brake_data_id,
-        use_train_data=use_train_data,
-        idx_gen=idx_gen,
-        result_dir=result_dir,
-        only_save=db_cfg["only_save"],
-    )
+    # idx_gen = "rand"
+    # aphin_vis.plot_time_trajectories_all(
+    #     disc_brake_data,
+    #     disc_brake_data_id,
+    #     use_train_data=use_train_data,
+    #     idx_gen=idx_gen,
+    #     result_dir=result_dir,
+    #     only_save=db_cfg["only_save"],
+    # )
 
     if db_cfg["create_costum_plot"]:
         # rescale data
@@ -494,7 +494,7 @@ def main(
         )
 
     # avoid that the script stops and keep the plots open
-    plt.show()
+    # plt.show()
 
 
 # parameter variation for multiple experiment runs
