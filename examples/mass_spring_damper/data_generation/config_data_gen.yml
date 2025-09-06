@@ -76,4 +76,4 @@ T_training: 20
 time_steps_training: 2000
 
 # debugging
-debug: True
+debug: False

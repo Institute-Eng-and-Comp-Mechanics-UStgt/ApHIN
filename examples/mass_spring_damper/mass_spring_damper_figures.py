@@ -80,6 +80,7 @@ def load_experiment_results(result_dir, experiments):
 
 def plot_trajectories(results, experiments):
     """Plot state, velocity, and acceleration trajectories."""
+    msd_dir = os.path.dirname(__file__)
     # %% show matrix plot
     for key, result in results.items():
         if result["matrix_plot"] is not None and key is not "reference":
@@ -89,7 +90,8 @@ def plot_trajectories(results, experiments):
             ax.set_title(f"Matrix comparison for {key}")
             ax.axis("off")
             plt.tight_layout()
-            plt.show()
+            plt.show(block=False)
+            plt.savefig(os.path.join(msd_dir, f"msd_traj_{key}.png"))
 
     # %% Eigenvalue plot
     fig, axs = plt.subplots(1, 3, figsize=(13, 4))
@@ -174,10 +176,11 @@ def plot_trajectories(results, experiments):
         handles=custom_lines, loc="upper center", bbox_to_anchor=(0.5, 1), ncol=4
     )
 
-    plt.show()
+    # plt.show(block=False)
     plt.tight_layout()
     plt.subplots_adjust(top=0.85)
-    plt.show()
+    plt.show(block=False)
+    plt.savefig(os.path.join(msd_dir, "msd_eigval.png"))
 
 
 def main():
@@ -196,7 +199,7 @@ def main():
             file_path="phin", linestyle="solid", color="orange", marker="d"
         ),
         "mi": Experiment(
-            file_path="mi", linestyle="solid", color="magenta", marker="s"
+            file_path="mi/test", linestyle="solid", color="magenta", marker="s"
         ),
     }
 

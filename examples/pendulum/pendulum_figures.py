@@ -46,6 +46,8 @@ def load_experiment_results(result_dir, experiments):
 
 def plot_trajectories(results, experiments):
     """Plot state, velocity, and acceleration trajectories."""
+    pend_dir = os.path.dirname(__file__)
+
     fig, axs = plt.subplots(3, N_STATES)
     for key, result in results.items():
         experiment = experiments[key]
@@ -77,7 +79,8 @@ def plot_trajectories(results, experiments):
     )
     plt.tight_layout()
     plt.subplots_adjust(top=0.85)
-    plt.show()
+    plt.show(block=False)
+    plt.savefig(os.path.join(pend_dir, "pendulum_traj.png"))
 
 
 def main():

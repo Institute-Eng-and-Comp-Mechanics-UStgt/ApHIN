@@ -602,7 +602,9 @@ def main(config_path_to_file=None, only_phin: bool = False):
             test_ids,
             msd_data_orig,
             matrices_pred=(
-                (J_pred, R_pred, B_pred, Q_pred) if Q_pred else (J_pred, R_pred, B_pred)
+                (J_pred, R_pred, B_pred, Q_pred)
+                if isinstance(Q_pred, np.ndarray)
+                else (J_pred, R_pred, B_pred)
             ),
             result_dir=dir_,
             limits=msd_cfg["matrix_color_limits"],
@@ -610,7 +612,7 @@ def main(config_path_to_file=None, only_phin: bool = False):
         )
 
     # avoid that the script stops and keep the plots open
-    plt.show()
+    # plt.show()
 
 
 def create_variation_of_parameters():

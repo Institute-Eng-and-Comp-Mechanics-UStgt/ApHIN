@@ -198,7 +198,6 @@ def main(config_path_to_file=None):
 
     use_train_data = False
     idx_gen = "first"
-    plt.show()
     aphin_vis.plot_time_trajectories_all(
         pendulum_data,
         pendulum_data_id,
@@ -220,7 +219,7 @@ def main(config_path_to_file=None):
         pendulum_data_id.TEST.save_latent_traj_as_csv(result_dir)
 
     # avoid that the script stops and keep the plots open
-    plt.show()
+    # plt.show()
 
 
 def create_variation_of_parameters():
@@ -230,21 +229,26 @@ def create_variation_of_parameters():
     parameter_variation_dict = {"model": ["phin", "aphin_linear", "aphin_nonlinear"]}
     return parameter_variation_dict
 
-if __name__ == "__main__":
+
+def main_various_experiments():
+    logging.info(f"Multiple simulation runs...")
+    # Run multiple simulation runs defined by parameter_variavation_dict
     working_dir = os.path.dirname(__file__)
+    configuration = Configuration(working_dir)
+    _, log_dir, _, result_dir = configuration.directories
+
+    run_various_experiments(
+        experiment_main_script=main,  # main without parentheses
+        parameter_variation_dict=create_variation_of_parameters(),
+        basis_config_yml_path=os.path.join(os.path.dirname(__file__), "config.yml"),
+        result_dir=result_dir,
+        log_dir=log_dir,
+    )
+
+
+if __name__ == "__main__":
     calc_various_experiments = True
     if calc_various_experiments:
-        logging.info(f"Multiple simulation runs...")
-        # Run multiple simulation runs defined by parameter_variavation_dict
-        configuration = Configuration(working_dir)
-        _, log_dir, _, result_dir = configuration.directories
-
-        run_various_experiments(
-            experiment_main_script=main,  # main without parentheses
-            parameter_variation_dict=create_variation_of_parameters(),
-            basis_config_yml_path=os.path.join(os.path.dirname(__file__), "config.yml"),
-            result_dir=result_dir,
-            log_dir=log_dir,
-        )
+        main_various_experiments()
     else:
         main()
