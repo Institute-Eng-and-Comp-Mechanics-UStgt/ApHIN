@@ -164,13 +164,13 @@ def plot_trajectories(results, experiments):
             linestyle=experiments["phin"].linestyle,
             label="PHIN",
         ),
-        Line2D(
-            [0],
-            [0],
-            color=experiments["mi"].color,
-            linestyle=experiments["mi"].linestyle,
-            label="MI",
-        ),
+        # Line2D(
+        #     [0],
+        #     [0],
+        #     color=experiments["mi"].color,
+        #     linestyle=experiments["mi"].linestyle,
+        #     label="MI",
+        # ),
     ]
     fig.legend(
         handles=custom_lines, loc="upper center", bbox_to_anchor=(0.5, 1), ncol=4

@@ -71,4 +71,4 @@ for system_type in system_types:
 
 # compare different system formulations - after retransforming they should be the same
 msd.compare_msd_systems(msd_list)
-# plt.show()
+plt.show()
