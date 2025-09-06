@@ -187,7 +187,6 @@ def main():
     aphin_vis.setup_matplotlib(save_plots=False)
     working_dir = os.path.dirname(__file__)
     result_dir = os.path.join(working_dir, "results", "msd_phin_lti_mi")
-    _, _, _, result_dir = configuration.directories
 
     # Refactored experiments dictionary using namedtuple
     experiments = {
