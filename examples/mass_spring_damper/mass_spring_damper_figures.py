@@ -83,7 +83,7 @@ def plot_trajectories(results, experiments):
     msd_dir = os.path.dirname(__file__)
     # %% show matrix plot
     for key, result in results.items():
-        if result["matrix_plot"] is not None and key is not "reference":
+        if result["matrix_plot"] is not None and key != "reference":
             fig, ax = plt.subplots(figsize=(6, 6))
             img = plt.imread(result["matrix_plot"])
             ax.imshow(img)
@@ -186,7 +186,7 @@ def plot_trajectories(results, experiments):
 def main():
     aphin_vis.setup_matplotlib(save_plots=False)
     working_dir = os.path.dirname(__file__)
-    configuration = Configuration(working_dir)
+    result_dir = os.path.join(working_dir, "results", "msd_phin_lti_mi")
     _, _, _, result_dir = configuration.directories
 
     # Refactored experiments dictionary using namedtuple
@@ -198,9 +198,9 @@ def main():
         "phin": Experiment(
             file_path="phin", linestyle="solid", color="orange", marker="d"
         ),
-        "mi": Experiment(
-            file_path="mi/test", linestyle="solid", color="magenta", marker="s"
-        ),
+        # "mi": Experiment(
+        #     file_path="mi/test", linestyle="solid", color="magenta", marker="s"
+        # ),
     }
 
     results = load_experiment_results(result_dir, experiments)

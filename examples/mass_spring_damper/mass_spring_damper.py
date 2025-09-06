@@ -577,8 +577,10 @@ def main(config_path_to_file=None, only_phin: bool = False):
 
     # state data
     for data_, dir_ in zip(
-        [msd_data, msd_data_id_lti, msd_data_id_mi, msd_data_id_phin],
-        [ref_dir, result_dir_lti, result_dir_mi, result_dir_phin],
+        # [msd_data, msd_data_id_lti, msd_data_id_mi, msd_data_id_phin],
+        # [ref_dir, result_dir_lti, result_dir_mi, result_dir_phin],
+        [msd_data, msd_data_id_lti, msd_data_id_phin],
+        [ref_dir, result_dir_lti, result_dir_phin],
     ):
 
         getattr(data_, TEST_or_TRAIN).calculate_eigenvalues(
