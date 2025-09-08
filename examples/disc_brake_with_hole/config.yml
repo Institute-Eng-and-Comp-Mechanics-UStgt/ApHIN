@@ -3,7 +3,7 @@ save_plots: False  # Show plots and visualization
 
 
 # %% General identification framework settings
-experiment: db_large_heat_larger_data_epoch6000_rsweep_multExp 
+experiment: disc_brake_rsweep_multExp 
 #     name of the experiment
 load_network: False  # train the network or load the last pre-trained one
 file_url: https://darus.uni-stuttgart.de/api/access/datafile/380780
