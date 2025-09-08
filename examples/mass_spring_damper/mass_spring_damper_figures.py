@@ -10,7 +10,7 @@ from matplotlib.lines import Line2D
 N_STATES = 3
 N_T = 2000
 N_TRAJECTORIES = 60
-TRAJECTORY_INDEX = 3
+TRAJECTORY_INDEX = 4
 
 # Define a named tuple for experiment properties
 Experiment = namedtuple("Experiment", ["file_path", "linestyle", "color", "marker"])
