@@ -39,8 +39,8 @@ Halton:
     mass_vals: [0.1, 100]
     stiff_vals: [0.1, 100]
     damp_vals: [0.1, 10]
-    delta: [0.5, 5]
-    omega: [0.125, 2]
+    delta: [0.125, 2]
+    omega: [0.5, 5]
     n_simulations_per_parameter_set: 1
 manual:
     mass_vals: 4
