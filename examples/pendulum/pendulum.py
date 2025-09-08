@@ -20,6 +20,7 @@ from aphin.utils.save_results import (
     save_evaluation_times,
 )
 from aphin.utils.print_matrices import print_matrices
+from aphin.utils.experiments import run_various_experiments
 
 
 def main(config_path_to_file=None):
@@ -68,7 +69,7 @@ def main(config_path_to_file=None):
     tf.config.experimental.enable_op_determinism()
 
     # %% Script parameters
-    experiment = pd_cfg["experiment"]
+    model = pd_cfg["model"]
 
     # %% Load simulation data
     logging.info(
@@ -76,7 +77,7 @@ def main(config_path_to_file=None):
     )
 
     # %% load data
-    r = pd_cfg[experiment]["r"]
+    r = pd_cfg[model]["r"]
     n_f = pd_cfg["n_n"] * pd_cfg["n_dn"]
     cache_path = os.path.join(data_dir, "pendulum.npz")
     try:
@@ -96,9 +97,9 @@ def main(config_path_to_file=None):
     logging.info(
         "################################   2. Model      ################################"
     )
-    if experiment == "phin":
+    if model == "phin":
         use_autoencoder = False
-    elif experiment == "aphin_nonlinear" or experiment == "aphin_linear":
+    elif model == "aphin_nonlinear" or model == "aphin_linear":
         use_autoencoder = True
 
     regularizer = tf.keras.regularizers.L1L2(l1=pd_cfg["l1"], l2=pd_cfg["l2"])
@@ -117,8 +118,8 @@ def main(config_path_to_file=None):
             l_rec=pd_cfg["l_rec"],
             l_dz=pd_cfg["l_dz"],
             l_dx=pd_cfg["l_dx"],
-            use_pca=pd_cfg[experiment]["use_pca"],
-            pca_only=pd_cfg[experiment]["pca_only"],
+            use_pca=pd_cfg[model]["use_pca"],
+            pca_only=pd_cfg[model]["pca_only"],
             pca_order=pd_cfg["n_pca"],
         )
     else:
@@ -175,7 +176,7 @@ def main(config_path_to_file=None):
     print_matrices(system_layer)
     save_evaluation_times(pendulum_data_id, result_dir)
 
-    if experiment.startswith("aphin"):
+    if model.startswith("aphin"):
         file_name = "projection_error.txt"
         projection_error_file_dir = os.path.join(result_dir, file_name)
         aphin.get_projection_properties(x, x_test, file_dir=projection_error_file_dir)
@@ -197,7 +198,6 @@ def main(config_path_to_file=None):
 
     use_train_data = False
     idx_gen = "first"
-    plt.show()
     aphin_vis.plot_time_trajectories_all(
         pendulum_data,
         pendulum_data_id,
@@ -212,14 +212,43 @@ def main(config_path_to_file=None):
     )
     # identified data
     pendulum_data_id.TEST.save_state_traj_as_csv(
-        result_dir, second_oder=True, filename=experiment
+        result_dir, second_oder=True, filename=model
     )
 
     if r != n_f:
         pendulum_data_id.TEST.save_latent_traj_as_csv(result_dir)
 
     # avoid that the script stops and keep the plots open
-    plt.show()
+    # plt.show()
+
+
+def create_variation_of_parameters():
+    """
+    Create a dictionary with variations of parameters for different experiments.
+    """
+    parameter_variation_dict = {"model": ["phin", "aphin_linear", "aphin_nonlinear"]}
+    return parameter_variation_dict
+
+
+def main_various_experiments():
+    logging.info(f"Multiple simulation runs...")
+    # Run multiple simulation runs defined by parameter_variavation_dict
+    working_dir = os.path.dirname(__file__)
+    configuration = Configuration(working_dir)
+    _, log_dir, _, result_dir = configuration.directories
+
+    run_various_experiments(
+        experiment_main_script=main,  # main without parentheses
+        parameter_variation_dict=create_variation_of_parameters(),
+        basis_config_yml_path=os.path.join(os.path.dirname(__file__), "config.yml"),
+        result_dir=result_dir,
+        log_dir=log_dir,
+    )
+
 
 if __name__ == "__main__":
-    main()
+    calc_various_experiments = True
+    if calc_various_experiments:
+        main_various_experiments()
+    else:
+        main()

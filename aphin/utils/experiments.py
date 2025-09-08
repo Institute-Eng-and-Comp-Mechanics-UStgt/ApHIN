@@ -13,7 +13,6 @@ def run_various_experiments(
     basis_config_yml_path,
     result_dir,
     log_dir,
-    force_calculation=False,
     **kwargs,
 ):
     """
@@ -35,14 +34,6 @@ def run_various_experiments(
 
     """
 
-    # Ask for user input to continue
-    user_input = (
-        input("Do you want to run various experiments? (y/n): ").strip().lower()
-    )
-    if user_input not in ["yes", "y"]:
-        print("Exiting the function.")
-        return
-
     yaml_paths_list = create_modified_config_files(
         parameter_variation_dict, basis_config_yml_path, result_dir
     )
@@ -52,7 +43,6 @@ def run_various_experiments(
         yaml_paths_list,
         # result_dir,
         log_dir,
-        # force_calculation=force_calculation,
         **kwargs,
     )
 
@@ -97,9 +87,9 @@ def create_modified_config_files(
                 for string in value:
                     value_str += f"{string}_"
                 value_str = value_str.strip("_")
-                save_name += f"{key}{value_str}_"
+                save_name += f"{key}_{value_str}_"
             else:
-                save_name += f"{key}{value}_"
+                save_name += f"{key}_{value}_"
         save_name = save_name.replace(".", "_")
         save_name = save_name.strip("_")
         # rename experiment to make it unique

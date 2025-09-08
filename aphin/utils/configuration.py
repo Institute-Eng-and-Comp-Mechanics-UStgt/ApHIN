@@ -14,7 +14,9 @@ class Configuration:
     supports both identifying and loading results based on the provided configuration information.
     """
 
-    def __init__(self, working_dir, config_info=None, overwrite_results=False) -> None:
+    def __init__(
+        self, working_dir, config_info=None, overwrite_results=False, various_exp=False
+    ) -> None:
         """
         Initializes the Configuration instance.
 
@@ -51,7 +53,7 @@ class Configuration:
         self.working_dir = working_dir
         self.datetime_str = datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
         # read config and get weight directory
-        self.read_config(config_info)
+        self.read_config(config_info, various_exp=various_exp)
         # check for mandatory config entries
         self.check_config_dict()
         # create directories
@@ -77,7 +79,7 @@ class Configuration:
         """
         return self.data_dir, self.log_dir, self.weight_dir, self.result_dir
 
-    def read_config(self, config_info):
+    def read_config(self, config_info, various_exp=False):
         """
         Reads and loads configuration settings from a specified source, determining whether to proceed
         with model identification or to load existing results. The method sets up paths to configuration
@@ -117,7 +119,7 @@ class Configuration:
             )
 
             # check if weights exist if network is loaded
-            if self.cfg_dict["load_network"]:
+            if self.cfg_dict["load_network"] and not various_exp:
                 assert os.path.isfile(os.path.join(self.weight_dir, ".weights.h5"))
 
         elif config_info.endswith(".yml"):
@@ -133,7 +135,7 @@ class Configuration:
             )
 
             # check if weights exist if network is loaded
-            if self.cfg_dict["load_network"]:
+            if self.cfg_dict["load_network"] and not various_exp:
                 # check if .weights.h5 file is in weight_dir or subfolders
                 assert os.path.isfile(
                     os.path.join(self.weight_dir, ".weights.h5")

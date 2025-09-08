@@ -33,9 +33,8 @@ import copy
 
 
 # %% Configuration
-def main(
-    config_path_to_file=None,
-):  # {None} if no config file shall be loaded, else create str with path to config file
+def main(config_path_to_file=None):  
+    # {None} if no config file shall be loaded, else create str with path to config file
     logging.info(f"Loading configuration")
     # Priority 1: config_path_to_file (input of main function)
     # Priority 2: manual_results_folder (below)
@@ -88,14 +87,14 @@ def main(
     cache_path = os.path.join(data_dir, f"{data_name}")  # path to .npz file
 
     # check if data already exists on local machine
-    # if not os.path.isfile(cache_path):
-    #     # download file if it is missing
-    #     file_url = db_cfg["file_url"]
-    #     logging.info(f"download data from {file_url} and save it to {cache_path}.")
-    #     urllib.request.urlretrieve(
-    #         file_url,
-    #         cache_path,
-    #     )
+    if not os.path.isfile(cache_path):
+        # download file if it is missing
+        file_url = db_cfg["file_url"]
+        logging.info(f"download data from {file_url} and save it to {cache_path}")
+        urllib.request.urlretrieve(
+            file_url,
+            cache_path,
+        )
 
     # reduced size
     r = db_cfg["r"]
@@ -143,10 +142,10 @@ def main(
         scaling_values=db_cfg["scaling_values"],
         domain_split_vals=db_cfg["domain_split_vals"],
     )
-    if not db_cfg["sim_name"] == "test_data":
-        disc_brake_data.scale_Mu(
-            mu_train_bounds=None, desired_bounds=db_cfg["desired_bounds"]
-        )
+
+    disc_brake_data.scale_Mu(
+        mu_train_bounds=None, desired_bounds=db_cfg["desired_bounds"]
+    )
 
     disc_brake_data.scale_U_domain_wise()
 
@@ -431,15 +430,15 @@ def main(
     )
 
     # %% plot trajectories
-    idx_gen = "rand"
-    aphin_vis.plot_time_trajectories_all(
-        disc_brake_data,
-        disc_brake_data_id,
-        use_train_data=use_train_data,
-        idx_gen=idx_gen,
-        result_dir=result_dir,
-        only_save=db_cfg["only_save"],
-    )
+    # idx_gen = "rand"
+    # aphin_vis.plot_time_trajectories_all(
+    #     disc_brake_data,
+    #     disc_brake_data_id,
+    #     use_train_data=use_train_data,
+    #     idx_gen=idx_gen,
+    #     result_dir=result_dir,
+    #     only_save=db_cfg["only_save"],
+    # )
 
     if db_cfg["create_costum_plot"]:
         # rescale data
@@ -494,7 +493,7 @@ def main(
         )
 
     # avoid that the script stops and keep the plots open
-    plt.show()
+    # plt.show()
 
 
 # parameter variation for multiple experiment runs
@@ -506,22 +505,26 @@ def create_variation_of_parameters():
     return parameter_variation_dict
 
 
+def main_various_experiments():
+
+    logging.info(f"Multiple simulation runs...")
+    # Run multiple simulation runs defined by parameter_variavation_dict
+    working_dir = os.path.dirname(__file__)
+    configuration = Configuration(working_dir, various_exp=True)
+    _, log_dir, _, result_dir = configuration.directories
+    run_various_experiments(
+        experiment_main_script=main,  # main without parentheses
+        parameter_variation_dict=create_variation_of_parameters(),
+        basis_config_yml_path=os.path.join(os.path.dirname(__file__), "config.yml"),
+        result_dir=result_dir,
+        log_dir=log_dir,
+    )
+
+
 if __name__ == "__main__":
-    calc_various_experiments = False
+    calc_various_experiments = True
     if calc_various_experiments:
-        logging.info(f"Multiple simulation runs...")
-        # Run multiple simulation runs defined by parameter_variavation_dict
-        working_dir = os.path.dirname(__file__)
-        configuration = Configuration(working_dir)
-        _, log_dir, _, result_dir = configuration.directories
-        run_various_experiments(
-            experiment_main_script=main,  # main without parentheses
-            parameter_variation_dict=create_variation_of_parameters(),
-            basis_config_yml_path=os.path.join(os.path.dirname(__file__), "config.yml"),
-            result_dir=result_dir,
-            log_dir=log_dir,
-            force_calculation=False,
-        )
+        main_various_experiments()
     else:
         # use standard config file - single run
         main()
