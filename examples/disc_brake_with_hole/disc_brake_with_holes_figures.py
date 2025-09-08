@@ -213,12 +213,13 @@ def main():
     aphin_vis.setup_matplotlib(save_plots=False)
     working_dir = os.path.dirname(__file__)
     configuration = Configuration(working_dir)
+    exp_name = configuration.cfg_dict["experiment"]
     _, _, _, result_dir = configuration.directories
     reduced_orders = [2, 4, 8, 12, 16, 24]
     # Refactored experiments dictionary using namedtuple
     experiments = {
         f"r{reduced_order}": Experiment(
-            file_path=f"db_large_heat_larger_data_epoch6000_rsweep_multExp_r_{reduced_order}"
+            file_path=f"{exp_name}_r_{reduced_order}"
         )
         for reduced_order in reduced_orders
     }
