@@ -71,7 +71,7 @@ def phin_learning(
         tensorboard=msd_cfg["tensorboard"],
         log_dir=log_dir,
         monitor=monitor,
-        earlystopping=True,
+        earlystopping=False,
         patience=500,
     )
 
@@ -118,7 +118,7 @@ def phin_learning(
 
     #  create model with several inputs
     phin.compile(
-        optimizer=tf.keras.optimizers.Adam(learning_rate=msd_cfg["lr"]),
+        optimizer=tf.keras.optimizers.AdamW(learning_rate=msd_cfg["lr"]),
         loss=tf.keras.losses.MSE,
     )
     if mu is None:
@@ -577,10 +577,8 @@ def main(config_path_to_file=None, only_phin: bool = False):
 
     # state data
     for data_, dir_ in zip(
-        # [msd_data, msd_data_id_lti, msd_data_id_mi, msd_data_id_phin],
-        # [ref_dir, result_dir_lti, result_dir_mi, result_dir_phin],
-        [msd_data, msd_data_id_lti, msd_data_id_phin],
-        [ref_dir, result_dir_lti, result_dir_phin],
+        [msd_data, msd_data_id_lti, msd_data_id_mi, msd_data_id_phin],
+        [ref_dir, result_dir_lti, result_dir_mi, result_dir_phin],
     ):
 
         getattr(data_, TEST_or_TRAIN).calculate_eigenvalues(

@@ -164,13 +164,13 @@ def plot_trajectories(results, experiments):
             linestyle=experiments["phin"].linestyle,
             label="PHIN",
         ),
-        # Line2D(
-        #     [0],
-        #     [0],
-        #     color=experiments["mi"].color,
-        #     linestyle=experiments["mi"].linestyle,
-        #     label="MI",
-        # ),
+        Line2D(
+            [0],
+            [0],
+            color=experiments["mi"].color,
+            linestyle=experiments["mi"].linestyle,
+            label="MI",
+        ),
     ]
     fig.legend(
         handles=custom_lines, loc="upper center", bbox_to_anchor=(0.5, 1), ncol=4
@@ -197,9 +197,9 @@ def main():
         "phin": Experiment(
             file_path="phin", linestyle="solid", color="orange", marker="d"
         ),
-        # "mi": Experiment(
-        #     file_path="mi/test", linestyle="solid", color="magenta", marker="s"
-        # ),
+        "mi": Experiment(
+            file_path="mi/test", linestyle="solid", color="magenta", marker="s"
+        ),
     }
 
     results = load_experiment_results(result_dir, experiments)

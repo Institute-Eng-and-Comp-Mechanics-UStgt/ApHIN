@@ -8,7 +8,7 @@ seed: 1  # For reproducibility
 
 save_plots: True
 
-ph_layer: "ph_layer" # ph_layer | phq_layer | lti_layer
+ph_layer: "phq_layer" # ph_layer | phq_layer | lti_layer
 
 # train-test split
 # test_size: 0.25
@@ -27,17 +27,18 @@ n_simulations_per_parameter_set: 1
 scale_x: False
 domain_split_vals: [1,1]
 
-# %% identification settings
-l1: 0.0000000001  # L1 regularizationl2: 0  # L2 regularization
-l2: 0
-n_epochs: 6000 #2500 # number of epochs
-batch_size: 64  # batch size
+# %% identification settings=
+l1: 0.0000000001  # L1 regularization
+l2: 0  # L2 regularization
+n_epochs: 6000  # number of epochs
+batch_size: 64  # batch sizes
 layer_sizes_ph: # layer sizes
   - 16  # first layer
   - 32  # second layer
   - 64  # third layer
 activation_ph: selu  # activation function
 lr: 0.00005  # learning rate
+
 
 # matrix interpolation
 ansatz: linear   # linear | cubic (only for 1D and 2D) | nearest
