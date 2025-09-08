@@ -306,7 +306,7 @@ def main(config_path_to_file=None, only_phin: bool = False):
 
     create_costum_plot = True
     if create_costum_plot:
-        rng = np.random.default_rng()
+        rng = np.random.default_rng(seed=msd_cfg["seed"])
         n_n_array = np.arange(3)
         n_dn = 0  # displacements
         n_sim_random = rng.integers(0, msd_data.TEST.n_sim, (5,))
@@ -325,7 +325,7 @@ def main(config_path_to_file=None, only_phin: bool = False):
             data_id=msd_data_id_phin,
             attributes=["X", "X"],
             index_list=index_list_disps,
-            use_train_data="test",
+            use_train_data=False,
             result_dir=result_dir_phin,
             subplot_idx=subplot_idx,
             subplot_title=subplot_title,
