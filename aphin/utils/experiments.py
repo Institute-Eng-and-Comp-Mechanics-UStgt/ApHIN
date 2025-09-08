@@ -34,14 +34,6 @@ def run_various_experiments(
 
     """
 
-    # Ask for user input to continue
-    # user_input = (
-    #     input("Do you want to run various experiments? (y/n): ").strip().lower()
-    # )
-    # if user_input not in ["yes", "y"]:
-    #     print("Exiting the function.")
-    #     return
-
     yaml_paths_list = create_modified_config_files(
         parameter_variation_dict, basis_config_yml_path, result_dir
     )
