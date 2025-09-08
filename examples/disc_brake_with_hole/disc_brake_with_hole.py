@@ -287,6 +287,87 @@ def main(
     )
     save_evaluation_times(disc_brake_data_id, result_dir)
 
+    use_train_data = False
+    # %% calculate errors
+    disc_brake_data.calculate_errors(
+        disc_brake_data_id,
+        domain_split_vals=db_cfg["domain_split_vals"],
+        save_to_txt=True,
+        result_dir=result_dir,
+    )
+    aphin_vis.plot_errors(
+        disc_brake_data,
+        use_train_data=use_train_data,
+        save_name=os.path.join(result_dir, "rms_error"),
+        domain_names=db_cfg["domain_names"],
+        save_to_csv=True,
+        yscale="log",
+        only_save=db_cfg["only_save"],
+    )
+
+    # %% plot trajectories
+    # idx_gen = "rand"
+    # aphin_vis.plot_time_trajectories_all(
+    #     disc_brake_data,
+    #     disc_brake_data_id,
+    #     use_train_data=use_train_data,
+    #     idx_gen=idx_gen,
+    #     result_dir=result_dir,
+    #     only_save=db_cfg["only_save"],
+    # )
+
+    if db_cfg["create_costum_plot"]:
+        # rescale data
+        disc_brake_data.rescale_X()
+        disc_brake_data_id.rescale_X()
+        # linear expansion coefficient 1e-6 to large - correct physical values manually
+        disc_brake_data.scale_X(
+            scaling_values=[1, 1e6, 1e6], domain_split_vals=db_cfg["domain_split_vals"]
+        )
+        disc_brake_data_id.scale_X(
+            scaling_values=[1, 1e6, 1e6], domain_split_vals=db_cfg["domain_split_vals"]
+        )
+
+        rng = np.random.default_rng(seed=db_cfg["seed"])
+        # n_n_costum = 2082  # between heat node
+        n_n_heat_line_nodes = (
+            np.array([759, 1695, 1934, 2199, 2233]) - 1
+        )  # -1 for 0-indexing (node numbers from Abaqus)
+        n_sim_constant = rng.integers(disc_brake_data.TEST.n_sim)
+        index_list_nodes_temp = [
+            (n_sim_constant, n_n_heat, 0) for n_n_heat in n_n_heat_line_nodes
+        ]
+        index_list_nodes_dispz = [
+            (n_sim_constant, n_n_heat, 3) for n_n_heat in n_n_heat_line_nodes
+        ]
+        index_list_nodes_velz = [
+            (n_sim_constant, n_n_heat, 6) for n_n_heat in n_n_heat_line_nodes
+        ]
+        index_list_nodes = (
+            index_list_nodes_temp + index_list_nodes_dispz + index_list_nodes_velz
+        )
+
+        subplot_idx = (
+            [0] * len(index_list_nodes_temp)
+            + [1] * len(index_list_nodes_dispz)
+            + [2] * len(index_list_nodes_dispz)
+        )
+
+        subplot_title = ["temp", "disp-z", "vel-z"]
+
+        aphin_vis.custom_state_plot(
+            data=disc_brake_data,
+            data_id=disc_brake_data_id,
+            attributes=["X", "X"],
+            index_list=index_list_nodes,
+            use_train_data="test",
+            result_dir=result_dir,
+            subplot_idx=subplot_idx,
+            subplot_title=subplot_title,
+            save_to_csv=True,
+            save_name="db_custom_nodes",
+        )
+
     # # %% 3D plots
     if db_cfg["create_3d_vis"]:
         # save each test parameter set as csv
@@ -411,87 +492,6 @@ def main(
                     close_on_end=True,
                     play_at_start=True,
                 )
-
-    use_train_data = False
-    # %% calculate errors
-    disc_brake_data.calculate_errors(
-        disc_brake_data_id,
-        domain_split_vals=db_cfg["domain_split_vals"],
-        save_to_txt=True,
-        result_dir=result_dir,
-    )
-    aphin_vis.plot_errors(
-        disc_brake_data,
-        use_train_data=use_train_data,
-        save_name=os.path.join(result_dir, "rms_error"),
-        domain_names=db_cfg["domain_names"],
-        save_to_csv=True,
-        yscale="log",
-        only_save=db_cfg["only_save"],
-    )
-
-    # %% plot trajectories
-    # idx_gen = "rand"
-    # aphin_vis.plot_time_trajectories_all(
-    #     disc_brake_data,
-    #     disc_brake_data_id,
-    #     use_train_data=use_train_data,
-    #     idx_gen=idx_gen,
-    #     result_dir=result_dir,
-    #     only_save=db_cfg["only_save"],
-    # )
-
-    if db_cfg["create_costum_plot"]:
-        # rescale data
-        disc_brake_data.rescale_X()
-        disc_brake_data_id.rescale_X()
-        # linear expansion coefficient 1e-6 to large - correct physical values manually
-        disc_brake_data.scale_X(
-            scaling_values=[1, 1e6, 1e6], domain_split_vals=db_cfg["domain_split_vals"]
-        )
-        disc_brake_data_id.scale_X(
-            scaling_values=[1, 1e6, 1e6], domain_split_vals=db_cfg["domain_split_vals"]
-        )
-
-        rng = np.random.default_rng(seed=db_cfg["seed"])
-        # n_n_costum = 2082  # between heat node
-        n_n_heat_line_nodes = (
-            np.array([759, 1695, 1934, 2199, 2233]) - 1
-        )  # -1 for 0-indexing (node numbers from Abaqus)
-        n_sim_constant = rng.integers(disc_brake_data.TEST.n_sim)
-        index_list_nodes_temp = [
-            (n_sim_constant, n_n_heat, 0) for n_n_heat in n_n_heat_line_nodes
-        ]
-        index_list_nodes_dispz = [
-            (n_sim_constant, n_n_heat, 3) for n_n_heat in n_n_heat_line_nodes
-        ]
-        index_list_nodes_velz = [
-            (n_sim_constant, n_n_heat, 6) for n_n_heat in n_n_heat_line_nodes
-        ]
-        index_list_nodes = (
-            index_list_nodes_temp + index_list_nodes_dispz + index_list_nodes_velz
-        )
-
-        subplot_idx = (
-            [0] * len(index_list_nodes_temp)
-            + [1] * len(index_list_nodes_dispz)
-            + [2] * len(index_list_nodes_dispz)
-        )
-
-        subplot_title = ["temp", "disp-z", "vel-z"]
-
-        aphin_vis.custom_state_plot(
-            data=disc_brake_data,
-            data_id=disc_brake_data_id,
-            attributes=["X", "X"],
-            index_list=index_list_nodes,
-            use_train_data="test",
-            result_dir=result_dir,
-            subplot_idx=subplot_idx,
-            subplot_title=subplot_title,
-            save_to_csv=True,
-            save_name="db_custom_nodes",
-        )
 
     # avoid that the script stops and keep the plots open
     # plt.show()
