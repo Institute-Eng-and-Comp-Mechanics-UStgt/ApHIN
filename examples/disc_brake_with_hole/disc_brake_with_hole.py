@@ -33,9 +33,8 @@ import copy
 
 
 # %% Configuration
-def main(
-    config_path_to_file=None, force_calculation=True
-):  # {None} if no config file shall be loaded, else create str with path to config file
+def main(config_path_to_file=None):  
+    # {None} if no config file shall be loaded, else create str with path to config file
     logging.info(f"Loading configuration")
     # Priority 1: config_path_to_file (input of main function)
     # Priority 2: manual_results_folder (below)
@@ -519,7 +518,6 @@ def main_various_experiments():
         basis_config_yml_path=os.path.join(os.path.dirname(__file__), "config.yml"),
         result_dir=result_dir,
         log_dir=log_dir,
-        force_calculation=False,
     )
 
 
