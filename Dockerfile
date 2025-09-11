@@ -49,6 +49,7 @@ ADD https://api.github.com/repos/${GITHUB_ORG}/${GITHUB_REPO}/git/refs/heads/mai
 RUN cd ${WORKSPACE_DIR} && \
     git clone -b ${GITHUB_BRANCH} "https://github.com/${GITHUB_ORG}/${GITHUB_REPO}.git" ${PROJECT_DIR} && \
     cd ${PROJECT_DIR} && \
+    pip install -r paper_requirements.txt && \
     pip install -e .
 
 # Set working directory
