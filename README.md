@@ -32,6 +32,10 @@ The method is exemplified by a parametric mass-spring-damper and a nonlinear pen
 This repository implements neural networks that identify linear port-Hamiltonian systems from (potentially high-dimensional) data[1].
 * Autoencoders (AEs) for dimensionality reduction
 * pH layer to identify system matrices that fulfill the definition of a linear pH system
+* Joint training of AE and pH layer to identify a latent pH system
+* Parametric extension using hypernetworks to identify parametric pH systems
+
+The main functionalities are:
 * pHIN: identify a (parametric) low-dimensional port-Hamiltonian system directly
 * ApHIN: identify a (parametric) low-dimensional latent port-Hamiltonian system based on coordinate representations found using an autoencoder
 * Examples for the identification of linear pH systems from data
@@ -94,6 +98,70 @@ xhost -local:root
 ```
 
 Terminate the container with `exit`.
+
+## Running the Experiments
+
+### Quick Start - Run All Experiments
+
+To run all experiments and generate the paper figures:
+
+```bash
+python examples/main_script.py
+```
+
+### Individual Experiments
+
+#### Mass-Spring-Damper (MSD) System
+
+This experiment demonstrates pHIN on a low-dimensinoal parametric mass-spring-damper chain.
+
+1. **Data Generation:**
+   ```bash
+   python examples/mass_spring_damper/data_generation/mass_spring_damper_data_generation.py
+   ```
+   Configuration: `examples/mass_spring_damper/data_generation/config_data_gen.yml`
+
+2. **Model Training:**
+   ```bash
+   python examples/mass_spring_damper/mass_spring_damper.py
+   ```
+   Configuration: `examples/mass_spring_damper/config.yml`
+
+#### Pendulum System
+
+This experiment shows the application of ApHIN to a nonlinear pendulum system.
+
+1. **Data Generation:**
+   ```bash
+   python examples/pendulum/pendulum_data_generation.py
+   ```
+
+2. **Model Training:**
+   ```bash
+   python examples/pendulum/pendulum.py
+   ```
+   Configuration: `examples/pendulum/config.yml`
+
+#### Disc Brake with Hole
+
+This experiment demonstrates ApHIN on a high-dimensional disc brake model with thermoelastic behavior.
+
+```bash
+python examples/disc_brake_with_hole.py
+```
+Configuration: `examples/disc_brake_with_hole/config.yml`
+
+> :information_source: **Note:** This experiment includes automated data download, so no separate data generation step is required.
+
+### Configuration Files
+
+Each experiment uses YAML configuration files to set hyperparameters, training settings, and system parameters. You can modify these configuration files to:
+- Adjust network architectures
+- Change training parameters (learning rate, epochs, batch size)
+- Modify system parameters for the physical models
+- Set data generation parameters
+
+When running the main script, all figures from the corresponding paper will be recreated.
 
 ## References
 
