@@ -8,7 +8,8 @@ import aphin.utils.visualizations as aphin_vis
 # Constants
 N_STATES = 2
 N_TRAJECTORIES = 6
-TRAJECTORY_INDEX = 4
+TRAJECTORY_INDEX = 2
+
 
 # Define a named tuple for experiment properties
 Experiment = namedtuple("Experiment", ["file_path", "linestyle", "color"])
